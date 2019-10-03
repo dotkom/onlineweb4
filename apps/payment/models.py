@@ -17,8 +17,9 @@ from django.utils.translation import ugettext as _
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 from apps.payment import status
-from apps.payment.constants import (FikenAccount, FikenSaleKind, StripeKey, TransactionType,
-                                    VatTypeSale, vat_percentage)
+from apps.payment.constants import (FikenAccount, FikenOutgoingAccount, FikenSaleKind, StripeKey,
+                                    TransactionType, VatTypeSale, fiken_outgoing_account_number,
+                                    vat_percentage)
 from apps.payment.pdf_generator import FikenSalePDF
 from apps.webshop.models import OrderLine
 
@@ -79,6 +80,14 @@ class Payment(models.Model):
         on_delete=models.CASCADE
     )
     """User who last changed payment. Automatically set"""
+    fiken_account = models.CharField(
+        max_length=128,
+        null=True,
+        blank=False,
+        choices=FikenOutgoingAccount.ALL_CHOICES,
+        verbose_name='Konto i Fiken',
+    )
+    """ The account in Fiken where the sale should be registered """
 
     def payment_delays(self):
         return self.paymentdelay_set.filter(active=True)
@@ -373,7 +382,7 @@ class PaymentRelation(models.Model):
         can_refund, reason = self.payment.check_refund(self)
         return reason
 
-    def create_fiken_sale(self, amount: int, status: str):
+    def create_fiken_sale(self, amount: int, sale_status: str):
         ore_amount = amount * 100  # Payment price is in Kr, sale amount is in Øre
         sale = FikenSale.objects.create(
             stripe_key=self.payment.stripe_key,
@@ -381,7 +390,8 @@ class PaymentRelation(models.Model):
             transaction_type=self.payment.transaction_type,
             object_id=self.id,
             content_type=ContentType.objects.get_for_model(self),
-            status=status,
+            status=sale_status,
+            customer=self.user,
         )
 
         if self.payment.is_type(AttendanceEvent):
@@ -390,6 +400,7 @@ class PaymentRelation(models.Model):
                 description=f'{self.get_description()} - {self.user.get_full_name()}',
                 price=ore_amount,
                 vat_type=VatTypeSale.OUTSIDE,
+                account_type=self.payment.fiken_account,
             )
         elif self.payment.is_type(OrderLine):
             order_line: OrderLine = self.payment.content_object
@@ -399,6 +410,7 @@ class PaymentRelation(models.Model):
                     description=f'{order_line} - {self.user.get_full_name()}',
                     price=order.price * 100,  # Webshop price is in Kr, Fiken price is in Øre
                     vat_type=order.product.vat_type,
+                    account_type=order.product.fiken_account,
                 )
 
         return sale
@@ -494,7 +506,7 @@ class PaymentTransaction(models.Model):
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
 
-    def create_fiken_sale(self, amount: int, status: str):
+    def create_fiken_sale(self, amount: int, sale_status: str):
         ore_amount = amount * 100  # Transaction amount is in Kr, sale amount is in øre
         sale = FikenSale.objects.create(
             stripe_key=StripeKey.TRIKOM,
@@ -502,13 +514,15 @@ class PaymentTransaction(models.Model):
             transaction_type=TransactionType.KIOSK,
             object_id=self.id,
             content_type=ContentType.objects.get_for_model(self),
-            status=status,
+            status=sale_status,
+            customer=self.user,
         )
         FikenOrderLine.objects.create(
             sale=sale,
             description=f'{self.get_description()} - {self.user.get_full_name()}',
             price=ore_amount,
             vat_type=VatTypeSale.OUTSIDE,
+            account_type=FikenOutgoingAccount.SALES_NIBBLE,
         )
         return sale
 
@@ -601,7 +615,7 @@ class FikenSale(models.Model):
         'Fiken Sale kind',
         max_length=20,
         choices=FikenSaleKind.ALL_CHOICES,
-        default=FikenSaleKind.CASH_SALE,
+        default=FikenSaleKind.EXTERNAL_INVOICE,
     )
     paid = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
@@ -611,6 +625,12 @@ class FikenSale(models.Model):
         choices=status.PAYMENT_STATUS_CHOICES,
     )
     fiken_id = models.IntegerField(null=True, blank=True)
+    customer = models.ForeignKey(
+        to=User,
+        related_name='fiken_sales',
+        verbose_name='Kunde',
+        on_delete=models.DO_NOTHING,
+    )
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     """Which model the receipt is created for"""
@@ -627,7 +647,7 @@ class FikenSale(models.Model):
 
     @property
     def identifier(self) -> str:
-        if self.status == status.REFUNDED:
+        if self.status == status.REMOVED:
             return f'REFUND-{self.id}'
         return f'{self.transaction_type.upper()}-{self.id}'
 
@@ -653,7 +673,7 @@ class FikenSale(models.Model):
     @property
     def amount(self) -> float:
         amount = self.remove_stripe_fee(self.original_amount)
-        if self.status == status.REFUNDED:
+        if self.status == status.REMOVED:
             return -amount
         return amount
 
@@ -684,6 +704,17 @@ class FikenOrderLine(models.Model):
     price = models.IntegerField()
     vat_type = models.CharField(max_length=200, choices=VatTypeSale.ALL_CHOICES)
     description = models.CharField(max_length=200)
+    account_type = models.CharField(
+        max_length=128,
+        null=False,
+        blank=False,
+        choices=FikenOutgoingAccount.ALL_CHOICES,
+        verbose_name='Utgående konto',
+    )
+
+    @property
+    def account(self) -> str:
+        return fiken_outgoing_account_number[self.account_type]
 
     @property
     def price_without_fee(self) -> int:
@@ -698,16 +729,19 @@ class FikenOrderLine(models.Model):
     @property
     def net_price(self) -> int:
         net_price = int(self.price_without_fee * (1 - self.vat_percentage))
-        if self.sale.status == status.REFUNDED:
+        if self.sale.status == status.REMOVED:
             return -net_price
         return net_price
 
     @property
     def vat_price(self) -> int:
         vat_price = int(self.price_without_fee * self.vat_percentage)
-        if self.sale.status == status.REFUNDED:
+        if self.sale.status == status.REMOVED:
             return -vat_price
         return vat_price
+
+    def __str__(self):
+        return f'{self.description} ({int(self.price / 100)} kr)'
 
     class Meta:
         verbose_name = 'Ordrelinje i Fiken'
@@ -727,6 +761,26 @@ class FikenSaleAttachment(models.Model):
     attach_to_payment = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f'{self.filename} ({self.created})'
+
     class Meta:
         verbose_name = 'Bilag i Fiken'
         verbose_name_plural = 'Bilag i Fiken'
+
+
+class FikenCustomer(models.Model):
+    user = models.OneToOneField(
+        to=User,
+        related_name='fiken_customer',
+        on_delete=models.DO_NOTHING,
+    )
+    fiken_customer_number = models.IntegerField(null=True, blank=True, unique=True)
+
+    def __str__(self):
+        customer_number = self.fiken_customer_number if self.fiken_customer_number else 'Ikke synkronisert'
+        return f'{self.user} ({customer_number})'
+
+    class Meta:
+        verbose_name = 'Kunde i Fiken'
+        verbose_name_plural = 'Kunder i Fiken'

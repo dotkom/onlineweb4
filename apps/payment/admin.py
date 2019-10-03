@@ -81,10 +81,12 @@ class FikenOrderLineInlineAdmin(admin.StackedInline):
     extra = 0
     classes = ('grp-collapse grp-open',)  # style
     fields = (
-        'price', 'vat_type', 'description', 'price_without_fee', 'net_price', 'vat_price', 'vat_percentage'
+        'price', 'vat_type', 'description', 'price_without_fee', 'net_price', 'vat_price', 'vat_percentage',
+        'account_type',
     )
     readonly_fields = (
-        'price', 'vat_type', 'description', 'price_without_fee', 'net_price', 'vat_price', 'vat_percentage'
+        'price', 'vat_type', 'description', 'price_without_fee', 'net_price', 'vat_price', 'vat_percentage',
+        'account_type',
     )
 
 
@@ -95,7 +97,7 @@ class FikenSaleAdmin(VersionAdmin):
     list_display = ('__str__', 'stripe_key', 'created_date', 'amount', 'original_amount',)
     fields = (
         'stripe_key', 'account', 'amount', 'original_amount', 'date', 'kind', 'paid', 'transaction_type', 'status',
-        'fiken_id', 'content_type', 'object_id', 'created_date', 'identifier',
+        'fiken_id', 'content_type', 'object_id', 'created_date', 'identifier', 'customer',
     )
     readonly_fields = (
         'stripe_key', 'account', 'amount', 'original_amount', 'date', 'kind', 'paid', 'transaction_type', 'status',
