@@ -138,6 +138,52 @@ class FikenAccount:
     ALL_CHOICES = [(a, a) for a in ALL_ACCOUNTS]
 
 
+class FikenOutgoingAccount:
+    # Webshop
+    SALES_MEDALS = 'sales_medals'
+    SALES_EXEMPT = 'sales_exempt'
+    SALES_NONE = 'sales_none'
+    SERVICES = 'services'
+    SUBSCRIPTIONS_OFFLINE = 'offline'
+
+    # Nibble
+    SALES_NIBBLE = 'sales_nibble'
+
+    # Arrangementer
+    ATTENDEES_ARRKOM = 'attendees_arrkom'
+    ATTENDEES_GALLA = 'attendees_galla'
+    ATTENDEES_GRADUATION = 'attendees_graduation'
+    ATTENDEES_ARE = 'attendees_are'
+
+    ALL_CHOICES = (
+        (SALES_MEDALS, 'Innbetaling medaljer og pins'),
+        (SALES_EXEMPT, 'Salgsinntekt handelsvarer, avgiftsfri'),
+        (SALES_NONE, 'Salgsinntekt handelsvarer, utenfor avgiftsområdet'),
+        (SERVICES, 'Salgsinntekt tjenester, utenfor avgiftsområdet'),
+        (SUBSCRIPTIONS_OFFLINE, 'Abonnement Offline'),
+        (SALES_NIBBLE, 'Salgsinntekt Nibble'),
+        (ATTENDEES_ARRKOM, 'Deltager avgift Arrkom'),
+        (ATTENDEES_GALLA, 'Deltakeravgift immatrikuleringsball'),
+        (ATTENDEES_GRADUATION, 'Deltakeravgift utmatrikulering'),
+        (ATTENDEES_ARE, 'Deltakeravgift Åre'),
+    )
+    ALL_ACCOUNTS = [k for k, v in ALL_CHOICES]
+
+
+fiken_outgoing_account_number = {
+    FikenOutgoingAccount.SALES_MEDALS: settings.OW4_FIKEN_ACCOUNT_SALES_MEDALS,
+    FikenOutgoingAccount.SALES_EXEMPT: settings.OW4_FIKEN_ACCOUNT_SALES_EXEMPT,
+    FikenOutgoingAccount.SALES_NONE: settings.OW4_FIKEN_ACCOUNT_SALES_NONE,
+    FikenOutgoingAccount.SERVICES: settings.OW4_FIKEN_ACCOUNT_SERVICES,
+    FikenOutgoingAccount.SUBSCRIPTIONS_OFFLINE: settings.OW4_FIKEN_ACCOUNT_SUBSCRIPTIONS_OFFLINE,
+    FikenOutgoingAccount.SALES_NIBBLE: settings.OW4_FIKEN_ACCOUNT_SALES_NIBBLE,
+    FikenOutgoingAccount.ATTENDEES_ARRKOM: settings.OW4_FIKEN_ACCOUNT_ATTENDEES_ARRKOM,
+    FikenOutgoingAccount.ATTENDEES_GALLA: settings.OW4_FIKEN_ACCOUNT_ATTENDEES_GALLA,
+    FikenOutgoingAccount.ATTENDEES_GRADUATION: settings.OW4_FIKEN_ACCOUNT_ATTENDEES_GRADUATION,
+    FikenOutgoingAccount.ATTENDEES_ARE: settings.OW4_FIKEN_ACCOUNT_ATTENDEES_ARE,
+}
+
+
 class FikenSaleKind:
     CASH_SALE = 'CASH_SALE'
     INVOICE = 'INVOICE'
