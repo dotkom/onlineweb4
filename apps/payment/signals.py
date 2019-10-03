@@ -51,10 +51,13 @@ def create_fiken_sale_for_relations(sender, instance: PaymentRelation, **kwargs)
         sale = instance.create_fiken_sale(instance.payment_price.price, status.DONE)
         handle_fiken_sale_created(sale)
 
+    """
+    Refunds are not enabled yet
     has_removed_sale = instance.sales.filter(status=status.REMOVED).exists()
     if instance.status == status.REMOVED and not has_removed_sale:
-        sale = instance.create_fiken_sale(-instance.payment_price.price, status.REMOVED)
+        sale = instance.create_fiken_sale(instance.payment_price.price, status.REMOVED)
         handle_fiken_sale_created(sale)
+    """
 
 
 @receiver(post_save, sender=PaymentTransaction)
@@ -64,7 +67,10 @@ def create_fiken_sale_for_transactions(sender, instance: PaymentTransaction, **k
         sale = instance.create_fiken_sale(instance.amount, status.DONE)
         handle_fiken_sale_created(sale)
 
+    """
+    Refunds are not enabled yet
     has_removed_sale = instance.sales.filter(status=status.REMOVED).exists()
     if instance.status == status.REMOVED and not has_removed_sale:
-        sale = instance.create_fiken_sale(-instance.amount, status.REMOVED)
+        sale = instance.create_fiken_sale(instance.amount, status.REMOVED)
         handle_fiken_sale_created(sale)
+    """

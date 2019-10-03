@@ -2,32 +2,59 @@ import json
 import logging
 
 import requests
-from django.conf import settings
 from onlineweb4.celery import app
-from requests.auth import HTTPBasicAuth
 
-from .models import FikenSale, FikenSaleAttachment
-from .serializers import FikenSaleAttachmentSerializer, FikenSaleSerializer
+from .models import FikenCustomer, FikenSale, FikenSaleAttachment
+from .serializers import FikenCustomerSerializer, FikenSaleAttachmentSerializer, FikenSaleSerializer
+from .settings import FIKEN_AUTH, FIKEN_ORG_API_URL, IS_FIKEN_CONFIGURED
 
 logger = logging.getLogger(__name__)
 
-FIKEN_API_URL = 'https://fiken.no/api/v1'
-FIKEN_USER = settings.OW4_FIKEN_USER
-FIKEN_PASSWORD = settings.OW4_FIKEN_PASSWORD
-FIKEN_ORG = settings.OW4_FIKEN_ORG
-IS_FIKEN_CONFIGURED = FIKEN_USER and FIKEN_PASSWORD and FIKEN_ORG
-
 
 def get_fiken_sales_api_url():
-    return f'{FIKEN_API_URL}/companies/{FIKEN_ORG}/sales'
+    return f'{FIKEN_ORG_API_URL}/sales'
 
 
 def get_fiken_sales_attachments_api_url(sale_fiken_id: int):
     return f'{get_fiken_sales_api_url()}/{sale_fiken_id}/attachments'
 
 
-def resolve_sale_fiken_id(location_url: str) -> int:
+def get_fiken_customer_api_url():
+    return f'{FIKEN_ORG_API_URL}/contacts'
+
+
+def resolve_fiken_id(location_url: str) -> int:
     return int(location_url.split('/')[-1])
+
+
+def register_customer_in_fiken(customer_id: int):
+    logger.info(f'Starting Fiken customer registration task')
+    customer = FikenCustomer.objects.get(pk=customer_id)
+
+    if IS_FIKEN_CONFIGURED:
+        headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
+
+        customer_data = FikenCustomerSerializer(customer).data
+
+        response = requests.post(
+            url=get_fiken_customer_api_url(),
+            auth=FIKEN_AUTH,
+            headers=headers,
+            json=customer_data,
+        )
+
+        if response.ok:
+            logger.info(f'Successfully created customer {customer.id} for user {customer.user}')
+            fiken_id = resolve_fiken_id(response.headers.get('Location'))
+            customer.fiken_customer_number = fiken_id
+            customer.save()
+
+        else:
+            logger.warning(f'Failed at registering customer {customer.id} in Fiken')
+            logger.warning(f'Fiken request failed with status code: {response.status_code} and '
+                           f'message {response.text}')
+    else:
+        logger.warning(f'Fiken is not configured correctly. Could not register customer {customer.id}')
 
 
 @app.task(bind=True)
@@ -36,7 +63,6 @@ def create_sale_attachment(_, sale_id: int):
     sale = FikenSale.objects.get(pk=sale_id)
     attachment: FikenSaleAttachment = sale.create_attachment()
     if IS_FIKEN_CONFIGURED:
-        auth = HTTPBasicAuth(FIKEN_USER, FIKEN_PASSWORD)
         headers = {}
 
         sale_attachment_data = FikenSaleAttachmentSerializer(attachment).data
@@ -47,7 +73,7 @@ def create_sale_attachment(_, sale_id: int):
 
         response = requests.post(
             url=get_fiken_sales_attachments_api_url(sale.fiken_id),
-            auth=auth,
+            auth=FIKEN_AUTH,
             headers=headers,
             files=attachment_data,
         )
@@ -66,21 +92,23 @@ def create_sale_attachment(_, sale_id: int):
 def register_sale_with_fiken(_, sale_id: int):
     logger.info('Starting Fiken sale register')
     sale = FikenSale.objects.get(pk=sale_id)
+    customer, created = FikenCustomer.objects.get_or_create(user=sale.customer)
+    if created:
+        register_customer_in_fiken(customer.id)
     sale_data = FikenSaleSerializer(sale).data
     if IS_FIKEN_CONFIGURED:
-        auth = HTTPBasicAuth(FIKEN_USER, FIKEN_PASSWORD)
         headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
 
         response = requests.post(
             url=get_fiken_sales_api_url(),
-            auth=auth,
+            auth=FIKEN_AUTH,
             headers=headers,
             json=sale_data,
         )
 
         if response.ok:
             logger.info(f'Successfully registered sale {sale.identifier} in Fiken')
-            sale_fiken_id = resolve_sale_fiken_id(response.headers.get('Location'))
+            sale_fiken_id = resolve_fiken_id(response.headers.get('Location'))
             sale.fiken_id = sale_fiken_id
             sale.save()
             create_sale_attachment.delay(sale_id=sale_id)

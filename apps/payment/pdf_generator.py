@@ -75,12 +75,18 @@ class FikenSalePDF:
 
         pdf.p(HEADER, style=create_paragraph_style(font_size=18))
         pdf.spacer(height=16)
-        pdf.p(self.sale.created_date.strftime('%d. %B %Y'), create_paragraph_style(font_size=9))
+        pdf.p(self.sale.created_date.strftime('%d. %B %Y %H:%M'), create_paragraph_style(font_size=9))
+        pdf.p(f'Kvitteringsnummer: K{self.sale.id}', create_paragraph_style(font_size=9))
         pdf.spacer(height=25)
 
         pdf.p(ORG_NAME, style=create_paragraph_style(font_size=13))
         pdf.spacer(height=6)
         pdf.p(ORG_CODE, style=create_paragraph_style(font_size=11))
+
+        pdf.spacer(height=15)
+        pdf.p('Mottaker', style=create_paragraph_style(font_size=13))
+        pdf.spacer(height=6)
+        pdf.p(self.sale.customer.get_full_name(), style=create_paragraph_style(font_size=11))
 
         pdf.spacer(height=25)
         pdf.p('Ordrelinjer', style=create_paragraph_style(font_size=14))
