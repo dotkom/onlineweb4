@@ -74,7 +74,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'first_name', 'last_name', 'rfid', 'password', 'email', 'username', 'infomail', 'jobmail', 'nickname',
-            'website', 'github', 'linkedin', 'gender', 'bio', 'ntnu_username', 'password', 'phone', 'id',
+            'website', 'github', 'linkedin', 'gender', 'bio', 'ntnu_username', 'password', 'phone_number', 'id',
         )
         extra_kwargs = {
             'password': {'write_only': True}
