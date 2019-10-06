@@ -35,4 +35,3 @@ router.register(
     viewset=views.RegistrationAttendeeViewSet,
     basename='registration_attendees'
 )
-router.register('attend', views.AttendViewSet, basename='attend')

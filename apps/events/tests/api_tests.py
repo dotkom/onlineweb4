@@ -9,6 +9,7 @@ from rest_framework import status
 
 from apps.authentication.models import OnlineUser
 from apps.companyprofile.models import Company
+from apps.events.constants import AttendStatus
 from apps.events.models import Attendee, CompanyEvent
 from apps.online_oidc_provider.test import OIDCTestCase
 from apps.profiles.models import Privacy
@@ -390,7 +391,7 @@ class AttendAPITestCase(OIDCTestCase):
             'format': 'json',
         }
 
-        self.url = reverse('event_attend')
+        self.url = reverse('attendees-register-attendance')
         self.event = generate_event(organizer=self.committee)
         self.attendee1 = generate_attendee(self.event, 'test1', '0123')
         self.attendee2 = generate_attendee(self.event, 'test2', '3210')
@@ -404,7 +405,7 @@ class AttendAPITestCase(OIDCTestCase):
     def test_missing_auth_returns_unauthorized(self):
         response = self.client.post(self.url)
 
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_missing_data_returns_bad_request(self):
         response = self.client.post(self.url, **self.headers)
@@ -421,7 +422,7 @@ class AttendAPITestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(self.attendee1.attended)
         self.assertFalse(self.attendee2.attended)
-        self.assertEqual(response.json()['attend_status'], 10)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.REGISTER_SUCCESS)
 
     def test_attend_with_rfid(self):
         response = self.client.post(self.url, {
@@ -433,7 +434,7 @@ class AttendAPITestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(self.attendee1.attended)
         self.assertFalse(self.attendee2.attended)
-        self.assertEqual(response.json()['attend_status'], 10)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.REGISTER_SUCCESS)
 
     def test_attend_twice(self):
         self.attendee1.attended = True
@@ -445,7 +446,7 @@ class AttendAPITestCase(OIDCTestCase):
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()['attend_status'], 20)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.PREVIOUSLY_REGISTERED)
 
     def test_unknown_rfid(self):
         response = self.client.post(self.url, {
@@ -454,7 +455,7 @@ class AttendAPITestCase(OIDCTestCase):
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()['attend_status'], 40)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.RFID_DOES_NOT_EXIST)
 
     def test_saves_rfid(self):
 
@@ -476,7 +477,7 @@ class AttendAPITestCase(OIDCTestCase):
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()['attend_status'], 50)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.USERNAME_DOES_NOT_EXIST)
 
     def test_user_is_on_waitlist_username(self):
         self.event.attendance_event.max_capacity = 1
@@ -488,8 +489,8 @@ class AttendAPITestCase(OIDCTestCase):
             'username': self.attendee2.user.username,
         }, **self.headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.json()['attend_status'], 30)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.ON_WAIT_LIST)
 
     def test_user_is_on_waitlist_rfid(self):
         self.event.attendance_event.max_capacity = 1
@@ -501,8 +502,8 @@ class AttendAPITestCase(OIDCTestCase):
             'rfid': self.attendee2.user.rfid,
         }, **self.headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.json()['attend_status'], 30)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.ON_WAIT_LIST)
 
     def test_user_is_on_waitlist_approved(self):
         self.event.attendance_event.max_capacity = 1
@@ -516,7 +517,7 @@ class AttendAPITestCase(OIDCTestCase):
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['attend_status'], 10)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.REGISTER_SUCCESS)
 
     def test_api_does_not_try_to_get_user_by_rfid_empty_string(self):
         self.event.attendance_event.max_capacity = 2
@@ -531,7 +532,7 @@ class AttendAPITestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(self.attendees[0].attended)
         self.assertFalse(self.attendees[1].attended)
-        self.assertEqual(response.json()['attend_status'], 41)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.USERNAME_AND_RFID_MISSING)
 
     def test_save_rfid_give_no_username_gives_useful_error_message(self):
         self.attendee1.user.rfid = None
@@ -545,7 +546,7 @@ class AttendAPITestCase(OIDCTestCase):
         self.refresh_attendees()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(self.attendees[0].attended)
-        self.assertEqual(response.json()['attend_status'], 41)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.USERNAME_AND_RFID_MISSING)
 
     def test_save_rfid_gives_useful_error_message_if_rfid_already_exists(self):
         rfid = generate_valid_rfid()
@@ -563,7 +564,7 @@ class AttendAPITestCase(OIDCTestCase):
         self.refresh_attendees()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(self.attendees[0].attended)
-        self.assertEqual(response.json()['attend_status'], 51)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.REGISTER_ERROR)
 
     def test_wrong_committee_registering_attendance(self):
         wrong_committee = G(Group, name='bedKom')
@@ -578,7 +579,7 @@ class AttendAPITestCase(OIDCTestCase):
         }, **self.headers)
 
         self.refresh_attendees()
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_not_authenticated_user_registering_attendance(self):
         response = self.client.post(self.url, {
@@ -587,4 +588,4 @@ class AttendAPITestCase(OIDCTestCase):
         }, headers={'format': 'json'})
 
         self.refresh_attendees()
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
