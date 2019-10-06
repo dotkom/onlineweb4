@@ -322,9 +322,8 @@ class RegisterAttendanceSerializer(serializers.Serializer):
         username: str = data.get('username')
         rfid: str = data.get('rfid')
         event_id: int = data.get('event')
-        return Attendee.objects.get(
-            Q(event_id=event_id, user__username=username) | Q(event_id=event_id, user__rfid=rfid)
-        )
+        user = User.objects.get(Q(username=username) | Q(rfid=rfid, rfid__isnull=False))
+        return Attendee.objects.get(user=user, event_id=event_id)
 
     def validate(self, attrs: dict):
         admin_user: User = self.context.get('request').user
@@ -367,10 +366,14 @@ class RegisterAttendanceSerializer(serializers.Serializer):
         try:
             attendee = self.get_attendee(attrs)
             self._handle_attendee(attendee, waitlist_approved)
-
         except Attendee.DoesNotExist:
+            raise RegisterAttendanceError(
+                detail='Brukeren er ikke påmeldt dette arrangementet',
+                attend_status=AttendStatus.USER_NOT_ATTENDING,
+            )
+        except User.DoesNotExist:
             # If attendee tried to attend by a username that isn't tied to a user
-            if rfid is None:
+            if not rfid:
                 raise RegisterAttendanceError(
                     detail='Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
                            '(Prøv igjen, eller scan nytt kort for å avbryte.)',

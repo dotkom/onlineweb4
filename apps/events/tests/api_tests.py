@@ -589,3 +589,23 @@ class AttendAPITestCase(OIDCTestCase):
 
         self.refresh_attendees()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_rfid_for_non_attending_user_returns_useful_information(self):
+        non_attending_user: OnlineUser = G(OnlineUser, username='non_attending', rfid='1010101010')
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'rfid': non_attending_user.rfid,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.USER_NOT_ATTENDING)
+
+    def test_attend_without_event_returns_correct_status(self):
+        response = self.client.post(self.url, {
+            'username': self.attendee1.user.username,
+        }, **self.headers)
+
+        self.refresh_attendees()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get('detail').get('attend_status'), AttendStatus.EVENT_ID_MISSING)

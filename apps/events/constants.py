@@ -4,6 +4,7 @@ class AttendStatus:
     PREVIOUSLY_REGISTERED = '20'
 
     ON_WAIT_LIST = '30'
+    USER_NOT_ATTENDING = '31'
 
     RFID_DOES_NOT_EXIST = '40'
     USERNAME_AND_RFID_MISSING = '41'
