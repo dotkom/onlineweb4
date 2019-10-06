@@ -163,7 +163,7 @@ class EmailUpdateSerializer(serializers.ModelSerializer):
 
         """ Set old primary email as inactive if this instance is set as primary """
         if validated_data.get('primary', None):
-            primary_email: Email = request.user.get_email()
+            primary_email: Email = request.user.email_object
             if primary_email:
                 primary_email.primary = False
                 primary_email.save()

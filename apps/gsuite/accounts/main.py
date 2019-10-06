@@ -114,4 +114,4 @@ def notify_g_suite_user_account(user, password):
         "user": user,
         "password": password,
     })
-    send_mail('Informasjon om G Suite konto fra Online', message, settings.EMAIL_DOTKOM, [user.get_email().email])
+    send_mail('Informasjon om G Suite konto fra Online', message, settings.EMAIL_DOTKOM, [user.primary_email])
