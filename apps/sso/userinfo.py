@@ -15,7 +15,7 @@ class Onlineweb4Userinfo(object):
             'field_of_study': user.get_field_of_study_display(),
             'first_name': user.first_name,
             'last_name': user.last_name,
-            'email': user.get_email().email,
+            'email': user.primary_email,
             'nickname': user.nickname,
             'image': user.get_image_url(),
         }

@@ -348,7 +348,7 @@ def handle_attend_event_payment(event, user):
             'price': payment.price().price
         })
 
-        EmailMessage(subject, content, event.feedback_mail(), [user.get_email().email]).send()
+        EmailMessage(subject, content, event.feedback_mail(), [user.primary_email]).send()
 
 
 def handle_mail_participants(event, _from_email, _to_email_value, subject, _message, _images,
@@ -389,7 +389,7 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
 
     # Send mail
     try:
-        email_addresses = [a.user.get_email().email for a in send_to_users]
+        email_addresses = [a.user.primary_email for a in send_to_users]
         _email_sent = EmailMessage(
             str(subject),
             str(message),

@@ -187,14 +187,19 @@ class OnlineUser(AbstractUser):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
 
-    def get_email(self):
-        email = self.get_emails().filter(primary=True)
-        if email:
-            return email[0]
+    @property
+    def primary_email(self) -> str:
+        email_object = self.email_object
+        if email_object:
+            return email_object.email
         return None
 
+    @property
+    def email_object(self) -> 'Email':
+        return self.get_emails().filter(primary=True).first()
+
     def get_emails(self):
-        return Email.objects.all().filter(user=self)
+        return Email.objects.filter(user=self)
 
     def get_online_mail(self):
         if self.online_mail:
@@ -300,7 +305,7 @@ class Email(models.Model):
     verified = models.BooleanField(_("verifisert"), default=False, editable=False)
 
     def save(self, *args, **kwargs):
-        primary_email = self.user.get_email()
+        primary_email = self.user.email_object
         if not primary_email:
             self.primary = True
         elif primary_email.email != self.email:
