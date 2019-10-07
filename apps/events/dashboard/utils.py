@@ -3,7 +3,6 @@ from django.urls import reverse
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee
-from apps.payment.models import Payment
 
 
 def _get_attendee(attendee_id):
@@ -78,10 +77,7 @@ def handle_add_attendee(event, user_id):
     attendee.save()
 
     resp['message'] = '%s ble meldt på %s' % (user.get_full_name(), event)
-    if Payment.objects.filter(object_id=event.attendance_event.pk).count() != 0:
-        resp['is_payment_event'] = True
-    else:
-        resp['is_payment_event'] = False
+    resp['is_payment_event'] = event.attendance_event.payment is not None
 
     resp['attendees'] = []
 
