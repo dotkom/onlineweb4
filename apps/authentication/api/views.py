@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
@@ -14,6 +15,7 @@ from apps.authentication.serializers import (EmailCreateSerializer, EmailReadOnl
                                              GroupRoleReadOnlySerializer,
                                              OnlineGroupCreateOrUpdateSerializer,
                                              OnlineGroupReadOnlySerializer,
+                                             PasswordUpdateSerializer,
                                              PositionCreateAndUpdateSerializer,
                                              PositionReadOnlySerializer, SpecialPositionSerializer,
                                              UserCreateSerializer, UserReadOnlySerializer,
@@ -45,8 +47,8 @@ class UserViewSet(viewsets.GenericViewSet,
                 return User.objects.all()
             return get_objects_for_user(user, 'authentication.view_onlineuser')
 
-        if self.action in ['list', 'retrieve', 'destroy']:
-            return User.objects.filter(user=user)
+        if self.action in ['destroy', 'update', 'partial_update', 'change_password']:
+            return User.objects.filter(pk=user.id)
 
         return super().get_queryset()
 
@@ -57,8 +59,19 @@ class UserViewSet(viewsets.GenericViewSet,
             return UserUpdateSerializer
         if self.action in ['list', 'retrieve']:
             return UserReadOnlySerializer
+        if self.action == 'change_password':
+            return PasswordUpdateSerializer
 
         return super().get_serializer_class()
+
+    @action(detail=True, methods=['put'], permission_classes=[IsAuthenticated])
+    def change_password(self, request, pk=None):
+        user: User = self.get_object()
+        serializer = self.get_serializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
 
 class EmailViewSet(viewsets.ModelViewSet):
