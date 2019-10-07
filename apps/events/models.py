@@ -192,6 +192,8 @@ class Event(models.Model):
             return True
         if not user:
             return False
+        if self.is_attendance_event() and self.attendance_event.is_attendee(user):
+            return True
         return restriction.has_access(user)
 
     @property
