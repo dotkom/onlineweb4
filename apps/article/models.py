@@ -3,6 +3,7 @@
 import re
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import SET_NULL
 from django.template.defaultfilters import slugify
@@ -13,7 +14,14 @@ from unidecode import unidecode
 
 from apps.gallery.models import ResponsiveImage
 
+from .tasks import check_if_vimeo_video_exists
+
 User = settings.AUTH_USER_MODEL
+
+
+def vimeo_id_validator(vimeo_id: str):
+    if not check_if_vimeo_video_exists(vimeo_id):
+        raise ValidationError(_('Vimeo videoen existerer ikke'))
 
 
 class Article(models.Model):
@@ -25,7 +33,7 @@ class Article(models.Model):
     ingress = models.TextField(_("ingress"))
     content = models.TextField(_("content"))
     image = models.ForeignKey(ResponsiveImage, null=True, default=None, blank=True, on_delete=SET_NULL)
-    video = models.CharField(_("vimeo id"), max_length=200, blank=True)
+    video = models.CharField(_("vimeo id"), max_length=200, blank=True, validators=[vimeo_id_validator])
     created_date = models.DateTimeField(_("opprettet-dato"), auto_now_add=True, editable=False)
     changed_date = models.DateTimeField(_("sist endret"), editable=False, auto_now=True)
     published_date = models.DateTimeField(_("publisert"))
