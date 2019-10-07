@@ -56,11 +56,11 @@ def handle_paid(attendee: Attendee):
     return {'message': 'OK', 'status': 200}
 
 
-def _gather_attendee_data(event: Event, response={}):
-    response['attendees'] = []
+def _get_attendee_data(attendee_qs):
+    attendees = []
 
-    for number, a in enumerate(event.attendance_event.attending_attendees_qs):
-        response['attendees'].append({
+    for number, a in enumerate(attendee_qs):
+        attendees.append({
             'number': number + 1,
             'id': a.id,
             'first_name': a.user.first_name,
@@ -70,24 +70,19 @@ def _gather_attendee_data(event: Event, response={}):
             'attended': a.attended,
             'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
         })
-    response['waitlist'] = []
-    for number, a in enumerate(event.attendance_event.waitlist_qs):
-        response['waitlist'].append({
-            'number': number + 1,
-            'id': a.id,
-            'first_name': a.user.first_name,
-            'last_name': a.user.last_name,
-            'paid': a.paid,
-            'extras': str(a.extras),
-            'attended': a.attended,
-            'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
-        })
+
+    return attendees
+
+
+def _get_event_context(event: Event, response={}):
+    response['attendees'] = _get_attendee_data(event.attendance_event.attending_attendees_qs)
+    response['waitlist'] = _get_attendee_data(event.attendance_event.waitlist_qs)
 
     return response
 
 
 def handle_add_attendee(event: Event, user_id: int):
-    resp = _gather_attendee_data(event)
+    resp = _get_event_context(event)
     if event.attendance_event.number_of_seats_taken >= event.attendance_event.max_capacity:
         if not event.attendance_event.waitlist:
             return {'message': f'Det er ingen ledige plasser på {event.title}.', 'status': 400, **resp}
@@ -102,17 +97,17 @@ def handle_add_attendee(event: Event, user_id: int):
     attendee = Attendee(user=user, event=event.attendance_event)
     attendee.save()
 
-    resp = _gather_attendee_data(event, resp)
+    resp = _get_event_context(event, resp)
     return {'message': f'{user} ble meldt på {event}', 'status': 200, **resp}
 
 
 def handle_remove_attendee(event: Event, attendee_id: int, admin_user: User):
-    resp = _gather_attendee_data(event)
+    resp = _get_event_context(event)
     attendee = Attendee.objects.filter(pk=attendee_id)
     if attendee.count() != 1:
         return {'message': f'Fant ingen påmeldte med oppgitt ID ({attendee_id}).', 'status': 400, **resp}
     attendee = attendee[0]
     attendee.unattend(admin_user)
 
-    resp = _gather_attendee_data(event, resp)
+    resp = _get_event_context(event, resp)
     return {'message': f'{attendee.user} ble fjernet fra {attendee.event}', 'status': 200, **resp}
