@@ -7,6 +7,8 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from apps.gallery.models import ResponsiveImage
+
 THUMBNAIL_HEIGHT = 200  # Ønsket høyde på thumbnail
 IMAGE_FOLDER = "images/offline"
 
@@ -23,6 +25,14 @@ class Issue(models.Model):
     release_date = models.DateField(_("utgivelsesdato"))
     description = models.TextField(_("beskrivelse"), blank=True, null=True)
     issue = models.FileField(_("pdf"), max_length=500, upload_to=IMAGE_FOLDER)
+    image = models.ForeignKey(
+        to=ResponsiveImage,
+        related_name='offline_issues',
+        verbose_name='Forsidebilde',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     def release_date_to_string(self):
         month = {
@@ -50,15 +60,6 @@ class Issue(models.Model):
         url = str(self.issue).replace("/media/", "/var/websites/prod/onlineweb_uploads/")
         url = path.join(settings.MEDIA_ROOT, url)
         return url
-
-    @property
-    def thumbnail(self):
-        thumb = self.url + '.thumb.png'
-        return thumb
-
-    @property
-    def thumbnail_exists(self):
-        return path.exists(self.thumbnail)
 
     class Meta:
         verbose_name = 'Utgivelse'

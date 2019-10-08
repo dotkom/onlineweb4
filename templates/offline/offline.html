@@ -62,7 +62,7 @@ Tidsskriftet Offline - Online
                  {% for issue in issues %}
                     <div id="offline_{{ issue.id }}" class="offline_issue offline_issue_archive displayable" data-year="{{ issue.release_date.year }}">
                         <a href="{{ MEDIA_URL }}{{ issue.issue }}">{{ issue.title|capfirst }}</a>
-                        <a href="{{ MEDIA_URL }}{{ issue.issue }}"><img alt="{{ issue.title }}: {{ issue.description }}" src="{{ MEDIA_URL }}{{ issue.issue }}.thumb.png"/></a>
+                        <a href="{{ MEDIA_URL }}{{ issue.issue }}"><img alt="{{ issue.title }}: {{ issue.description }}" src="{{ issue.image.xs }}"/></a>
                         <a href="{{ MEDIA_URL }}{{ issue.issue }}"><span>{{ issue.release_date_to_string|capfirst }} {{ issue.release_date.year }}</span></a>
                     </div>
                 {% endfor %}
