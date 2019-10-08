@@ -12,6 +12,54 @@ from PIL import Image, ImageOps
 from apps.gallery import settings as gallery_settings
 from apps.gallery.models import ResponsiveImage, UnhandledImage
 
+logger = logging.getLogger(__name__)
+
+
+def create_responsive_image_from_file(
+    file, name: str,
+    description: str,
+    photographer: str,
+    preset: str,
+) -> ResponsiveImage:
+    uploaded_file = InMemoryUploadedFile(
+        name=f'{uuid.uuid1()}.png',
+        file=file,
+        field_name='file',
+        content_type='image/png',
+        size=file.seek(0),
+        charset='UTF-8',
+    )
+    base_image_handler = UploadImageHandler(uploaded_file)
+    base_image = base_image_handler.image
+
+    pillow_image = Image.open(base_image.image.path)
+    image_width, image_height = pillow_image.size
+
+    config = {
+        'name': name,
+        'description': description,
+        'photographer': photographer,
+        'x': 0,
+        'y': 0,
+        'width': image_width,
+        'height': image_height,
+        'scaleX': 1,
+        'scaleY': 1,
+        'id': base_image.id,
+        'preset': preset,
+    }
+
+    responsive_image_handler = ResponsiveImageHandler(base_image)
+    status = responsive_image_handler.configure(config)
+    if not status:
+        logger.error(f'Fatal error when creating responsive image from file')
+
+    status = responsive_image_handler.generate()
+    if not status:
+        logger.error(f'Fatal error when creating responsive image from file')
+
+    return status.data
+
 
 class GalleryStatus(object):
     """
