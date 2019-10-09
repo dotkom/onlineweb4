@@ -163,19 +163,19 @@ class SignupAPIURLTestCase(OIDCTestCase):
         response = self.client.put(self.change_password_url(self.user.id), {
             'current_password': self.password,
             'new_password': new_password,
-            'new_password_retype': new_password,
+            'new_password_confirm': new_password,
         }, **self.headers)
         self.user.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertTrue(self.user.check_password(new_password))
 
-    def test_change_password_wrong_retype(self):
+    def test_change_password_wrong_confirm(self):
         new_password = 'the_most_secure_password'
         response = self.client.put(self.change_password_url(self.user.id), {
             'current_password': self.password,
             'new_password': new_password,
-            'new_password_retype': 'some_random_shit',
+            'new_password_confirm': 'some_random_shit',
         }, **self.headers)
         self.user.refresh_from_db()
 
@@ -188,7 +188,7 @@ class SignupAPIURLTestCase(OIDCTestCase):
         response = self.client.put(self.change_password_url(self.user.id), {
             'current_password': 'some_random_shit',
             'new_password': new_password,
-            'new_password_retype': new_password,
+            'new_password_confirm': new_password,
         }, **self.headers)
         self.user.refresh_from_db()
 
@@ -200,7 +200,7 @@ class SignupAPIURLTestCase(OIDCTestCase):
         new_password = 'the_most_secure_password'
         response = self.client.put(self.change_password_url(self.user.id), {
             'current_password': self.password,
-            'new_password_retype': new_password,
+            'new_password_confirm': new_password,
         }, **self.headers)
         self.user.refresh_from_db()
 
@@ -213,7 +213,7 @@ class SignupAPIURLTestCase(OIDCTestCase):
         response = self.client.put(self.change_password_url(self.user.id), {
             'current_password': self.password,
             'new_password': new_password,
-            'new_password_retype': new_password,
+            'new_password_confirm': new_password,
         }, **self.headers)
         self.user.refresh_from_db()
 
