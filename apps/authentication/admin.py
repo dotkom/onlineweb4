@@ -25,7 +25,7 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
         (_('Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
         (_('Adresse'), {'fields': ('address', 'zip_code',)}),
         (_('Viktige datoer'), {'fields': ('last_login', 'date_joined',)}),
-        (_('Annen info'), {'fields': ('infomail', 'jobmail', 'mark_rules', 'rfid', 'nickname', 'website',)}),
+        (_('Annen info'), {'fields': ('infomail', 'jobmail', 'mark_rules_accepted', 'rfid', 'nickname', 'website',)}),
         (_('Tilganger'), {'fields': (
             'is_active',
             'is_staff',
