@@ -4,6 +4,9 @@ from django import forms
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
+from apps.authentication.models import OnlineUser as User
+from apps.marks.models import MarkRuleSet
+
 
 class CaptchaForm(forms.Form):
 
@@ -21,12 +24,12 @@ class CaptchaForm(forms.Form):
                                              'required': _('Du glemte captchaen! Vennligst prøv på nytt.')})
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
+        self.user: User = kwargs.pop('user', None)
         super(CaptchaForm, self).__init__(*args, **kwargs)
 
         # Removing mark rules field if user has already accepted the rules
         if self.user and self.user.is_authenticated:
-            if self.user.mark_rules:
+            if self.user.mark_rules_accepted:
                 del self.fields['mark_rules']
 
             if self.user.phone_number:
@@ -47,8 +50,7 @@ class CaptchaForm(forms.Form):
                 mark_rules = cleaned_data['mark_rules']
 
                 if mark_rules:
-                    self.user.mark_rules = True
-                    self.user.save()
+                    MarkRuleSet.accept_mark_rules(self.user)
 
         if 'phone_number' in self.fields:
             if 'phone_number' in cleaned_data:
