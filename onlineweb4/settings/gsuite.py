@@ -49,7 +49,7 @@ OW4_GSUITE_SYNC = {
         'itex' : 'itex',
         'velkom': 'velkom',
         'interessegrupper': 'interessegrupper',
-        'online-il': 'oil',
+        'online-il': 'online-il',
         'techtalks' : 'techtalks'
     }
 }
