@@ -12,6 +12,7 @@ from freezegun import freeze_time
 from rest_framework import status
 
 from apps.authentication.models import AllowedUsername
+from apps.marks.models import MarkRuleSet
 from apps.payment.models import PaymentDelay, PaymentPrice
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
@@ -29,6 +30,8 @@ class EventsTestMixin:
 
         self.user = generate_user('test')
         self.client.force_login(self.user)
+
+        self.mark_rule_set = G(MarkRuleSet)
 
         self.event = generate_event()
         self.event_url = reverse(
@@ -268,8 +271,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'WRONG'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         response = self.client.post(url, form_params, follow=True)
 
@@ -289,8 +291,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         response = self.client.post(url, form_params, follow=True)
 
@@ -312,8 +313,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         response = self.client.post(url, form_params, follow=True)
 
@@ -335,8 +335,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         self.client.post(url, form_params, follow=True)
         response = self.client.post(url, form_params, follow=True)
@@ -359,8 +358,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         self.client.post(url, form_params, follow=True)
 

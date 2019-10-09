@@ -124,7 +124,6 @@ class OnlineUser(AbstractUser):
 
     # Other
     allergies = models.TextField(_("matallergier/preferanser"), blank=True, null=True)
-    mark_rules = models.BooleanField(_("godtatt prikkeregler"), default=False)
     rfid = models.CharField(_("RFID"), max_length=50, unique=True, blank=True, null=True, validators=[validate_rfid])
     nickname = models.CharField(_("nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_("hjemmeside"), blank=True, null=True)
@@ -287,6 +286,11 @@ class OnlineUser(AbstractUser):
         if hasattr(self, 'privacy'):
             return self.privacy.visible_as_attending_events
         return False
+
+    @property
+    def mark_rules_accepted(self):
+        from apps.marks.models import MarkRuleSet
+        return MarkRuleSet.has_user_accepted_mark_rules(user=self)
 
     class Meta:
         ordering = ['first_name', 'last_name']

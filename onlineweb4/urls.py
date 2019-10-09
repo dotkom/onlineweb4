@@ -140,6 +140,7 @@ if 'apps.hobbygroups' in settings.INSTALLED_APPS:
 
 if 'apps.marks' in settings.INSTALLED_APPS:
     urlpatterns += [
+        url(r'^marks/', include('apps.marks.urls')),
         url(r'^dashboard/marks/',          include('apps.marks.dashboard.urls')),
     ]
 
