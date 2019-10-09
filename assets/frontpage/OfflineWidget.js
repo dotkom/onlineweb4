@@ -37,7 +37,7 @@ function OfflineWidget() {
         if (i === 0) {
           insertMe += itemWrapperStart;
         }
-        const issue = offlines[i]
+        const issue = offlines[i];
         insertMe += `<a href="${offlines[i].issue}"><img src="${issue.image && issue.image.xs}" /></a>`;
 
         if (i === offlines.length - 1 || (i + 1) % issuesPerSlide === 0) {
