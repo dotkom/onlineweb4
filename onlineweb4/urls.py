@@ -180,15 +180,6 @@ if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in s
         url(r'^dashboard/resources/', include('apps.resourcecenter.dashboard.urls')),
     ]
 
-if 'apps.rutinator' in settings.INSTALLED_APPS:
-    urlpatterns += [
-        url(r'^dashboard/rutinator/', include(
-            'apps.rutinator.dashboard.urls',
-            namespace='dashboard',
-            app_name='rutinator'
-        )),
-    ]
-
 if 'apps.slack' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^slack/', include('apps.slack.urls'))
