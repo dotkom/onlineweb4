@@ -11,6 +11,8 @@ SEMESTER_CHOICES = [
     ("v", _("Vår")),
 ]
 
+VALID_FIELD_OF_STUDY_CHOICES = filter(lambda choice: choice[0] != FieldOfStudyType.GUEST, FieldOfStudyType.ALL_CHOICES)
+
 
 def _year_choices():
     now = timezone.now()
@@ -24,6 +26,6 @@ class FieldOfStudyApplicationForm(forms.Form):
     started_year = forms.ChoiceField(
         label=_("Hvilket år startet du? "), choices=_year_choices())
     field_of_study = forms.ChoiceField(
-        label=_("Studieretning "), choices=FieldOfStudyType.ALL_CHOICES)
+        label=_("Studieretning "), choices=VALID_FIELD_OF_STUDY_CHOICES)
     documentation = forms.ImageField(
         label=_("Dokumentasjon "), required=False)

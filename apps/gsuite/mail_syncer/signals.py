@@ -48,6 +48,6 @@ def toggle_mailing_lists(sender, instance, **kwargs):
 
             update_mailing_list.delay(
                 g_suite_mailing_list,
-                instance.get_email().email,
+                instance.primary_email,
                 getattr(instance, mailing_list)
             )

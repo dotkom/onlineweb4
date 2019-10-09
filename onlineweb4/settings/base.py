@@ -113,3 +113,5 @@ OIDC_EXTRA_SCOPE_CLAIMS = 'apps.online_oidc_provider.claims.Onlineweb4ScopeClaim
 
 USE_X_FORWARDED_HOST = config("OW4_DJANGO_DEVELOPMENT_HTTPS", cast=bool, default=False)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if USE_X_FORWARDED_HOST else None
+
+VIMEO_API_TOKEN = config('OW4_VIMEO_API_TOKEN', default=None)

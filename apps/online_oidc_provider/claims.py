@@ -15,8 +15,8 @@ def userinfo(claims, user):
     claims['preferred_username'] = user.username
 
     # Email scope
-    claims['email'] = user.get_email().email
-    claims['email_verified'] = user.get_email().verified
+    claims['email'] = user.primary_email
+    claims['email_verified'] = user.email_object.verified
 
     # Address scope
     claims['address']['formatted'] = '{}, {}'.format(user.address, user.zip_code)

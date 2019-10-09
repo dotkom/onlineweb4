@@ -38,7 +38,7 @@ class GSuiteSignalsTestCase(TestCase):
         mocked_insert.side_effect = create_http_error(status=409, reason=error_message, error=error_message)
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
-            insert_user_into_group_pass_if_already_member(self.domain, group_name, user.get_email().email)
+            insert_user_into_group_pass_if_already_member(self.domain, group_name, user.primary_email)
             mocked_logger.assert_called_with(
                 'Email address "{email}" was already subscribed to mailing list "{list}"!'.format(
                     email=email, list=group_name))
@@ -60,7 +60,7 @@ class GSuiteSignalsTestCase(TestCase):
         mocked_remove.side_effect = create_http_error(status=404, reason=error_message, error=error_message)
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
-            remove_user_from_group_pass_if_not_subscribed(self.domain, group_name, user.get_email().email)
+            remove_user_from_group_pass_if_not_subscribed(self.domain, group_name, user.primary_email)
             mocked_logger.assert_called_with(
                 'Email address "{email}" was not subscribed to mailing list "{list}"!'.format(
                     email=email, list=group_name))

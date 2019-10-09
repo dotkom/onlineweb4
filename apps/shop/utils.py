@@ -13,7 +13,7 @@ def send_magic_link(user, token):
         'user': token.user,
         'rfid_confirm_link': '{}{}'.format(settings.BASE_URL, rfid_confirm_link),
     })
-    send_mail('Oppdatert RFID på online.ntnu.no', message, settings.DEFAULT_FROM_EMAIL, [user.get_email().email])
+    send_mail('Oppdatert RFID på online.ntnu.no', message, settings.DEFAULT_FROM_EMAIL, [user.primary_email])
 
     return token
 

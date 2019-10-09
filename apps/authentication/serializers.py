@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from django.contrib.auth.password_validation import validate_password
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
@@ -26,9 +27,52 @@ class UserReadOnlySerializer(serializers.ModelSerializer):
         read_only = True
 
 
+class PasswordUpdateSerializer(serializers.ModelSerializer):
+    current_password = serializers.CharField()
+    new_password = serializers.CharField()
+    new_password_retype = serializers.CharField()
+
+    def validate_current_password(self, password):
+        request = self.context.get('request')
+        if not request:
+            raise serializers.ValidationError('Serializer missing request')
+
+        user: User = request.user
+        if user.has_usable_password() and not user.check_password(password):
+            raise serializers.ValidationError('Nåværende passord stemmer ikke')
+
+        return password
+
+    def validate_new_password(self, password):
+        if password:
+            validate_password(password)
+        return password
+
+    def validate(self, attrs):
+        new_password = attrs.get('new_password')
+        new_password_retype = attrs.get('new_password_retype')
+        if new_password != new_password_retype:
+            raise serializers.ValidationError('Passordene stemmer ikke overens')
+        return attrs
+
+    def update(self, instance: User, validated_data: dict):
+        new_password = validated_data.get('new_password')
+        instance.set_password(new_password)
+        instance.save()
+        return instance
+
+    class Meta:
+        model = User
+        fields = ('current_password', 'new_password', 'new_password_retype')
+
+
 class UserCreateSerializer(serializers.ModelSerializer):
     recaptcha = RecaptchaField()
     email = OnlineUserEmailField(required=True)
+
+    def validate_password(self, password: str):
+        validate_password(password)
+        return password
 
     def create(self, validated_data):
         """
@@ -48,6 +92,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
             email=validated_data.get('email').lower(),
             primary=True,
         )
+        created_user.set_password(created_user.password)
         created_user.save()
 
         send_register_verification_email(
@@ -73,12 +118,9 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'first_name', 'last_name', 'rfid', 'password', 'email', 'username', 'infomail', 'jobmail', 'nickname',
-            'website', 'github', 'linkedin', 'gender', 'bio', 'ntnu_username', 'password', 'phone', 'id',
+            'first_name', 'last_name', 'rfid', 'email', 'username', 'infomail', 'jobmail', 'nickname',
+            'website', 'github', 'linkedin', 'gender', 'bio', 'ntnu_username', 'phone_number', 'id',
         )
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
 
 
 class PositionReadOnlySerializer(serializers.ModelSerializer):
@@ -163,7 +205,7 @@ class EmailUpdateSerializer(serializers.ModelSerializer):
 
         """ Set old primary email as inactive if this instance is set as primary """
         if validated_data.get('primary', None):
-            primary_email: Email = request.user.get_email()
+            primary_email: Email = request.user.email_object
             if primary_email:
                 primary_email.primary = False
                 primary_email.save()
