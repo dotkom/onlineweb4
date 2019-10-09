@@ -186,14 +186,14 @@ class Event(models.Model):
 
     def can_display(self, user):
         restriction = GroupRestriction.objects.filter(event=self).first()
+        if not user.is_anonymous and self.is_attendance_event() and self.attendance_event.is_attendee(user):
+            return True
         if not self.visible:
             return False
         if not restriction:
             return True
         if not user:
             return False
-        if self.is_attendance_event() and self.attendance_event.is_attendee(user):
-            return True
         return restriction.has_access(user)
 
     @property
