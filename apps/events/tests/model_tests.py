@@ -16,7 +16,7 @@ from apps.events.models import (AttendanceEvent, Attendee, CompanyEvent, Event, 
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.marks.models import DURATION, Mark, MarkUser
 
-from .utils import generate_attendance_event, generate_attendee
+from .utils import attend_user_to_event, generate_attendance_event, generate_attendee
 
 
 class EventModelTest(TestCase):
@@ -299,9 +299,10 @@ class AttendanceEventModelTest(TestCase):
         denied_user = G(User, groups=[denied_groups[0], ])
 
         unrestricted_event = G(Event)
+        G(AttendanceEvent, event=unrestricted_event)
         restricted_event = G(Event)
         G(GroupRestriction, event=restricted_event, groups=allowed_groups)
-        # restricted_event.group_restriction.add(allowed_groups)
+        G(AttendanceEvent, event=restricted_event)
 
         self.assertTrue(restricted_event.can_display(allowed_user),
                         "User should be able to view restricted event if in allowed group")
@@ -311,6 +312,10 @@ class AttendanceEventModelTest(TestCase):
                         "Any user should be able to see unrestricted events")
         self.assertTrue(unrestricted_event.can_display(denied_user),
                         "Any user should be able to see unrestricted events")
+
+        attend_user_to_event(restricted_event, denied_user)
+        self.assertTrue(restricted_event.can_display(denied_user),
+                        "User should be able to see event when they are attending even if the event is restricted")
 
 
 class WaitlistAttendanceEventTest(TestCase):

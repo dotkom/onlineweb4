@@ -392,11 +392,15 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
         """
         :return: Queryset filtered by these requirements:
             event is visible AND (event has NO group restriction OR user having access to restricted event)
+            OR the user is attending the event themselves
         """
-        return Event.by_registration.filter(
-            (Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())) &
-            Q(visible=True)). \
-            distinct()
+        user = self.request.user
+        group_restriction_query = Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=user.groups.all())
+        is_attending_query = (
+            Q(attendance_event__isnull=False) & Q(attendance_event__attendees__user=user)
+        ) if not user.is_anonymous else Q()
+        is_visible_query = Q(visible=True)
+        return Event.by_registration.filter(group_restriction_query & is_visible_query | is_attending_query).distinct()
 
 
 class RegistrationAttendaceEventViewSet(viewsets.ReadOnlyModelViewSet):
