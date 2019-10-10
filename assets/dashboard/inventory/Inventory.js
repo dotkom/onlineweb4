@@ -1,4 +1,6 @@
 import jQuery from 'jquery';
+import { ajax, showStatusMessage, toggleChecked } from 'common/utils';
+import './index.less';
 
 /*
     The Company module exposes functionality needed in the company section
@@ -11,6 +13,15 @@ const Inventory = (function PrivateInventory($) {
         `<input type="hidden" name="csrfmiddlewaretoken" value="${
         $('input[name=csrfmiddlewaretoken]').val()}"></form>`).submit();
   };
+
+  // Toggle inventory item
+  $('.toggle-inventory-item').each(function toggleItem() {
+    $(this).on('click', function toggleItemClick() {
+      if ($(this).hasClass('in-stock')) {
+        Inventory.item.toggle(this, 'in-stock');
+      }
+    });
+  });
 
   return {
     // Bind them buttons and other initial functionality here
@@ -42,6 +53,26 @@ const Inventory = (function PrivateInventory($) {
       });
     },
 
+    item: {
+      toggle(cell, action) {
+        const data = {
+          item_id: $(cell).data('id'),
+          action,
+        };
+
+        const success = () => {
+          // var line = $('#' + attendee_id > i)
+          toggleChecked(cell);
+        };
+        const error = (xhr, txt, errorMessage) => {
+          showStatusMessage(errorMessage, 'alert-danger');
+        };
+
+        const url = `/dashboard/inventory/item/${data.item_id}/change/`;
+
+        ajax('POST', url, data, success, error, null);
+      },
+    },
   };
 }(jQuery));
 

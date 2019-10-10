@@ -61,7 +61,11 @@ Varelager
                             </td>
                             <td>{{ item.last_added|date:'Y-m-d' }}</td>
                             <td>{% if item.available %}{{ item.price }},-{% else %}-{% endif %}</td>
-                            <td>{% if item.available %}Ja{% else %}Nei{% endif %}</td>
+                            <td>
+                                <a href="#" data-id="{{ item.id }}" class="toggle-inventory-item in-stock">
+                                <i class="checkbox fa fa-lg {% if item.available %} fa-check-square-o checked {% else %} fa-square-o {% endif %}"></i>
+                                </a>
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
