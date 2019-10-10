@@ -9,8 +9,13 @@ import { ajax, showStatusMessage, toggleChecked } from 'common/utils';
 
 const Event = (function PrivateEvent($) {
   // Get the currently correct endpoint for posting user changes to
-  const posOfLastSlash = window.location.href.toString().slice(0, window.location.href.toString().length).lastIndexOf('/');
-  const attendanceEndpoint = `${window.location.href.toString().slice(0, posOfLastSlash)}/attendees/`;
+  const posOfLastSlash = window.location.href
+        .toString()
+        .slice(0, window.location.href.toString().length)
+        .lastIndexOf('/');
+  const attendanceEndpoint = `${window.location.href
+        .toString()
+        .slice(0, posOfLastSlash)}/attendees/`;
 
   // Javascript to enable link to tab
   const url = document.location.toString();
@@ -27,32 +32,44 @@ const Event = (function PrivateEvent($) {
     }
   });
 
-  const attendeeRow = (attendee) => {
-    let row = '<tr>';
+  const attendeeRow = (attendee, isPaymentEvent, hasExtras) => {
+    let row = '<tr role="row">';
     row += `<td>${attendee.number}</td>`;
-    row += `<td><a href="${attendee.link}">${attendee.first_name}</td>`;
-    row += `<td><a href="${attendee.link}">${attendee.last_name}</td>`;
+    row += `<td><a href="${attendee.link}">${attendee.first_name}</a></td>`;
+    row += `<td><a href="${attendee.link}">${attendee.last_name}</a></td>`;
+    row += `<td><a href="${attendee.link}">${attendee.year_of_study}</a></td>`;
+
     // Paid cell
-    row += `<td><a href="#" data-id="${attendee.id}" class="toggle-attendee paid">`;
-    if (attendee.paid) {
-      row += '<i class="fa fa-lg fa-check-square-o checked"></i>';
-    } else {
-      row += '<i class="fa fa-lg fa-square-o"></i>';
+    if (isPaymentEvent) {
+      row += `<td class="paid-container">
+                <a href="#" data-id="${attendee.id}" class="toggle-attendee paid">`;
+      if (attendee.paid) {
+        row += '<i class="fa fa-lg fa-check-square-o checked"></i>';
+      } else {
+        row += '<i class="fa fa-lg fa-square-o"></i>';
+      }
+      row += `</a><div>${attendee.payment_deadline}</div></td>`;
     }
-    row += '</a></td>';
     // Attended cell
     row += `<td><a href="#" data-id="${attendee.id}" class="toggle-attendee attended">`;
+
     if (attendee.attended) {
       row += '<i class="fa fa-lg fa-check-square-o checked"></i>';
     } else {
       row += '<i class="fa fa-lg fa-square-o"></i>';
     }
     row += '</a></td>';
+
     // Extras cell
-    row += `<td>${attendee.extras}</td>`;
+    if (hasExtras) {
+      row += `<td>${(!attendee.extras || attendee.extras === 'None' ? '-' : attendee.extras)}</td>`;
+    } else {
+      row += `<td>${(!attendee.allergies || attendee.allergies === 'None' ? '-' : attendee.allergies)}</td>`;
+    }
+
     // Delete cell
     row += `<td><a href="#modal-delete-attendee" data-toggle="modal" data-id="${attendee.id}" data-name="${attendee.first_name} ${attendee.last_name}" class="remove-user">`;
-    row += '<i class="fa fa-times fa-lg pull-right red"></i>';
+    row += '<i class="fa fa-times fa-lg red"></i>';
     row += '</a></td>';
     // Close row
     row += '</tr>';
@@ -86,11 +103,11 @@ const Event = (function PrivateEvent($) {
     $('#waitlist-table').trigger('update');
   };
 
-  const drawTable = (tbody, data) => {
+  const drawTable = (tbody, data, isPaymentEvent, hasExtras) => {
     // Redraw the table with new data
     let tbodyHtml = '';
     $.each(data, (i, attendee) => {
-      tbodyHtml += attendeeRow(attendee);
+      tbodyHtml += attendeeRow(attendee, isPaymentEvent, hasExtras);
     });
     $(`#${tbody}`).html(tbodyHtml);
 
@@ -99,7 +116,6 @@ const Event = (function PrivateEvent($) {
   };
 
   return {
-
     // Bind them buttons here
     init() {
       $('#upcoming_events_list').tablesorter();
@@ -124,10 +140,10 @@ const Event = (function PrivateEvent($) {
 
       /* Typeahead for user search */
       plainUserTypeahead($('#usersearch'), (e, datum) => {
-        ($(() => {
+        $(() => {
           Event.attendee.add(datum.id);
           $('#usersearch').val('');
-        }));
+        });
       });
     },
 
@@ -162,7 +178,7 @@ const Event = (function PrivateEvent($) {
             $('#attendees-content').show();
           }
           // We have to redraw this table in any case
-          drawTable('attendeelist', eventData.attendees);
+          drawTable('attendeelist', eventData.attendees, eventData.is_payment_event, eventData.has_extras);
           // Waitlist only needs to be considered if it actually has content
           if (eventData.waitlist.length > 0) {
             // If this was the first, etc
@@ -170,7 +186,7 @@ const Event = (function PrivateEvent($) {
               $('#no-waitlist-content').hide();
               $('#waitlist-content').show();
             }
-            drawTable('waitlist', eventData.waitlist);
+            drawTable('waitlist', eventData.waitlist, eventData.is_payment_event, eventData.has_extras);
           }
           showStatusMessage(eventData.message, 'alert-success');
         };
@@ -194,7 +210,7 @@ const Event = (function PrivateEvent($) {
             $('#attendees-content').hide();
           } else {
             // Only draw table if there are attendees to add to it
-            drawTable('attendeelist', eventData.attendees);
+            drawTable('attendeelist', eventData.attendees, eventData.is_payment_event, eventData.has_extras);
           }
           // Hide waitlist if noone is in it.
           // Hard to do any checks to prevent doing this every time.
@@ -202,7 +218,7 @@ const Event = (function PrivateEvent($) {
             $('#no-waitlist-content').show();
             $('#waitlist-content').hide();
           } else {
-            drawTable('waitlist', eventData.waitlist);
+            drawTable('waitlist', eventData.waitlist, eventData.is_payment_event, eventData.has_extras);
           }
           showStatusMessage(eventData.message, 'alert-success');
         };
@@ -212,9 +228,7 @@ const Event = (function PrivateEvent($) {
 
         ajax('POST', attendanceEndpoint, data, success, error, null);
       },
-
     },
-
   };
 }(jQuery));
 
