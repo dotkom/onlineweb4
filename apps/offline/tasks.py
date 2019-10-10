@@ -1,29 +1,30 @@
 # -*- coding: utf-8 -*-
 import logging
-from subprocess import CalledProcessError, check_call
 
-from apps.offline.models import THUMBNAIL_HEIGHT
+from onlineweb4.celery import app
+
+from apps.gallery.util import create_responsive_image_from_file
+
+from .models import Issue
+from .utils import pdf_page_to_png
+
+logger = logging.getLogger(__name__)
 
 
-def create_thumbnail(instance):
-    logger = logging.getLogger(__name__)
-    logger.debug('Checking for thumbnail for "%s".' % instance.title)
+def create_thumbnail(offline_issue: Issue):
+    thumbnail_file = pdf_page_to_png(pdf=offline_issue.issue, page_number=0)
+    responsive_image = create_responsive_image_from_file(
+        file=thumbnail_file,
+        name=f'{offline_issue.title} - forsidebilde',
+        description=f'Forsidebilde for {offline_issue.title}',
+        photographer='Bildegeneratoren for Offline',
+        preset='offline',
+    )
+    offline_issue.image = responsive_image
+    offline_issue.save()
 
-    if instance.thumbnail_exists is False:
-        logger.debug('Thumbnail for "%s" not found - creating...' % instance.title)
 
-        # Fixes an annoying Exception in logs, not really needed
-        # http://stackoverflow.com/questions/13193278/ {
-        import threading
-        threading._DummyThread._Thread__stop = lambda x: 42
-        # }
-
-        try:
-            check_call(["convert", "-resize", "x" + str(THUMBNAIL_HEIGHT), instance.url + "[0]", instance.thumbnail])
-        except (OSError, CalledProcessError) as e:
-            logger.debug("ERROR: {0}".format(e))
-
-        logger.debug('Thumbnail created, and is located at: %s' % instance.thumbnail)
-
-    else:
-        logger.debug('Thumbnail already exists, and is located at: %s' % instance.thumbnail)
+@app.task(bind=True)
+def create_thumbnail_task(_, issue_id: int):
+    offline_issue = Issue.objects.get(pk=issue_id)
+    create_thumbnail(offline_issue)

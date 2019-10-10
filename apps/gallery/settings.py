@@ -72,14 +72,14 @@ OFFLINE = {
     'description': 'Offline',
     'aspect_ratio': True,
     'aspect_ratio_x': 1,
-    'aspect_ratio_y': 1.414,
-    'min_width': 488,
-    'min_height': 690,
+    'aspect_ratio_y': 1.28,
+    'min_width': 1528,
+    'min_height': 2160,
     'sizes': {
-        'lg': (488, 690),
-        'md': (488, 690),
-        'sm': (244, 345),
-        'xs': (244, 345)
+        'lg': (1688, 2160),
+        'md': (844, 1080),
+        'sm': (422, 540),
+        'xs': (156, 200)
     }
 }
 PRODUCT = {

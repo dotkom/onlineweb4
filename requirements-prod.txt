@@ -1,3 +1,2 @@
 psycopg2-binary==2.8.3            # Postgres adapter
 uWSGI==2.0.18                     # Used as a http server in production
-redis==3.3.8                      # Broker for celery in production
