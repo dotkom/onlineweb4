@@ -8,7 +8,7 @@ import { ajax, showStatusMessage, toggleChecked } from 'common/utils';
 */
 
 const Event = (function PrivateEvent($) {
-    // Get the currently correct endpoint for posting user changes to
+  // Get the currently correct endpoint for posting user changes to
   const posOfLastSlash = window.location.href
         .toString()
         .slice(0, window.location.href.toString().length)
@@ -17,13 +17,13 @@ const Event = (function PrivateEvent($) {
         .toString()
         .slice(0, posOfLastSlash)}/attendees/`;
 
-    // Javascript to enable link to tab
+  // Javascript to enable link to tab
   const url = document.location.toString();
   if (url.match('#')) {
     $(`.nav-tabs a[href="#${url.split('#')[1]}"]`).tab('show');
   }
 
-    // Change hash for page-reload
+  // Change hash for page-reload
   $('.nav-tabs a').on('shown.bs.tab', (e) => {
     if (history.pushState) {
       history.pushState(null, '', e.target.hash);
@@ -32,24 +32,25 @@ const Event = (function PrivateEvent($) {
     }
   });
 
-  const attendeeRow = (attendee, isPaymentEvent) => {
-    let row = '<tr>';
+  const attendeeRow = (attendee, isPaymentEvent, hasExtras) => {
+    let row = '<tr role="row">';
     row += `<td>${attendee.number}</td>`;
-    row += `<td><a href="${attendee.link}">${attendee.first_name}</td>`;
-    row += `<td><a href="${attendee.link}">${attendee.last_name}</td>`;
-    row += `<td>${attendee.year_of_study}</td>`;
+    row += `<td><a href="${attendee.link}">${attendee.first_name}</a></td>`;
+    row += `<td><a href="${attendee.link}">${attendee.last_name}</a></td>`;
+    row += `<td><a href="${attendee.link}">${attendee.year_of_study}</a></td>`;
 
-        // Paid cell
+    // Paid cell
     if (isPaymentEvent) {
-      row += `<td><a href="#" data-id="${attendee.id}" class="toggle-attendee paid">`;
+      row += `<td class="paid-container">
+                <a href="#" data-id="${attendee.id}" class="toggle-attendee paid">`;
       if (attendee.paid) {
         row += '<i class="fa fa-lg fa-check-square-o checked"></i>';
       } else {
         row += '<i class="fa fa-lg fa-square-o"></i>';
       }
+      row += `</a><div>${attendee.payment_deadline}</div></td>`;
     }
-    row += '</a> Betalt</td>';
-        // Attended cell
+    // Attended cell
     row += `<td><a href="#" data-id="${attendee.id}" class="toggle-attendee attended">`;
 
     if (attendee.attended) {
@@ -59,19 +60,24 @@ const Event = (function PrivateEvent($) {
     }
     row += '</a></td>';
 
-        // Extras cell
-    row += `<td>${attendee.extras}</td>`;
-        // Delete cell
+    // Extras cell
+    if (hasExtras) {
+      row += `<td>${(!attendee.extras || attendee.extras === 'None' ? '-' : attendee.extras)}</td>`;
+    } else {
+      row += `<td>${(!attendee.allergies || attendee.allergies === 'None' ? '-' : attendee.allergies)}</td>`;
+    }
+
+    // Delete cell
     row += `<td><a href="#modal-delete-attendee" data-toggle="modal" data-id="${attendee.id}" data-name="${attendee.first_name} ${attendee.last_name}" class="remove-user">`;
-    row += '<i class="fa fa-times fa-lg pull-right red"></i>';
+    row += '<i class="fa fa-times fa-lg red"></i>';
     row += '</a></td>';
-        // Close row
+    // Close row
     row += '</tr>';
     return row;
   };
 
   const buttonBinds = () => {
-        // Bind remove user buttons
+    // Bind remove user buttons
     $('.remove-user').each(function removeUser() {
       $(this).on('click', function removeUserClick(e) {
         e.preventDefault();
@@ -80,7 +86,7 @@ const Event = (function PrivateEvent($) {
       });
     });
 
-        // Toggle paid and attended
+    // Toggle paid and attended
     $('.toggle-attendee').each(function toggleAttendee() {
       $(this).on('click', function toggleAttendeeClick() {
         if ($(this).hasClass('attended')) {
@@ -92,47 +98,47 @@ const Event = (function PrivateEvent($) {
       });
     });
 
-        // Refresh tablesorter
+    // Refresh tablesorter
     $('#attendees-table').trigger('update');
     $('#waitlist-table').trigger('update');
   };
 
-  const drawTable = (tbody, data, isPaymentEvent) => {
-        // Redraw the table with new data
+  const drawTable = (tbody, data, isPaymentEvent, hasExtras) => {
+    // Redraw the table with new data
     let tbodyHtml = '';
     $.each(data, (i, attendee) => {
-      tbodyHtml += attendeeRow(attendee, isPaymentEvent);
+      tbodyHtml += attendeeRow(attendee, isPaymentEvent, hasExtras);
     });
     $(`#${tbody}`).html(tbodyHtml);
 
-        // Bind all the buttons
+    // Bind all the buttons
     buttonBinds();
   };
 
   return {
-        // Bind them buttons here
+    // Bind them buttons here
     init() {
       $('#upcoming_events_list').tablesorter();
       $('#attendees-table').tablesorter();
       $('#waitlist-table').tablesorter();
       $('#extras-table').tablesorter();
 
-            // Bind add users button
+      // Bind add users button
       $('#event_users_button').on('click', (e) => {
         e.preventDefault();
         $('#event_edit_users').slideToggle(200);
         $('#usersearch').focus();
       });
 
-            // Bind toggle paid/attended and remove use button
+      // Bind toggle paid/attended and remove use button
       buttonBinds();
 
-            // Bind the modal button only once
+      // Bind the modal button only once
       $('.confirm-remove-user').on('click', function confirmRemoveUser() {
         Event.attendee.remove($(this).data('id'));
       });
 
-            /* Typeahead for user search */
+      /* Typeahead for user search */
       plainUserTypeahead($('#usersearch'), (e, datum) => {
         $(() => {
           Event.attendee.add(datum.id);
@@ -141,7 +147,7 @@ const Event = (function PrivateEvent($) {
       });
     },
 
-        // Attendee module, toggles and adding
+    // Attendee module, toggles and adding
     attendee: {
       toggle(cell, action) {
         const data = {
@@ -149,7 +155,7 @@ const Event = (function PrivateEvent($) {
           action,
         };
         const success = () => {
-                    // var line = $('#' + attendee_id > i)
+          // var line = $('#' + attendee_id > i)
           toggleChecked(cell);
         };
         const error = (xhr, txt, errorMessage) => {
@@ -166,21 +172,21 @@ const Event = (function PrivateEvent($) {
         const success = (eventData) => {
           $('#attendees-count').text(eventData.attendees.length);
           $('#waitlist-count').text(eventData.waitlist.length);
-                    // If this was the first attendee to be added we need to show the table
+          // If this was the first attendee to be added we need to show the table
           if (eventData.attendees.length === 1) {
             $('#no-attendees-content').hide();
             $('#attendees-content').show();
           }
-                    // We have to redraw this table in any case
-          drawTable('attendeelist', eventData.attendees, eventData.is_payment_event);
-                    // Waitlist only needs to be considered if it actually has content
+          // We have to redraw this table in any case
+          drawTable('attendeelist', eventData.attendees, eventData.is_payment_event, eventData.has_extras);
+          // Waitlist only needs to be considered if it actually has content
           if (eventData.waitlist.length > 0) {
-                        // If this was the first, etc
+            // If this was the first, etc
             if (eventData.waitlist.length === 1) {
               $('#no-waitlist-content').hide();
               $('#waitlist-content').show();
             }
-            drawTable('waitlist', eventData.waitlist, eventData.is_payment_event);
+            drawTable('waitlist', eventData.waitlist, eventData.is_payment_event, eventData.has_extras);
           }
           showStatusMessage(eventData.message, 'alert-success');
         };
@@ -198,21 +204,21 @@ const Event = (function PrivateEvent($) {
         const success = (eventData) => {
           $('#attendees-count').text(eventData.attendees.length);
           $('#waitlist-count').text(eventData.waitlist.length);
-                    // If there are no attendees left, hide the table
+          // If there are no attendees left, hide the table
           if (eventData.attendees.length === 0) {
             $('#no-attendees-content').show();
             $('#attendees-content').hide();
           } else {
-                        // Only draw table if there are attendees to add to it
-            drawTable('attendeelist', eventData.attendees, eventData.is_payment_event);
+            // Only draw table if there are attendees to add to it
+            drawTable('attendeelist', eventData.attendees, eventData.is_payment_event, eventData.has_extras);
           }
-                    // Hide waitlist if noone is in it.
-                    // Hard to do any checks to prevent doing this every time.
+          // Hide waitlist if noone is in it.
+          // Hard to do any checks to prevent doing this every time.
           if (eventData.waitlist.length === 0) {
             $('#no-waitlist-content').show();
             $('#waitlist-content').hide();
           } else {
-            drawTable('waitlist', eventData.waitlist, eventData.is_payment_event);
+            drawTable('waitlist', eventData.waitlist, eventData.is_payment_event, eventData.has_extras);
           }
           showStatusMessage(eventData.message, 'alert-success');
         };

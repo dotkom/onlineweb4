@@ -68,6 +68,7 @@ def _get_attendee_data(attendee_qs):
             'last_name': a.user.last_name,
             'year_of_study': a.user.year,
             'paid': a.paid,
+            'payment_deadline': a.get_payment_deadline(),
             'extras': str(a.extras),
             'attended': a.attended,
             'link': reverse('dashboard_attendee_details', kwargs={'attendee_id': a.id})
@@ -80,6 +81,7 @@ def _get_event_context(event: Event, response={}):
     response['attendees'] = _get_attendee_data(event.attendance_event.attending_attendees_qs)
     response['waitlist'] = _get_attendee_data(event.attendance_event.waitlist_qs)
     response['is_payment_event'] = Payment.objects.filter(object_id=event.attendance_event.pk).exists()
+    response['has_extras'] = event.is_attendance_event() and event.attendance_event.has_extras
 
     return response
 
