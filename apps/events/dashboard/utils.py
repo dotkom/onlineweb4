@@ -3,7 +3,6 @@ from django.urls import reverse
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee, Event
-from apps.payment.models import Payment
 
 
 def _get_attendee(attendee_id):
@@ -80,8 +79,8 @@ def _get_attendee_data(attendee_qs):
 def _get_event_context(event: Event, response={}):
     response['attendees'] = _get_attendee_data(event.attendance_event.attending_attendees_qs)
     response['waitlist'] = _get_attendee_data(event.attendance_event.waitlist_qs)
-    response['is_payment_event'] = Payment.objects.filter(object_id=event.attendance_event.pk).exists()
-    response['has_extras'] = event.is_attendance_event() and event.attendance_event.has_extras
+    response['is_payment_event'] = bool(event.attendance_event.payment())
+    response['has_extras'] = event.attendance_event.has_extras
 
     return response
 
