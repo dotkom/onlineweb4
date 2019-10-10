@@ -134,7 +134,7 @@ class UserUpdateForm(forms.ModelForm):
             'username', 'nickname', 'first_name', 'last_name',
             'address', 'zip_code', 'ntnu_username', 'online_mail',
             'phone_number', 'rfid', 'started_date', 'website', 'github', 'linkedin',
-            'bio', 'allergies', 'compiled', 'mark_rules', 'infomail', 'jobmail',
+            'bio', 'allergies', 'compiled', 'infomail', 'jobmail',
         )
 
 

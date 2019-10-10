@@ -90,55 +90,6 @@
 <hr>
 <div class="row">
     <div class="col-md-12">
-        <h3>Prikk?</h3>
-            <p>Det at du har aktive prikker innebærer at du vil måtte vente 24 timer etter ordinær påmeldingsstart for å melde deg på et arrangement. Hver prikk varer i 30 dager, dersom du får ny prikk og du allerede har en aktiv prikk blir de nye 30 dagene lagt til på slutten av virkeperioden til eksisterende prikk(er).</p>
-
-            <p>Varigheten til prikker er fryst i ferier. Disse er definert fra 1. desember til 15. januar og 1. juni til 15. august. Dersom en prikk gis 15. mai vil altså denne prikken utløpe 30. august.</p>
-
-            <p>Grunnen til at vi deler ut prikker er å sørge for at medlemmer følger reglene.</p>
-        {% markdown %}
-### Generelle regler
-- Det kreves at en møter opp ved påmelding til et arrangement. Dersom du må melde deg av etter avmeldingsfristen har gått ut, sender du en mail til den ansvarlige komiteen og melder frafall slik at vi kan gi plassen din videre. Du vil få prikk så lenge avmeldingsfristen er ute.
-- Hvis du står på venteliste kan du melde deg av helt til arrangementet starter. Når du står på venteliste er du inneforstått med at du når som helst kan få plass på arrangementet og dermed er bundet til reglene for arrangementet på lik linje med andre påmeldte.
-- Ved upassende oppførsel under et av Onlines arrangement vil du stå økonomisk ansvarlig for eventuelle skader, og i verste fall risikere utestengelse fra alle Onlines arrangement
-- Dersom det oppstår noe uforutsett under et arrangement forventes det at man tar kontakt med de ansvarlige for arrangementet. Hvis du ikke varsler, og dette medfører store problemer for arrangøren, får man en prikk.
-Arrkomarrangement
-- Betalingsfrister skal overholdes. Man får en prikk for betaling etter fristen, og utestenging fra alle betalingsarrangement fram til man har betalt det utestående beløpet.
-- Hvis man er påmeldt et betalingsarrangement, og har betalt, er det ikke mulighet for å få tilbakebetalt pengene etter betalingsfristen. Unntak for dette vil være om det er personer på ventelisten. Da kan vi kontakte disse for å ta over plassen og betalingen. Dette må avtales med komiteen som har ansvar for betalingsarrangementet, som oftest Arrangementskomiteen. Man får en prikk som vanlig når man melder seg av for sent.
-- Dersom man deltar på et arrangement som foregår over lengre tid kan man få fritak fra deler av arrangementet på godkjent grunnlag.
-
-### Bedriftsarrangementer
-Ved kurs og bedriftspresentasjon åpner dørene i henhold til starttid på arrangementet, vanligvis klokken 17:00. For å få tilgang til arrangementet må du enten være påmeldt eller stå på venteliste. Innslipp fra ventelisten åpner ti minutter etter arrangementstart. Da slippes studenter inn i den rekkefølgen de er påmeldt. Alle som kommer etter at ventelisten har åpnet havner bakerst i køen, uavhengig om du er påmeldt eller står på venteliste. Når presentasjonen har startet, vanligvis 15 minutter etter arrangementstart, stenges dørene og ingen flere slipper inn.
-
-- Dersom presentasjonen har startet og du ikke er tilstede vil du bli nektet inngang, og få en prikk.
-- Ved oppmøte etter at ventelisten har åpnet, og arrangementet har blitt fylt opp av deltakere fra ventelisten, vil du ikke få plass på arrangementet, og få en prikk.
-
-Ved frafall etter avmeldingsfristen pga sykdom må dette meldes til den ansvarlige komiteen senest samme dag som kurset/bedriftspresentasjonen innen kl.12.00.
-
-- Avbud senere enn 12:00 på arrangementdagen vil gi en prikk.
-
-Det kreves at hver deltaker svarer på den elektroniske tilbakemeldingen etter bedriftsarrangementet. Det vil komme epost etter presentasjonen med lenke til tilbakemeldingsskjema som må besvares innen noen få dager (frist er oppgitt i eposten).
-
-- Om en deltager ikke svarer innen fristen vil dette gi en prikk. Dersom du må gå tidlig fra en bedriftspresentasjon eller et kurs, skal den ansvarlige komiteen varsles og godkjenne dette. Dette skal helst gjøres på forhånd.
-- Hvis du forlater et bedriftsarrangement uten å melde i fra, risikerer du å få prikk.
-
-Bedriftsarrangement er lukkede arrangementer i regi av Online. Dersom du ikke er påmeldt arrangementet eller ikke er deltaker har du ikke anledning til å delta på mingling og bespisning i etterkant av presentasjonen eller kurset.
-
-- Dersom du ikke har deltatt på presentasjonen/kurset, og møter opp på minglingen, vil du få en prikk, og risikere utestengelse fra alle Onlines arrangementer over en gitt periode.
-- Dersom en deltaker er overstadig beruset, eller oppfører seg upassende, kan dette også medføre en prikk.
-        {% endmarkdown %}
-        <h3>Hvorfor har jeg fått en prikk?</h3>
-            <p>På toppen av denne siden vil du kunne se grunnen til prikkene dine. Om de ikke vises kan du ta kontakt med de respektive komiteene.
-
-            <ul>
-                <li>For sosiale arrangementer, kontakt <a href="mailto:arrkom@online.ntnu.no">arrKom</a>.</li>
-                <li>For bedriftspresentasjoner kontakt <a href="mailto:bedkom@online.ntnu.no">bedKom</a>.</li>
-                <li>For kurs kontakt <a href="mailto:fagkom@online.ntnu.no">fagKom</a>.</li>
-                <li>For generelle henvendelser kontakt <a href="mailto:hovedstyret@online.ntnu.no">Hovedstyret</a>.</li>
-            </ul>
-
-            <p>I Online foregår all kommunikasjon på e-post. Dette betyr at for å holde deg oppdatert på hva som skjer, om du har fått en prikk eller om du har fått plass på et arrangement, må du sjekke e-posten din med jevne mellomrom. Adressen vi kontakter deg på er den du har satt som primæradresse på online.ntnu.no.</p>
-
-            <p><strong>Ved upassende oppførsel under et av Onlines arrangement vil du stå økonomisk ansvarlig for eventuelle skader, og i verste fall risikere utestengelse fra <em>alle</em> Onlines arrangement</strong></p>
+        {{ mark_rule_set.content|striptags|markdown }}
     </div>
 </div>

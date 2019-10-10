@@ -16,7 +16,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             "first_name", "last_name", "username", "nickname", "ntnu_username", "year", "email", "online_mail",
             "phone_number", "address", "website", "github", "linkedin", "positions", "special_positions", "rfid",
             "field_of_study", "started_date", "compiled", "infomail", "jobmail", "zip_code", "allergies",
-            "mark_rules", "gender", "bio", "saldo", "is_committee", "is_member", "image", "has_expiring_membership",
+            "mark_rules_accepted", "gender", "bio", "saldo", "is_committee", "is_member", "image",
+            "has_expiring_membership",
         )
         read_only_fields = (
             "username", "ntnu_username", "online_mail", "field_of_study", "started_date", "compiled", "saldo",

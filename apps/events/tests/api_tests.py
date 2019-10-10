@@ -10,7 +10,7 @@ from rest_framework import status
 from apps.authentication.models import OnlineUser
 from apps.companyprofile.models import Company
 from apps.events.constants import AttendStatus
-from apps.events.models import Attendee, CompanyEvent
+from apps.events.models import Attendee, CompanyEvent, GroupRestriction
 from apps.online_oidc_provider.test import OIDCTestCase
 from apps.profiles.models import Privacy
 
@@ -326,6 +326,10 @@ class EventsAPITestCase(OIDCTestCase):
         self.user = generate_user(username='_user')
         self.privacy = G(Privacy, user=self.user)
         self.token = self.generate_access_token(self.user)
+        self.headers = {
+            **self.headers,
+            **self.generate_headers(),
+        }
 
         self.url = reverse('events-list')
         self.id_url = lambda _id: self.url + str(_id) + '/'
@@ -376,6 +380,22 @@ class EventsAPITestCase(OIDCTestCase):
 
         self.assertIn(bedpres_with_onlinecorp.id, event_titles_list)
         self.assertNotIn(bedpres_with_evilcorp.id, event_titles_list)
+
+    def test_event_with_group_restriction(self):
+        response = self.client.get(self.id_url(self.event.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        restricted_to_group: Group = G(Group)
+        G(GroupRestriction, event=self.event, group=restricted_to_group)
+
+        response = self.client.get(self.id_url(self.event.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        attendee = attend_user_to_event(self.event, self.user)
+
+        self.assertIn(attendee, self.event.attendance_event.attendees.all())
+        response = self.client.get(self.id_url(self.event.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class AttendAPITestCase(OIDCTestCase):

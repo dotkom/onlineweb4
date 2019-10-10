@@ -30,7 +30,7 @@ class UserReadOnlySerializer(serializers.ModelSerializer):
 class PasswordUpdateSerializer(serializers.ModelSerializer):
     current_password = serializers.CharField()
     new_password = serializers.CharField()
-    new_password_retype = serializers.CharField()
+    new_password_confirm = serializers.CharField()
 
     def validate_current_password(self, password):
         request = self.context.get('request')
@@ -50,8 +50,8 @@ class PasswordUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         new_password = attrs.get('new_password')
-        new_password_retype = attrs.get('new_password_retype')
-        if new_password != new_password_retype:
+        new_password_confirm = attrs.get('new_password_confirm')
+        if new_password != new_password_confirm:
             raise serializers.ValidationError('Passordene stemmer ikke overens')
         return attrs
 
@@ -63,7 +63,7 @@ class PasswordUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('current_password', 'new_password', 'new_password_retype')
+        fields = ('current_password', 'new_password', 'new_password_confirm')
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

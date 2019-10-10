@@ -25,7 +25,7 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
         (_('Studieinformasjon'), {'fields': ('ntnu_username', 'field_of_study', 'started_date', 'compiled',)}),
         (_('Adresse'), {'fields': ('address', 'zip_code',)}),
         (_('Viktige datoer'), {'fields': ('last_login', 'date_joined',)}),
-        (_('Annen info'), {'fields': ('infomail', 'jobmail', 'mark_rules', 'rfid', 'nickname', 'website',)}),
+        (_('Annen info'), {'fields': ('infomail', 'jobmail', 'mark_rules_accepted', 'rfid', 'nickname', 'website',)}),
         (_('Tilganger'), {'fields': (
             'is_active',
             'is_staff',
@@ -36,10 +36,15 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
     )
     filter_horizontal = ('groups', 'user_permissions',)
     search_fields = ('first_name', 'last_name', 'username', 'ntnu_username',)
+    readonly_fields = ('mark_rules_accepted',)
 
-    def is_member(self, instance):
+    def is_member(self, instance: OnlineUser):
         return instance.is_member
     is_member.boolean = True
+
+    def mark_rules_accepted(self, instance: OnlineUser):
+        return instance.mark_rules_accepted
+    mark_rules_accepted.boolean = True
 
 
 admin.site.register(OnlineUser, OnlineUserAdmin)

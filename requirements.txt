@@ -11,6 +11,8 @@ stripe==2.35.1                  # Stripe payment
 icalendar==4.0.3                # iCalendar generation
 google-api-python-client==1.7.11
 celery==4.3.0                   # Async task runner
+redis==3.3.8                    # Broker for celery
+PyMuPDF==1.16.3
 
 # third party deps
 django-filebrowser==3.11.1      # File uploading
