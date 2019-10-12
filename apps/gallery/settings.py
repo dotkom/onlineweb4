@@ -85,16 +85,16 @@ OFFLINE = {
 PHOTOALBUM = {
     'name': 'photoalbum',
     'description': 'Fotoalbum',
-    'aspect_ratio': True,
-    'aspect_ratio_x': 5,
-    'aspect_ratio_y': 6,
-    'min_width': 1093,
-    'min_height': 614,
+    'aspect_ratio': False,
+    'aspect_ratio_x': 4,
+    'aspect_ratio_y': 3,
+    'min_width': 200,
+    'min_height': 150,
     'sizes': {
-        'lg': (520, 624),
-        'md': (520, 624),
-        'sm': (390, 468),
-        'xs': (260, 312)
+        'lg': (2400, 1800),
+        'md': (1200, 900),
+        'sm': (600, 450),
+        'xs': (300, 225)
     }
 }
 PRODUCT = {

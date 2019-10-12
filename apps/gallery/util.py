@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import math
 import os
 import shutil
 import uuid
@@ -488,6 +489,15 @@ class ResponsiveImageHandler(BaseImageHandler):
         # Extract necessary data
         file_name, file_extension = os.path.splitext(filename)
         target_width, target_height = size
+
+        self._log.warning(self._config)
+
+        # If the image should keep the aspect ratio, the size is based on the width
+        preset = gallery_settings.MODELS[self._config['preset']]
+        if not preset['aspect_ratio']:
+            image_width, image_height = image.size
+            scaling_factor = target_height / image_height
+            target_width = math.ceil(image_width * scaling_factor)
 
         try:
             image = ImageOps.fit(image, (target_width, target_height), Image.ANTIALIAS)
