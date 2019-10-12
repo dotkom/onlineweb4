@@ -147,12 +147,12 @@
                     {% if request.user.is_superuser %} <!-- TODO: Fix! -->
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-image blue"></i> <span>Fotoalbum</span>
+                            <i class="fa fa-image blue"></i> <span>Fotalbum</span>
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="{% url 'dashboard_photoalbum_create' %}"><i class="fa fa-angle-double-right orange"></i> Nytt album</a></li>
-                            <li><a href="{% url 'dashboard_photoalbum_index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                            <li><a href="{% url 'dashboard-photoalbum:albums' %}"><i class="fa fa-angle-double-right orange"></i> Alle album</a></li>
+                            <li><a href="{% url 'dashboard-photoalbum:index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
                     {% endif %}

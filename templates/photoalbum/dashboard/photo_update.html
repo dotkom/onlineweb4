@@ -1,0 +1,107 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{% if photo %}
+Rediger bilde - Online Dashboard
+{% else %}
+Nytt bilde - Online Dashboard
+{% endif %}
+
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardPhotoAlbum' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardPhotoAlbum' 'js' %}
+{% endblock %}
+
+{% block page-header %}
+Fotoalbum - {{ photo|default:"Legg til" }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-photoalbum:albums' %}">Albumer</a></li>
+    {% if photo %}
+    <li><a href="{% url 'dashboard-photoalbum:album' pk=photo.album.pk %}">{{ photo.album }}</a></li>
+    {% endif %}
+    <li>{{ photo|default:"Legg til" }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <form method="POST" action="" enctype="multipart/form-data">
+    <div class="col-md-12">
+        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Lagre</button>
+        {% if photo %}
+        <a href="#modal-delete-photo"
+           id="photoalbum-delete-photo"
+           data-toggle="modal"
+           data-pk="{{ photo.pk }}"
+           data-albumpk="{{ photo.album.pk }}"
+           class="btn btn-danger pull-right">
+            <i class="fa fa-times fa-lg"></i>
+            Slett bilde
+        </a>
+        {% endif %}
+    </div>
+</div>
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Bilde</h3>
+    </div>
+    <div class="panel-body">
+        {% if photo %}
+        <img src="{{ photo.image.sm }}" alt="{{ photo.title }}" />
+        <hr>
+        <h4>Tags</h4>
+        <div id="tag-data" data-photopk="{{ photo.pk }}" data-albumpk="{{ photo.album.pk }}">
+            {% for tag in photo.user_tags.all %}
+                <button class="btn btn-default delete-tag-button" data-tagpk="{{ tag.pk }}">{{ tag.user.get_full_name }}</button>
+            {% endfor %}
+        </div>
+        <p>Klikk på den aktuelle brukeren for å tagge dem i bildet</p>
+        <input type="text" class="form-control" maxlength="50" autocomplete=off name="usersearch" id="usersearch" placeholder="Søk..." />
+        <hr>
+        {% endif %}
+        <h4>Endre bilde</h4>
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <label for="{{field.auto_id }}">{{ field.label }}</label>
+                {{ field|addclass:"form-control" }}
+                {% if field.errors %}
+                <p>{{ field.errors }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+{% if photo %}
+<div id="modal-delete-photo" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av {{ photo }}</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil slette {{ photo }}?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <button class="btn btn-danger confirm-delete-photo" data-dismiss="modal" aria-hidden="true">Slett</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}
