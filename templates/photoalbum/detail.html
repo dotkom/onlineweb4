@@ -15,37 +15,35 @@
 {% block content %}
 	<section id="album">
 		<div class="container">
-      <div class="row">
-  			<div class="col-md-12">
-  				<div class="page-header">
-  					<ul class="nav nav-pills">
-    					<li class="pull-left">
-    						<h1>{{ album.title}}</h1>
-    					</li>
-  					</ul>
-  				</div>
-  			</div>
-      </div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="page-header">
+						<ul class="nav nav-pills">
+							<li class="pull-left">
+								<h1>{{ album.title}}</h1>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
 			<div class="row">
 				{% for tag in album.tags.all %}
-					<span class="tag"">
+					<span class="tag">
 						<a href="" class="btn btn-default">{{ tag }}</a>
 					</span>
 				{% endfor %}
 			</div>
-
-      <div class="row center photos_div">
-  			{%  for photo in album.photos.all %}
-  				<div class="small">
-    				<a href="{% url 'photo_detail' album_pk=album.pk album_slug=album.slug pk=photo.pk %}">
-              <div class="flex_div">
-    						<img src="{{MEDIA_URL}}{{ photo.photo}}" alt="{{ photo.photo }}" class="photo center">
-              </div>
-    				</a>
-  				</div>
-  			{% endfor  %}
-      </div>
-
+			<div class="row center photos_div">
+				{%  for photo in album.photos.all %}
+					<div class="small">
+						<a href="{% url 'photo_detail' album_pk=album.pk pk=photo.pk %}">
+							<div class="flex_div">
+							  <img src="{{ photo.image.sm }}" alt="{{ photo }}" class="photo center">
+						  </div>
+						</a>
+					</div>
+				{% endfor  %}
+			</div>
 		</div>
 	</section>
 {% endblock content %}

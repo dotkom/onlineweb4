@@ -35,23 +35,23 @@
 				<div class="col-md-12">
 					<form id="searchform" action="{% url 'albums_list' %}" method="GET" accept-charset="utf-8" class="form-inline">
 						{% csrf_token %}
-							<div class="form-group">
-								{% render_field filter.form.title class="form-control" %}
-							</div>
-							<button type="submit" class="btn btn-primary">
-								<span class="glyphicon glyphicon-search"></span> Søk
-							</button>
+						<div class="form-group">
+							{% render_field filter.form.title class="form-control" %}
+						</div>
+						<button type="submit" class="btn btn-primary">
+							<span class="glyphicon glyphicon-search"></span> Søk
+						</button>
 				  </form>
 				  <br>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12">
-					{%  for album in filter.qs %}
-						<a href="{%  url 'album_detail' pk=album.pk slug=album.slug %}">
+					{%  for album in albums %}
+						<a href="{%  url 'album_detail' pk=album.pk %}">
 							<div class="narrow">
-								<span class="glyphicon glyphicon-folder-open photo_folder" alt="{{ album.title }}"></span>
-								<p class="text-center album-title"> 
+								<img src="{{ album.cover_photo.image.xs }}" alt="{{ album_cover_photo }}" />
+								<p class="text-center album-title">
 									{{ album.title }}
 								</p>
 							</div>
