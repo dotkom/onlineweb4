@@ -105,10 +105,8 @@ const init = () => {
   plainUserTypeahead($('#usersearch'), async (e, datum) => {
     const tagData = document.querySelector('#tag-data').dataset;
     document.querySelector('#usersearch').value = '';
-    console.log(datum)
     const data = await createTag(datum.id, tagData.photopk, tagData.albumpk);
     if (data) {
-      console.log(data);
       renderNewTag(data.id, datum.value);
     }
   });

@@ -43,7 +43,6 @@ docutils==0.15.2                  # Allows django-admindocs to generate document
 requests-oauthlib==1.2.0        # Simplify OAuth2 connections to external apps
 oic==1.0.1			            # OpenID Connect Client
 python-dateutil==2.8.0                 # Simplify date parsing
-django-widget-tweaks
 
 # Frigg
 requests[security]==2.22.0

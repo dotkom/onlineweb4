@@ -490,8 +490,6 @@ class ResponsiveImageHandler(BaseImageHandler):
         file_name, file_extension = os.path.splitext(filename)
         target_width, target_height = size
 
-        self._log.warning(self._config)
-
         # If the image should keep the aspect ratio, the size is based on the width
         preset = gallery_settings.MODELS[self._config['preset']]
         if not preset['aspect_ratio']:
