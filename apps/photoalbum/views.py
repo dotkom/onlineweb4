@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
-from rest_framework import permissions, viewsets
+from rest_framework import mixins, permissions, viewsets
 
+from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import ResponsiveImage
 from apps.photoalbum.forms import ReportPhotoForm
-from apps.photoalbum.models import Album, Photo, UserTag
-from apps.photoalbum.utils import get_next_photo, get_previous_photo, report_photo
+from apps.photoalbum.models import Album, Photo
+from apps.photoalbum.utils import report_photo
 
-from .serializers import AlbumReadOnlySerializer, PhotoReadOnlySerializer, UserTagReadOnlySerializer
+from .serializers import (AlbumReadOnlySerializer, PhotoReadOnlySerializer, UserTagCreateSerializer,
+                          UserTagReadOnlySerializer)
 
 
 class AlbumsListView(ListView):
@@ -20,8 +23,8 @@ class AlbumsListView(ListView):
     template_name = 'photoalbum/index.html'
 
     def get_context_data(self, **kwargs):
-        context = super(AlbumsListView, self).get_context_data(**kwargs)
-        context['albums'] = Album.objects.all()
+        context = super().get_context_data(**kwargs)
+        context['albums'] = Album.objects_visible.all()
 
         return context
 
@@ -33,28 +36,33 @@ class AlbumDetailView(DetailView, View):
 
     def get_context_data(self, **kwargs):
         context = super(AlbumDetailView, self).get_context_data(**kwargs)
-
-        album = Album.objects.get(pk=self.kwargs['pk'])
+        album_pk = self.kwargs.get('pk')
+        album = get_object_or_404(Album.objects_visible.all(), pk=album_pk)
         context['album'] = album
 
         return context
 
 
 class PhotoDisplay(DetailView):
-    model = ResponsiveImage
+    model = Photo
     template_name = "photoalbum/photo.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        photo = ResponsiveImage.objects.get(pk=self.kwargs['pk'])
-        album = Album.objects.get(pk=self.kwargs['album_pk'])
+        album_pk = self.kwargs.get('album_pk')
+        photo_pk = self.kwargs.get('pk')
+
+        photo = get_object_or_404(Photo, pk=photo_pk)
+        album = get_object_or_404(Album.objects_visible.all(), pk=album_pk)
+
+        previous_photo = album.get_previous_photo(photo)
+        next_photo = album.get_next_photo(photo)
 
         context['photo'] = photo
         context['album'] = album
         context['form'] = ReportPhotoForm()
-        context['tagged_users'] = context['photo'].tags
-        context['next_photo'] = get_next_photo(photo, album)
-        context['previous_photo'] = get_previous_photo(photo, album)
+        context['previous_photo'] = previous_photo
+        context['next_photo'] = next_photo
 
         return context
 
@@ -104,29 +112,60 @@ class PhotoDetailView(View):
 
 
 class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.DjangoModelPermissions,)
-    queryset = Album.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    queryset = Album.objects_visible.all()
     filterset_fields = ('published_date',)
     serializer_class = AlbumReadOnlySerializer
 
+    def get_queryset(self):
+        user: User = self.request.user
+        if not user.is_authenticated:
+            return Album.objects_public.all()
+        return super().get_queryset()
+
 
 class AlbumPhotoViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.DjangoModelPermissions,)
+    permission_classes = (permissions.AllowAny,)
     serializer_class = PhotoReadOnlySerializer
-    queryset = Photo.objects.all()
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        album_id = self.kwargs.get('album_id', None)
+        user: User = self.request.user
+        album_queryset = Album.objects_visible.all()
+        if not user.is_authenticated:
+            album_queryset = Album.objects_public.all()
 
-        if album_id:
-            return queryset.filter(album_id=album_id)
+        album_pk = self.kwargs.get('album_pk', None)
+        album = get_object_or_404(album_queryset, pk=album_pk)
 
-        return queryset.none()
+        return album.photos.all()
 
 
-class PhotoUserTagViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.DjangoModelPermissions,)
-    queryset = UserTag.objects.all()
-    filterset_fields = ('published_date',)
-    serializer_class = UserTagReadOnlySerializer
+class PhotoUserTagViewSet(viewsets.GenericViewSet,
+                          mixins.ListModelMixin,
+                          mixins.RetrieveModelMixin,
+                          mixins.CreateModelMixin,
+                          mixins.DestroyModelMixin):
+
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return UserTagCreateSerializer
+        if self.action in ['list', 'retrieve']:
+            return UserTagReadOnlySerializer
+
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        user: User = self.request.user
+        album_queryset = Album.objects_visible.all()
+        if not user.is_authenticated:
+            album_queryset = Album.objects_public.all()
+
+        album_pk = self.kwargs.get('album_pk', None)
+        photo_pk = self.kwargs.get('photo_pk', None)
+
+        album = get_object_or_404(album_queryset, pk=album_pk)
+        photo = get_object_or_404(album.photos.all(), pk=photo_pk)
+
+        return photo.user_tags.all()
