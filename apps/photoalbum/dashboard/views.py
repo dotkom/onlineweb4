@@ -1,126 +1,124 @@
-# -*- coding: utf8 -*-
+import logging
 
-from logging import getLogger
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.views.generic import CreateView, DeleteView, DetailView, TemplateView, UpdateView
 
-from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect, render
-from guardian.decorators import permission_required
+from apps.dashboard.tools import DashboardPermissionMixin
+from apps.gallery.util import UploadImageHandler
+from apps.photoalbum.dashboard.forms import AlbumCreateOrUpdateForm, PhotoCreateForm
+from apps.photoalbum.models import Album, Photo
 
-from apps.dashboard.tools import check_access_or_403, get_base_context
-from apps.photoalbum.dashboard.forms import AlbumForm
-from apps.photoalbum.models import Album
-from apps.photoalbum.utils import get_photos_to_album
-
-
-@permission_required('photoalbum.view_album')
-def photoalbum_index(request):
-    check_access_or_403(request)
-
-    context = get_base_context(request)
-    context['albums'] = Album.objects.all()
-
-    return render(request, 'photoalbum/dashboard/index.html', context)
+logger = logging.getLogger(__name__)
 
 
-@permission_required('photoalbum.add_album')
-def photoalbum_create(request):
-    check_access_or_403(request)
-
-    form = AlbumForm()
-
-    if request.method == 'POST':
-
-        if 'upload_photos' in request.POST:
-            photos = form['files']
-            print("Files: ", photos)
-
-        form = AlbumForm(request.POST)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.save()
-            instance.changed_by = request.user
-            instance.created_by = request.user
-            photos = get_photos_to_album(instance.title)
-
-            for photo in photos:
-                instance.photos.add(photo)
-
-            instance.save()
-
-            messages.success(request, 'Albumet ble opprettet.')
-
-            return redirect(photoalbum_detail, pk=instance.pk)
-        else:
-            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
-
-    context = get_base_context(request)
-    context['form'] = form
-
-    return render(request, 'photoalbum/dashboard/create.html', context)
+class Overview(DashboardPermissionMixin, TemplateView):
+    template_name = 'photoalbum/dashboard/index.html'
+    permission_required = 'photoalbum.view_album'
 
 
-def upload_photos(request, form):
-    print("In upload_photos")
-    photos = form['files']
-    print("Files: ", photos)
+class AlbumsView(DashboardPermissionMixin, TemplateView):
+    model = Album
+    template_name = 'photoalbum/dashboard/albums.html'
+    permission_required = 'photoalbum.change_album'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['albums'] = Album.objects.all().prefetch_related('photos')
+        return context
 
 
-@permission_required('photoalbum.view_album')
-def photoalbum_detail(request, pk):
-    check_access_or_403(request)
-
-    album = get_object_or_404(Album, pk=pk)
-
-    context = get_base_context(request)
-    context['album'] = album
-
-    return render(request, 'photoalbum/dashboard/detail.html', context)
+class AlbumView(DashboardPermissionMixin, DetailView):
+    model = Album
+    template_name = 'photoalbum/dashboard/album.html'
+    permission_required = 'photoalbum.view_album'
 
 
-@permission_required('photoalbum.change_album')
-def photoalbum_edit(request, pk):
-    check_access_or_403(request)
+class AlbumCreate(DashboardPermissionMixin, CreateView):
+    model = Album
+    form_class = AlbumCreateOrUpdateForm
+    template_name = 'photoalbum/dashboard/album_update.html'
+    permission_required = 'photoalbum.add_album'
 
-    album = get_object_or_404(Album, pk=pk)
+    def get_success_url(self):
+        return reverse('dashboard-photoalbum:albums')
 
-    form = AlbumForm(instance=album)
+    def form_valid(self, form):
+        album = form.save(commit=False)
+        user = self.request.user
+        album.created_by = user
+        return super().form_valid(form)
 
-    if request.method == 'POST':
-        if 'upload_photos' in request.POST:
-            upload_photos(form)
 
-        if 'action' in request.POST and request.POST['action'] == 'delete':
-            instance = get_object_or_404(Album, pk=album.pk)
-            album_title = instance.title
-            album_pk = instance.pk
-            instance.delete()
-            messages.success(request, '%s ble slettet.' % album_title)
-            getLogger(__name__).info('%s deleted album %d (%s)' % (request.user, album_pk, album_title))
+class AlbumUpdate(DashboardPermissionMixin, UpdateView):
+    model = Album
+    form_class = AlbumCreateOrUpdateForm
+    template_name = 'photoalbum/dashboard/album_update.html'
+    context_object_name = 'album'
+    permission_required = 'photoalbum.change_album'
 
-            return redirect(photoalbum_index)
+    def get_success_url(self):
+        return reverse('dashboard-photoalbum:album', kwargs={'pk': self.object.pk})
 
-        form = AlbumForm(request.POST)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.save()
-            instance.changed_by = request.user
-            instance.created_by = request.user
-            photos = get_photos_to_album(instance.title)
 
-            for photo in photos:
-                instance.photos.add(photo)
+class AlbumDelete(DashboardPermissionMixin, DeleteView):
+    model = Album
+    template_name = 'photoalbum/dashboard/delete.html'
+    permission_required = 'photoalbum.delete_category'
 
-            instance.save()
+    def get_success_url(self):
+        return reverse('dashboard-photoalbum:albums')
 
-            messages.success(request, 'Albumet ble lagret.')
-            getLogger(__name__).info('%s edited album %d (%s)' % (request.user, instance.pk, instance.title))
 
-            return redirect(photoalbum_index)
-        else:
-            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+class PhotoCreate(DashboardPermissionMixin, CreateView):
+    model = Photo
+    template_name = 'photoalbum/dashboard/photo_update.html'
+    context_object_name = 'photo'
+    permission_required = 'photoalbum.add_photo'
+    form_class = PhotoCreateForm
 
-    context = get_base_context(request)
-    context['form'] = form
-    context['edit'] = True
+    def form_valid(self, form):
+        photo = form.save(commit=False)
+        user = self.request.user
+        photo.created_by = user
+        photo.album = get_object_or_404(Album, pk=self.kwargs.get('album_pk'))
+        result = UploadImageHandler(self.request.FILES.get('file')).status
+        if result:
+            photo.raw_image = result.data
 
-    return render(request, 'photoalbum/dashboard/create.html', context)
+        if not photo.photographer_name:
+            if photo.photographer:
+                photo.photographer_name = photo.photographer.get_full_name()
+            else:
+                photo.photographer_name = user.get_full_name()
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('dashboard-photoalbum:album', kwargs={'pk': self.object.album.pk})
+
+
+class PhotoUpdate(DashboardPermissionMixin, UpdateView):
+    model = Photo
+    fields = ('title', 'description', 'tags', 'photographer_name', 'photographer',)
+    template_name = 'photoalbum/dashboard/photo_update.html'
+    context_object_name = 'photo'
+    permission_required = 'photoalbum.change_photo'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['photo'] = self.object
+        return context
+
+    def get_success_url(self):
+        kwargs = {'pk': self.object.pk, 'album_pk': self.object.album.pk}
+        return reverse('dashboard-photoalbum:photo_update', kwargs=kwargs)
+
+
+class PhotoDelete(DashboardPermissionMixin, DeleteView):
+    model = Photo
+    template_name = 'photoalbum/dashboard/delete.html'
+    permission_required = 'photoalbum.delete_photo'
+
+    def get_success_url(self):
+        return reverse('dashboard-photoalbum:album', kwargs={'pk': self.object.album.pk})

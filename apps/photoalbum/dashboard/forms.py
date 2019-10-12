@@ -1,44 +1,31 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
-from django.utils.translation import ugettext as _
-from taggit.forms import TagWidget
 
-from apps.dashboard.widgets import multiple_widget_generator
-from apps.photoalbum.models import Album
-from apps.photoalbum.widgets import MultipleImagesInput
+from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
+from apps.gallery.forms import DocumentForm
+from apps.photoalbum.models import Album, Photo
 
 
-class AlbumForm(forms.ModelForm):
+class AlbumCreateOrUpdateForm(forms.ModelForm):
     class Meta:
-
         model = Album
-        fields = [
-            'title',
-            'tags',
-        ]
-
-        photos_fields = [('photos', {'id': 'responsive-images-id'})]
-        widgetlist = [
-            # (MultipleImagesInput, 'photos')
-        ]
-
-        # Multiple widget generator merges results from regular widget_generator into a single widget dict
-        widgets = multiple_widget_generator(widgetlist)
-        widgets.update({
-            'tags': TagWidget(attrs={'placeholder': 'Eksempel: åre, online, kjelleren'}),
-            'photos': MultipleImagesInput(attrs={'multiple': True, 'name': 'Bilder'})
-        })
+        fields = ('title', 'description', 'published_date', 'tags',)
 
         labels = {
             'tags': 'Tags'
         }
 
+        dtp_fields = (('published_date', {}),)
+        widgetlist = [
+            (DatetimePickerInput, dtp_fields)
+        ]
 
-class UploadPhotosForm(forms.ModelForm):
-    widget = forms.ClearableFileInput(attrs={'multiple': True})
-    photos = forms.FileField(widget=widget, label=_("Bilder"), required=False)
+        widgets = multiple_widget_generator(widgetlist)
+
+
+class PhotoCreateForm(forms.ModelForm, DocumentForm):
 
     class Meta:
-        model = Album
-        fields = ['photos']
+        model = Photo
+        fields = ('file', 'title', 'description', 'tags')
