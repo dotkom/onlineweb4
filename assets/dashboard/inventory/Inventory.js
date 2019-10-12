@@ -61,7 +61,6 @@ const Inventory = (function PrivateInventory($) {
         };
 
         const success = () => {
-          // var line = $('#' + attendee_id > i)
           toggleChecked(cell);
         };
         const error = (xhr, txt, errorMessage) => {
