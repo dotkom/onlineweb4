@@ -3,9 +3,11 @@ import logging
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+from apps.fiken.tasks import register_sale_with_fiken
+from apps.fiken.utils import create_sale_from_relation, create_sale_from_transaction
+
 from . import status
-from .models import FikenSale, PaymentRelation, PaymentTransaction
-from .tasks import register_sale_with_fiken
+from .models import PaymentRelation, PaymentTransaction
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +41,7 @@ def handle_payment_transaction_status_change(sender, instance: PaymentTransactio
         instance.status = status.REMOVED
 
 
-def handle_fiken_sale_created(sale: FikenSale):
+def handle_fiken_sale_created(sale):
     logger.info(f'Registering {sale} with Fiken')
     register_sale_with_fiken.delay(sale_id=sale.id)
 
@@ -48,14 +50,14 @@ def handle_fiken_sale_created(sale: FikenSale):
 def create_fiken_sale_for_relations(sender, instance: PaymentRelation, **kwargs):
     has_done_sale = instance.sales.filter(status=status.DONE).exists()
     if instance.status == status.DONE and not has_done_sale:
-        sale = instance.create_fiken_sale(instance.payment_price.price, status.DONE)
+        sale = create_sale_from_relation(instance, instance.payment_price.price, status.DONE)
         handle_fiken_sale_created(sale)
 
     """
     Refunds are not enabled yet
     has_removed_sale = instance.sales.filter(status=status.REMOVED).exists()
     if instance.status == status.REMOVED and not has_removed_sale:
-        sale = instance.create_fiken_sale(instance.payment_price.price, status.REMOVED)
+        sale = create_sale_from_relation(instance, instance.payment_price.price, status.REMOVED)
         handle_fiken_sale_created(sale)
     """
 
@@ -64,13 +66,13 @@ def create_fiken_sale_for_relations(sender, instance: PaymentRelation, **kwargs)
 def create_fiken_sale_for_transactions(sender, instance: PaymentTransaction, **kwargs):
     has_done_sale = instance.sales.filter(status=status.DONE).exists()
     if instance.status == status.DONE and not has_done_sale:
-        sale = instance.create_fiken_sale(instance.amount, status.DONE)
+        sale = create_sale_from_transaction(instance, instance.amount, status.DONE)
         handle_fiken_sale_created(sale)
 
     """
     Refunds are not enabled yet
     has_removed_sale = instance.sales.filter(status=status.REMOVED).exists()
     if instance.status == status.REMOVED and not has_removed_sale:
-        sale = instance.create_fiken_sale(instance.amount, status.REMOVED)
+        sale = create_sale_from_transaction(instance, instance.amount, status.REMOVED)
         handle_fiken_sale_created(sale)
     """

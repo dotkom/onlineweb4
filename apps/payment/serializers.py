@@ -6,10 +6,8 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
 from apps.payment import status
-from apps.payment.models import (FikenCustomer, FikenOrderLine, FikenSale, FikenSaleAttachment,
-                                 Payment, PaymentDelay, PaymentPrice, PaymentRelation,
+from apps.payment.models import (Payment, PaymentDelay, PaymentPrice, PaymentRelation,
                                  PaymentTransaction)
-from apps.payment.settings import FIKEN_ORG_API_URL
 
 logger = logging.getLogger(__name__)
 
@@ -339,69 +337,3 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
             'payment_intent_id', 'id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime',
         )
         read_only_fields = ('id', 'payment_intent_secret', 'amount', 'status', 'used_stripe', 'datetime')
-
-
-class FikenSaleAttachmentSerializer(serializers.ModelSerializer):
-    attachToPayment = serializers.BooleanField(source='attach_to_payment')
-    attachToSale = serializers.BooleanField(source='attach_to_sale')
-
-    class Meta:
-        model = FikenSaleAttachment
-        fields = (
-            'filename', 'comment', 'attachToPayment', 'attachToSale',
-        )
-        read_only = True
-
-
-class FikenOrderLineSerializer(serializers.ModelSerializer):
-    netPrice = serializers.IntegerField(source='net_price')
-    vat = serializers.IntegerField(source='vat_price')
-    vatType = serializers.CharField(source='vat_type')
-
-    class Meta:
-        model = FikenOrderLine
-        fields = ('netPrice', 'vat', 'vatType', 'account', 'description',)
-        read_only = True
-
-
-class FikenSaleSerializer(serializers.ModelSerializer):
-    totalPaid = serializers.IntegerField(source='amount')
-    paymentDate = serializers.CharField(source='date')
-    paymentAccount = serializers.CharField(source='account')
-    customer = serializers.SerializerMethodField()
-    lines = FikenOrderLineSerializer(many=True)
-
-    def get_customer(self, obj: FikenSale):
-        customer, created = FikenCustomer.objects.get_or_create(user=obj.customer)
-        return f'{FIKEN_ORG_API_URL}/contacts/{customer.fiken_customer_number}'
-
-    class Meta:
-        model = FikenSale
-        fields = (
-            'identifier', 'date', 'kind', 'paid', 'totalPaid', 'lines', 'paymentDate', 'paymentAccount', 'customer',
-        )
-        read_only = True
-
-
-class FikenCustomerSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-    email = serializers.SerializerMethodField()
-    phoneNumber = serializers.SerializerMethodField('get_phone_number')
-    customer = serializers.SerializerMethodField()
-
-    def get_customer(self, obj: FikenCustomer):
-        return True
-
-    def get_name(self, obj: FikenCustomer):
-        return obj.user.get_full_name()
-
-    def get_email(self, obj: FikenCustomer):
-        return obj.user.primary_email
-
-    def get_phone_number(self, obj: FikenCustomer):
-        return obj.user.phone_number
-
-    class Meta:
-        model = FikenCustomer
-        fields = ('name', 'customer', 'email', 'phoneNumber',)
-        read_only = True
