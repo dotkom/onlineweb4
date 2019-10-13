@@ -13,7 +13,7 @@ from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
 
-from .utils import create_fiken_account
+from .utils import get_fiken_account
 
 
 class PaymentTest(TestCase):
@@ -33,7 +33,7 @@ class PaymentTest(TestCase):
             last_name="nordmann"
         )
 
-        self.fiken_account = create_fiken_account()
+        self.fiken_account = get_fiken_account()
 
         self.event_payment: Payment = G(
             Payment,

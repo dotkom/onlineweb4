@@ -11,7 +11,7 @@ def add_price_to_payment(payment: Payment, price=200) -> PaymentPrice:
 
 
 def generate_event_payment(event, price=100, *args, **kwargs):
-    fiken_account = create_fiken_account()
+    fiken_account = get_fiken_account()
     payment: Payment = G(
         Payment,
         object_id=event.id,
@@ -24,5 +24,6 @@ def generate_event_payment(event, price=100, *args, **kwargs):
     return payment
 
 
-def create_fiken_account() -> FikenAccount:
-    return G(FikenAccount, name='Fly', code='1225', identifier='fly')
+def get_fiken_account() -> FikenAccount:
+    account, created = FikenAccount.objects.get_or_create(name='Fly', code='1225', identifier='fly')
+    return account

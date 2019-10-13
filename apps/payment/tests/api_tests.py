@@ -386,7 +386,7 @@ class PaymentTransactionTestCase(OIDCTestCase):
         self.fiken_account_nibble, created = FikenAccount.objects.get_or_create(
             identifier=NIBBLE_ACCOUNT_IDENTIFIER,
             name='Salgsinntekt Nibble',
-            code='0000',
+            code='1006',
         )
 
         self.url = reverse('payment_transactions-list')
