@@ -13,9 +13,18 @@ from .pdf_generator import FikenSalePDF
 
 
 class FikenAccount(models.Model):
-    name = models.CharField('Navn', max_length=128, unique=True, null=False, blank=False)
-    code = models.CharField('Kontokode', max_length=128, unique=True, null=False, blank=False)
+    identifier = models.CharField('Identifikator', max_length=64, null=False, blank=False,
+                                  help_text='Kodeord som brukes for å referere til kontoen, f.eks "nibble"',)
+    name = models.CharField('Navn', max_length=128, unique=True, null=False, blank=False,
+                            help_text='Navnet kontoen har i Fiken')
+    code = models.CharField('Kontokode', max_length=128, unique=True, null=False, blank=False,
+                            help_text='ID-en til kontoen i Fiken')
     created_date = models.DateTimeField('Opprettelsesdato', auto_now_add=True)
+    active = models.BooleanField('Aktiv', default=True,
+                                 help_text='Om kontoen fortsatt er i aktiv bruk. Sett heller som inaktiv enn å slette')
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = 'Konto i Fiken'

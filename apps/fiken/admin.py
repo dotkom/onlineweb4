@@ -1,7 +1,7 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
-from .models import FikenCustomer, FikenOrderLine, FikenSale, FikenSaleAttachment
+from .models import FikenAccount, FikenCustomer, FikenOrderLine, FikenSale, FikenSaleAttachment
 
 
 class FikenSaleAttachmentInlineAdmin(admin.StackedInline):
@@ -48,3 +48,11 @@ class FikenSaleAdmin(VersionAdmin):
 @admin.register(FikenCustomer)
 class FikenCustomerAdmin(VersionAdmin):
     model = FikenCustomer
+
+
+@admin.register(FikenAccount)
+class FikenAccountAdmin(VersionAdmin):
+    model = FikenAccount
+    list_display = ('name', 'code', 'identifier', 'active',)
+    fields = ('name', 'code', 'identifier', 'active', 'created_date',)
+    readonly_fields = ('code', 'identifier', 'created_date',)

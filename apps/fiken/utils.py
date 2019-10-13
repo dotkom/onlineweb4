@@ -8,12 +8,12 @@ from apps.webshop.models import OrderLine
 
 from .constants import VatTypeSale
 from .models import FikenAccount, FikenOrderLine, FikenSale
-from .settings import NIBBLE_ACCOUNT_NAME
+from .settings import NIBBLE_ACCOUNT_IDENTIFIER
 
 
 def _get_nibble_account():
     try:
-        return FikenAccount.objects.get(name=NIBBLE_ACCOUNT_NAME)
+        return FikenAccount.objects.get(identifier=NIBBLE_ACCOUNT_IDENTIFIER)
     except FikenAccount.DoesNotExist:
         raise ImproperlyConfigured('Nibble account object does not exist')
 
