@@ -29,7 +29,7 @@ def resolve_fiken_id(location_url: str) -> int:
 
 def register_customer_in_fiken(customer_id: int):
     logger.info(f'Starting Fiken customer registration task')
-    customer = FikenCustomer.objects.get(pk=customer_id)
+    customer: FikenCustomer = FikenCustomer.objects.get(pk=customer_id)
 
     if IS_FIKEN_CONFIGURED:
         headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
@@ -46,8 +46,13 @@ def register_customer_in_fiken(customer_id: int):
         if response.ok:
             logger.info(f'Successfully created customer {customer.id} for user {customer.user}')
             fiken_id = resolve_fiken_id(response.headers.get('Location'))
-            customer.fiken_customer_number = fiken_id
-            customer.save()
+            customer.refresh_from_db()
+            if not customer.fiken_customer_number:
+                customer.fiken_customer_number = fiken_id
+                customer.save()
+            else:
+                logger.warning(f'Fiken customer {customer} registered twice with IDs {fiken_id} and'
+                               f'{customer.fiken_customer_number}')
 
         else:
             logger.warning(f'Failed at registering customer {customer.id} in Fiken')
@@ -92,9 +97,6 @@ def create_sale_attachment(_, sale_id: int):
 def register_sale_with_fiken(_, sale_id: int):
     logger.info('Starting Fiken sale register')
     sale = FikenSale.objects.get(pk=sale_id)
-    customer, created = FikenCustomer.objects.get_or_create(user=sale.customer)
-    if created:
-        register_customer_in_fiken(customer.id)
     sale_data = FikenSaleSerializer(sale).data
     if IS_FIKEN_CONFIGURED:
         headers = {'Content-type': 'application/json', 'Accept': 'application/json'}

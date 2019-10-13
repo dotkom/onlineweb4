@@ -86,7 +86,7 @@ class FikenSalePDF:
         pdf.spacer(height=15)
         pdf.p('Mottaker', style=create_paragraph_style(font_size=13))
         pdf.spacer(height=6)
-        pdf.p(self.sale.customer.get_full_name(), style=create_paragraph_style(font_size=11))
+        pdf.p(self.sale.customer.user.get_full_name(), style=create_paragraph_style(font_size=11))
 
         pdf.spacer(height=25)
         pdf.p('Ordrelinjer', style=create_paragraph_style(font_size=14))

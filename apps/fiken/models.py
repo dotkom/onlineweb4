@@ -32,6 +32,25 @@ class FikenAccount(models.Model):
         ordering = ('created_date', 'name',)
 
 
+class FikenCustomer(models.Model):
+    user = models.OneToOneField(
+        to=User,
+        related_name='fiken_customer',
+        on_delete=models.DO_NOTHING,
+        verbose_name='Bruker',
+    )
+    fiken_customer_number = models.IntegerField('Kundenummer', null=True, blank=True, unique=True)
+
+    def __str__(self):
+        customer_number = self.fiken_customer_number if self.fiken_customer_number else 'Ikke synkronisert'
+        return f'{self.user} ({customer_number})'
+
+    class Meta:
+        verbose_name = 'Kunde i Fiken'
+        verbose_name_plural = 'Kunder i Fiken'
+        ordering = ('user', 'fiken_customer_number',)
+
+
 class FikenSale(models.Model):
     stripe_key = models.CharField(
         'Stripe key',
@@ -59,8 +78,8 @@ class FikenSale(models.Model):
     )
     fiken_id = models.IntegerField(null=True, blank=True)
     customer = models.ForeignKey(
-        to=User,
-        related_name='fiken_sales',
+        to=FikenCustomer,
+        related_name='sales',
         verbose_name='Kunde',
         on_delete=models.DO_NOTHING,
     )
@@ -199,22 +218,3 @@ class FikenSaleAttachment(models.Model):
         verbose_name = 'Bilag i Fiken'
         verbose_name_plural = 'Bilag i Fiken'
         ordering = ('sale', 'created_date',)
-
-
-class FikenCustomer(models.Model):
-    user = models.OneToOneField(
-        to=User,
-        related_name='fiken_customer',
-        on_delete=models.DO_NOTHING,
-        verbose_name='Bruker',
-    )
-    fiken_customer_number = models.IntegerField('Kundenummer', null=True, blank=True, unique=True)
-
-    def __str__(self):
-        customer_number = self.fiken_customer_number if self.fiken_customer_number else 'Ikke synkronisert'
-        return f'{self.user} ({customer_number})'
-
-    class Meta:
-        verbose_name = 'Kunde i Fiken'
-        verbose_name_plural = 'Kunder i Fiken'
-        ordering = ('user', 'fiken_customer_number',)

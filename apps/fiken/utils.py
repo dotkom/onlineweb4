@@ -1,14 +1,26 @@
+from typing import Tuple
+
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 
+from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent
 from apps.payment.constants import StripeKey, TransactionType
 from apps.payment.models import PaymentRelation, PaymentTransaction
 from apps.webshop.models import OrderLine
 
 from .constants import VatTypeSale
-from .models import FikenAccount, FikenOrderLine, FikenSale
+from .models import FikenAccount, FikenCustomer, FikenOrderLine, FikenSale
 from .settings import NIBBLE_ACCOUNT_IDENTIFIER
+from .tasks import register_customer_in_fiken
+
+
+def get_customer_for_user(user: User) -> FikenCustomer:
+    result: Tuple[FikenCustomer, bool] = FikenCustomer.objects.get_or_create(user=user)
+    customer, created = result
+    if created or not customer.fiken_customer_number:
+        register_customer_in_fiken(customer.id)
+    return customer
 
 
 def _get_nibble_account():
@@ -21,6 +33,7 @@ def _get_nibble_account():
 def create_sale_from_transaction(transaction: PaymentTransaction, amount: int, sale_status: str) -> FikenSale:
     ore_amount = amount * 100  # Transaction amount is in Kr, sale amount is in øre
     nibble_account = _get_nibble_account()
+    customer = get_customer_for_user(transaction.user)
     sale = FikenSale.objects.create(
         stripe_key=StripeKey.TRIKOM,
         original_amount=ore_amount,
@@ -28,7 +41,7 @@ def create_sale_from_transaction(transaction: PaymentTransaction, amount: int, s
         object_id=transaction.id,
         content_type=ContentType.objects.get_for_model(transaction),
         status=sale_status,
-        customer=transaction.user,
+        customer=customer,
     )
     FikenOrderLine.objects.create(
         sale=sale,
@@ -42,6 +55,7 @@ def create_sale_from_transaction(transaction: PaymentTransaction, amount: int, s
 
 def create_sale_from_relation(relation: PaymentRelation, amount: int, sale_status: str) -> FikenSale:
     ore_amount = amount * 100  # Payment price is in Kr, sale amount is in Øre
+    customer = get_customer_for_user(relation.user)
     sale = FikenSale.objects.create(
         stripe_key=relation.payment.stripe_key,
         original_amount=ore_amount,
@@ -49,7 +63,7 @@ def create_sale_from_relation(relation: PaymentRelation, amount: int, sale_statu
         object_id=relation.id,
         content_type=ContentType.objects.get_for_model(relation),
         status=sale_status,
-        customer=relation.user,
+        customer=customer,
     )
 
     if relation.payment.is_type(AttendanceEvent):

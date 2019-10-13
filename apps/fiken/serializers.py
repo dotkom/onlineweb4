@@ -39,8 +39,7 @@ class FikenSaleSerializer(serializers.ModelSerializer):
     lines = FikenOrderLineSerializer(many=True)
 
     def get_customer(self, obj: FikenSale):
-        customer, created = FikenCustomer.objects.get_or_create(user=obj.customer)
-        return f'{FIKEN_ORG_API_URL}/contacts/{customer.fiken_customer_number}'
+        return f'{FIKEN_ORG_API_URL}/contacts/{obj.customer.fiken_customer_number}'
 
     class Meta:
         model = FikenSale
