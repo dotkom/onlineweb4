@@ -141,7 +141,7 @@ class Photo(models.Model):
         ordering = ('album', 'created_date')
         verbose_name = 'Bilde'
         verbose_name_plural = 'Bilder'
-        unique_together = (('album', 'title', 'relative_id'),)
+        unique_together = (('album', 'title',), ('album', 'relative_id',))
 
 
 class UserTag(models.Model):
