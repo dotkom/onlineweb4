@@ -7,7 +7,6 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.core.files import File
 from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
@@ -15,12 +14,10 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from apps.events.models import AttendanceEvent, Attendee
+from apps.fiken.models import FikenAccount, FikenSale
 from apps.marks.models import Suspension
 from apps.payment import status
-from apps.payment.constants import (FikenAccount, FikenOutgoingAccount, FikenSaleKind, StripeKey,
-                                    TransactionType, VatTypeSale, fiken_outgoing_account_number,
-                                    vat_percentage)
-from apps.payment.pdf_generator import FikenSalePDF
+from apps.payment.constants import StripeKey, TransactionType
 from apps.webshop.models import OrderLine
 
 User = settings.AUTH_USER_MODEL
@@ -80,12 +77,13 @@ class Payment(models.Model):
         on_delete=models.CASCADE
     )
     """User who last changed payment. Automatically set"""
-    fiken_account = models.CharField(
-        max_length=128,
+    fiken_account = models.ForeignKey(
+        to=FikenAccount,
+        related_name='payments',
+        verbose_name='Konto i Fiken',
+        on_delete=models.DO_NOTHING,
         null=True,
         blank=False,
-        choices=FikenOutgoingAccount.ALL_CHOICES,
-        verbose_name='Konto i Fiken',
     )
     """ The account in Fiken where the sale should be registered """
 
@@ -343,7 +341,7 @@ class PaymentRelation(models.Model):
     payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
     """ Stripe payment intent secret key for verifying pending transactions/intents """
 
-    sales = GenericRelation('FikenSale')
+    sales = GenericRelation(FikenSale)
 
     def get_timestamp(self):
         return self.datetime
@@ -381,39 +379,6 @@ class PaymentRelation(models.Model):
     def is_refundable_reason(self) -> str:
         can_refund, reason = self.payment.check_refund(self)
         return reason
-
-    def create_fiken_sale(self, amount: int, sale_status: str):
-        ore_amount = amount * 100  # Payment price is in Kr, sale amount is in Øre
-        sale = FikenSale.objects.create(
-            stripe_key=self.payment.stripe_key,
-            original_amount=amount * 100,  # Payment price is in Kr, sale amount is in Øre
-            transaction_type=self.payment.transaction_type,
-            object_id=self.id,
-            content_type=ContentType.objects.get_for_model(self),
-            status=sale_status,
-            customer=self.user,
-        )
-
-        if self.payment.is_type(AttendanceEvent):
-            FikenOrderLine.objects.create(
-                sale=sale,
-                description=f'{self.get_description()} - {self.user.get_full_name()}',
-                price=ore_amount,
-                vat_type=VatTypeSale.OUTSIDE,
-                account_type=self.payment.fiken_account,
-            )
-        elif self.payment.is_type(OrderLine):
-            order_line: OrderLine = self.payment.content_object
-            for order in order_line.orders.all():
-                FikenOrderLine.objects.create(
-                    sale=sale,
-                    description=f'{order_line} - {self.user.get_full_name()}',
-                    price=order.price * 100,  # Webshop price is in Kr, Fiken price is in Øre
-                    vat_type=order.product.vat_type,
-                    account_type=order.product.fiken_account,
-                )
-
-        return sale
 
     def save(self, *args, **kwargs):
         if not self.unique_id:
@@ -478,7 +443,7 @@ class PaymentTransaction(models.Model):
     payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
     """ Stripe payment intent secret key for verifying pending transactions/intents """
 
-    sales = GenericRelation('FikenSale')
+    sales = GenericRelation(FikenSale)
 
     def get_timestamp(self):
         return self.datetime
@@ -505,26 +470,6 @@ class PaymentTransaction(models.Model):
 
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
-
-    def create_fiken_sale(self, amount: int, sale_status: str):
-        ore_amount = amount * 100  # Transaction amount is in Kr, sale amount is in øre
-        sale = FikenSale.objects.create(
-            stripe_key=StripeKey.TRIKOM,
-            original_amount=ore_amount,
-            transaction_type=TransactionType.KIOSK,
-            object_id=self.id,
-            content_type=ContentType.objects.get_for_model(self),
-            status=sale_status,
-            customer=self.user,
-        )
-        FikenOrderLine.objects.create(
-            sale=sale,
-            description=f'{self.get_description()} - {self.user.get_full_name()}',
-            price=ore_amount,
-            vat_type=VatTypeSale.OUTSIDE,
-            account_type=FikenOutgoingAccount.SALES_NIBBLE,
-        )
-        return sale
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -597,190 +542,3 @@ class PaymentReceipt(models.Model):
 
     class Meta:
         default_permissions = ('add', 'change', 'delete')
-
-
-class FikenSale(models.Model):
-    stripe_key = models.CharField(
-        'Stripe key',
-        max_length=20,
-        choices=StripeKey.ALL_CHOICES,
-    )
-    transaction_type = models.CharField(
-        'Transaction Type',
-        max_length=20,
-        choices=TransactionType.ALL_CHOICES,
-    )
-    original_amount = models.IntegerField()
-    kind = models.CharField(
-        'Fiken Sale kind',
-        max_length=20,
-        choices=FikenSaleKind.ALL_CHOICES,
-        default=FikenSaleKind.EXTERNAL_INVOICE,
-    )
-    paid = models.BooleanField(default=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=30,
-        null=False,
-        choices=status.PAYMENT_STATUS_CHOICES,
-    )
-    fiken_id = models.IntegerField(null=True, blank=True)
-    customer = models.ForeignKey(
-        to=User,
-        related_name='fiken_sales',
-        verbose_name='Kunde',
-        on_delete=models.DO_NOTHING,
-    )
-
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    """Which model the receipt is created for"""
-    object_id = models.PositiveIntegerField(null=True)
-    """Object id for the model chosen in content_type"""
-    content_object = GenericForeignKey()
-    """Helper attribute which points to the object select in object_id"""
-
-    @staticmethod
-    def remove_stripe_fee(price: int) -> int:
-        stripe_fee_percentage = 0.014  # 1.4 %
-        stripe_fee = 180  # 1.8 Kr NOK
-        return int(price * (1 - stripe_fee_percentage) - stripe_fee)
-
-    @property
-    def identifier(self) -> str:
-        if self.status == status.REMOVED:
-            return f'REFUND-{self.id}'
-        return f'{self.transaction_type.upper()}-{self.id}'
-
-    @property
-    def date(self):
-        return str(self.created_date.date())
-
-    @property
-    def account(self) -> str:
-        """
-        Fiken account related to the Stripe key used for the sale
-        """
-        if self.stripe_key == StripeKey.ARRKOM:
-            return FikenAccount.ARRKOM
-        elif self.stripe_key == StripeKey.FAGKOM:
-            return FikenAccount.FAGKOM
-        elif self.stripe_key == StripeKey.TRIKOM:
-            return FikenAccount.TRIKOM
-        elif self.stripe_key == StripeKey.PROKOM:
-            return FikenAccount.PROKOM
-        return FikenAccount.ARRKOM
-
-    @property
-    def amount(self) -> float:
-        amount = self.remove_stripe_fee(self.original_amount)
-        if self.status == status.REMOVED:
-            return -amount
-        return amount
-
-    @property
-    def lines(self):
-        return self.order_lines.all()
-
-    def create_attachment(self):
-        sale_attachment = FikenSaleAttachment.objects.create(
-            sale=self,
-            filename=f'sale-attachment-{self.identifier}.pdf',
-            comment='',
-        )
-        attachment_file = FikenSalePDF(self).render_pdf()
-        sale_attachment.file.save(sale_attachment.filename, File(attachment_file))
-        return sale_attachment
-
-    def __str__(self):
-        return self.identifier
-
-    class Meta:
-        verbose_name = 'Salg i Fiken'
-        verbose_name_plural = 'Salg i Fiken'
-
-
-class FikenOrderLine(models.Model):
-    sale = models.ForeignKey(to=FikenSale, related_name='order_lines', on_delete=models.CASCADE, null=True)
-    price = models.IntegerField()
-    vat_type = models.CharField(max_length=200, choices=VatTypeSale.ALL_CHOICES)
-    description = models.CharField(max_length=200)
-    account_type = models.CharField(
-        max_length=128,
-        null=False,
-        blank=False,
-        choices=FikenOutgoingAccount.ALL_CHOICES,
-        verbose_name='Utgående konto',
-    )
-
-    @property
-    def account(self) -> str:
-        return fiken_outgoing_account_number[self.account_type]
-
-    @property
-    def price_without_fee(self) -> int:
-        return self.sale.remove_stripe_fee(self.price)
-
-    @property
-    def vat_percentage(self) -> float:
-        if self.vat_type not in vat_percentage:
-            return 0.0
-        return vat_percentage[self.vat_type]
-
-    @property
-    def net_price(self) -> int:
-        net_price = int(self.price_without_fee * (1 - self.vat_percentage))
-        if self.sale.status == status.REMOVED:
-            return -net_price
-        return net_price
-
-    @property
-    def vat_price(self) -> int:
-        vat_price = int(self.price_without_fee * self.vat_percentage)
-        if self.sale.status == status.REMOVED:
-            return -vat_price
-        return vat_price
-
-    def __str__(self):
-        return f'{self.description} ({int(self.price / 100)} kr)'
-
-    class Meta:
-        verbose_name = 'Ordrelinje i Fiken'
-        verbose_name_plural = 'Ordrelinjer i Fiken'
-
-
-class FikenSaleAttachment(models.Model):
-    sale = models.ForeignKey(
-        to=FikenSale,
-        related_name='attachments',
-        on_delete=models.DO_NOTHING,
-    )
-    filename = models.CharField(max_length=200)
-    file = models.FileField(upload_to=settings.OW4_FIKEN_FILE_ROOT)
-    comment = models.CharField(max_length=4000)
-    attach_to_sale = models.BooleanField(default=False)
-    attach_to_payment = models.BooleanField(default=True)
-    created = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'{self.filename} ({self.created})'
-
-    class Meta:
-        verbose_name = 'Bilag i Fiken'
-        verbose_name_plural = 'Bilag i Fiken'
-
-
-class FikenCustomer(models.Model):
-    user = models.OneToOneField(
-        to=User,
-        related_name='fiken_customer',
-        on_delete=models.DO_NOTHING,
-    )
-    fiken_customer_number = models.IntegerField(null=True, blank=True, unique=True)
-
-    def __str__(self):
-        customer_number = self.fiken_customer_number if self.fiken_customer_number else 'Ikke synkronisert'
-        return f'{self.user} ({customer_number})'
-
-    class Meta:
-        verbose_name = 'Kunde i Fiken'
-        verbose_name_plural = 'Kunder i Fiken'
