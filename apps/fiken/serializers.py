@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from .constants import FIKEN_ACCOUNT_BANK_FEES
 from .models import FikenCustomer, FikenOrderLine, FikenSale, FikenSaleAttachment
 from .settings import FIKEN_ORG_API_URL
 
@@ -31,6 +32,10 @@ class FikenOrderLineSerializer(serializers.ModelSerializer):
         read_only = True
 
 
+def _get_customer_url(customer: FikenCustomer):
+    return f'{FIKEN_ORG_API_URL}/contacts/{customer.fiken_customer_number}'
+
+
 class FikenSaleSerializer(serializers.ModelSerializer):
     totalPaid = serializers.IntegerField(source='amount')
     paymentDate = serializers.CharField(source='date')
@@ -39,13 +44,29 @@ class FikenSaleSerializer(serializers.ModelSerializer):
     lines = FikenOrderLineSerializer(many=True)
 
     def get_customer(self, obj: FikenSale):
-        return f'{FIKEN_ORG_API_URL}/contacts/{obj.customer.fiken_customer_number}'
+        return _get_customer_url(obj.customer)
 
     class Meta:
         model = FikenSale
         fields = (
             'identifier', 'date', 'kind', 'paid', 'totalPaid', 'lines', 'paymentDate', 'paymentAccount', 'customer',
         )
+        read_only = True
+
+
+class FikenTransactionFeeSerializer(serializers.ModelSerializer):
+    amount = serializers.SerializerMethodField()
+    account = serializers.SerializerMethodField()
+
+    def get_amount(self, obj: FikenSale):
+        return obj.original_amount - obj.amount
+
+    def get_account(self, obj: FikenSale):
+        return FIKEN_ACCOUNT_BANK_FEES
+
+    class Meta:
+        model = FikenSale
+        fields = ('amount', 'account', 'date',)
         read_only = True
 
 

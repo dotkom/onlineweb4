@@ -134,3 +134,6 @@ class FikenSaleKind:
 
     ALL_KINDS = (CASH_SALE, INVOICE, EXTERNAL_INVOICE,)
     ALL_CHOICES = [(k, k) for k in ALL_KINDS]
+
+
+FIKEN_ACCOUNT_BANK_FEES = '7770'

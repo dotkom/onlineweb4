@@ -55,4 +55,4 @@ class FikenAccountAdmin(VersionAdmin):
     model = FikenAccount
     list_display = ('name', 'code', 'identifier', 'active',)
     fields = ('name', 'code', 'identifier', 'active', 'created_date',)
-    readonly_fields = ('code', 'identifier', 'created_date',)
+    readonly_fields = ('created_date',)

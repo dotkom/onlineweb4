@@ -5,7 +5,8 @@ import requests
 from onlineweb4.celery import app
 
 from .models import FikenCustomer, FikenSale, FikenSaleAttachment
-from .serializers import FikenCustomerSerializer, FikenSaleAttachmentSerializer, FikenSaleSerializer
+from .serializers import (FikenCustomerSerializer, FikenSaleAttachmentSerializer,
+                          FikenSaleSerializer, FikenTransactionFeeSerializer)
 from .settings import FIKEN_AUTH, FIKEN_ORG_API_URL, IS_FIKEN_CONFIGURED
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,10 @@ def get_fiken_sales_api_url():
 
 def get_fiken_sales_attachments_api_url(sale_fiken_id: int):
     return f'{get_fiken_sales_api_url()}/{sale_fiken_id}/attachments'
+
+
+def get_fiken_sales_payment_api_url(sale_fiken_id: int):
+    return f'{get_fiken_sales_api_url()}/{sale_fiken_id}/payments'
 
 
 def get_fiken_customer_api_url():
@@ -94,10 +99,36 @@ def create_sale_attachment(_, sale_id: int):
 
 
 @app.task(bind=True)
+def register_stripe_fee_payment(_, sale_id: int):
+    sale = FikenSale.objects.get(pk=sale_id)
+    logger.info(f'Starting register fee payment task for Sale {sale}')
+    fee_payment_data = FikenTransactionFeeSerializer(sale).data
+
+    if IS_FIKEN_CONFIGURED:
+
+        response = requests.post(
+            url=get_fiken_sales_payment_api_url(sale.fiken_id),
+            auth=FIKEN_AUTH,
+            headers={},
+            json=fee_payment_data,
+        )
+
+        if response.ok:
+            logger.info(f'Successfully registered fee payment for {sale.identifier} in Fiken')
+        else:
+            logger.warning(f'Failed at registering fee payment for {sale.identifier} in Fiken')
+            logger.warning(f'Fiken request failed with status code: {response.status_code} and '
+                           f'message {response.text}')
+    else:
+        logger.warning(f'Fiken is not configured correctly. Could not register fee payment for {sale.identifier}')
+
+
+@app.task(bind=True)
 def register_sale_with_fiken(_, sale_id: int):
     logger.info('Starting Fiken sale register')
     sale = FikenSale.objects.get(pk=sale_id)
     sale_data = FikenSaleSerializer(sale).data
+
     if IS_FIKEN_CONFIGURED:
         headers = {'Content-type': 'application/json', 'Accept': 'application/json'}
 
@@ -113,6 +144,7 @@ def register_sale_with_fiken(_, sale_id: int):
             sale_fiken_id = resolve_fiken_id(response.headers.get('Location'))
             sale.fiken_id = sale_fiken_id
             sale.save()
+            register_stripe_fee_payment.delay(sale_id=sale.id)
             create_sale_attachment.delay(sale_id=sale_id)
         else:
             logger.warning(f'Failed at registering sale {sale.identifier} in Fiken')
