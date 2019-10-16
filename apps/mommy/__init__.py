@@ -4,7 +4,7 @@ import logging
 from .registry import Schedule
 
 logger = logging.getLogger(__name__)
-default_app_config = "apps.mommy.appconfig.MommyConfig"
+default_app_config = 'apps.mommy.appconfig.MommyConfig'
 schedule = Schedule()
 
 
@@ -21,10 +21,10 @@ def autodiscover():
         mod = import_module(app)
         # Attempt to import the app's mommy module.
         try:
-            import_module("%s.mommy" % app)
+            import_module('%s.mommy' % app)
         except ImportError:
             # silently fail if mommy module does not exist
-            if module_has_submodule(mod, "mommy"):
+            if module_has_submodule(mod, 'mommy'):
                 raise
 
 
@@ -37,6 +37,6 @@ def run(**kwargs):
     sched = BlockingScheduler(**kwargs)
 
     for task, kwargs in schedule.tasks.items():
-        sched.add_job(task.run, trigger="cron", name=task.__name__, **kwargs)
+        sched.add_job(task.run, trigger='cron', name=task.__name__, **kwargs)
 
     sched.start()  # main loop

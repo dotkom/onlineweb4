@@ -42,7 +42,7 @@ class SingleImageInput(HiddenInput):
 
     def __init__(self, attrs=None):
         super(SingleImageInput, self).__init__(attrs)
-        self.input_type = "hidden"
+        self.input_type = 'hidden'
 
     def render(self, name, value, attrs=None, renderer=None):
         """
@@ -54,24 +54,24 @@ class SingleImageInput(HiddenInput):
         """
 
         if value is None:
-            value = ""
+            value = ''
 
-        img_thumb = "Det er ikke valgt noe bilde."
+        img_thumb = 'Det er ikke valgt noe bilde.'
 
         attrs = self.build_attrs(self.attrs, attrs)
-        final_attrs = self.build_attrs(attrs, {"type": self.input_type, "name": name})
-        if value != "":
+        final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
+        if value != '':
             # Only add the value attribute if the value is non-empty
-            final_attrs["value"] = force_text(self.format_value(value))
+            final_attrs['value'] = force_text(self.format_value(value))
             img = ResponsiveImage.objects.get(pk=value)
             img_thumb = format_html(
                 '<img src="{}" alt title="{}"/>',
                 settings.MEDIA_URL + str(img.thumbnail),
                 str(img.name),
-                encoding="utf-8",
+                encoding='utf-8'
             )
 
-        upload_url = reverse_lazy("gallery_dashboard:upload")
+        upload_url = reverse_lazy('gallery_dashboard:upload')
 
         return format_html(WIDGET_STRING, flatatt(final_attrs), img_thumb, upload_url)
 

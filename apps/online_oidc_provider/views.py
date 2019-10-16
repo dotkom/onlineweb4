@@ -9,12 +9,10 @@ from .serializers import (
 )
 
 
-class UserConsentViewSet(
-    viewsets.GenericViewSet,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-    mixins.DestroyModelMixin,
-):
+class UserConsentViewSet(viewsets.GenericViewSet,
+                         mixins.ListModelMixin,
+                         mixins.RetrieveModelMixin,
+                         mixins.DestroyModelMixin):
     serializer_class = UserConsentReadOnlySerializer
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -30,9 +28,9 @@ class ClientViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
     def get_queryset(self):
-        if self.action in ["retrieve", "list"]:
+        if self.action in ['retrieve', 'list']:
             return Client.objects.all()
-        if self.action in ["create", "update", "partial_update", "destroy"]:
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
             user = self.request.user
             if user.is_anonymous:
                 return Client.objects.none()
@@ -41,9 +39,9 @@ class ClientViewSet(viewsets.ModelViewSet):
         return super().get_queryset()
 
     def get_serializer_class(self):
-        if self.action in ["retrieve", "list"]:
+        if self.action in ['retrieve', 'list']:
             return ClientReadOnlySerializer
-        if self.action in ["create", "update", "partial_update"]:
+        if self.action in ['create', 'update', 'partial_update']:
             return ClientCreateAndUpdateSerializer
 
         return super().get_serializer_class()

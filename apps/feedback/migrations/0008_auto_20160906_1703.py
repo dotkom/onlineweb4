@@ -7,29 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("feedback", "0007_auto_20160309_2133")]
+    dependencies = [
+        ('feedback', '0007_auto_20160309_2133'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="fieldofstudyanswer",
-            name="answer",
-            field=models.SmallIntegerField(
-                choices=[
-                    (0, "Gjest"),
-                    (1, "Bachelor i Informatikk"),
-                    (10, "Programvaresystemer"),
-                    (11, "Databaser og søk"),
-                    (12, "Algoritmer og datamaskiner"),
-                    (13, "Spillteknologi"),
-                    (14, "Kunstig intelligens"),
-                    (15, "Helseinformatikk"),
-                    (16, "Interaksjonsdesign, spill- og læringsteknologi"),
-                    (30, "Annen mastergrad"),
-                    (80, "PhD"),
-                    (90, "International"),
-                    (100, "Annet Onlinemedlem"),
-                ],
-                verbose_name="Studieretning",
-            ),
-        )
+            model_name='fieldofstudyanswer',
+            name='answer',
+            field=models.SmallIntegerField(choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk'), (10, 'Programvaresystemer'), (11, 'Databaser og søk'), (12, 'Algoritmer og datamaskiner'), (13, 'Spillteknologi'), (14, 'Kunstig intelligens'), (15, 'Helseinformatikk'), (16, 'Interaksjonsdesign, spill- og læringsteknologi'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')], verbose_name='Studieretning'),
+        ),
     ]

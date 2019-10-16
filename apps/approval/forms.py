@@ -6,11 +6,12 @@ from django.utils.translation import ugettext as _
 
 from apps.authentication.constants import FieldOfStudyType
 
-SEMESTER_CHOICES = [("h", _("Høst")), ("v", _("Vår"))]
+SEMESTER_CHOICES = [
+    ("h", _("Høst")),
+    ("v", _("Vår")),
+]
 
-VALID_FIELD_OF_STUDY_CHOICES = filter(
-    lambda choice: choice[0] != FieldOfStudyType.GUEST, FieldOfStudyType.ALL_CHOICES
-)
+VALID_FIELD_OF_STUDY_CHOICES = filter(lambda choice: choice[0] != FieldOfStudyType.GUEST, FieldOfStudyType.ALL_CHOICES)
 
 
 def _year_choices():
@@ -21,12 +22,10 @@ def _year_choices():
 
 class FieldOfStudyApplicationForm(forms.Form):
     started_semester = forms.ChoiceField(
-        label=_("Hvilket semester startet du? "), choices=SEMESTER_CHOICES
-    )
+        label=_("Hvilket semester startet du? "), choices=SEMESTER_CHOICES)
     started_year = forms.ChoiceField(
-        label=_("Hvilket år startet du? "), choices=_year_choices()
-    )
+        label=_("Hvilket år startet du? "), choices=_year_choices())
     field_of_study = forms.ChoiceField(
-        label=_("Studieretning "), choices=VALID_FIELD_OF_STUDY_CHOICES
-    )
-    documentation = forms.ImageField(label=_("Dokumentasjon "), required=False)
+        label=_("Studieretning "), choices=VALID_FIELD_OF_STUDY_CHOICES)
+    documentation = forms.ImageField(
+        label=_("Dokumentasjon "), required=False)

@@ -10,124 +10,47 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("auth", "0008_alter_user_username_max_length"),
+        ('auth', '0008_alter_user_username_max_length'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("approval", "0005_auto_20160906_1703"),
+        ('approval', '0005_auto_20160906_1703'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="CommitteeApplication",
+            name='CommitteeApplication',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "created",
-                    models.DateTimeField(auto_now_add=True, verbose_name="opprettet"),
-                ),
-                (
-                    "modified",
-                    models.DateTimeField(auto_now=True, verbose_name="endret"),
-                ),
-                (
-                    "name",
-                    models.CharField(
-                        blank=True, max_length=69, null=True, verbose_name="navn"
-                    ),
-                ),
-                (
-                    "email",
-                    models.EmailField(
-                        blank=True,
-                        max_length=254,
-                        null=True,
-                        verbose_name="e-postadresse",
-                    ),
-                ),
-                ("application_text", models.TextField(verbose_name="søknadstekst")),
-                (
-                    "prioritized",
-                    models.BooleanField(
-                        default=False, verbose_name="prioriter komitevalg"
-                    ),
-                ),
-                (
-                    "applicant",
-                    models.ForeignKey(
-                        blank=True,
-                        null=True,
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to=settings.AUTH_USER_MODEL,
-                        verbose_name="søker",
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created', models.DateTimeField(auto_now_add=True, verbose_name='opprettet')),
+                ('modified', models.DateTimeField(auto_now=True, verbose_name='endret')),
+                ('name', models.CharField(blank=True, max_length=69, null=True, verbose_name='navn')),
+                ('email', models.EmailField(blank=True, max_length=254, null=True, verbose_name='e-postadresse')),
+                ('application_text', models.TextField(verbose_name='søknadstekst')),
+                ('prioritized', models.BooleanField(default=False, verbose_name='prioriter komitevalg')),
+                ('applicant', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='søker')),
             ],
             options={
-                "verbose_name": "komitesøknad",
-                "verbose_name_plural": "komitesøknader",
-                "default_permissions": ("add", "change", "delete", "view"),
+                'verbose_name': 'komitesøknad',
+                'verbose_name_plural': 'komitesøknader',
+                'default_permissions': ('add', 'change', 'delete', 'view'),
             },
         ),
         migrations.CreateModel(
-            name="CommitteePriority",
+            name='CommitteePriority',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "priority",
-                    models.SmallIntegerField(
-                        choices=[
-                            (1, "1. prioritet"),
-                            (2, "2. prioritet"),
-                            (3, "3. prioritet"),
-                        ],
-                        verbose_name="prioritet",
-                    ),
-                ),
-                (
-                    "committee_application",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="approval.CommitteeApplication",
-                        verbose_name="søknad",
-                    ),
-                ),
-                (
-                    "group",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="auth.Group",
-                        verbose_name="komite",
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('priority', models.SmallIntegerField(choices=[(1, '1. prioritet'), (2, '2. prioritet'), (3, '3. prioritet')], verbose_name='prioritet')),
+                ('committee_application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='approval.CommitteeApplication', verbose_name='søknad')),
+                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auth.Group', verbose_name='komite')),
             ],
             options={
-                "verbose_name": "komiteprioritering",
-                "verbose_name_plural": "komiteprioriteringer",
-                "default_permissions": ("add", "change", "delete", "view"),
+                'verbose_name': 'komiteprioritering',
+                'verbose_name_plural': 'komiteprioriteringer',
+                'default_permissions': ('add', 'change', 'delete', 'view'),
             },
         ),
         migrations.AddField(
-            model_name="committeeapplication",
-            name="committees",
-            field=models.ManyToManyField(
-                through="approval.CommitteePriority",
-                to="auth.Group",
-                verbose_name="komiteer",
-            ),
+            model_name='committeeapplication',
+            name='committees',
+            field=models.ManyToManyField(through='approval.CommitteePriority', to='auth.Group', verbose_name='komiteer'),
         ),
     ]

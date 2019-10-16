@@ -6,12 +6,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("webshop", "0001_initial")]
+    dependencies = [
+        ('webshop', '0001_initial'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="orderline",
-            name="stripe_id",
+            model_name='orderline',
+            name='stripe_id',
             field=models.CharField(max_length=50, null=True, blank=True),
-        )
+        ),
     ]

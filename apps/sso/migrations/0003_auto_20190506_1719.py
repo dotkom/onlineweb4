@@ -5,14 +5,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("sso", "0002_auto_20171127_1304")]
+    dependencies = [
+        ('sso', '0002_auto_20171127_1304'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="client",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_client", "View Client"),),
-            },
-        )
+            name='client',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_client', 'View Client'),)},
+        ),
     ]

@@ -7,22 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("payment", "0015_auto_20160429_1542")]
+    dependencies = [
+        ('payment', '0015_auto_20160429_1542'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="payment",
-            name="stripe_key",
-            field=models.CharField(
-                choices=[
-                    ("arrkom", "arrkom"),
-                    ("prokom", "prokom"),
-                    ("trikom", "trikom"),
-                    ("fagkom", "fagkom"),
-                ],
-                default="arrkom",
-                max_length=10,
-                verbose_name="stripe key",
-            ),
-        )
+            model_name='payment',
+            name='stripe_key',
+            field=models.CharField(choices=[('arrkom', 'arrkom'), ('prokom', 'prokom'), ('trikom', 'trikom'), ('fagkom', 'fagkom')], default='arrkom', max_length=10, verbose_name='stripe key'),
+        ),
     ]

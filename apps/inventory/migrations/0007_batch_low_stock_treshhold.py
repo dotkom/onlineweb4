@@ -7,14 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("inventory", "0006_auto_20171106_0913")]
+    dependencies = [
+        ('inventory', '0006_auto_20171106_0913'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="item",
-            name="low_stock_treshold",
-            field=models.IntegerField(
-                default=10, verbose_name="Grense for email om lav beholdning"
-            ),
-        )
+            model_name='item',
+            name='low_stock_treshold',
+            field=models.IntegerField(default=10, verbose_name='Grense for email om lav beholdning'),
+        ),
     ]

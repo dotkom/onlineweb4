@@ -7,12 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("companyprofile", "0003_company_image")]
+    dependencies = [
+        ('companyprofile', '0003_company_image'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="company",
-            name="short_description",
-            field=models.TextField(verbose_name="kort beskrivelse"),
-        )
+            model_name='company',
+            name='short_description',
+            field=models.TextField(verbose_name='kort beskrivelse'),
+        ),
     ]

@@ -1,1 +1,1 @@
-default_app_config = "apps.resourcecenter.appconfig.ResourcecenterConfig"
+default_app_config = 'apps.resourcecenter.appconfig.ResourcecenterConfig'

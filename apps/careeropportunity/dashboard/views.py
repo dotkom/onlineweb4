@@ -14,7 +14,7 @@ from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required
-@permission_required("careeropportunity.view_careeropportunity", return_403=True)
+@permission_required('careeropportunity.view_careeropportunity', return_403=True)
 def index(request):
 
     if not has_access(request):
@@ -25,17 +25,17 @@ def index(request):
     # "cops" is short for "careeropportunities" which is a fucking long word
     # "cop" is short for "careeropportunity" which also is a fucking long word
     cops = CareerOpportunity.objects.all()
-    context["cops"] = cops.filter(end__gte=timezone.now()).order_by("end")
-    context["archive"] = cops.filter(end__lte=timezone.now()).order_by("-id")
-    context["all"] = cops
-    return render(request, "careeropportunity/dashboard/index.html", context)
+    context['cops'] = cops.filter(end__gte=timezone.now()).order_by('end')
+    context['archive'] = cops.filter(end__lte=timezone.now()).order_by('-id')
+    context['all'] = cops
+    return render(request, 'careeropportunity/dashboard/index.html', context)
 
 
 @login_required
-@permission_required("careeropportunity.change_careeropportunity", return_403=True)
+@permission_required('careeropportunity.change_careeropportunity', return_403=True)
 def detail(request, opportunity_id=None):
     logger = logging.getLogger(__name__)
-    logger.debug("Editing careeropportunity with id: %s" % (opportunity_id))
+    logger.debug('Editing careeropportunity with id: %s' % (opportunity_id))
 
     if not has_access(request):
         raise PermissionDenied
@@ -44,12 +44,12 @@ def detail(request, opportunity_id=None):
     cop = None
     if opportunity_id:
         cop = get_object_or_404(CareerOpportunity, pk=opportunity_id)
-        context["cop"] = cop
-        context["form"] = AddCareerOpportunityForm(instance=cop)
+        context['cop'] = cop
+        context['form'] = AddCareerOpportunityForm(instance=cop)
     else:
-        context["form"] = AddCareerOpportunityForm()
+        context['form'] = AddCareerOpportunityForm()
 
-    if request.method == "POST":
+    if request.method == 'POST':
         if cop:
             form = AddCareerOpportunityForm(data=request.POST, instance=cop)
         else:
@@ -57,27 +57,25 @@ def detail(request, opportunity_id=None):
 
         if form.is_valid():
             form.save()
-            messages.success(request, "La til ny karrieremulighet")
+            messages.success(request, 'La til ny karrieremulighet')
             return redirect(index)
         else:
-            context["form"] = form
-            messages.error(
-                request,
-                "Skjemaet ble ikke korrekt utfylt. Se etter markerte felter for å se hva som gikk galt.",
-            )
+            context['form'] = form
+            messages.error(request,
+                           'Skjemaet ble ikke korrekt utfylt. Se etter markerte felter for å se hva som gikk galt.')
 
-    return render(request, "careeropportunity/dashboard/detail.html", context)
+    return render(request, 'careeropportunity/dashboard/detail.html', context)
 
 
 @login_required
-@permission_required("careeropportunity.change_careeropportunity", return_403=True)
+@permission_required('careeropportunity.change_careeropportunity', return_403=True)
 def delete(request, opportunity_id=None):
     logger = logging.getLogger(__name__)
-    logger.debug("Deleting careeropportunitywith id: %s" % (opportunity_id))
+    logger.debug('Deleting careeropportunitywith id: %s' % (opportunity_id))
     if not has_access(request):
         raise PermissionDenied
 
     cop = get_object_or_404(CareerOpportunity, pk=opportunity_id)
     cop.delete()
-    messages.success(request, "Slettet karrieremuligheten")
+    messages.success(request, 'Slettet karrieremuligheten')
     return redirect(index)

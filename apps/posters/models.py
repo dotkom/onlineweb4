@@ -20,32 +20,35 @@ class OrderMixin(models.Model):
     amount and description is optional, but should exist in all orders.
     assigned_to and finished will be set by ProKom.
     """
-
-    order_type = models.IntegerField(choices=((1, "Plakat"), (2, "Bong"), (3, "Annet")))
+    order_type = models.IntegerField(choices=(
+        (1, 'Plakat'),
+        (2, 'Bong'),
+        (3, 'Annet'),
+    ))
     ordered_date = models.DateTimeField(auto_now_add=True, editable=False)
     ordered_by = models.ForeignKey(
         User,
         verbose_name=_("bestilt av"),
-        related_name="ordered_by",
-        on_delete=models.CASCADE,
+        related_name='ordered_by',
+        on_delete=models.CASCADE
     )
     ordered_committee = models.ForeignKey(
         Group,
-        verbose_name=_("bestilt av komite"),
-        related_name="ordered_committee",
-        on_delete=models.CASCADE,
+        verbose_name=_('bestilt av komite'),
+        related_name='ordered_committee',
+        on_delete=models.CASCADE
     )
     assigned_to = models.ForeignKey(
         User,
-        verbose_name=_("tilordnet til"),
-        related_name="assigned_to",
+        verbose_name=_('tilordnet til'),
+        related_name='assigned_to',
         blank=True,
         null=True,
-        on_delete=models.CASCADE,
+        on_delete=models.CASCADE
     )
     description = models.TextField(_("beskrivelse"), blank=True, null=True)
     comments = models.TextField(_("kommentar"), blank=True, null=True)
-    amount = models.IntegerField(_("antall opplag"), blank=True, null=True)
+    amount = models.IntegerField(_('antall opplag'), blank=True, null=True)
     finished = models.BooleanField(_("ferdig"), default=False)
     display_from = models.DateField(_("vis fra"), blank=True, null=True, default=None)
 
@@ -54,7 +57,7 @@ class OrderMixin(models.Model):
         self.save()
 
     def get_absolute_url(self):
-        return reverse("posters_detail", args=[str(self.id)])
+        return reverse('posters_detail', args=[str(self.id)])
 
     def get_dashboard_url(self):
         return self.get_absolute_url()
@@ -62,50 +65,39 @@ class OrderMixin(models.Model):
     class Meta:
 
         permissions = (
-            ("add_poster_order", "Add poster orders"),
-            ("overview_poster_order", "View poster order overview"),
-            ("view_poster_order", "View poster orders"),
+            ('add_poster_order', 'Add poster orders'),
+            ('overview_poster_order', 'View poster order overview'),
+            ('view_poster_order', 'View poster orders'),
         )
-        default_permissions = ("add", "change", "delete")
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Poster(OrderMixin):
     """
     Poster order
     """
-
-    title = models.CharField(
-        _("arrangementstittel"), max_length=60, blank=True, null=True
-    )
-    event = models.ForeignKey(
-        Event,
-        related_name="Arrangement",
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-    )
-    price = models.DecimalField(
-        _("pris"), max_digits=10, decimal_places=2, blank=True, null=True
-    )
+    title = models.CharField(_('arrangementstittel'), max_length=60, blank=True, null=True)
+    event = models.ForeignKey(Event, related_name='Arrangement', blank=True, null=True, on_delete=models.CASCADE)
+    price = models.DecimalField(_('pris'), max_digits=10, decimal_places=2, blank=True, null=True)
     display_to = models.DateField(_("vis til"), blank=True, null=True, default=None)
-    bong = models.IntegerField(_("bonger"), blank=True, null=True)
+    bong = models.IntegerField(_('bonger'), blank=True, null=True)
 
     class Meta:
-        ordering = ["-id"]
+        ordering = ['-id']
         verbose_name = _("bestilling")
         verbose_name_plural = _("bestillinger")
         permissions = (
-            ("add_poster_order", "Add poster orders"),
-            ("overview_poster_order", "View poster order overview"),
-            ("view_poster_order", "View poster orders"),
+            ('add_poster_order', 'Add poster orders'),
+            ('overview_poster_order', 'View poster order overview'),
+            ('view_poster_order', 'View poster orders'),
         )
-        default_permissions = ("add", "change", "delete")
+        default_permissions = ('add', 'change', 'delete')
 
     def __str__(self):
         if self.order_type == 1:
-            return _("Plakatbestilling: %(event)s" % {"event": self.event.title})
+            return _("Plakatbestilling: %(event)s" % {'event': self.event.title})
         else:
-            return _("Generell bestilling: %(title)s" % {"title": self.title})
+            return _("Generell bestilling: %(title)s" % {'title': self.title})
 
 
 class CustomText(models.Model):
@@ -113,4 +105,4 @@ class CustomText(models.Model):
     text = models.CharField(max_length=30)
 
     class Meta:
-        default_permissions = ("add", "change", "delete")
+        default_permissions = ('add', 'change', 'delete')

@@ -7,10 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("hobbygroups", "0001_initial")]
+    dependencies = [
+        ('hobbygroups', '0001_initial'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="hobby", name="priority", field=models.IntegerField(default=0)
-        )
+            model_name='hobby',
+            name='priority',
+            field=models.IntegerField(default=0),
+        ),
     ]

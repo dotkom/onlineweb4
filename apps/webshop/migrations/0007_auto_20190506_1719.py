@@ -7,66 +7,34 @@ import re
 
 class Migration(migrations.Migration):
 
-    dependencies = [("webshop", "0006_auto_20181110_1615")]
+    dependencies = [
+        ('webshop', '0006_auto_20181110_1615'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="category",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_category", "View Category"),),
-                "verbose_name": "Kategori",
-                "verbose_name_plural": "Kategorier",
-            },
+            name='category',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_category', 'View Category'),), 'verbose_name': 'Kategori', 'verbose_name_plural': 'Kategorier'},
         ),
         migrations.AlterModelOptions(
-            name="order",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_order", "View Order"),),
-                "verbose_name": "Bestilling",
-                "verbose_name_plural": "Bestillinger",
-            },
+            name='order',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_order', 'View Order'),), 'verbose_name': 'Bestilling', 'verbose_name_plural': 'Bestillinger'},
         ),
         migrations.AlterModelOptions(
-            name="orderline",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_order_line", "View Order Line"),),
-            },
+            name='orderline',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_order_line', 'View Order Line'),)},
         ),
         migrations.AlterModelOptions(
-            name="product",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_product", "View Product"),),
-                "verbose_name": "Produkt",
-                "verbose_name_plural": "Produkter",
-            },
+            name='product',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_product', 'View Product'),), 'verbose_name': 'Produkt', 'verbose_name_plural': 'Produkter'},
         ),
         migrations.AlterModelOptions(
-            name="productsize",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "verbose_name": "Størrelse",
-                "verbose_name_plural": "Størrelser",
-            },
+            name='productsize',
+            options={'default_permissions': ('add', 'change', 'delete'), 'verbose_name': 'Størrelse', 'verbose_name_plural': 'Størrelser'},
         ),
         migrations.AlterField(
-            model_name="product",
-            name="images_csv",
-            field=models.CharField(
-                blank=True,
-                default=None,
-                max_length=200,
-                null=True,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        re.compile("^\\d+(?:,\\d+)*\\Z"),
-                        code="invalid",
-                        message="Enter only digits separated by commas.",
-                    )
-                ],
-            ),
+            model_name='product',
+            name='images_csv',
+            field=models.CharField(blank=True, default=None, max_length=200, null=True, validators=[django.core.validators.RegexValidator(re.compile('^\\d+(?:,\\d+)*\\Z'), code='invalid', message='Enter only digits separated by commas.')]),
         ),
     ]

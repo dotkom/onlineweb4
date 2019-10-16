@@ -8,7 +8,7 @@ class PublicProfileFilter(django_filters.FilterSet):
     year = django_filters.NumberFilter(field_name="year", method="filter_year")
     group = django_filters.CharFilter(method="filter_group")
 
-    class Meta:
+    class Meta():
         model = User
         fields = ("year", "group")
 

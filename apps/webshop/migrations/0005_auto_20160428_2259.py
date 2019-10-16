@@ -8,34 +8,24 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("webshop", "0004_auto_20151118_2242")]
+    dependencies = [
+        ('webshop', '0004_auto_20151118_2242'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="product",
-            name="stock",
-            field=models.PositiveSmallIntegerField(
-                blank=True,
-                help_text="Antall på lager. Blankt vil si uendelig.",
-                null=True,
-            ),
+            model_name='product',
+            name='stock',
+            field=models.PositiveSmallIntegerField(blank=True, help_text='Antall på lager. Blankt vil si uendelig.', null=True),
         ),
         migrations.AlterField(
-            model_name="productsize",
-            name="product",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="product_sizes",
-                to="webshop.Product",
-            ),
+            model_name='productsize',
+            name='product',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='product_sizes', to='webshop.Product'),
         ),
         migrations.AlterField(
-            model_name="productsize",
-            name="stock",
-            field=models.PositiveSmallIntegerField(
-                blank=True,
-                help_text="Antall på lager. Blankt vil si uendelig.",
-                null=True,
-            ),
+            model_name='productsize',
+            name='stock',
+            field=models.PositiveSmallIntegerField(blank=True, help_text='Antall på lager. Blankt vil si uendelig.', null=True),
         ),
     ]

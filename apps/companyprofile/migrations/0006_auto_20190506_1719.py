@@ -5,17 +5,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("companyprofile", "0005_auto_20170130_2037")]
+    dependencies = [
+        ('companyprofile', '0005_auto_20170130_2037'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="company",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ("name",),
-                "permissions": (("view_company", "View Company"),),
-                "verbose_name": "Bedrift",
-                "verbose_name_plural": "Bedrifter",
-            },
-        )
+            name='company',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ('name',), 'permissions': (('view_company', 'View Company'),), 'verbose_name': 'Bedrift', 'verbose_name_plural': 'Bedrifter'},
+        ),
     ]

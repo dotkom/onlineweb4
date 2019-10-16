@@ -10,44 +10,27 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = []
+    dependencies = [
+    ]
 
     operations = [
         migrations.CreateModel(
-            name="Repository",
+            name='Repository',
             fields=[
-                (
-                    "id",
-                    models.CharField(max_length=50, primary_key=True, serialize=False),
-                ),
-                ("name", models.CharField(max_length=150)),
-                ("description", models.CharField(max_length=300, null=True)),
-                ("url", models.URLField()),
-                ("updated_at", models.DateTimeField()),
+                ('id', models.CharField(max_length=50, primary_key=True, serialize=False)),
+                ('name', models.CharField(max_length=150)),
+                ('description', models.CharField(max_length=300, null=True)),
+                ('url', models.URLField()),
+                ('updated_at', models.DateTimeField()),
             ],
         ),
         migrations.CreateModel(
-            name="RepositoryLanguage",
+            name='RepositoryLanguage',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("type", models.CharField(max_length=100)),
-                ("size", models.IntegerField()),
-                (
-                    "repository",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="languages",
-                        to="contribution.Repository",
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('type', models.CharField(max_length=100)),
+                ('size', models.IntegerField()),
+                ('repository', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='languages', to='contribution.Repository')),
             ],
         ),
     ]

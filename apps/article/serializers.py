@@ -10,25 +10,25 @@ class ArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
     created_by = UserReadOnlySerializer()
     image = ResponsiveImageSerializer()
     tags = TagListSerializerField()
-    absolute_url = serializers.CharField(source="get_absolute_url", read_only=True)
+    absolute_url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
         model = Article
         fields = (
-            "absolute_url",
-            "authors",
-            "created_by",
-            "changed_date",
-            "content",
-            "created_date",
-            "featured",
-            "heading",
-            "id",
-            "ingress",
-            "ingress_short",
-            "published_date",
-            "slug",
-            "tags",
-            "video",
-            "image",
+            'absolute_url',
+            'authors',
+            'created_by',
+            'changed_date',
+            'content',
+            'created_date',
+            'featured',
+            'heading',
+            'id',
+            'ingress',
+            'ingress_short',
+            'published_date',
+            'slug',
+            'tags',
+            'video',
+            'image'
         )

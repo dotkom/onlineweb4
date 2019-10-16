@@ -11,20 +11,24 @@ Relations on the old format need to be converted to understand that they are sto
 
 
 def load_data(apps, schema_editor):
-    PaymentRelation = apps.get_model("payment", "PaymentRelation")
+    PaymentRelation = apps.get_model('payment', 'PaymentRelation')
 
     success_relations = PaymentRelation.objects.filter(status=status.SUCCEEDED)
     for relation in success_relations:
         relation.status = status.DONE
-        relation.save(update_fields=["status"])
+        relation.save(update_fields=['status'])
 
     refunded_relations = PaymentRelation.objects.filter(status=status.REFUNDED)
     for relation in refunded_relations:
         relation.status = status.REMOVED
-        relation.save(update_fields=["status"])
+        relation.save(update_fields=['status'])
 
 
 class Migration(migrations.Migration):
-    dependencies = [("payment", "0028_set_succeeded_transactions_to_done")]
+    dependencies = [
+        ('payment', '0028_set_succeeded_transactions_to_done'),
+    ]
 
-    operations = [migrations.RunPython(load_data)]
+    operations = [
+        migrations.RunPython(load_data)
+    ]

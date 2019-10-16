@@ -8,20 +8,18 @@ from apps.offline.models import Issue, ProxyChunk
 
 class IssueAdmin(VersionAdmin):
     model = Issue
-    list_display = ["title", "release_date"]
+    list_display = ['title', 'release_date']
 
 
 class ProxyChunkAdmin(VersionAdmin):
 
-    readonly_fields = ["key"]
+    readonly_fields = ['key']
 
     def has_add_permission(self, request):
         return False
 
     def get_queryset(self, request):
-        offline = Chunk.objects.filter(
-            Q(key="offline_ingress") | Q(key="offline_brodtekst")
-        )
+        offline = Chunk.objects.filter(Q(key='offline_ingress') | Q(key='offline_brodtekst'))
         return offline
 
 

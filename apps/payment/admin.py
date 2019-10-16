@@ -18,8 +18,8 @@ from utils.admin import DepositWithdrawalFilter
 class PaymentInline(GenericStackedInline):
     model = Payment
     extra = 0
-    classes = ("grp-collapse grp-open",)  # style
-    inline_classes = ("grp-collapse grp-open",)  # style
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
     exclude = ("added_date", "last_changed_date", "last_changed_by")
 
     # TODO add proper history updates in dashboard
@@ -31,59 +31,42 @@ class PaymentInline(GenericStackedInline):
 class PaymentPriceInline(admin.StackedInline):
     model = PaymentPrice
     extra = 0
-    classes = ("grp-collapse grp-open",)  # style
-    inline_classes = ("grp-collapse grp-open",)  # style
+    classes = ('grp-collapse grp-open',)  # style
+    inline_classes = ('grp-collapse grp-open',)  # style
 
 
 class PaymentAdmin(VersionAdmin):
-    inlines = (PaymentPriceInline,)
+    inlines = (PaymentPriceInline, )
     model = Payment
-    list_display = (
-        "__str__",
-        "active",
-        "payment_type",
-        "deadline",
-        "delay",
-        "stripe_key",
-    )
-    list_filter = ["active", "stripe_key", "payment_type"]
+    list_display = ('__str__', 'active', 'payment_type', 'deadline', 'delay', 'stripe_key')
+    list_filter = ['active', 'stripe_key', 'payment_type']
 
 
 class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
-    list_display = ("payment", "user", "datetime", "refunded")
-    list_filter = ["refunded"]
-    search_fields = [
-        "user__first_name",
-        "user__last_name",
-        "user__username",
-        "user__ntnu_username",
-    ]
-    exclude = ("stripe_id",)
+    list_display = ('payment', 'user', 'datetime', 'refunded')
+    list_filter = ['refunded']
+    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__ntnu_username']
+    exclude = ('stripe_id',)
 
 
 class PaymentDelayAdmin(VersionAdmin):
     model = PaymentDelay
-    list_display = ("__str__", "valid_to", "active")
-    search_fields = [
-        "user__first_name",
-        "user__last_name",
-        "user__username",
-        "user__ntnu_username",
-    ]
-    list_filter = ["active"]
+    list_display = ('__str__', 'valid_to', 'active')
+    search_fields = ['user__first_name', 'user__last_name', 'user__username', 'user__ntnu_username']
+    list_filter = ['active']
 
 
 class PaymentReceiptAdmin(admin.ModelAdmin):
     model = PaymentReceipt
-    list_display = ("receipt_id",)
-    search_fields = ["receipt_id"]
+    list_display = ('receipt_id',)
+    search_fields = ['receipt_id']
 
 
 class PaymentTransactionAdmin(VersionAdmin):
     model = PaymentTransaction
-    list_display = ("__str__", "user", "datetime", "amount", "used_stripe")
-    list_filter = ("used_stripe", DepositWithdrawalFilter)
+    list_display = ('__str__', 'user', 'datetime', 'amount', 'used_stripe')
+    list_filter = ('used_stripe', DepositWithdrawalFilter)
 
 
 admin.site.register(PaymentReceipt, PaymentReceiptAdmin)

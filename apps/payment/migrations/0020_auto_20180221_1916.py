@@ -10,33 +10,22 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("contenttypes", "0002_remove_content_type_name"),
-        ("payment", "0019_paymenttransaction_unique_id"),
+        ('contenttypes', '0002_remove_content_type_name'),
+        ('payment', '0019_paymenttransaction_unique_id'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="PaymentReceipt",
+            name='PaymentReceipt',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("receipt_id", models.UUIDField(default=uuid.uuid4)),
-                ("object_id", models.PositiveIntegerField(null=True)),
-                (
-                    "content_type",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to="contenttypes.ContentType",
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('receipt_id', models.UUIDField(default=uuid.uuid4)),
+                ('object_id', models.PositiveIntegerField(null=True)),
+                ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
             ],
         ),
-        migrations.RemoveField(model_name="paymenttransaction", name="unique_id"),
+        migrations.RemoveField(
+            model_name='paymenttransaction',
+            name='unique_id',
+        ),
     ]

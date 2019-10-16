@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("sso", "0003_auto_20190506_1719")]
+    dependencies = [
+        ('sso', '0003_auto_20190506_1719'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="client",
-            name="redirect_uris",
-            field=models.TextField(
-                blank=True, help_text="Allowed URIs list, space separated"
-            ),
-        )
+            model_name='client',
+            name='redirect_uris',
+            field=models.TextField(blank=True, help_text='Allowed URIs list, space separated'),
+        ),
     ]

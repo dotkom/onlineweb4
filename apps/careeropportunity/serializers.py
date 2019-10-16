@@ -9,7 +9,10 @@ class LocationTagListSerializerFieldWithSlug(serializers.ModelSerializer):
     def to_representation(self, obj):
         locations = []
         for tag in obj.all():
-            locations.append({"name": tag.name, "slug": tag.slug})
+            locations.append({
+                'name': tag.name,
+                'slug': tag.slug
+            })
 
         return locations
 
@@ -21,20 +24,22 @@ class CareerSerializer(TaggitSerializer, serializers.ModelSerializer):
 
     class Meta:
         model = CareerOpportunity
-        fields = (
-            "id",
-            "company",
-            "title",
-            "ingress",
-            "description",
-            "website",
-            "start",
-            "end",
-            "featured",
-            "deadline",
-            "employment",
-            "location",
-        )
+        fields = ('id',
+                  'company',
+                  'title',
+                  'ingress',
+                  'description',
+                  'website',
+                  'start',
+                  'end',
+                  'featured',
+                  'deadline',
+                  'employment',
+                  'location'
+                  )
 
     def get_employment(self, obj):
-        return {"id": obj.employment, "name": obj.get_employment_display()}
+        return {
+            'id': obj.employment,
+            'name': obj.get_employment_display()
+        }

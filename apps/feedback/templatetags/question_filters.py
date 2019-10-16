@@ -14,8 +14,8 @@ def isinst(value, class_str):
     """
     isinstance in django templates.
     """
-    split = class_str.split(".")
-    return isinstance(value, getattr(import_module(".".join(split[:-1])), split[-1]))
+    split = class_str.split('.')
+    return isinstance(value, getattr(import_module('.'.join(split[:-1])), split[-1]))
 
 
 @register.filter

@@ -12,40 +12,18 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("shop", "0002_auto_20160110_2140"),
+        ('shop', '0002_auto_20160110_2140'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="MagicToken",
+            name='MagicToken',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "token",
-                    models.CharField(
-                        default=uuid.uuid4, max_length=36, verbose_name="token"
-                    ),
-                ),
-                ("data", models.TextField(verbose_name="data")),
-                (
-                    "created",
-                    models.DateTimeField(auto_now_add=True, verbose_name="created"),
-                ),
-                (
-                    "user",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        to=settings.AUTH_USER_MODEL,
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('token', models.CharField(default=uuid.uuid4, max_length=36, verbose_name='token')),
+                ('data', models.TextField(verbose_name='data')),
+                ('created', models.DateTimeField(auto_now_add=True, verbose_name='created')),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
-        )
+        ),
     ]

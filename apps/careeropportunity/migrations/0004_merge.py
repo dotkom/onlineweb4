@@ -8,8 +8,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("careeropportunity", "0003_careeropportunity_deadline"),
-        ("careeropportunity", "0002_auto_20161019_2138"),
+        ('careeropportunity', '0003_careeropportunity_deadline'),
+        ('careeropportunity', '0002_auto_20161019_2138'),
     ]
 
-    operations = []
+    operations = [
+    ]

@@ -6,10 +6,10 @@ from apps.authentication.constants import GroupType, RoleType
 
 
 def load_data(apps, schema_editor):
-    Group = apps.get_model("auth", "Group")
-    OnlineGroup = apps.get_model("authentication", "OnlineGroup")
-    GroupMember = apps.get_model("authentication", "GroupMember")
-    GroupRole = apps.get_model("authentication", "GroupRole")
+    Group = apps.get_model('auth', 'Group')
+    OnlineGroup = apps.get_model('authentication', 'OnlineGroup')
+    GroupMember = apps.get_model('authentication', 'GroupMember')
+    GroupRole = apps.get_model('authentication', 'GroupRole')
 
     for group in Group.objects.all():
         online_group = OnlineGroup()
@@ -37,6 +37,10 @@ def revert_data(*args):
 
 class Migration(migrations.Migration):
 
-    dependencies = [("authentication", "0035_auto_20190627_1854")]
+    dependencies = [
+        ('authentication', '0035_auto_20190627_1854'),
+    ]
 
-    operations = [migrations.RunPython(load_data, revert_data)]
+    operations = [
+        migrations.RunPython(load_data, revert_data)
+    ]

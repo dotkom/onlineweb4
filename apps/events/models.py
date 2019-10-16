@@ -36,62 +36,46 @@ from apps.payment import status as payment_status
 User = settings.AUTH_USER_MODEL
 
 TYPE_CHOICES = (
-    (1, "Sosialt"),
-    (2, "Bedriftspresentasjon"),
-    (3, "Kurs"),
-    (4, "Utflukt"),
-    (5, "Ekskursjon"),
-    (6, "Internt"),
-    (7, "Annet"),
-    (8, "Realfagskjelleren"),
+    (1, 'Sosialt'),
+    (2, 'Bedriftspresentasjon'),
+    (3, 'Kurs'),
+    (4, 'Utflukt'),
+    (5, 'Ekskursjon'),
+    (6, 'Internt'),
+    (7, 'Annet'),
+    (8, 'Realfagskjelleren')
 )
 
 
 # Managers
 
-
 class EventOrderedByRegistration(models.Manager):
     """
     Order events by registration start if registration start is within 7 days of today.
     """
-
     def get_queryset(self):
         now = timezone.now()
-        DELTA_FUTURE_SETTING = settings.OW4_SETTINGS.get("events").get(
-            "FEATURED_DAYS_FUTURE"
-        )
-        DELTA_PAST_SETTING = settings.OW4_SETTINGS.get("events").get(
-            "FEATURED_DAYS_PAST"
-        )
+        DELTA_FUTURE_SETTING = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_FUTURE')
+        DELTA_PAST_SETTING = settings.OW4_SETTINGS.get('events').get('FEATURED_DAYS_PAST')
         DAYS_BACK_DELTA = timezone.now() - timedelta(days=DELTA_PAST_SETTING)
         DAYS_FORWARD_DELTA = timezone.now() + timedelta(days=DELTA_FUTURE_SETTING)
 
-        return (
-            super(EventOrderedByRegistration, self)
-            .get_queryset()
-            .annotate(
-                registration_filtered=Case(
-                    When(
-                        Q(event_end__gte=now)
-                        & Q(attendance_event__registration_start__gte=DAYS_BACK_DELTA)
-                        & Q(
-                            attendance_event__registration_start__lte=DAYS_FORWARD_DELTA
-                        ),
-                        then="attendance_event__registration_start",
-                    ),
-                    default="event_end",
-                    output_field=models.DateTimeField(),
-                )
+        return super(EventOrderedByRegistration, self).get_queryset().\
+            annotate(registration_filtered=Case(
+                When(Q(event_end__gte=now) &
+                     Q(attendance_event__registration_start__gte=DAYS_BACK_DELTA) &
+                     Q(attendance_event__registration_start__lte=DAYS_FORWARD_DELTA),
+                     then='attendance_event__registration_start'),
+                default='event_end',
+                output_field=models.DateTimeField()
             )
-            .annotate(
-                is_today=Case(
-                    When(event_end__date=now.date(), then=Value(1)),
-                    default=Value(0),
-                    output_field=models.IntegerField(),
-                )
-            )
-            .order_by("-is_today", "registration_filtered")
+        ).annotate(is_today=Case(
+            When(event_end__date=now.date(),
+                 then=Value(1)),
+            default=Value(0),
+            output_field=models.IntegerField()
         )
+        ).order_by('-is_today', 'registration_filtered')
 
 
 class Event(models.Model):
@@ -100,73 +84,58 @@ class Event(models.Model):
     """
 
     IMAGE_FOLDER = "images/events"
-    IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".gif", ".png", ".tif", ".tiff"]
+    IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.gif', '.png', '.tif', '.tiff']
 
     # Managers
     objects = models.Manager()
     by_registration = EventOrderedByRegistration()
 
     author = models.ForeignKey(
-        User, related_name="oppretter", null=True, blank=True, on_delete=models.CASCADE
-    )
-    title = models.CharField(_("tittel"), max_length=60)
-    """Event title"""
-    event_start = models.DateTimeField(_("start-dato"))
-    """Datetime for event start"""
-    event_end = models.DateTimeField(_("slutt-dato"))
-    """Datetime for event end"""
-    location = models.CharField(_("lokasjon"), max_length=100)
-    """Event location"""
-    ingress_short = models.CharField(
-        _("kort ingress"),
-        max_length=150,
-        validators=[validators.MinLengthValidator(25)],
-        help_text="En kort ingress som blir vist på forsiden",
-    )
-    """Short ingress used on the frontpage"""
-    ingress = models.TextField(
-        _("ingress"),
-        validators=[validators.MinLengthValidator(25)],
-        help_text="En ingress som blir vist før beskrivelsen.",
-    )
-    """Ingress used in archive and details page"""
-    description = models.TextField(
-        _("beskrivelse"), validators=[validators.MinLengthValidator(45)]
-    )
-    """Event description shown on details page"""
-    image = models.ForeignKey(
-        ResponsiveImage,
-        related_name="events",
-        blank=True,
+        User,
+        related_name='oppretter',
         null=True,
-        on_delete=SET_NULL,
+        blank=True,
+        on_delete=models.CASCADE
     )
+    title = models.CharField(_('tittel'), max_length=60)
+    """Event title"""
+    event_start = models.DateTimeField(_('start-dato'))
+    """Datetime for event start"""
+    event_end = models.DateTimeField(_('slutt-dato'))
+    """Datetime for event end"""
+    location = models.CharField(_('lokasjon'), max_length=100)
+    """Event location"""
+    ingress_short = models.CharField(_("kort ingress"), max_length=150,
+                                     validators=[validators.MinLengthValidator(25)],
+                                     help_text='En kort ingress som blir vist på forsiden')
+    """Short ingress used on the frontpage"""
+    ingress = models.TextField(_('ingress'), validators=[validators.MinLengthValidator(25)],
+                               help_text='En ingress som blir vist før beskrivelsen.')
+    """Ingress used in archive and details page"""
+    description = models.TextField(_('beskrivelse'), validators=[validators.MinLengthValidator(45)])
+    """Event description shown on details page"""
+    image = models.ForeignKey(ResponsiveImage, related_name='events', blank=True, null=True, on_delete=SET_NULL)
     """Event image"""
-    event_type = models.SmallIntegerField(_("type"), choices=TYPE_CHOICES, null=False)
+    event_type = models.SmallIntegerField(_('type'), choices=TYPE_CHOICES, null=False)
     """Event type. Used mainly for filtering"""
-    organizer = models.ForeignKey(
-        Group, verbose_name=_("arrangør"), blank=True, null=True, on_delete=SET_NULL
-    )
+    organizer = models.ForeignKey(Group, verbose_name=_('arrangør'), blank=True, null=True, on_delete=SET_NULL)
     """Committee responsible for organizing the event"""
     visible = models.BooleanField(
-        _("Vis arrangementet utenfor Dashboard og Adminpanelet"),
+        _('Vis arrangementet utenfor Dashboard og Adminpanelet'),
         default=True,
-        help_text=_("Denne brukes for å skjule eksisterende arrangementer."),
-    )
+        help_text=_('Denne brukes for å skjule eksisterende arrangementer.'))
 
     feedback = GenericRelation(FeedbackRelation)
 
     def is_attendance_event(self):
         """ Returns true if the event is an attendance event """
-        return hasattr(self, "attendance_event")
+        return hasattr(self, 'attendance_event')
 
     # TODO move payment and feedback stuff to attendance event when dasboard is done
 
     def feedback_users(self):
         if self.is_attendance_event():
-            return [
-                a.user for a in self.attendance_event.attendees.filter(attended=True)
-            ]
+            return [a.user for a in self.attendance_event.attendees.filter(attended=True)]
         return []
 
     def feedback_date(self):
@@ -178,11 +147,9 @@ class Event(models.Model):
     def feedback_info(self):
         info = OrderedDict()
         if self.is_attendance_event():
-            info[_("Påmeldte")] = self.attendance_event.number_of_attendees
-            info[_("Oppmøtte")] = self.attendance_event.number_of_attendees - len(
-                self.attendance_event.not_attended()
-            )
-            info[_("Venteliste")] = self.attendance_event.number_on_waitlist
+            info[_('Påmeldte')] = self.attendance_event.number_of_attendees
+            info[_('Oppmøtte')] = self.attendance_event.number_of_attendees - len(self.attendance_event.not_attended())
+            info[_('Venteliste')] = self.attendance_event.number_on_waitlist
 
         return info
 
@@ -223,11 +190,7 @@ class Event(models.Model):
 
     def can_display(self, user):
         restriction = GroupRestriction.objects.filter(event=self).first()
-        if (
-            not user.is_anonymous
-            and self.is_attendance_event()
-            and self.attendance_event.is_attendee(user)
-        ):
+        if not user.is_anonymous and self.is_attendance_event() and self.attendance_event.is_attendee(user):
             return True
         if not self.visible:
             return False
@@ -242,36 +205,30 @@ class Event(models.Model):
         return slugify(unidecode(self.title))
 
     def get_absolute_url(self):
-        return reverse(
-            "events_details", kwargs={"event_id": self.id, "event_slug": self.slug}
-        )
+        return reverse('events_details', kwargs={'event_id': self.id, 'event_slug': self.slug})
 
     def clean(self):
         if not self.organizer:
-            raise ValidationError({"organizer": ["Arrangementet krever en arrangør."]})
+            raise ValidationError({'organizer': ['Arrangementet krever en arrangør.']})
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
-        super().save(
-            force_insert=force_insert,
-            force_update=force_update,
-            using=using,
-            update_fields=update_fields,
-        )
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.organizer:
-            assign_perm("events.change_event", self.organizer, obj=self)
-            assign_perm("events.delete_event", self.organizer, obj=self)
+            assign_perm('events.change_event', self.organizer, obj=self)
+            assign_perm('events.delete_event', self.organizer, obj=self)
 
     def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name = _("arrangement")
-        verbose_name_plural = _("arrangementer")
-        permissions = (("view_event", "View Event"),)
-        default_permissions = ("add", "change", "delete")
+        verbose_name = _('arrangement')
+        verbose_name_plural = _('arrangementer')
+        permissions = (
+            ('view_event', 'View Event'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 """
@@ -283,14 +240,11 @@ class Rule(models.Model):
     """
     Super class for a rule object
     """
-
-    offset = models.PositiveSmallIntegerField(
-        _("utsettelse"), help_text=_("utsettelse oppgis i timer"), default=0
-    )
+    offset = models.PositiveSmallIntegerField(_('utsettelse'), help_text=_('utsettelse oppgis i timer'), default=0)
 
     def get_offset_time(self, time):
         if type(time) is not datetime:
-            raise TypeError("time must be a datetime, not %s" % type(time))
+            raise TypeError('time must be a datetime, not %s' % type(time))
         else:
             return time + timedelta(hours=self.offset)
 
@@ -299,17 +253,17 @@ class Rule(models.Model):
         return True
 
     def __str__(self):
-        return "Rule"
+        return 'Rule'
 
     class Meta:
-        permissions = (("view_rule", "View Rule"),)
-        default_permissions = ("add", "change", "delete")
+        permissions = (
+            ('view_rule', 'View Rule'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class FieldOfStudyRule(Rule):
-    field_of_study = models.SmallIntegerField(
-        _("studieretning"), choices=FieldOfStudyType.ALL_CHOICES
-    )
+    field_of_study = models.SmallIntegerField(_('studieretning'), choices=FieldOfStudyType.ALL_CHOICES)
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -322,44 +276,30 @@ class FieldOfStudyRule(Rule):
                 return {"status": True, "message": None, "status_code": 210}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {
-                    "status": False,
-                    "message": _("Påmeldingen har ikke åpnet enda."),
-                    "status_code": 402,
-                }
+                return {"status": False, "message": _("Påmeldingen har ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
-                return {
-                    "status": False,
-                    "message": _("Din studieretning har utsatt påmelding."),
-                    "offset": offset_datetime,
-                    "status_code": 420,
-                }
+                return {"status": False, "message": _("Din studieretning har utsatt påmelding."),
+                        "offset": offset_datetime, "status_code": 420}
         return {
-            "status": False,
-            "message": _(
-                "Din studieretning er en annen enn de som har tilgang til dette arrangementet."
-            ),
-            "status_code": 410,
-        }
+            "status": False, "message":
+            _("Din studieretning er en annen enn de som har tilgang til dette arrangementet."), "status_code": 410}
 
     def __str__(self):
         if self.offset > 0:
-            time_unit = _("timer") if self.offset > 1 else _("time")
-            return _("%s etter %d %s") % (
-                str(self.get_field_of_study_display()),
-                self.offset,
-                time_unit,
-            )
+            time_unit = _('timer') if self.offset > 1 else _('time')
+            return _("%s etter %d %s") % (str(self.get_field_of_study_display()), self.offset, time_unit)
         return str(self.get_field_of_study_display())
 
     class Meta:
-        permissions = (("view_fieldofstudyrule", "View FieldOfStudyRule"),)
-        default_permissions = ("add", "change", "delete")
+        permissions = (
+            ('view_fieldofstudyrule', 'View FieldOfStudyRule'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class GradeRule(Rule):
-    grade = models.SmallIntegerField(_("klassetrinn"), null=False)
+    grade = models.SmallIntegerField(_('klassetrinn'), null=False)
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -372,38 +312,36 @@ class GradeRule(Rule):
                 return {"status": True, "message": None, "status_code": 211}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {
-                    "status": False,
-                    "message": _("Påmeldingen har ikke åpnet enda."),
-                    "status_code": 402,
-                }
+                return {"status": False, "message": _("Påmeldingen har ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
                 return {
-                    "status": False,
-                    "message": _("Ditt klassetrinn har utsatt påmelding."),
-                    "offset": offset_datetime,
-                    "status_code": 421,
-                }
+                    "status": False, "message":
+                    _("Ditt klassetrinn har utsatt påmelding."), "offset": offset_datetime, "status_code": 421}
         return {
-            "status": False,
-            "message": _("Ditt klassetrinn har ikke tilgang til dette arrangementet."),
-            "status_code": 411,
-        }
+            "status": False, "message":
+                _("Ditt klassetrinn har ikke tilgang til dette arrangementet."), "status_code": 411}
 
     def __str__(self):
         if self.offset > 0:
-            time_unit = _("timer") if self.offset > 1 else _("time")
+            time_unit = _('timer') if self.offset > 1 else _('time')
             return _("%s. klasse etter %d %s") % (self.grade, self.offset, time_unit)
         return _("%s. klasse") % self.grade
 
     class Meta:
-        permissions = (("view_graderule", "View GradeRule"),)
-        default_permissions = ("add", "change", "delete")
+        permissions = (
+            ('view_graderule', 'View GradeRule'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class UserGroupRule(Rule):
-    group = models.ForeignKey(Group, blank=False, null=False, on_delete=models.CASCADE)
+    group = models.ForeignKey(
+        Group,
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE
+    )
 
     def satisfied(self, user, registration_start):
         """ Override method """
@@ -414,44 +352,33 @@ class UserGroupRule(Rule):
                 return {"status": True, "message": None, "status_code": 212}
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {
-                    "status": False,
-                    "message": _("Påmeldingen er ikke åpnet enda."),
-                    "status_code": 402,
-                }
+                return {"status": False, "message": _("Påmeldingen er ikke åpnet enda."), "status_code": 402}
             # In the last case there is a delayed signup
             else:
-                return {
-                    "status": False,
-                    "message": _("%s har utsatt påmelding.") % self.group,
-                    "offset": offset_datetime,
-                    "status_code": 422,
-                }
+                return {"status": False, "message": _("%s har utsatt påmelding.") % self.group,
+                        "offset": offset_datetime, "status_code": 422}
         return {
-            "status": False,
-            "message": _("Din brukergruppe har ikke tilgang til dette arrangementet."),
-            "status_code": 412,
-        }
+            "status": False, "message":
+            _("Din brukergruppe har ikke tilgang til dette arrangementet."), "status_code": 412}
 
     def __str__(self):
         if self.offset > 0:
-            time_unit = _("timer") if self.offset > 1 else _("time")
+            time_unit = _('timer') if self.offset > 1 else _('time')
             return _("%s etter %d %s") % (str(self.group), self.offset, time_unit)
         return str(self.group)
 
     class Meta:
-        permissions = (("view_usergrouprule", "View UserGroupRule"),)
-        default_permissions = ("add", "change", "delete")
+        permissions = (
+            ('view_usergrouprule', 'View UserGroupRule'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class RuleBundle(models.Model):
     """
     Access restriction rule object
     """
-
-    description = models.CharField(
-        _("beskrivelse"), max_length=100, blank=True, null=True
-    )
+    description = models.CharField(_('beskrivelse'), max_length=100, blank=True, null=True)
     field_of_study_rules = models.ManyToManyField(FieldOfStudyRule, blank=True)
     grade_rules = models.ManyToManyField(GradeRule, blank=True)
     user_group_rules = models.ManyToManyField(UserGroupRule, blank=True)
@@ -473,7 +400,7 @@ class RuleBundle(models.Model):
 
         for rule in self.get_all_rules():
             response = rule.satisfied(user, registration_start)
-            if response["status"]:
+            if response['status']:
                 return [response]
             else:
                 errors.append(response)
@@ -489,8 +416,10 @@ class RuleBundle(models.Model):
             return _("Tom rule bundle.")
 
     class Meta:
-        permissions = (("view_rulebundle", "View RuleBundle"),)
-        default_permissions = ("add", "change", "delete")
+        permissions = (
+            ('view_rulebundle', 'View RuleBundle'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 """
@@ -503,8 +432,8 @@ class Extras(models.Model):
     Choices for events
     """
 
-    choice = models.CharField("valg", max_length=69)
-    note = models.CharField("notat", max_length=200, blank=True, null=True)
+    choice = models.CharField('valg', max_length=69)
+    note = models.CharField('notat', max_length=200, blank=True, null=True)
 
     def __str__(self):
         return self.choice
@@ -512,44 +441,30 @@ class Extras(models.Model):
     class Meta:
         verbose_name = _("ekstra valg")
         verbose_name_plural = _("ekstra valg")
-        ordering = ["choice"]
-        default_permissions = ("add", "change", "delete")
+        ordering = ['choice']
+        default_permissions = ('add', 'change', 'delete')
 
 
 class AttendanceEvent(models.Model):
     """
     Events that require special considerations regarding attendance.
     """
-
     event = models.OneToOneField(
         Event,
         primary_key=True,
-        related_name="attendance_event",
-        on_delete=models.CASCADE,
+        related_name='attendance_event',
+        on_delete=models.CASCADE
     )
-    max_capacity = models.PositiveIntegerField(
-        _("maks-kapasitet"), null=False, blank=False
-    )
-    waitlist = models.BooleanField(_("venteliste"), default=False)
-    guest_attendance = models.BooleanField(
-        _("gjestepåmelding"), null=False, blank=False, default=False
-    )
-    registration_start = models.DateTimeField(
-        _("registrerings-start"), null=False, blank=False
-    )
-    unattend_deadline = models.DateTimeField(
-        _("avmeldings-frist"), null=False, blank=False
-    )
-    registration_end = models.DateTimeField(
-        _("registrerings-slutt"), null=False, blank=False
-    )
+    max_capacity = models.PositiveIntegerField(_('maks-kapasitet'), null=False, blank=False)
+    waitlist = models.BooleanField(_('venteliste'), default=False)
+    guest_attendance = models.BooleanField(_('gjestepåmelding'), null=False, blank=False, default=False)
+    registration_start = models.DateTimeField(_('registrerings-start'), null=False, blank=False)
+    unattend_deadline = models.DateTimeField(_('avmeldings-frist'), null=False, blank=False)
+    registration_end = models.DateTimeField(_('registrerings-slutt'), null=False, blank=False)
 
     # Automatic mark setting for not attending
-    automatically_set_marks = models.BooleanField(
-        _("automatisk prikk"),
-        default=False,
-        help_text=_("Påmeldte som ikke har møtt vil automatisk få prikk"),
-    )
+    automatically_set_marks = models.BooleanField(_('automatisk prikk'), default=False,
+                                                  help_text=_('Påmeldte som ikke har møtt vil automatisk få prikk'))
     marks_has_been_set = models.BooleanField(default=False)
 
     # Access rules
@@ -558,7 +473,7 @@ class AttendanceEvent(models.Model):
     # Extra choices
     extras = models.ManyToManyField(Extras, blank=True)
 
-    payments = GenericRelation("payment.Payment")
+    payments = GenericRelation('payment.Payment')
 
     @property
     def feedback(self):
@@ -574,7 +489,7 @@ class AttendanceEvent(models.Model):
     @property
     def has_reservation(self):
         """Returns whether this event has an attached reservation """
-        return hasattr(self, "reserved_seats")
+        return hasattr(self, 'reserved_seats')
 
     @property
     def has_extras(self):
@@ -583,7 +498,7 @@ class AttendanceEvent(models.Model):
     @property
     def attending_attendees_qs(self):
         """Queryset with all attendees not on waiting list """
-        return self.attendees.all()[: self.number_of_attendee_seats]
+        return self.attendees.all()[:self.number_of_attendee_seats]
 
     def not_attended(self):
         """List of all attending attendees who have not attended"""
@@ -592,7 +507,7 @@ class AttendanceEvent(models.Model):
     @property
     def waitlist_qs(self):
         """Queryset with all attendees on waiting list """
-        return self.attendees.all()[self.number_of_attendee_seats :]
+        return self.attendees.all()[self.number_of_attendee_seats:]
 
     @property
     def reservees_qs(self):
@@ -644,11 +559,7 @@ class AttendanceEvent(models.Model):
     @property
     def free_seats(self):
         """Integer representing the number of free seats for an event"""
-        return (
-            0
-            if self.number_of_seats_taken == self.max_capacity
-            else self.max_capacity - self.number_of_seats_taken
-        )
+        return 0 if self.number_of_seats_taken == self.max_capacity else self.max_capacity - self.number_of_seats_taken
 
     @property
     def room_on_event(self):
@@ -662,57 +573,19 @@ class AttendanceEvent(models.Model):
     @property
     def visible_attending_attendees(self):
         """ List with all attendees whom want to be displayed as attending else return a anonymous name """
-        dyr = [
-            "piggsvin",
-            "kjøttmeis",
-            "flaggermus",
-            "elg",
-            "villsvin",
-            "rådyr",
-            "moskus",
-            "narhval",
-            "spekkhogger",
-            "gaupe",
-            "ekorn",
-            "kanin",
-            "lemen",
-            "neshorn",
-            "ørn",
-            "gullfisk",
-            "kodiakbjørn",
-            "hacker",
-            "stol",
-            "bever",
-            "datamaskin",
-            "piano",
-            "strykejern",
-            "samurai",
-            "laks",
-            "server",
-        ]
+        dyr = ['piggsvin', 'kjøttmeis', 'flaggermus', 'elg', 'villsvin', 'rådyr', 'moskus', 'narhval',
+               'spekkhogger', 'gaupe', 'ekorn', 'kanin', 'lemen', 'neshorn', 'ørn', 'gullfisk', 'kodiakbjørn',
+               'hacker', 'stol', 'bever', 'datamaskin', 'piano', 'strykejern', 'samurai', 'laks', 'server']
 
         visible_attendees = []
         for attendee in self.attending_attendees_qs:
             user = attendee.user
             visible = attendee.show_as_attending_event
-            f_name, l_name = (
-                [user.first_name, user.last_name]
-                if visible
-                else ["Anonym " + random_choice(dyr), ""]
-            )
-            year = "{} klasse".format(user.year)
-            visible_attendees.append(
-                {
-                    "visible": visible,
-                    "first_name": f_name,
-                    "last_name": l_name,
-                    "year": year,
-                }
-            )
+            f_name, l_name = [user.first_name, user.last_name] if visible else ['Anonym ' + random_choice(dyr), '']
+            year = '{} klasse'.format(user.year)
+            visible_attendees.append({'visible': visible, 'first_name': f_name, 'last_name': l_name, 'year': year})
 
-        return sorted(
-            visible_attendees, key=lambda attendee: attendee["visible"], reverse=True
-        )
+        return sorted(visible_attendees, key=lambda attendee: attendee['visible'], reverse=True)
 
     def has_delayed_signup(self, user):
         pass
@@ -735,10 +608,7 @@ class AttendanceEvent(models.Model):
 
     def is_suspended(self, user):
         for suspension in user.get_active_suspensions():
-            if (
-                not suspension.expiration_date
-                or suspension.expiration_date > timezone.now().date()
-            ):
+            if not suspension.expiration_date or suspension.expiration_date > timezone.now().date():
                 return True
 
         return False
@@ -753,10 +623,7 @@ class AttendanceEvent(models.Model):
 
     def bump_waitlist_for_x_users(self, extra_capacity=1):
         """Handle bumping of the x first users on the waitlist"""
-        from apps.events.utils import (
-            handle_waitlist_bump,
-        )  # Imported here to avoid circular import
-
+        from apps.events.utils import handle_waitlist_bump  # Imported here to avoid circular import
         if not self.waitlist_qs:
             return
         bumped_attendees = self.waitlist_qs[:extra_capacity]
@@ -782,24 +649,24 @@ class AttendanceEvent(models.Model):
         extensive, and tracking where it's going wrong is much needed.
         """
 
-        response = {"status": False, "message": "", "status_code": None}
+        response = {'status': False, 'message': '', 'status_code': None}
 
         # User is already an attendee
         if self.attendees.filter(user=user).exists():
-            response["message"] = "Du er allerede meldt på dette arrangementet."
-            response["status_code"] = 404
+            response['message'] = 'Du er allerede meldt på dette arrangementet.'
+            response['status_code'] = 404
             return response
 
         # Registration closed
         if timezone.now() > self.registration_end:
-            response["message"] = _("Påmeldingen er ikke lenger åpen.")
-            response["status_code"] = 502
+            response['message'] = _('Påmeldingen er ikke lenger åpen.')
+            response['status_code'] = 502
             return response
 
         # Room for me on the event?
         if not self.room_on_event:
-            response["message"] = _("Det er ikke mer plass på dette arrangementet.")
-            response["status_code"] = 503
+            response['message'] = _("Det er ikke mer plass på dette arrangementet.")
+            response['status_code'] = 503
             return response
 
         #
@@ -809,15 +676,15 @@ class AttendanceEvent(models.Model):
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
         response = self.rules_satisfied(user)
-        if not response["status"]:
-            if "offset" not in response:
+        if not response['status']:
+            if 'offset' not in response:
                 return response
 
         # Do I have any marks that postpone my registration date?
         response = self._check_marks(response, user)
 
         # Return response if offset was set.
-        if "offset" in response and response["offset"] > timezone.now():
+        if 'offset' in response and response['offset'] > timezone.now():
             return response
 
         #
@@ -826,31 +693,29 @@ class AttendanceEvent(models.Model):
 
         # Registration not open
         if timezone.now() < self.registration_start:
-            response["status"] = False
-            response["message"] = _("Påmeldingen har ikke åpnet enda.")
-            response["status_code"] = 501
+            response['status'] = False
+            response['message'] = _('Påmeldingen har ikke åpnet enda.')
+            response['status_code'] = 501
             return response
 
         # Is suspended
         if self.is_suspended(user):
-            response["status"] = False
-            response["message"] = _("Du er suspendert og kan ikke melde deg på.")
-            response["status_code"] = 402
+            response['status'] = False
+            response['message'] = _("Du er suspendert og kan ikke melde deg på.")
+            response['status_code'] = 402
 
             return response
 
         # Checks if the event is group restricted and if the user is in the right group
         if not self.event.can_display(user):
-            response["status"] = False
-            response["message"] = _(
-                "Du har ikke tilgang til å melde deg på dette arrangementet."
-            )
-            response["status_code"] = 403
+            response['status'] = False
+            response['message'] = _("Du har ikke tilgang til å melde deg på dette arrangementet.")
+            response['status_code'] = 403
 
             return response
 
         # No objections, set eligible.
-        response["status"] = True
+        response['status'] = True
         return response
 
     def _check_marks(self, response, user):
@@ -863,15 +728,12 @@ class AttendanceEvent(models.Model):
             before_expiry = self.registration_start.date() < expiry_date
 
             if postponed_registration_start > timezone.now() and before_expiry:
-                if (
-                    "offset" in response
-                    and response["offset"] < postponed_registration_start
-                    or "offset" not in response
-                ):
-                    response["status"] = False
-                    response["status_code"] = 401
-                    response["message"] = _("Din påmelding er utsatt grunnet prikker.")
-                    response["offset"] = postponed_registration_start
+                if 'offset' in response and response['offset'] < postponed_registration_start \
+                        or 'offset' not in response:
+                    response['status'] = False
+                    response['status_code'] = 401
+                    response['message'] = _("Din påmelding er utsatt grunnet prikker.")
+                    response['offset'] = postponed_registration_start
         return response
 
     def _process_rulebundle_satisfaction_responses(self, responses):
@@ -882,13 +744,13 @@ class AttendanceEvent(models.Model):
         errors = []
 
         for response in responses:
-            if response["status"]:
+            if response['status']:
                 return response
-            elif "offset" in response:
-                if response["offset"] < smallest_offset:
-                    smallest_offset = response["offset"]
+            elif 'offset' in response:
+                if response['offset'] < smallest_offset:
+                    smallest_offset = response['offset']
                     offset_response = response
-            elif response["status_code"] == 402:
+            elif response['status_code'] == 402:
                 future_response = response
             else:
                 errors.append(response)
@@ -906,20 +768,18 @@ class AttendanceEvent(models.Model):
         """
         # If the event has guest attendance, allow absolutely anyone
         if self.guest_attendance:
-            return {"status": True, "status_code": 201}
+            return {'status': True, 'status_code': 201}
 
         # If the user is not a member, return False right away
         # TODO check for guest list
         if not user.is_member:
             return {
-                "status": False,
-                "message": _("Dette arrangementet er kun åpent for medlemmer."),
-                "status_code": 400,
-            }
+                'status': False, 'message':
+                _("Dette arrangementet er kun åpent for medlemmer."), 'status_code': 400}
 
         # If there are no rule_bundles on this object, all members of Online are allowed.
         if not self.rule_bundles.exists() and user.is_member:
-            return {"status": True, "status_code": 200}
+            return {'status': True, 'status_code': 200}
 
         # Check all rule bundles
         responses = []
@@ -961,14 +821,9 @@ class AttendanceEvent(models.Model):
             return None
         except MultipleObjectsReturned:
             import logging
-
             logger = logging.getLogger(__name__)
-            logger.warning(
-                "Multiple payment objects connected to attendance event #%s." % self.pk
-            )
-            return (
-                self.get_payments()
-            )  # Sneaky hack, however, use get_payments for multiple
+            logger.warning("Multiple payment objects connected to attendance event #%s." % self.pk)
+            return self.get_payments()  # Sneaky hack, however, use get_payments for multiple
 
     def __str__(self):
         return self.event.title
@@ -982,101 +837,84 @@ class AttendanceEvent(models.Model):
         as it looks at the difference between the fields.
         """
 
-        old_attendance_event = AttendanceEvent.objects.filter(
-            event_id=self.event_id
-        ).first()
+        old_attendance_event = AttendanceEvent.objects.filter(event_id=self.event_id).first()
         if not old_attendance_event:
             # Attendance event was just created
             return
 
-        extra_capacity = (
-            self.number_of_attendee_seats
-            - old_attendance_event.number_of_attendee_seats
-        )
+        extra_capacity = self.number_of_attendee_seats - old_attendance_event.number_of_attendee_seats
         if extra_capacity > 0:
             # Using old object because waitlist has already been changed in self
             old_attendance_event.bump_waitlist_for_x_users(extra_capacity)
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
         self.bump_waitlist()
 
-        super().save(
-            force_insert=force_insert,
-            force_update=force_update,
-            using=using,
-            update_fields=update_fields,
-        )
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.event.organizer:
-            assign_perm("events.change_attendanceevent", self.event.organizer, obj=self)
-            assign_perm("events.delete_attendanceevent", self.event.organizer, obj=self)
+            assign_perm('events.change_attendanceevent', self.event.organizer, obj=self)
+            assign_perm('events.delete_attendanceevent', self.event.organizer, obj=self)
 
     class Meta:
-        verbose_name = _("påmelding")
-        verbose_name_plural = _("påmeldinger")
-        permissions = (("view_attendanceevent", "View AttendanceEvent"),)
-        default_permissions = ("add", "change", "delete")
+        verbose_name = _('påmelding')
+        verbose_name_plural = _('påmeldinger')
+        permissions = (
+            ('view_attendanceevent', 'View AttendanceEvent'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class CompanyEvent(models.Model):
     """
     Company relation to AttendanceEvent
     """
-
     company = models.ForeignKey(
-        Company, verbose_name=_("bedrifter"), on_delete=models.CASCADE
+        Company,
+        verbose_name=_('bedrifter'),
+        on_delete=models.CASCADE
     )
     event = models.ForeignKey(
         Event,
-        verbose_name=_("arrangement"),
-        related_name="companies",
-        on_delete=models.CASCADE,
+        verbose_name=_('arrangement'),
+        related_name='companies',
+        on_delete=models.CASCADE
     )
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
-        super().save(
-            force_insert=force_insert,
-            force_update=force_update,
-            using=using,
-            update_fields=update_fields,
-        )
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.event.organizer:
-            assign_perm("events.change_companyevent", self.event.organizer, obj=self)
-            assign_perm("events.delete_companyevent", self.event.organizer, obj=self)
+            assign_perm('events.change_companyevent', self.event.organizer, obj=self)
+            assign_perm('events.delete_companyevent', self.event.organizer, obj=self)
 
     class Meta:
-        verbose_name = _("bedrift")
-        verbose_name_plural = _("bedrifter")
-        permissions = (("view_companyevent", "View CompanyEvent"),)
-        ordering = ("company",)
-        default_permissions = ("add", "change", "delete")
-        unique_together = (("company", "event"),)
+        verbose_name = _('bedrift')
+        verbose_name_plural = _('bedrifter')
+        permissions = (
+            ('view_companyevent', 'View CompanyEvent'),
+        )
+        ordering = ('company',)
+        default_permissions = ('add', 'change', 'delete')
+        unique_together = (('company', 'event',),)
 
 
 class Attendee(models.Model):
     """
     User relation to AttendanceEvent.
     """
-
-    event = models.ForeignKey(
-        AttendanceEvent, related_name="attendees", on_delete=models.CASCADE
-    )
+    event = models.ForeignKey(AttendanceEvent, related_name="attendees", on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     timestamp = models.DateTimeField(auto_now_add=True, editable=False)
-    attended = models.BooleanField(_("var tilstede"), default=False)
-    paid = models.BooleanField(_("har betalt"), default=False)
-    note = models.CharField(_("notat"), max_length=100, blank=True, default="")
+    attended = models.BooleanField(_('var tilstede'), default=False)
+    paid = models.BooleanField(_('har betalt'), default=False)
+    note = models.CharField(_('notat'), max_length=100, blank=True, default='')
     extras = models.ForeignKey(Extras, blank=True, null=True, on_delete=models.CASCADE)
 
-    show_as_attending_event = models.BooleanField(
-        _("vis som påmeldt arrangementet"), default=False
-    )
+    show_as_attending_event = models.BooleanField(_('vis som påmeldt arrangementet'), default=False)
 
     def __str__(self):
         return self.user.get_full_name()
@@ -1084,11 +922,8 @@ class Attendee(models.Model):
     def delete(self):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
-
         try:
-            PaymentDelay.objects.get(
-                user=self.user, payment=self.event.payment()
-            ).delete()
+            PaymentDelay.objects.get(user=self.user, payment=self.event.payment()).delete()
         except PaymentDelay.DoesNotExist:
             # Do nothing
             False
@@ -1105,9 +940,7 @@ class Attendee(models.Model):
 
         payment = self.event.payment()
         if payment:
-            payment_relations = PaymentRelation.objects.filter(
-                payment=payment, user=self.user
-            )
+            payment_relations = PaymentRelation.objects.filter(payment=payment, user=self.user)
             return payment_relations
         return None
 
@@ -1118,33 +951,23 @@ class Attendee(models.Model):
         :return: If the user has paid anything for the event.
         """
         if self.payment_relations:
-            non_refunded_payment_relations = self.payment_relations.filter(
-                refunded=False
-            )
-            return any(
-                map(
-                    lambda relation: relation.status == payment_status.DONE,
-                    non_refunded_payment_relations,
-                )
-            )
+            non_refunded_payment_relations = self.payment_relations.filter(refunded=False)
+            return any(map(lambda relation: relation.status == payment_status.DONE, non_refunded_payment_relations))
         return False
 
     @property
     def payment_delays(self):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
-
         try:
-            return PaymentDelay.objects.filter(
-                user=self.user, payment=self.event.payment()
-            )
+            return PaymentDelay.objects.filter(user=self.user, payment=self.event.payment())
         except PaymentDelay.DoesNotExist:
             return PaymentDelay.objects.none()
 
     def get_payment_deadline(self):
         delays = self.payment_delays
         if len(delays) == 0:
-            return "Betalt"
+            return 'Betalt'
         return delays.first().valid_to
 
     def is_on_waitlist(self):
@@ -1153,30 +976,22 @@ class Attendee(models.Model):
     # Unattend user from event
     def unattend(self, admin_user):
         logger = logging.getLogger(__name__)
-        logger.info(
-            'User %s was removed from event "%s" by %s on %s'
-            % (self.user.get_full_name(), self.event, admin_user, datetime.now())
-        )
+        logger.info('User %s was removed from event "%s" by %s on %s' %
+                    (self.user.get_full_name(), self.event, admin_user, datetime.now()))
 
         # Notify responsible group if someone is unattended after deadline
         if timezone.now() >= self.event.unattend_deadline:
-            subject = "[%s] %s har blitt avmeldt arrangementet av %s" % (
-                self.event,
-                self.user.get_full_name(),
-                admin_user,
-            )
+            subject = '[%s] %s har blitt avmeldt arrangementet av %s' % (self.event, self.user.get_full_name(),
+                                                                         admin_user)
 
-            content = render_to_string(
-                "events/email/unattend.txt",
-                {
-                    "user": self.user.get_full_name(),
-                    "user_id": self.user_id,
-                    "event": self.event,
-                    "admin": admin_user,
-                    "admin_id": admin_user.id,
-                    "time": timezone.now().strftime("%d. %b %H:%M:%S"),
-                },
-            )
+            content = render_to_string('events/email/unattend.txt', {
+                'user': self.user.get_full_name(),
+                'user_id': self.user_id,
+                'event': self.event,
+                'admin': admin_user,
+                'admin_id': admin_user.id,
+                'time': timezone.now().strftime('%d. %b %H:%M:%S')
+            })
 
             to_email = self.event.event.feedback_mail()
             EmailMessage(subject, content, "online@online.ntnu.no", [to_email]).send()
@@ -1187,35 +1002,29 @@ class Attendee(models.Model):
         # TODO: Not delete attendee unless payments have been refunded?
         self.delete()
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
-        super().save(
-            force_insert=force_insert,
-            force_update=force_update,
-            using=using,
-            update_fields=update_fields,
-        )
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.event.event.organizer:
-            assign_perm("events.change_attendee", self.event.event.organizer, obj=self)
-            assign_perm("events.delete_attendee", self.event.event.organizer, obj=self)
+            assign_perm('events.change_attendee', self.event.event.organizer, obj=self)
+            assign_perm('events.delete_attendee', self.event.event.organizer, obj=self)
 
     def _clean_payment_delays(self):
         for delay in self.payment_delays:
             delay.delete()
 
     class Meta:
-        ordering = ["timestamp"]
-        unique_together = (("event", "user"),)
-        permissions = (("view_attendee", "View Attendee"),)
-        default_permissions = ("add", "change", "delete")
+        ordering = ['timestamp']
+        unique_together = (('event', 'user'),)
+        permissions = (
+            ('view_attendee', 'View Attendee'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Reservation(models.Model):
-    attendance_event = models.OneToOneField(
-        AttendanceEvent, related_name="reserved_seats", on_delete=models.CASCADE
-    )
+    attendance_event = models.OneToOneField(AttendanceEvent, related_name="reserved_seats", on_delete=models.CASCADE)
     seats = models.PositiveIntegerField("reserverte plasser", blank=False, null=False)
 
     @property
@@ -1225,97 +1034,67 @@ class Reservation(models.Model):
     def __str__(self):
         return "Reservasjoner for %s" % self.attendance_event.event.title
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
         # Notify attendance event that the waitlist may have changed
         self.attendance_event.bump_waitlist()
-        super().save(
-            force_insert=force_insert,
-            force_update=force_update,
-            using=using,
-            update_fields=update_fields,
-        )
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.attendance_event.event.organizer:
-            assign_perm(
-                "events.change_reservation",
-                self.attendance_event.event.organizer,
-                obj=self,
-            )
-            assign_perm(
-                "events.delete_reservation",
-                self.attendance_event.event.organizer,
-                obj=self,
-            )
+            assign_perm('events.change_reservation', self.attendance_event.event.organizer, obj=self)
+            assign_perm('events.delete_reservation', self.attendance_event.event.organizer, obj=self)
 
     class Meta:
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
-        permissions = (("view_reservation", "View Reservation"),)
-        default_permissions = ("add", "change", "delete")
+        permissions = (
+            ('view_reservation', 'View Reservation'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class Reservee(models.Model):
     """
     Reservation entry
     """
-
-    reservation = models.ForeignKey(
-        Reservation, related_name="reservees", on_delete=models.CASCADE
-    )
+    reservation = models.ForeignKey(Reservation, related_name='reservees', on_delete=models.CASCADE)
     # I 2014 var norges lengste navn på 69 tegn;
     # julius andreas gimli arn macgyver chewbacka highlander elessar-jankov
-    name = models.CharField("navn", max_length=69)
-    note = models.CharField("notat", max_length=100)
-    allergies = models.CharField("allergier", max_length=200, null=True, blank=True)
+    name = models.CharField('navn', max_length=69)
+    note = models.CharField('notat', max_length=100)
+    allergies = models.CharField('allergier', max_length=200, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
-        super().save(
-            force_insert=force_insert,
-            force_update=force_update,
-            using=using,
-            update_fields=update_fields,
-        )
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        super().save(force_insert=force_insert, force_update=force_update, using=using, update_fields=update_fields)
 
         if self.reservation.attendance_event.event.organizer:
-            assign_perm(
-                "events.change_reservee",
-                self.reservation.attendance_event.event.organizer,
-                obj=self,
-            )
-            assign_perm(
-                "events.delete_reservee",
-                self.reservation.attendance_event.event.organizer,
-                obj=self,
-            )
+            assign_perm('events.change_reservee', self.reservation.attendance_event.event.organizer, obj=self)
+            assign_perm('events.delete_reservee', self.reservation.attendance_event.event.organizer, obj=self)
 
     class Meta:
         verbose_name = _("reservasjon")
         verbose_name_plural = _("reservasjoner")
-        ordering = ["id"]
-        permissions = (("view_reservee", "View Reservee"),)
-        default_permissions = ("add", "change", "delete")
+        ordering = ['id']
+        permissions = (
+            ('view_reservee', 'View Reservee'),
+        )
+        default_permissions = ('add', 'change', 'delete')
 
 
 class GroupRestriction(models.Model):
     event = models.OneToOneField(
         Event,
         primary_key=True,
-        related_name="group_restriction",
-        on_delete=models.CASCADE,
+        related_name='group_restriction',
+        on_delete=models.CASCADE
     )
 
-    groups = models.ManyToManyField(
-        Group,
-        blank=True,
-        help_text=_("Legg til de gruppene som skal ha tilgang til arrangementet"),
-    )
+    groups = models.ManyToManyField(Group, blank=True,
+                                    help_text=_('Legg til de gruppene som skal ha tilgang til arrangementet'))
 
     def has_access(self, user):
         # returns True if any of the users groups are in one of the accepted groups
@@ -1324,5 +1103,7 @@ class GroupRestriction(models.Model):
     class Meta:
         verbose_name = _("restriksjon")
         verbose_name_plural = _("restriksjoner")
-        permissions = (("view_restriction", "View Restriction"),)
-        default_permissions = ("add", "change", "delete")
+        permissions = (
+            ('view_restriction', 'View Restriction'),
+        )
+        default_permissions = ('add', 'change', 'delete')

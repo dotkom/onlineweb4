@@ -7,6 +7,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("events", "0014_auto_20161007_1846")]
+    dependencies = [
+        ('events', '0014_auto_20161007_1846'),
+    ]
 
-    operations = [migrations.RemoveField(model_name="event", name="old_image")]
+    operations = [
+        migrations.RemoveField(
+            model_name='event',
+            name='old_image',
+        ),
+    ]

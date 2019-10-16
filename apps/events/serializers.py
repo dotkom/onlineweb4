@@ -26,9 +26,10 @@ logger = logging.getLogger(__name__)
 
 
 class ExtrasSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Extras
-        fields = ("id", "choice", "note")
+        fields = ('id', 'choice', 'note',)
 
 
 class AttendeeRegistrationReadOnlySerializer(serializers.ModelSerializer):
@@ -39,21 +40,17 @@ class AttendeeRegistrationReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendee
         fields = (
-            "id",
-            "event",
-            "user",
-            "attended",
-            "timestamp",
-            "show_as_attending_event",
-            "has_paid",
-            "extras",
+            'id', 'event', 'user', 'attended', 'timestamp', 'show_as_attending_event', 'has_paid', 'extras',
         )
         read_only = True
 
 
 class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
     extras = serializers.PrimaryKeyRelatedField(
-        required=False, allow_null=True, write_only=True, queryset=Extras.objects.all()
+        required=False,
+        allow_null=True,
+        write_only=True,
+        queryset=Extras.objects.all(),
     )
     user = serializers.PrimaryKeyRelatedField(
         write_only=True,
@@ -61,49 +58,44 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(),
     )
     event = serializers.PrimaryKeyRelatedField(
-        write_only=True, queryset=AttendanceEvent.objects.all()
+        write_only=True,
+        queryset=AttendanceEvent.objects.all(),
     )
     recaptcha = RecaptchaField()
 
     def validate_user(self, user):
-        request = self.context.get("request")
+        request = self.context.get('request')
         if not request:
-            raise ValidationError(
-                "internal:Request was not passed as context to serializer"
-            )
+            raise ValidationError('internal:Request was not passed as context to serializer')
 
         if user.id != request.user.id:
-            raise ValidationError("Du kan ikke melde andre brukere på arrangementer!")
+            raise ValidationError('Du kan ikke melde andre brukere på arrangementer!')
 
         return user
 
     def validate(self, data):
-        request = self.context.get("request", None)
+        request = self.context.get('request', None)
         if not request:
-            raise ValidationError(
-                "internal:Request was not passed as context to serializer"
-            )
+            raise ValidationError('internal:Request was not passed as context to serializer')
 
         user = request.user
         if not user.is_authenticated:
-            raise ValidationError(
-                "Du må være logget inn for å kunne melde deg på et arrangement"
-            )
+            raise ValidationError('Du må være logget inn for å kunne melde deg på et arrangement')
 
-        attendance_event = data.get("event", None)
+        attendance_event = data.get('event', None)
         event = attendance_event.event
 
         if not event:
-            raise ValidationError("Det gitte arrangementet eksisterer ikke")
+            raise ValidationError('Det gitte arrangementet eksisterer ikke')
 
         if not event.is_attendance_event():
-            raise ValidationError("Dette er ikke et påmeldingsarrangement")
+            raise ValidationError('Dette er ikke et påmeldingsarrangement')
 
         attend_response = attendance_event.is_eligible_for_signup(request.user)
-        can_attend = attend_response.get("status")
+        can_attend = attend_response.get('status')
 
         if not can_attend:
-            raise ValidationError(attend_response.get("message"))
+            raise ValidationError(attend_response.get('message'))
 
         return data
 
@@ -113,42 +105,38 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
         All serializer fields will be put into 'Model#create', and 'recaptcha' is removed for the serializer not
         to try and create it on the model-
         """
-        validated_data.pop("recaptcha")
+        validated_data.pop('recaptcha')
         return super(AttendeeRegistrationCreateSerializer, self).create(validated_data)
 
     class Meta:
         model = Attendee
         fields = (
-            "id",
-            "event",
-            "user",
-            "show_as_attending_event",
-            "recaptcha",
-            "extras",
+            'id', 'event', 'user', 'show_as_attending_event', 'recaptcha', 'extras',
         )
 
 
 class AttendeeRegistrationUpdateSerializer(serializers.ModelSerializer):
     extras = serializers.PrimaryKeyRelatedField(
-        required=False, allow_null=True, write_only=True, queryset=Extras.objects.all()
+        required=False,
+        allow_null=True,
+        write_only=True,
+        queryset=Extras.objects.all()
     )
 
     def validate_extras(self, value):
         attendance = self.instance.event
         if timezone.now() > attendance.registration_end:
-            raise ValidationError(
-                "Det er ikke mulig å endre ekstravalg etter påmeldingsfristen"
-            )
+            raise ValidationError('Det er ikke mulig å endre ekstravalg etter påmeldingsfristen')
         if timezone.now() > attendance.unattend_deadline:
-            raise ValidationError(
-                "Det er ikke mulig å endre ekstravalg etter avmeldingsfristen"
-            )
+            raise ValidationError('Det er ikke mulig å endre ekstravalg etter avmeldingsfristen')
 
         return value
 
     class Meta:
         model = Attendee
-        fields = ("id", "user", "show_as_attending_event", "extras")
+        fields = (
+            'id', 'user', 'show_as_attending_event', 'extras',
+        )
 
 
 class AttendeeSerializer(serializers.ModelSerializer):
@@ -156,19 +144,17 @@ class AttendeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendee
-        fields = ("id", "event", "user", "attended", "timestamp")
+        fields = (
+            'id', 'event', 'user', 'attended', 'timestamp',
+        )
 
 
 class RuleBundleSerializer(serializers.ModelSerializer):
     class Meta:
         model = RuleBundle
         fields = (
-            "description",
-            "field_of_study_rules",
-            "grade_rules",
-            "user_group_rules",
-            "rule_strings",
-            "id",
+            'description', 'field_of_study_rules', 'grade_rules', 'user_group_rules',
+            'rule_strings', 'id',
         )
 
 
@@ -184,7 +170,7 @@ class SerializerUserMethodField(serializers.SerializerMethodField):
         super(SerializerUserMethodField, self).bind(field_name, parent)
 
     def to_representation(self, obj):
-        request = self.context.get("request", None)
+        request = self.context.get('request', None)
         if request:
             get_user_field_method = getattr(obj, self.method_name)
             return get_user_field_method(request.user)
@@ -212,28 +198,12 @@ class UserAttendanceEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttendanceEvent
         fields = (
-            "max_capacity",
-            "waitlist",
-            "guest_attendance",
-            "extras",
-            "payments",
-            "registration_start",
-            "registration_end",
-            "unattend_deadline",
-            "automatically_set_marks",
-            "rule_bundles",
-            "number_on_waitlist",
-            "number_of_seats_taken",
-            "visible_attending_attendees",
-            "has_extras",
-            "has_reservation",
-            "has_postponed_registration",
-            "is_marked",
-            "is_suspended",
-            "is_eligible_for_signup",
-            "is_attendee",
-            "is_on_waitlist",
-            "what_place_is_user_on_wait_list",
+            'max_capacity', 'waitlist', 'guest_attendance', 'extras', 'payments',
+            'registration_start', 'registration_end', 'unattend_deadline',
+            'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
+            'number_of_seats_taken', 'visible_attending_attendees', 'has_extras',
+            'has_reservation', 'has_postponed_registration', 'is_marked', 'is_suspended',
+            'is_eligible_for_signup', 'is_attendee', 'is_on_waitlist', 'what_place_is_user_on_wait_list'
         )
 
 
@@ -244,17 +214,10 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttendanceEvent
         fields = (
-            "max_capacity",
-            "waitlist",
-            "guest_attendance",
-            "registration_start",
-            "registration_end",
-            "unattend_deadline",
-            "automatically_set_marks",
-            "rule_bundles",
-            "number_on_waitlist",
-            "number_of_seats_taken",
-            "extras",
+            'max_capacity', 'waitlist', 'guest_attendance',
+            'registration_start', 'registration_end', 'unattend_deadline',
+            'automatically_set_marks', 'rule_bundles', 'number_on_waitlist',
+            'number_of_seats_taken', 'extras',
         )
 
 
@@ -263,11 +226,13 @@ class CompanyEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CompanyEvent
-        fields = ("company", "event")
+        fields = (
+            'company', 'event',
+        )
 
 
 class EventSerializer(serializers.ModelSerializer):
-    absolute_url = serializers.CharField(source="get_absolute_url", read_only=True)
+    absolute_url = serializers.CharField(source='get_absolute_url', read_only=True)
     attendance_event = AttendanceEventSerializer()
     company_event = CompanyEventSerializer(many=True)
     image = ResponsiveImageSerializer()
@@ -275,22 +240,9 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = (
-            "absolute_url",
-            "attendance_event",
-            "company_event",
-            "description",
-            "event_start",
-            "event_end",
-            "event_type",
-            "id",
-            "image",
-            "ingress",
-            "ingress_short",
-            "location",
-            "slug",
-            "title",
-            "organizer_name",
-            "organizer",
+            'absolute_url', 'attendance_event', 'company_event', 'description', 'event_start', 'event_end',
+            'event_type', 'id', 'image', 'ingress', 'ingress_short', 'location', 'slug', 'title',
+            'organizer_name', 'organizer',
         )
 
 
@@ -301,11 +253,16 @@ class AttendSerializer(serializers.Serializer):
 
 class RegisterAttendanceError(serializers.ValidationError):
     status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Invalid input."
-    default_code = "invalid"
+    default_detail = 'Invalid input.'
+    default_code = 'invalid'
 
     def __init__(self, attend_status: int, detail=None):
-        self.detail = {"detail": {"message": detail, "attend_status": attend_status}}
+        self.detail = {
+            'detail': {
+                'message': detail,
+                'attend_status': attend_status,
+            },
+        }
 
 
 class RegisterAttendanceSerializer(serializers.Serializer):
@@ -322,8 +279,8 @@ class RegisterAttendanceSerializer(serializers.Serializer):
             username_exists = User.objects.filter(username=username).exists()
             if not username_exists:
                 raise RegisterAttendanceError(
-                    detail="Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! "
-                    "(Prøv igjen, eller scan nytt kort for å avbryte.)",
+                    detail='Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
+                           '(Prøv igjen, eller scan nytt kort for å avbryte.)',
                     attend_status=AttendStatus.USERNAME_DOES_NOT_EXIST,
                 )
 
@@ -332,21 +289,21 @@ class RegisterAttendanceSerializer(serializers.Serializer):
     def _validate_event(self, event_id: int):
         if not event_id:
             raise RegisterAttendanceError(
-                detail="Arrangementets id er ikke oppgitt",
+                detail='Arrangementets id er ikke oppgitt',
                 attend_status=AttendStatus.EVENT_ID_MISSING,
             )
 
         try:
             event = Event.objects.get(pk=event_id)
-            admin_user = self.context.get("request").user
-            if not admin_user.has_perm("events.change_event", event):
+            admin_user = self.context.get('request').user
+            if not admin_user.has_perm('events.change_event', event):
                 raise RegisterAttendanceError(
-                    detail="Administerende bruker har ikke rettigheter til å registrere oppmøte på dette arrangementet",
+                    detail='Administerende bruker har ikke rettigheter til å registrere oppmøte på dette arrangementet',
                     attend_status=AttendStatus.NOT_AUTHORIZED,
                 )
         except Event.DoesNotExist:
             raise RegisterAttendanceError(
-                detail="Det gitte arrangementet eksisterer ikke",
+                detail='Det gitte arrangementet eksisterer ikke',
                 attend_status=AttendStatus.EVENT_DOES_NOT_EXIST,
             )
 
@@ -355,32 +312,32 @@ class RegisterAttendanceSerializer(serializers.Serializer):
     def _handle_attendee(self, attendee: Attendee, waitlist_approved: bool):
         # If attendee is already marked as attended
         if attendee.attended:
-            logger.debug(f"Attendee ({attendee}) already marked as attended.")
+            logger.debug(f'Attendee ({attendee}) already marked as attended.')
             raise RegisterAttendanceError(
-                detail=f"{attendee.user} har allerede registrert oppmøte.",
+                detail=f'{attendee.user} har allerede registrert oppmøte.',
                 attend_status=AttendStatus.PREVIOUSLY_REGISTERED,
             )
 
         # If attendee is on waitlist (bypassed if attendee has gotten the all-clear)
         if attendee.is_on_waitlist() and not waitlist_approved:
             raise RegisterAttendanceError(
-                detail=f"{attendee.user} er på venteliste. Registrer dem som møtt opp allikevel?",
+                detail=f'{attendee.user} er på venteliste. Registrer dem som møtt opp allikevel?',
                 attend_status=AttendStatus.ON_WAIT_LIST,
             )
 
     def get_attendee(self, data: dict):
-        username: str = data.get("username")
-        rfid: str = data.get("rfid")
-        event_id: int = data.get("event")
+        username: str = data.get('username')
+        rfid: str = data.get('rfid')
+        event_id: int = data.get('event')
         user = User.objects.get(Q(username=username) | Q(rfid=rfid, rfid__isnull=False))
         return Attendee.objects.get(user=user, event_id=event_id)
 
     def validate(self, attrs: dict):
-        admin_user: User = self.context.get("request").user
-        username: str = attrs.get("username")
-        rfid: str = attrs.get("rfid")
-        event_id: int = attrs.get("event")
-        waitlist_approved: bool = attrs.get("approved")
+        admin_user: User = self.context.get('request').user
+        username: str = attrs.get('username')
+        rfid: str = attrs.get('rfid')
+        event_id: int = attrs.get('event')
+        waitlist_approved: bool = attrs.get('approved')
 
         self._validate_rfid(rfid)
         self._validate_username(username)
@@ -388,13 +345,13 @@ class RegisterAttendanceSerializer(serializers.Serializer):
 
         if not admin_user.is_authenticated:
             raise RegisterAttendanceError(
-                detail="Administerende bruker må være logget inn for å registrere oppmøte",
+                detail='Administerende bruker må være logget inn for å registrere oppmøte',
                 attend_status=AttendStatus.NOT_LOGGED_IN,
             )
 
         if not (username or rfid):
             raise RegisterAttendanceError(
-                detail="Mangler både RFID og brukernavn. Vennligst prøv igjen.",
+                detail='Mangler både RFID og brukernavn. Vennligst prøv igjen.',
                 attend_status=AttendStatus.USERNAME_AND_RFID_MISSING,
             )
 
@@ -403,18 +360,13 @@ class RegisterAttendanceSerializer(serializers.Serializer):
                 user = User.objects.get(username=username)
                 user.rfid = rfid
                 user.save()
-                logger.debug(
-                    f'Storing new RFID to user "{user}"',
-                    extra={"user": user.pk, "rfid": rfid},
-                )
+                logger.debug(f'Storing new RFID to user "{user}"', extra={'user': user.pk, 'rfid': rfid})
             except (IntegrityError, ValidationError):
-                logger.error(
-                    f'Could not store RFID information for username "{username}" with RFID "{rfid}".'
-                )
+                logger.error(f'Could not store RFID information for username "{username}" with RFID "{rfid}".')
                 raise RegisterAttendanceError(
-                    detail="Det oppstod en feil da vi prøvde å lagre informasjonen. Vennligst prøv igjen. "
-                    "Dersom problemet vedvarer, ta kontakt med dotkom. "
-                    "Personen kan registreres med brukernavn i steden for RFID.",
+                    detail='Det oppstod en feil da vi prøvde å lagre informasjonen. Vennligst prøv igjen. '
+                           'Dersom problemet vedvarer, ta kontakt med dotkom. '
+                           'Personen kan registreres med brukernavn i steden for RFID.',
                     attend_status=AttendStatus.REGISTER_ERROR,
                 )
 
@@ -423,23 +375,23 @@ class RegisterAttendanceSerializer(serializers.Serializer):
             self._handle_attendee(attendee, waitlist_approved)
         except Attendee.DoesNotExist:
             raise RegisterAttendanceError(
-                detail="Brukeren er ikke påmeldt dette arrangementet",
+                detail='Brukeren er ikke påmeldt dette arrangementet',
                 attend_status=AttendStatus.USER_NOT_ATTENDING,
             )
         except User.DoesNotExist:
             # If attendee tried to attend by a username that isn't tied to a user
             if not rfid:
                 raise RegisterAttendanceError(
-                    detail="Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! "
-                    "(Prøv igjen, eller scan nytt kort for å avbryte.)",
+                    detail='Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
+                           '(Prøv igjen, eller scan nytt kort for å avbryte.)',
                     attend_status=AttendStatus.USERNAME_DOES_NOT_EXIST,
                 )
 
             # If attendee tried to attend by card, but card isn't tied to a user
             else:
                 raise RegisterAttendanceError(
-                    detail="Kortet finnes ikke i databasen. Skriv inn et online.ntnu.no brukernavn for å "
-                    "knytte kortet til brukeren og registrere oppmøte.",
+                    detail='Kortet finnes ikke i databasen. Skriv inn et online.ntnu.no brukernavn for å '
+                           'knytte kortet til brukeren og registrere oppmøte.',
                     attend_status=AttendStatus.RFID_DOES_NOT_EXIST,
                 )
 

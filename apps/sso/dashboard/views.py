@@ -31,14 +31,12 @@ def index(request):
     context = get_base_context(request)
 
     # Fetch all clients sorted by name
-    context["apps"] = Client.objects.all().order_by("name")
+    context['apps'] = Client.objects.all().order_by('name')
 
     # Add all available scopes from settings dict (sorted)
-    context["available_scopes"] = sorted(
-        (k, v) for k, v in list(oauth2_settings.user_settings["SCOPES"].items())
-    )
+    context['available_scopes'] = sorted((k, v) for k, v in list(oauth2_settings.user_settings['SCOPES'].items()))
 
-    return render(request, "sso/dashboard/index.html", context)
+    return render(request, 'sso/dashboard/index.html', context)
 
 
 @login_required()
@@ -49,7 +47,7 @@ def new_app(request):
     :return: An HttpResponse
     """
 
-    _log = logging.getLogger("%s.%s" % (__name__, new_app.__name__))
+    _log = logging.getLogger('%s.%s' % (__name__, new_app.__name__))
 
     # Force only the almighty dotKom to access this view
     if not request.user.is_superuser:
@@ -57,12 +55,12 @@ def new_app(request):
 
     context = get_base_context(request)
 
-    if request.method == "POST":
+    if request.method == 'POST':
         # Bind the request data to the model form
         client_form = NewClientForm(request.POST)
 
         if not client_form.is_valid():
-            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             # We save but not commit to get a Client instance
             client = client_form.save(commit=False)
@@ -78,19 +76,16 @@ def new_app(request):
 
             client.save()
 
-            _log.info(
-                "%s created external auth client %s (%d)"
-                % (request.user, client.name, client.id)
-            )
-            messages.success(request, "App-klienten ble opprettet")
-            return redirect(reverse("sso:app_details", kwargs={"app_pk": client.id}))
+            _log.info('%s created external auth client %s (%d)' % (request.user, client.name, client.id))
+            messages.success(request, 'App-klienten ble opprettet')
+            return redirect(reverse('sso:app_details', kwargs={'app_pk': client.id}))
 
-        context["form"] = client_form
+        context['form'] = client_form
 
     else:
-        context["form"] = NewClientForm()
+        context['form'] = NewClientForm()
 
-    return render(request, "sso/dashboard/new_app.html", context)
+    return render(request, 'sso/dashboard/new_app.html', context)
 
 
 @login_required()
@@ -101,7 +96,7 @@ def app_details(request, app_pk):
     :return: An HttpResponse
     """
 
-    _log = logging.getLogger("%s.%s" % (__name__, app_details.__name__))
+    _log = logging.getLogger('%s.%s' % (__name__, app_details.__name__))
 
     # Force only the almighty dotKom to access this view
     if not request.user.is_superuser:
@@ -110,25 +105,22 @@ def app_details(request, app_pk):
     context = get_base_context(request)
 
     client = get_object_or_404(Client, pk=app_pk)
-    context["app"] = client
+    context['app'] = client
 
     # If we have some action to perform
-    if request.method == "POST":
-        if "action" in request.POST:
-            if request.POST["action"] == "delete":
-                app_id = context["app"].id
-                app_name = context["app"].name
-                context["app"].delete()
-                _log.info(
-                    "%s deleted external auth client %s (%d)"
-                    % (request.user, app_name, app_id)
-                )
-                messages.success(request, "App-klienten ble slettet")
-                return redirect(reverse("sso:index"))
+    if request.method == 'POST':
+        if 'action' in request.POST:
+            if request.POST['action'] == 'delete':
+                app_id = context['app'].id
+                app_name = context['app'].name
+                context['app'].delete()
+                _log.info('%s deleted external auth client %s (%d)' % (request.user, app_name, app_id))
+                messages.success(request, 'App-klienten ble slettet')
+                return redirect(reverse('sso:index'))
 
     # Add the registered scopes for the client to the context as a list of scope:description tuples
-    scopes_available = oauth2_settings.user_settings["SCOPES"]
+    scopes_available = oauth2_settings.user_settings['SCOPES']
     scopes = [(s, scopes_available[s]) for s in client.get_scopes()]
-    context["scopes"] = scopes
+    context['scopes'] = scopes
 
-    return render(request, "sso/dashboard/app_details.html", context)
+    return render(request, 'sso/dashboard/app_details.html', context)

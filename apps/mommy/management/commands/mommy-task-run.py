@@ -4,14 +4,14 @@ from apps import mommy
 
 
 class Command(BaseCommand):
-    help = "run a job"
+    help = 'run a job'
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         mommy.autodiscover()
 
     def add_arguments(self, parser):
-        parser.add_argument("job", help="name of job", choices=Command.job_names())
+        parser.add_argument('job', help='name of job', choices=Command.job_names())
 
     @staticmethod
     def job_names():
@@ -24,7 +24,7 @@ class Command(BaseCommand):
         mommy.autodiscover()
 
         # run shit
-        do_name = options["job"]
+        do_name = options['job']
         for task, _ in mommy.schedule.tasks.items():
             if task.__name__ == do_name:
                 task.run()

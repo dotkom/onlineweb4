@@ -5,13 +5,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("hobbygroups", "0003_auto_20180829_1953")]
+    dependencies = [
+        ('hobbygroups', '0003_auto_20180829_1953'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="hobby", options={"verbose_name_plural": "Hobbies"}
+            name='hobby',
+            options={'verbose_name_plural': 'Hobbies'},
         ),
         migrations.AddField(
-            model_name="hobby", name="active", field=models.BooleanField(default=True)
+            model_name='hobby',
+            name='active',
+            field=models.BooleanField(default=True),
         ),
     ]

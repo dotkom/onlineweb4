@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("authentication", "0040_auto_20190801_2200")]
+    dependencies = [
+        ('authentication', '0040_auto_20190801_2200'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="onlineuser",
-            name="allergies",
-            field=models.TextField(
-                blank=True, null=True, verbose_name="matallergier/preferanser"
-            ),
-        )
+            model_name='onlineuser',
+            name='allergies',
+            field=models.TextField(blank=True, null=True, verbose_name='matallergier/preferanser'),
+        ),
     ]

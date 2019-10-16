@@ -5,17 +5,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("article", "0010_auto_20151101_0522")]
+    dependencies = [
+        ('article', '0010_auto_20151101_0522'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="article",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ["published_date"],
-                "permissions": (("view_article", "View Article"),),
-                "verbose_name": "artikkel",
-                "verbose_name_plural": "artikler",
-            },
-        )
+            name='article',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['published_date'], 'permissions': (('view_article', 'View Article'),), 'verbose_name': 'artikkel', 'verbose_name_plural': 'artikler'},
+        ),
     ]

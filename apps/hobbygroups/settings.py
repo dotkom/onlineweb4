@@ -1,3 +1,3 @@
 import os
 
-IMAGES_PATH = os.path.join("images", "hobbygroups")
+IMAGES_PATH = os.path.join('images', 'hobbygroups')

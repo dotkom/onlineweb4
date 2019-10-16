@@ -5,62 +5,38 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("payment", "0025_auto_20180424_1451")]
+    dependencies = [
+        ('payment', '0025_auto_20180424_1451'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="payment",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "verbose_name": "betaling",
-                "verbose_name_plural": "betalinger",
-            },
+            name='payment',
+            options={'default_permissions': ('add', 'change', 'delete'), 'verbose_name': 'betaling', 'verbose_name_plural': 'betalinger'},
         ),
         migrations.AlterModelOptions(
-            name="paymentdelay",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "verbose_name": "betalingsutsettelse",
-                "verbose_name_plural": "betalingsutsettelser",
-            },
+            name='paymentdelay',
+            options={'default_permissions': ('add', 'change', 'delete'), 'verbose_name': 'betalingsutsettelse', 'verbose_name_plural': 'betalingsutsettelser'},
         ),
         migrations.AlterModelOptions(
-            name="paymentprice",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "verbose_name": "pris",
-                "verbose_name_plural": "priser",
-            },
+            name='paymentprice',
+            options={'default_permissions': ('add', 'change', 'delete'), 'verbose_name': 'pris', 'verbose_name_plural': 'priser'},
         ),
         migrations.AlterModelOptions(
-            name="paymentreceipt",
-            options={"default_permissions": ("add", "change", "delete")},
+            name='paymentreceipt',
+            options={'default_permissions': ('add', 'change', 'delete')},
         ),
         migrations.AlterModelOptions(
-            name="paymentrelation",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "verbose_name": "betalingsrelasjon",
-                "verbose_name_plural": "betalingsrelasjoner",
-            },
+            name='paymentrelation',
+            options={'default_permissions': ('add', 'change', 'delete'), 'verbose_name': 'betalingsrelasjon', 'verbose_name_plural': 'betalingsrelasjoner'},
         ),
         migrations.AlterModelOptions(
-            name="paymenttransaction",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ["-datetime"],
-                "verbose_name": "transaksjon",
-                "verbose_name_plural": "transaksjoner",
-            },
+            name='paymenttransaction',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['-datetime'], 'verbose_name': 'transaksjon', 'verbose_name_plural': 'transaksjoner'},
         ),
         migrations.AlterField(
-            model_name="payment",
-            name="delay",
-            field=models.DurationField(
-                blank=True,
-                help_text='Oppgi utsettelse på formatet "dager timer:min:sek"',
-                null=True,
-                verbose_name="utsettelse",
-            ),
+            model_name='payment',
+            name='delay',
+            field=models.DurationField(blank=True, help_text='Oppgi utsettelse på formatet "dager timer:min:sek"', null=True, verbose_name='utsettelse'),
         ),
     ]

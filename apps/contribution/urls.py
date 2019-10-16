@@ -1,7 +1,8 @@
 from apps.api.utils import SharedAPIRootRouter
 from apps.contribution import views
 
-urlpatterns = []
+urlpatterns = [
+]
 
 router = SharedAPIRootRouter()
-router.register("repositories", views.RepositoryViewSet)
+router.register('repositories', views.RepositoryViewSet)

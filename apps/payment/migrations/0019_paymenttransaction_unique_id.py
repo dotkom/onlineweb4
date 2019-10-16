@@ -7,12 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("payment", "0018_merge")]
+    dependencies = [
+        ('payment', '0018_merge'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="paymenttransaction",
-            name="unique_id",
+            model_name='paymenttransaction',
+            name='unique_id',
             field=models.CharField(blank=True, max_length=128, null=True),
-        )
+        ),
     ]

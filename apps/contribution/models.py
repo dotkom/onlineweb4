@@ -11,15 +11,13 @@ class Repository(models.Model):
     updated_at = models.DateTimeField()
 
     class Meta:
-        default_permissions = ("add", "change", "delete")
+        default_permissions = ('add', 'change', 'delete')
 
 
 class RepositoryLanguage(models.Model):
-    repository = models.ForeignKey(
-        Repository, related_name="languages", on_delete=models.CASCADE
-    )
+    repository = models.ForeignKey(Repository, related_name='languages', on_delete=models.CASCADE)
     type = models.CharField(max_length=100)
     size = models.IntegerField()
 
     class Meta:
-        default_permissions = ("add", "change", "delete")
+        default_permissions = ('add', 'change', 'delete')

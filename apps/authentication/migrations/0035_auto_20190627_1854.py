@@ -9,184 +9,79 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("gallery", "0013_auto_20190506_1719"),
-        ("auth", "0009_alter_user_last_name_max_length"),
-        ("authentication", "0034_auto_20190602_2006"),
+        ('gallery', '0013_auto_20190506_1719'),
+        ('auth', '0009_alter_user_last_name_max_length'),
+        ('authentication', '0034_auto_20190602_2006'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="GroupMember",
+            name='GroupMember',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("added", models.DateTimeField(default=django.utils.timezone.now)),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('added', models.DateTimeField(default=django.utils.timezone.now)),
             ],
             options={
-                "verbose_name": "Gruppemedlemskap",
-                "verbose_name_plural": "Gruppemedlemskap",
-                "ordering": ("group", "user", "added"),
-                "permissions": (("view_groupmember", "View GroupMember"),),
-                "default_permissions": ("add", "change", "delete"),
+                'verbose_name': 'Gruppemedlemskap',
+                'verbose_name_plural': 'Gruppemedlemskap',
+                'ordering': ('group', 'user', 'added'),
+                'permissions': (('view_groupmember', 'View GroupMember'),),
+                'default_permissions': ('add', 'change', 'delete'),
             },
         ),
         migrations.CreateModel(
-            name="GroupRole",
+            name='GroupRole',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                (
-                    "role_type",
-                    models.CharField(
-                        choices=[
-                            ("leader", "Leder"),
-                            ("deputy_leader", "Nestleder"),
-                            ("treasurer", "Økonomiansvarlig"),
-                            ("member", "Medlem"),
-                            ("retired", "Pensjonert"),
-                            ("on_leave", "Permittert"),
-                            ("chief_editor", "Redaktør"),
-                        ],
-                        default="member",
-                        max_length=256,
-                        verbose_name="Rolle",
-                    ),
-                ),
-                ("added", models.DateTimeField(default=django.utils.timezone.now)),
-                (
-                    "membership",
-                    models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        related_name="roles",
-                        to="authentication.GroupMember",
-                        verbose_name="Medlemskap",
-                    ),
-                ),
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('role_type', models.CharField(choices=[('leader', 'Leder'), ('deputy_leader', 'Nestleder'), ('treasurer', 'Økonomiansvarlig'), ('member', 'Medlem'), ('retired', 'Pensjonert'), ('on_leave', 'Permittert'), ('chief_editor', 'Redaktør')], default='member', max_length=256, verbose_name='Rolle')),
+                ('added', models.DateTimeField(default=django.utils.timezone.now)),
+                ('membership', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='roles', to='authentication.GroupMember', verbose_name='Medlemskap')),
             ],
             options={
-                "verbose_name": "Medlemskapsrolle",
-                "verbose_name_plural": "Medlemskapsroller",
-                "ordering": ("membership", "role_type", "added"),
-                "permissions": (("view_grouprole", "View GroupRole"),),
-                "default_permissions": ("add", "change", "delete"),
+                'verbose_name': 'Medlemskapsrolle',
+                'verbose_name_plural': 'Medlemskapsroller',
+                'ordering': ('membership', 'role_type', 'added'),
+                'permissions': (('view_grouprole', 'View GroupRole'),),
+                'default_permissions': ('add', 'change', 'delete'),
             },
         ),
         migrations.CreateModel(
-            name="OnlineGroup",
+            name='OnlineGroup',
             fields=[
-                (
-                    "group",
-                    models.OneToOneField(
-                        on_delete=django.db.models.deletion.CASCADE,
-                        primary_key=True,
-                        related_name="online_group",
-                        serialize=False,
-                        to="auth.Group",
-                        verbose_name="Djangogruppe",
-                    ),
-                ),
-                (
-                    "name_short",
-                    models.CharField(max_length=48, verbose_name="Forkortelse"),
-                ),
-                (
-                    "name_long",
-                    models.CharField(max_length=128, verbose_name="Fullt navn"),
-                ),
-                (
-                    "description_short",
-                    models.TextField(
-                        blank=True,
-                        max_length=2048,
-                        verbose_name="Beskrivelse (kortfattet)",
-                    ),
-                ),
-                (
-                    "description_long",
-                    models.TextField(
-                        blank=True,
-                        max_length=2048,
-                        verbose_name="Beskrivelse (helhetlig)",
-                    ),
-                ),
-                ("email", models.EmailField(max_length=128, verbose_name="E-post")),
-                (
-                    "created",
-                    models.DateTimeField(
-                        default=django.utils.timezone.now,
-                        verbose_name="Oprettelsesdato",
-                    ),
-                ),
-                (
-                    "group_type",
-                    models.CharField(
-                        choices=[
-                            ("committee", "Komité"),
-                            ("node_committee", "Nodekomité"),
-                            ("hobby_group", "Interessegruppe"),
-                            ("other", "Annet"),
-                        ],
-                        default="committee",
-                        max_length=256,
-                        verbose_name="Gruppetype",
-                    ),
-                ),
-                (
-                    "image",
-                    models.ForeignKey(
-                        null=True,
-                        on_delete=django.db.models.deletion.DO_NOTHING,
-                        related_name="online_groups",
-                        to="gallery.ResponsiveImage",
-                    ),
-                ),
+                ('group', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, primary_key=True, related_name='online_group', serialize=False, to='auth.Group', verbose_name='Djangogruppe')),
+                ('name_short', models.CharField(max_length=48, verbose_name='Forkortelse')),
+                ('name_long', models.CharField(max_length=128, verbose_name='Fullt navn')),
+                ('description_short', models.TextField(blank=True, max_length=2048, verbose_name='Beskrivelse (kortfattet)')),
+                ('description_long', models.TextField(blank=True, max_length=2048, verbose_name='Beskrivelse (helhetlig)')),
+                ('email', models.EmailField(max_length=128, verbose_name='E-post')),
+                ('created', models.DateTimeField(default=django.utils.timezone.now, verbose_name='Oprettelsesdato')),
+                ('group_type', models.CharField(choices=[('committee', 'Komité'), ('node_committee', 'Nodekomité'), ('hobby_group', 'Interessegruppe'), ('other', 'Annet')], default='committee', max_length=256, verbose_name='Gruppetype')),
+                ('image', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='online_groups', to='gallery.ResponsiveImage')),
             ],
             options={
-                "verbose_name": "Onlinegruppe",
-                "verbose_name_plural": "Onlinegrupper",
-                "ordering": ("name_long",),
-                "permissions": (("view_onlinegroups", "View OnlineGroup"),),
-                "default_permissions": ("add", "change", "delete"),
+                'verbose_name': 'Onlinegruppe',
+                'verbose_name_plural': 'Onlinegrupper',
+                'ordering': ('name_long',),
+                'permissions': (('view_onlinegroups', 'View OnlineGroup'),),
+                'default_permissions': ('add', 'change', 'delete'),
             },
         ),
         migrations.AddField(
-            model_name="groupmember",
-            name="group",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="members",
-                to="authentication.OnlineGroup",
-                verbose_name="Onlinegruppe",
-            ),
+            model_name='groupmember',
+            name='group',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='members', to='authentication.OnlineGroup', verbose_name='Onlinegruppe'),
         ),
         migrations.AddField(
-            model_name="groupmember",
-            name="user",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="group_memberships",
-                to=settings.AUTH_USER_MODEL,
-                verbose_name="Bruker",
-            ),
+            model_name='groupmember',
+            name='user',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='group_memberships', to=settings.AUTH_USER_MODEL, verbose_name='Bruker'),
         ),
         migrations.AlterUniqueTogether(
-            name="grouprole", unique_together={("membership", "role_type")}
+            name='grouprole',
+            unique_together={('membership', 'role_type')},
         ),
         migrations.AlterUniqueTogether(
-            name="groupmember", unique_together={("user", "group")}
+            name='groupmember',
+            unique_together={('user', 'group')},
         ),
     ]

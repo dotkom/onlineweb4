@@ -7,11 +7,24 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("splash", "0007_auto_20160812_2053")]
+    dependencies = [
+        ('splash', '0007_auto_20160812_2053'),
+    ]
 
     operations = [
-        migrations.RemoveField(model_name="splashevent", name="created"),
-        migrations.RemoveField(model_name="splashevent", name="modified"),
-        migrations.RemoveField(model_name="splashevent", name="splash_year"),
-        migrations.DeleteModel(name="SplashYear"),
+        migrations.RemoveField(
+            model_name='splashevent',
+            name='created',
+        ),
+        migrations.RemoveField(
+            model_name='splashevent',
+            name='modified',
+        ),
+        migrations.RemoveField(
+            model_name='splashevent',
+            name='splash_year',
+        ),
+        migrations.DeleteModel(
+            name='SplashYear',
+        ),
     ]

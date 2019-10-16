@@ -15,5 +15,5 @@ class SplashEventViewSet(ReadOnlyModelViewSet):
     serializer_class = SplashEventSerializer
     pagination_class = HundredItemsPaginator
     filterset_class = SplashEventFilter
-    filterset_fields = ("start_time", "end_time")
-    ordering_fields = ("id", "start_time", "end_time")
+    filterset_fields = ('start_time', 'end_time')
+    ordering_fields = ('id', 'start_time', 'end_time')

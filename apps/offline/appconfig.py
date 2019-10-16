@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class OfflineConfig(AppConfig):
-    name = "apps.offline"
-    verbose_name = "Offline"
+    name = 'apps.offline'
+    verbose_name = 'Offline'
 
     def ready(self):
         super(OfflineConfig, self).ready()
@@ -15,7 +15,6 @@ class OfflineConfig(AppConfig):
         import apps.offline.signals  # noqa: F401
 
         from chunks.models import Chunk
-
         # noinspection PyUnresolvedReferences
         from apps.offline.models import Issue  # noqa: F401
 

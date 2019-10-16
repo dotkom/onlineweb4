@@ -1,18 +1,18 @@
 from filebrowser.settings import VERSIONS
 
 MONTH_STRINGS = {
-    "1": "Januar",
-    "2": "Februar",
-    "3": "Mars",
-    "4": "April",
-    "5": "Mai",
-    "6": "Juni",
-    "7": "Juli",
-    "8": "August",
-    "9": "September",
-    "10": "Oktober",
-    "11": "November",
-    "12": "Desember",
+    '1': 'Januar',
+    '2': 'Februar',
+    '3': 'Mars',
+    '4': 'April',
+    '5': 'Mai',
+    '6': 'Juni',
+    '7': 'Juli',
+    '8': 'August',
+    '9': 'September',
+    '10': 'Oktober',
+    '11': 'November',
+    '12': 'Desember',
 }
 
 
@@ -21,7 +21,7 @@ def find_image_versions(article):
     img_strings = []
 
     for ver in VERSIONS.keys():
-        if ver.startswith("article_"):
+        if ver.startswith('article_'):
             img_strings.append(img.version_generate(ver).url)
 
     return img_strings
@@ -39,12 +39,12 @@ def create_article_filters(articles):
         dates = _create_months(article, dates)
     # Now sort months
     for year in dates:
-        sorted_months = [""] * 12
+        sorted_months = [''] * 12
         for month in dates[year]:
             sorted_months[int(rev_month_strings[month]) - 1] = month
         remove_these = []
         for n, m in enumerate(sorted_months):
-            if m == "":
+            if m == '':
                 remove_these.append(n)
         for i in reversed(remove_these):
             del sorted_months[i]

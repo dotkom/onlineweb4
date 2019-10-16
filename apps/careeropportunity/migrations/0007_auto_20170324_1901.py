@@ -8,23 +8,25 @@ import taggit.managers
 
 class Migration(migrations.Migration):
 
-    dependencies = [("careeropportunity", "0006_careeropportunity_employment")]
+    dependencies = [
+        ('careeropportunity', '0006_careeropportunity_employment'),
+    ]
 
     operations = [
         migrations.RemoveField(
-            model_name="careeropportunitylocationtag", name="content_object"
+            model_name='careeropportunitylocationtag',
+            name='content_object',
         ),
-        migrations.RemoveField(model_name="careeropportunitylocationtag", name="tag"),
+        migrations.RemoveField(
+            model_name='careeropportunitylocationtag',
+            name='tag',
+        ),
         migrations.AlterField(
-            model_name="careeropportunity",
-            name="location",
-            field=taggit.managers.TaggableManager(
-                blank=True,
-                help_text="A comma-separated list of tags.",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
-                verbose_name="sted(er)",
-            ),
+            model_name='careeropportunity',
+            name='location',
+            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='sted(er)'),
         ),
-        migrations.DeleteModel(name="CareerOpportunityLocationTag"),
+        migrations.DeleteModel(
+            name='CareerOpportunityLocationTag',
+        ),
     ]

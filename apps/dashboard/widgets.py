@@ -87,7 +87,7 @@ class DatePickerInput(TextInput):
 
     def __init__(self, attrs=None):
         super(DatePickerInput, self).__init__(attrs)
-        self.input_type = "text"
+        self.input_type = 'text'
 
     def render(self, name, value, attrs=None, renderer=None):
         """
@@ -99,29 +99,27 @@ class DatePickerInput(TextInput):
         """
 
         if value is None:
-            value = ""
+            value = ''
 
         attrs = self.build_attrs(self.attrs, attrs)
-        final_attrs = self.build_attrs(attrs, {"type": self.input_type, "name": name})
-        if value != "":
-            final_attrs["value"] = format_html(
-                'value="{}"', force_text(self.format_value(value))
-            )
+        final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
+        if value != '':
+            final_attrs['value'] = format_html('value="{}"', force_text(self.format_value(value)))
         else:
-            final_attrs["value"] = ""
+            final_attrs['value'] = ''
 
         # Kept for backwards compatibility with existing forms.
-        final_attrs["placeholder"] = "Vennligst velg en dato ..."
-        if attrs.get("placeholder", False):
+        final_attrs['placeholder'] = 'Vennligst velg en dato ...'
+        if attrs.get('placeholder', False):
             # Update the placeholder text if supplied.
-            final_attrs["placeholder"] = force_text(attrs.get("placeholder"))
+            final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
 
         return format_html(
             DATEPICKER_WIDGET_STRING,
-            id=force_text(final_attrs["id"]),
-            name=force_text(final_attrs["name"]),
-            placeholder=force_text(final_attrs["placeholder"]),
-            value=final_attrs["value"],
+            id=force_text(final_attrs['id']),
+            name=force_text(final_attrs['name']),
+            placeholder=force_text(final_attrs['placeholder']),
+            value=final_attrs['value']
         )
 
 
@@ -132,7 +130,7 @@ class DatetimePickerInput(TextInput):
 
     def __init__(self, attrs=None):
         super(DatetimePickerInput, self).__init__(attrs)
-        self.input_type = "text"
+        self.input_type = 'text'
 
     def render(self, name, value, attrs=None, renderer=None):
         """
@@ -144,27 +142,27 @@ class DatetimePickerInput(TextInput):
         """
 
         if value is None:
-            value = ""
+            value = ''
 
         attrs = self.build_attrs(self.attrs, attrs)
-        final_attrs = self.build_attrs(attrs, {"type": self.input_type, "name": name})
-        if value != "":
-            final_attrs["value"] = force_text(self.format_value(value))
+        final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
+        if value != '':
+            final_attrs['value'] = force_text(self.format_value(value))
         else:
-            final_attrs["value"] = ""
+            final_attrs['value'] = ''
 
         # Kept for backwards compatibility with existing forms.
-        final_attrs["placeholder"] = "Vennligst velg dato og klokkeslett ..."
-        if self.attrs.get("placeholder", False):
+        final_attrs['placeholder'] = 'Vennligst velg dato og klokkeslett ...'
+        if self.attrs.get('placeholder', False):
             # Update the placeholder text if supplied.
-            final_attrs["placeholder"] = force_text(self.attrs.get("placeholder"))
+            final_attrs['placeholder'] = force_text(self.attrs.get('placeholder'))
 
         return format_html(
             DATETIMEPICKER_WIDGET_STRING,
-            id=force_text(final_attrs["id"]),
-            name=force_text(final_attrs["name"]),
-            placeholder=force_text(final_attrs["placeholder"]),
-            value=final_attrs["value"],
+            id=force_text(final_attrs['id']),
+            name=force_text(final_attrs['name']),
+            placeholder=force_text(final_attrs['placeholder']),
+            value=final_attrs['value']
         )
 
 
@@ -175,7 +173,7 @@ class TimePickerInput(TextInput):
 
     def __init__(self, attrs=None):
         super(TimePickerInput, self).__init__(attrs)
-        self.input_type = "text"
+        self.input_type = 'text'
 
     def render(self, name, value, attrs=None, renderer=None):
         """
@@ -187,27 +185,25 @@ class TimePickerInput(TextInput):
         """
 
         if value is None:
-            value = ""
+            value = ''
 
         attrs = self.build_attrs(self.attrs, attrs)
-        final_attrs = self.build_attrs(attrs, {"type": self.input_type, "name": name})
-        if value != "":
-            final_attrs["value"] = format_html(
-                'value="{}"', force_text(self.format_value(value))
-            )
+        final_attrs = self.build_attrs(attrs, {'type': self.input_type, 'name': name})
+        if value != '':
+            final_attrs['value'] = format_html('value="{}"', force_text(self.format_value(value)))
         else:
-            final_attrs["value"] = ""
+            final_attrs['value'] = ''
 
         # Kept for backwards compatibility with existing forms.
-        final_attrs["placeholder"] = "Vennligst velg klokkeslett ..."
-        if attrs.get("placeholder", False):
+        final_attrs['placeholder'] = 'Vennligst velg klokkeslett ...'
+        if attrs.get('placeholder', False):
             # Update the placeholder text if supplied.
-            final_attrs["placeholder"] = force_text(attrs.get("placeholder"))
+            final_attrs['placeholder'] = force_text(attrs.get('placeholder'))
 
         return format_html(
             TIMEPICKER_WIDGET_STRING,
-            id=force_text(final_attrs["id"]),
-            name=force_text(final_attrs["name"]),
-            placeholder=force_text(final_attrs["placeholder"]),
-            value=final_attrs["value"],
+            id=force_text(final_attrs['id']),
+            name=force_text(final_attrs['name']),
+            placeholder=force_text(final_attrs['placeholder']),
+            value=final_attrs['value']
         )

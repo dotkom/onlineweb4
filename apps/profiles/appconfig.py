@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class ProfilesConfig(AppConfig):
-    name = "apps.profiles"
-    verbose_name = "Profiles"
+    name = 'apps.profiles'
+    verbose_name = 'Profiles'
 
     def ready(self):
         super(ProfilesConfig, self).ready()

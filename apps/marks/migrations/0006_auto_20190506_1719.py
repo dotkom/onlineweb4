@@ -5,28 +5,21 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("marks", "0005_auto_20150916_2124")]
+    dependencies = [
+        ('marks', '0005_auto_20150916_2124'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="mark",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_mark", "View Mark"),),
-                "verbose_name": "Prikk",
-                "verbose_name_plural": "Prikker",
-            },
+            name='mark',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_mark', 'View Mark'),), 'verbose_name': 'Prikk', 'verbose_name_plural': 'Prikker'},
         ),
         migrations.AlterModelOptions(
-            name="markuser",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ("expiration_date",),
-                "permissions": (("view_userentry", "View UserEntry"),),
-            },
+            name='markuser',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ('expiration_date',), 'permissions': (('view_userentry', 'View UserEntry'),)},
         ),
         migrations.AlterModelOptions(
-            name="suspension",
-            options={"default_permissions": ("add", "change", "delete")},
+            name='suspension',
+            options={'default_permissions': ('add', 'change', 'delete')},
         ),
     ]

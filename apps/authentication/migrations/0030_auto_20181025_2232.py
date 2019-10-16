@@ -7,18 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("authentication", "0029_auto_20180914_1305")]
+    dependencies = [
+        ('authentication', '0029_auto_20180914_1305'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="onlineuser",
-            name="ntnu_username",
-            field=models.CharField(
-                blank=True,
-                max_length=50,
-                null=True,
-                unique=True,
-                verbose_name="NTNU-brukernavn",
-            ),
-        )
+            model_name='onlineuser',
+            name='ntnu_username',
+            field=models.CharField(blank=True, max_length=50, null=True, unique=True, verbose_name='NTNU-brukernavn'),
+        ),
     ]

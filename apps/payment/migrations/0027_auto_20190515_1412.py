@@ -5,47 +5,29 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("payment", "0026_auto_20190506_1719")]
+    dependencies = [
+        ('payment', '0026_auto_20190506_1719'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="paymentrelation",
-            name="payment_intent_secret",
+            model_name='paymentrelation',
+            name='payment_intent_secret',
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name="paymentrelation",
-            name="status",
-            field=models.CharField(
-                choices=[
-                    ("pending", "pending"),
-                    ("succeeded", "succeeded"),
-                    ("done", "done"),
-                    ("refunded", "refunded"),
-                    ("removed", "removed"),
-                ],
-                default="succeeded",
-                max_length=30,
-            ),
+            model_name='paymentrelation',
+            name='status',
+            field=models.CharField(choices=[('pending', 'pending'), ('succeeded', 'succeeded'), ('done', 'done'), ('refunded', 'refunded'), ('removed', 'removed')], default='succeeded', max_length=30),
         ),
         migrations.AddField(
-            model_name="paymenttransaction",
-            name="payment_intent_secret",
+            model_name='paymenttransaction',
+            name='payment_intent_secret',
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AddField(
-            model_name="paymenttransaction",
-            name="status",
-            field=models.CharField(
-                choices=[
-                    ("pending", "pending"),
-                    ("succeeded", "succeeded"),
-                    ("done", "done"),
-                    ("refunded", "refunded"),
-                    ("removed", "removed"),
-                ],
-                default="succeeded",
-                max_length=30,
-            ),
+            model_name='paymenttransaction',
+            name='status',
+            field=models.CharField(choices=[('pending', 'pending'), ('succeeded', 'succeeded'), ('done', 'done'), ('refunded', 'refunded'), ('removed', 'removed')], default='succeeded', max_length=30),
         ),
     ]

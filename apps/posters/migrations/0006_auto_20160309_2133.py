@@ -7,14 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("posters", "0005_merge")]
+    dependencies = [
+        ('posters', '0005_merge'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="ordermixin",
-            name="order_type",
-            field=models.IntegerField(
-                choices=[(1, "Plakat"), (2, "Bong"), (3, "Annet")]
-            ),
-        )
+            model_name='ordermixin',
+            name='order_type',
+            field=models.IntegerField(choices=[(1, 'Plakat'), (2, 'Bong'), (3, 'Annet')]),
+        ),
     ]

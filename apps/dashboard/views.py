@@ -18,4 +18,4 @@ def index(request):
 
     context = get_base_context(request)
 
-    return render(request, "dashboard/dashboard.html", context)
+    return render(request, 'dashboard/dashboard.html', context)

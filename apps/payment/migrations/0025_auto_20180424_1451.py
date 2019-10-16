@@ -7,10 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("payment", "0024_auto_20180424_1450")]
+    dependencies = [
+        ('payment', '0024_auto_20180424_1450'),
+    ]
 
     operations = [
         migrations.RenameField(
-            model_name="payment", old_name="delay_duration", new_name="delay"
-        )
+            model_name='payment',
+            old_name='delay_duration',
+            new_name='delay',
+        ),
     ]

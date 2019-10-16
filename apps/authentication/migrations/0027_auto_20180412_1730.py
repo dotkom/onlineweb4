@@ -7,13 +7,13 @@ from django.db.migrations import RunPython
 
 
 def remove_duplicate_rfids(apps, schema_editor):
-    OnlineUser = apps.get_model("authentication", "OnlineUser")
+    OnlineUser = apps.get_model('authentication', 'OnlineUser')
 
-    for user in OnlineUser.objects.filter(rfid=""):
+    for user in OnlineUser.objects.filter(rfid=''):
         user.rfid = None
         user.save()
 
-    for user in OnlineUser.objects.exclude(rfid__isnull=True).exclude(rfid=""):
+    for user in OnlineUser.objects.exclude(rfid__isnull=True).exclude(rfid=''):
         if OnlineUser.objects.filter(rfid=user.rfid).count() > 1:
             user.rfid = None
             user.save()
@@ -26,6 +26,10 @@ def backward(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [("authentication", "0026_auto_20171108_1027")]
+    dependencies = [
+        ('authentication', '0026_auto_20171108_1027'),
+    ]
 
-    operations = [RunPython(remove_duplicate_rfids, backward)]
+    operations = [
+        RunPython(remove_duplicate_rfids, backward)
+    ]

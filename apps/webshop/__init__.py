@@ -1,1 +1,1 @@
-default_app_config = "apps.webshop.appconfig.WebshopConfig"
+default_app_config = 'apps.webshop.appconfig.WebshopConfig'

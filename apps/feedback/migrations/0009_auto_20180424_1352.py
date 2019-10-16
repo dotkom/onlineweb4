@@ -7,16 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("feedback", "0008_auto_20160906_1703")]
+    dependencies = [
+        ('feedback', '0008_auto_20160906_1703'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="feedback",
-            name="display_field_of_study",
-            field=models.BooleanField(
-                default=True,
-                help_text="Grafen over studiefelt vil bli vist til bedriften",
-                verbose_name="Vis studieoversikt",
-            ),
-        )
+            model_name='feedback',
+            name='display_field_of_study',
+            field=models.BooleanField(default=True, help_text='Grafen over studiefelt vil bli vist til bedriften', verbose_name='Vis studieoversikt'),
+        ),
     ]

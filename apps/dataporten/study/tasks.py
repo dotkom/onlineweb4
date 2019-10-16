@@ -21,25 +21,23 @@ logger = logging.getLogger(__name__)
 
 # API request functions
 
-
 def fetch_groups_information(access_token, show_all=False):
-    logger.debug("Fetching groups info...")
-    query_params = urlencode({"show_all": show_all})
-    groups_api = "https://groups-api.dataporten.no/groups/me/groups?%s" % query_params
-    groups_resp = requests.get(
-        groups_api, headers={"Authorization": "Bearer " + access_token}
-    )
-    return json.loads(groups_resp.content.decode(encoding="UTF-8"))
+    logger.debug('Fetching groups info...')
+    query_params = urlencode({
+        'show_all': show_all
+    })
+    groups_api = 'https://groups-api.dataporten.no/groups/me/groups?%s' % query_params
+    groups_resp = requests.get(groups_api, headers={'Authorization': 'Bearer ' + access_token})
+    return json.loads(groups_resp.content.decode(encoding='UTF-8'))
 
 
 # Model changes
-
 
 def find_user_study_and_update(user, groups):
     study_group = get_study(groups)
     study_id = get_group_id(study_group)
     study_year = get_year(study_id, groups)
-    study_name = study_group.get("displayName")
+    study_name = study_group.get('displayName')
     field_of_study = get_field_of_study(groups)
 
     # Remove the years from bachelor if the user is a master student.
@@ -51,9 +49,7 @@ def find_user_study_and_update(user, groups):
     # Approvals are usually set from July 1st, so we do that here too.
     started_date = datetime(timezone.now().year - start_date_for_study + 1, 7, 1)
 
-    logger.debug(
-        "Found {} to be studying {} on year {}".format(user, study_id, study_year)
-    )
+    logger.debug('Found {} to be studying {} on year {}'.format(user, study_id, study_year))
 
     if study_name:
         application = MembershipApproval.objects.create(
@@ -62,11 +58,9 @@ def find_user_study_and_update(user, groups):
             processed=True,
             processed_date=timezone.now(),
             approved=True,
-            message="Automatisk godkjent gjennom integrasjon mot Dataporten.",
+            message='Automatisk godkjent gjennom integrasjon mot Dataporten.',
             field_of_study=field_of_study,
-            new_expiry_date=get_expiry_date(
-                started_date.year, get_length_of_field_of_study(field_of_study)
-            ),
+            new_expiry_date=get_expiry_date(started_date.year, get_length_of_field_of_study(field_of_study)),
             started_date=started_date,
         )
 
@@ -80,7 +74,7 @@ def find_user_study_and_update(user, groups):
             if membership.count() == 1:
                 membership = membership[0]
                 if not membership.description:
-                    membership.description = ""
+                    membership.description = ''
                 membership.description += """
                 -------------------
                 Updated by dataporten app.
@@ -89,13 +83,8 @@ def find_user_study_and_update(user, groups):
 
                 Old notes:
                 %s
-                """ % (
-                    str(timezone.now().date()),
-                    membership.note,
-                )
-                membership.note = (
-                    user.get_field_of_study_display() + " " + str(user.started_date)
-                )
+                """ % (str(timezone.now().date()), membership.note)
+                membership.note = user.get_field_of_study_display() + " " + str(user.started_date)
 
             else:
                 membership = AllowedUsername()
@@ -103,12 +92,8 @@ def find_user_study_and_update(user, groups):
                 membership.registered = timezone.now().date()
                 membership.description = """Added by dataporten app.
 
-                Automatically approved on %s.""" % (
-                    str(timezone.now().date())
-                )
-                membership.note = (
-                    user.get_field_of_study_display() + " " + str(user.started_date)
-                )
+                Automatically approved on %s.""" % (str(timezone.now().date()))
+                membership.note = user.get_field_of_study_display() + " " + str(user.started_date)
 
             membership.expiration_date = application.new_expiry_date
             logger.debug("ntnu username: ")

@@ -7,32 +7,22 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [("approval", "0007_auto_20180404_1923")]
+    dependencies = [
+        ('approval', '0007_auto_20180404_1923'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="approval",
-            options={"default_permissions": ("add", "change", "delete")},
+            name='approval',
+            options={'default_permissions': ('add', 'change', 'delete')},
         ),
         migrations.AlterModelOptions(
-            name="membershipapproval",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (
-                    ("view_membershipapproval", "View membership approval"),
-                ),
-                "verbose_name": "medlemskapssøknad",
-                "verbose_name_plural": "medlemskapssøknader",
-            },
+            name='membershipapproval',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_membershipapproval', 'View membership approval'),), 'verbose_name': 'medlemskapssøknad', 'verbose_name_plural': 'medlemskapssøknader'},
         ),
         migrations.AlterField(
-            model_name="approval",
-            name="applicant",
-            field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="applicant",
-                to=settings.AUTH_USER_MODEL,
-                verbose_name="søker",
-            ),
+            model_name='approval',
+            name='applicant',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='applicant', to=settings.AUTH_USER_MODEL, verbose_name='søker'),
         ),
     ]

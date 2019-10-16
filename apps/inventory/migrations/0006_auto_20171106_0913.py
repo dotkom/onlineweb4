@@ -7,15 +7,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("inventory", "0005_item_image")]
+    dependencies = [
+        ('inventory', '0005_item_image'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="itemcategory",
-            options={
-                "permissions": (("view_itemcategory", "View Item Category"),),
-                "verbose_name": "Kategori",
-                "verbose_name_plural": "Kategorier",
-            },
-        )
+            name='itemcategory',
+            options={'permissions': (('view_itemcategory', 'View Item Category'),), 'verbose_name': 'Kategori', 'verbose_name_plural': 'Kategorier'},
+        ),
     ]

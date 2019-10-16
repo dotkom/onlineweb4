@@ -11,11 +11,11 @@ class CompanySerializer(serializers.ModelSerializer):
         model = Company
 
         fields = (
-            "id",
-            "name",
-            "site",
-            "image",
-            "long_description",
-            "short_description",
-            "phone_number",
+          'id',
+          'name',
+          'site',
+          'image',
+          'long_description',
+          'short_description',
+          'phone_number',
         )

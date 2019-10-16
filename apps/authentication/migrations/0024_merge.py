@@ -8,8 +8,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("authentication", "0022_auto_20160714_1347"),
-        ("authentication", "0023_remove_onlineuser_internal_services_password"),
+        ('authentication', '0022_auto_20160714_1347'),
+        ('authentication', '0023_remove_onlineuser_internal_services_password'),
     ]
 
-    operations = []
+    operations = [
+    ]

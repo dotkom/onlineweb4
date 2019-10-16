@@ -6,17 +6,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("article", "0011_auto_20190506_1719")]
+    dependencies = [
+        ('article', '0011_auto_20190506_1719'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="article",
-            name="video",
-            field=models.CharField(
-                blank=True,
-                max_length=200,
-                validators=[apps.article.models.vimeo_id_validator],
-                verbose_name="vimeo id",
-            ),
-        )
+            model_name='article',
+            name='video',
+            field=models.CharField(blank=True, max_length=200, validators=[apps.article.models.vimeo_id_validator], verbose_name='vimeo id'),
+        ),
     ]

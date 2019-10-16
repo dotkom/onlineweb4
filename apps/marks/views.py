@@ -34,12 +34,10 @@ class MarkRuleSetViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MarkRuleSet.objects.all()
 
 
-class RuleAccpetanceViewSet(
-    viewsets.GenericViewSet,
-    mixins.CreateModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-):
+class RuleAccpetanceViewSet(viewsets.GenericViewSet,
+                            mixins.CreateModelMixin,
+                            mixins.ListModelMixin,
+                            mixins.RetrieveModelMixin):
     permission_classes = (permissions.IsAuthenticated,)
     queryset = RuleAcceptance.objects.all()
 
@@ -47,9 +45,9 @@ class RuleAccpetanceViewSet(
         return super().get_queryset().filter(user=self.request.user)
 
     def get_serializer_class(self):
-        if self.action in ["retrieve", "list"]:
+        if self.action in ['retrieve', 'list']:
             return RuleAcceptanceReadOnlySerializer
-        if self.action == "create":
+        if self.action == 'create':
             return RuleAcceptanceCreateSerializer
 
         return super().get_serializer_class()

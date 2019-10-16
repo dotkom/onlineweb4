@@ -7,20 +7,13 @@ from apps.gallery.models import ResponsiveImage
 class Resource(models.Model):
     title = models.CharField(max_length=35)
     description = models.TextField()
-    image = models.ForeignKey(
-        ResponsiveImage,
-        related_name="resources",
-        blank=True,
-        null=True,
-        on_delete=SET_NULL,
-    )
+    image = models.ForeignKey(ResponsiveImage, related_name='resources', blank=True, null=True, on_delete=SET_NULL)
     priority = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return "{title} (Priority: {priority})".format(
-            title=self.title, priority=self.priority
-        )
+        return "{title} (Priority: {priority})".format(title=self.title,
+                                                       priority=self.priority)
 
     class Meta:
-        default_permissions = ("add", "change", "delete")
+        default_permissions = ('add', 'change', 'delete')

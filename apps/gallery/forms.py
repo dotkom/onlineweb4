@@ -12,11 +12,11 @@ class DocumentForm(forms.Form):
 
     def clean(self):
 
-        if "file" not in self.cleaned_data:
-            self._errors["file"] = "File attribute missing."
+        if 'file' not in self.cleaned_data:
+            self._errors['file'] = "File attribute missing."
             return self
         else:
-            form_data = self.cleaned_data["file"]
+            form_data = self.cleaned_data['file']
 
         # Legacy fix for PIL, not sure if needed anymore
         correct_file_name = _get_correct_file_name(form_data)
@@ -25,7 +25,7 @@ class DocumentForm(forms.Form):
         filename, file_extension = os.path.splitext(form_data.name.lower())
 
         if file_extension not in ALLOWED_FILE_TYPES:
-            self._errors["file"] = "File type not allowed (jpg, jpeg, png, bmp)"
+            self._errors['file'] = "File type not allowed (jpg, jpeg, png, bmp)"
 
         return form_data
 

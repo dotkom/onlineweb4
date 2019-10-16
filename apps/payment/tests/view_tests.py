@@ -15,40 +15,39 @@ from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
 
 
 class PaymentTest(TestCase):
+
     def setUp(self):
-        self.event = G(Event, title="Sjakkturnering")
+        self.event = G(Event, title='Sjakkturnering')
         self.attendance_event = G(
             AttendanceEvent,
             event=self.event,
-            unnatend_deadline=timezone.now() + timedelta(days=1),
+            unnatend_deadline=timezone.now() + timedelta(days=1)
         )
         self.user = G(
             User,
-            username="ola123",
-            ntnu_username="ola123ntnu",
+            username='ola123',
+            ntnu_username='ola123ntnu',
             first_name="ola",
-            last_name="nordmann",
+            last_name="nordmann"
         )
 
         self.event_payment = G(
             Payment,
             object_id=self.event.id,
-            content_type=ContentType.objects.get_for_model(AttendanceEvent),
+            content_type=ContentType.objects.get_for_model(AttendanceEvent)
         )
         self.payment_price = G(PaymentPrice, price=200, payment=self.event_payment)
 
     def simulate_user_payment(self, user):
-        G(
-            PaymentRelation,
-            payment=self.event_payment,
-            user=user,
-            payment_price=self.payment_price,
-        )
+        G(PaymentRelation, payment=self.event_payment,
+          user=user, payment_price=self.payment_price)
         self.event_payment.handle_payment(user)
 
     def testPaymentCreation(self):
         PaymentRelation.objects.create(
-            payment=self.event_payment, payment_price=self.payment_price, user=self.user
+            payment=self.event_payment,
+            payment_price=self.payment_price,
+            user=self.user
         )
         payment_relation = PaymentRelation.objects.all()[0]
 
@@ -80,14 +79,11 @@ class PaymentTest(TestCase):
             PaymentRelation,
             payment=self.event_payment,
             user=self.user,
-            payment_price=self.payment_price,
+            payment_price=self.payment_price
         )
 
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(
-            mail.outbox[0].subject,
-            "[Kvittering] " + payment_relation.payment.description(),
-        )
+        self.assertEqual(mail.outbox[0].subject, "[Kvittering] " + payment_relation.payment.description())
         self.assertEqual(mail.outbox[0].to, [payment_relation.user.email])
 
     def testEventPaymentRefundCheckUnatendDeadlinePassed(self):
@@ -96,7 +92,7 @@ class PaymentTest(TestCase):
             PaymentRelation,
             payment=self.event_payment,
             user=self.user,
-            payment_price=self.payment_price,
+            payment_price=self.payment_price
         )
 
         self.attendance_event.unattend_deadline = timezone.now() - timedelta(days=1)
@@ -109,7 +105,7 @@ class PaymentTest(TestCase):
             PaymentRelation,
             payment=self.event_payment,
             user=self.user,
-            payment_price=self.payment_price,
+            payment_price=self.payment_price
         )
 
         self.assertFalse(payment_relation.is_refundable)
@@ -120,7 +116,7 @@ class PaymentTest(TestCase):
             PaymentRelation,
             payment=self.event_payment,
             user=self.user,
-            payment_price=self.payment_price,
+            payment_price=self.payment_price
         )
 
         self.event.event_start = timezone.now() - timedelta(days=1)
@@ -140,7 +136,7 @@ class PaymentTest(TestCase):
             PaymentRelation,
             payment=self.event_payment,
             user=self.user,
-            payment_price=self.payment_price,
+            payment_price=self.payment_price
         )
 
         self.assertTrue(payment_relation.is_refundable)
@@ -153,7 +149,7 @@ class PaymentTest(TestCase):
             PaymentRelation,
             payment=self.event_payment,
             user=self.user,
-            payment_price=self.payment_price,
+            payment_price=self.payment_price
         )
         self.assertFalse(payment_relation.refunded)
 
@@ -195,12 +191,8 @@ class PaymentTest(TestCase):
         G(Attendee, event=self.attendance_event, user=user1)
         G(Attendee, event=self.attendance_event, user=user2)
         G(Attendee, event=self.attendance_event, user=user3)
-        G(
-            PaymentDelay,
-            payment=self.event_payment,
-            user=user2,
-            valid_to=timezone.now() + timedelta(days=1),
-        )
+        G(PaymentDelay, payment=self.event_payment, user=user2,
+          valid_to=timezone.now() + timedelta(days=1))
         self.simulate_user_payment(user3)
 
         not_paid = PaymentReminder.not_paid(self.event_payment)
@@ -219,7 +211,7 @@ class PaymentTest(TestCase):
             PaymentDelay,
             payment=self.event_payment,
             user=self.user,
-            valid_to=timezone.now() + timedelta(days=1),
+            valid_to=timezone.now() + timedelta(days=1)
         )
 
         self.assertTrue(payment_delay.active)
@@ -238,7 +230,7 @@ class PaymentTest(TestCase):
             PaymentDelay,
             payment=self.event_payment,
             user=self.user,
-            valid_to=timezone.now() + timedelta(days=1),
+            valid_to=timezone.now() + timedelta(days=1)
         )
 
         not_paid = PaymentReminder.not_paid(self.event_payment)

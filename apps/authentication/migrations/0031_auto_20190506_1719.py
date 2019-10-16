@@ -5,70 +5,38 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("authentication", "0030_auto_20181025_2232")]
+    dependencies = [
+        ('authentication', '0030_auto_20181025_2232'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="allowedusername",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ("username",),
-                "permissions": (("view_allowedusername", "View AllowedUsername"),),
-                "verbose_name": "medlem",
-                "verbose_name_plural": "medlemsregister",
-            },
+            name='allowedusername',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ('username',), 'permissions': (('view_allowedusername', 'View AllowedUsername'),), 'verbose_name': 'medlem', 'verbose_name_plural': 'medlemsregister'},
         ),
         migrations.AlterModelOptions(
-            name="email",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_email", "View Email"),),
-                "verbose_name": "epostadresse",
-                "verbose_name_plural": "epostadresser",
-            },
+            name='email',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_email', 'View Email'),), 'verbose_name': 'epostadresse', 'verbose_name_plural': 'epostadresser'},
         ),
         migrations.AlterModelOptions(
-            name="onlineuser",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ["first_name", "last_name"],
-                "permissions": (("view_onlineuser", "View OnlineUser"),),
-                "verbose_name": "brukerprofil",
-                "verbose_name_plural": "brukerprofiler",
-            },
+            name='onlineuser',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['first_name', 'last_name'], 'permissions': (('view_onlineuser', 'View OnlineUser'),), 'verbose_name': 'brukerprofil', 'verbose_name_plural': 'brukerprofiler'},
         ),
         migrations.AlterModelOptions(
-            name="position",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ("user", "period"),
-                "permissions": (("view_position", "View Position"),),
-                "verbose_name": "posisjon",
-                "verbose_name_plural": "posisjoner",
-            },
+            name='position',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ('user', 'period'), 'permissions': (('view_position', 'View Position'),), 'verbose_name': 'posisjon', 'verbose_name_plural': 'posisjoner'},
         ),
         migrations.AlterModelOptions(
-            name="registertoken",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_registertoken", "View RegisterToken"),),
-            },
+            name='registertoken',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_registertoken', 'View RegisterToken'),)},
         ),
         migrations.AlterModelOptions(
-            name="specialposition",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ("user", "since_year"),
-                "permissions": (("view_specialposition", "View SpecialPosition"),),
-                "verbose_name": "spesialposisjon",
-                "verbose_name_plural": "spesialposisjoner",
-            },
+            name='specialposition',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ('user', 'since_year'), 'permissions': (('view_specialposition', 'View SpecialPosition'),), 'verbose_name': 'spesialposisjon', 'verbose_name_plural': 'spesialposisjoner'},
         ),
         migrations.AlterField(
-            model_name="onlineuser",
-            name="last_name",
-            field=models.CharField(
-                blank=True, max_length=150, verbose_name="last name"
-            ),
+            model_name='onlineuser',
+            name='last_name',
+            field=models.CharField(blank=True, max_length=150, verbose_name='last name'),
         ),
     ]

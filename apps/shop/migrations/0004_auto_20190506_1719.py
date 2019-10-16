@@ -5,18 +5,21 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("shop", "0003_magictoken")]
+    dependencies = [
+        ('shop', '0003_magictoken'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="magictoken",
-            options={"default_permissions": ("add", "change", "delete")},
+            name='magictoken',
+            options={'default_permissions': ('add', 'change', 'delete')},
         ),
         migrations.AlterModelOptions(
-            name="order", options={"default_permissions": ("add", "change", "delete")}
+            name='order',
+            options={'default_permissions': ('add', 'change', 'delete')},
         ),
         migrations.AlterModelOptions(
-            name="orderline",
-            options={"default_permissions": ("add", "change", "delete")},
+            name='orderline',
+            options={'default_permissions': ('add', 'change', 'delete')},
         ),
     ]

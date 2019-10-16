@@ -9,19 +9,14 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("auth", "0008_alter_user_username_max_length"),
-        ("events", "0015_remove_event_old_image"),
+        ('auth', '0008_alter_user_username_max_length'),
+        ('events', '0015_remove_event_old_image'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="event",
-            name="organizer",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                to="auth.Group",
-            ),
-        )
+            model_name='event',
+            name='organizer',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='auth.Group'),
+        ),
     ]

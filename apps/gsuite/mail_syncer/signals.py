@@ -8,7 +8,10 @@ from .tasks import update_mailing_list
 
 User = get_user_model()
 
-MAILING_LIST_USER_FIELDS_TO_LIST_NAME = {"infomail": "info", "jobmail": "oppdrag"}
+MAILING_LIST_USER_FIELDS_TO_LIST_NAME = {
+    'infomail': 'info',
+    'jobmail': 'oppdrag',
+}
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +22,9 @@ def get_updated_mailing_list_fields(user):
         # Get the current user and find out what's about to change
         current_user = User.objects.get(pk=user.pk)
         if user.infomail != current_user.infomail:
-            updated_mailing_lists.append("infomail")
+            updated_mailing_lists.append('infomail')
         if user.jobmail != current_user.jobmail:
-            updated_mailing_lists.append("jobmail")
+            updated_mailing_lists.append('jobmail')
     except User.DoesNotExist:
         # Find out which mailing lists are opted into if the user did not previously exist
         for mailing_list in MAILING_LIST_USER_FIELDS_TO_LIST_NAME.keys():
@@ -46,5 +49,5 @@ def toggle_mailing_lists(sender, instance, **kwargs):
             update_mailing_list.delay(
                 g_suite_mailing_list,
                 instance.primary_email,
-                getattr(instance, mailing_list),
+                getattr(instance, mailing_list)
             )

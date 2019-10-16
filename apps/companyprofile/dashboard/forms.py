@@ -12,19 +12,9 @@ class CompanyForm(ModelForm):
 
     class Meta:
         model = Company
-        fields = (
-            "name",
-            "short_description",
-            "long_description",
-            "image",
-            "site",
-            "email_address",
-            "phone_number",
-        )
+        fields = ('name', 'short_description', 'long_description', 'image', 'site', 'email_address', 'phone_number',)
 
-        exclude = ["old_image"]
+        exclude = ['old_image']
 
         # Widget generator accepts a form widget, and a list of tuples between field name and an attribute dict
-        widgets = widget_generator(
-            SingleImageInput, [("image", {"id": "responsive-image-id"})]
-        )
+        widgets = widget_generator(SingleImageInput, [('image', {'id': 'responsive-image-id'})])

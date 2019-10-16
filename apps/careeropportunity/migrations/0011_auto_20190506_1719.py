@@ -6,28 +6,18 @@ import taggit.managers
 
 class Migration(migrations.Migration):
 
-    dependencies = [("careeropportunity", "0010_auto_20180424_1328")]
+    dependencies = [
+        ('careeropportunity', '0010_auto_20180424_1328'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="careeropportunity",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "permissions": (("view_careeropportunity", "View CareerOpportunity"),),
-                "verbose_name": "karrieremulighet",
-                "verbose_name_plural": "karrieremuligheter",
-            },
+            name='careeropportunity',
+            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_careeropportunity', 'View CareerOpportunity'),), 'verbose_name': 'karrieremulighet', 'verbose_name_plural': 'karrieremuligheter'},
         ),
         migrations.AlterField(
-            model_name="careeropportunity",
-            name="location",
-            field=taggit.managers.TaggableManager(
-                blank=True,
-                help_text="A comma-separated list of tags.",
-                related_name="+",
-                through="taggit.TaggedItem",
-                to="taggit.Tag",
-                verbose_name="sted(er)",
-            ),
+            model_name='careeropportunity',
+            name='location',
+            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', related_name='+', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='sted(er)'),
         ),
     ]

@@ -13,8 +13,8 @@ def pdf_page_to_png(pdf: FieldFile, page_number=0):
     first_page: fitz.Page = source_pdf[page_number]
     first_page_image = first_page.getPixmap(alpha=False, matrix=fitz.Matrix(4.0, 4.0))
 
-    temp_image_path = f"{gettempdir()}/{uuid.uuid1()}.png"
+    temp_image_path = f'{gettempdir()}/{uuid.uuid1()}.png'
     first_page_image.writePNG(temp_image_path)
-    image_file = open(temp_image_path, "rb")
+    image_file = open(temp_image_path, 'rb')
 
     return image_file

@@ -7,21 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("careeropportunity", "0001_squashed_0003_auto_20151017_2258")]
+    dependencies = [
+        ('careeropportunity', '0001_squashed_0003_auto_20151017_2258'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="careeropportunity",
-            name="job_type",
-            field=models.IntegerField(
-                choices=[
-                    (1, "Fastjobb"),
-                    (2, "Deltidsjobb"),
-                    (3, "Sommerjobb/internship"),
-                    (4, "Start-up"),
-                    (5, "Annet"),
-                ],
-                default=5,
-            ),
-        )
+            model_name='careeropportunity',
+            name='job_type',
+            field=models.IntegerField(choices=[(1, 'Fastjobb'), (2, 'Deltidsjobb'), (3, 'Sommerjobb/internship'), (4, 'Start-up'), (5, 'Annet')], default=5),
+        ),
     ]

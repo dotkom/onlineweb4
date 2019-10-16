@@ -7,10 +7,13 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [("authentication", "0022_onlineuser_internal_services_password")]
+    dependencies = [
+        ('authentication', '0022_onlineuser_internal_services_password'),
+    ]
 
     operations = [
         migrations.RemoveField(
-            model_name="onlineuser", name="internal_services_password"
-        )
+            model_name='onlineuser',
+            name='internal_services_password',
+        ),
     ]

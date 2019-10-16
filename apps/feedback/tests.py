@@ -45,14 +45,7 @@ class FeedbackTestCaseMixin:
     def tomorow(self):
         return timezone.now() + timedelta(days=1)
 
-    def create_feedback_relation(
-        self,
-        end_date=False,
-        event_type=2,
-        feedback=None,
-        deadline=False,
-        organizer=None,
-    ):
+    def create_feedback_relation(self, end_date=False, event_type=2, feedback=None, deadline=False, organizer=None):
         if not end_date:
             end_date = self.yesterday()
 
@@ -73,21 +66,20 @@ class FeedbackTestCaseMixin:
             unattend_deadline=timezone.now(),
             registration_end=timezone.now(),
             event=self.event,
-            max_capacity=30,
+            max_capacity=30
         )
 
         feedback = Feedback.objects.create(author=self.user1)
         TextQuestion.objects.create(feedback=feedback)
         RatingQuestion.objects.create(feedback=feedback)
 
-        Attendee.objects.create(
-            event=self.attendance_event, user=self.user1, attended=True
-        )
-        Attendee.objects.create(
-            event=self.attendance_event, user=self.user2, attended=True
-        )
+        Attendee.objects.create(event=self.attendance_event, user=self.user1, attended=True)
+        Attendee.objects.create(event=self.attendance_event, user=self.user2, attended=True)
         return FeedbackRelation.objects.create(
-            feedback=feedback, content_object=self.event, deadline=deadline, active=True
+            feedback=feedback,
+            content_object=self.event,
+            deadline=deadline,
+            active=True,
         )
 
     # Create a feedback relation that won't work
@@ -95,7 +87,10 @@ class FeedbackTestCaseMixin:
         feedback = Feedback.objects.create(author=self.user1)
         deadline = self.tomorow()
         return FeedbackRelation.objects.create(
-            feedback=feedback, content_object=self.user1, deadline=deadline, active=True
+            feedback=feedback,
+            content_object=self.user1,
+            deadline=deadline,
+            active=True
         )
 
 
@@ -104,11 +99,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         feedback_relation = self.create_feedback_relation()
 
         # The below if user.id check is due to Django Guardian middleware needing an AnonymousUser, that has ID -1
-        user_mails = [
-            user.email
-            for user in User.objects.all()
-            if user.username != settings.ANONYMOUS_USER_NAME
-        ]
+        user_mails = [user.email for user in User.objects.all() if user.username != settings.ANONYMOUS_USER_NAME]
 
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
         self.assertEqual(set(message.attended_mails), set(user_mails))
@@ -133,32 +124,26 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         feedback_relation.answered.set([self.user1, self.user2])
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
-        self.assertEqual(message.status, "Everyone has answered")
+        self.assertEqual(message.status, 'Everyone has answered')
         self.assertFalse(message.send)
         self.assertFalse(feedback_relation.active)
 
     def test_deadline_passeed(self):
-        feedback_relation = self.create_feedback_relation(
-            deadline=self.yesterday().date()
-        )
+        feedback_relation = self.create_feedback_relation(deadline=self.yesterday().date())
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Deadine passed")
         self.assertFalse(feedback_relation.active)
 
     def test_last_warning(self):
-        feedback_relation = self.create_feedback_relation(
-            deadline=timezone.now().date()
-        )
+        feedback_relation = self.create_feedback_relation(deadline=timezone.now().date())
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Last warning")
         self.assertTrue(message.send)
 
     def test_warning(self):
-        feedback_relation = self.create_feedback_relation(
-            deadline=timezone.now().date() + timedelta(days=2)
-        )
+        feedback_relation = self.create_feedback_relation(deadline=timezone.now().date() + timedelta(days=2))
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Warning message")
@@ -173,9 +158,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         self.assertTrue(feedback_relation.first_mail_sent)
 
     def test_no_message(self):
-        feedback_relation = self.create_feedback_relation(
-            end_date=timezone.now() - timedelta(days=2)
-        )
+        feedback_relation = self.create_feedback_relation(end_date=timezone.now() - timedelta(days=2))
         feedback_relation.first_mail_sent = True
         message = FeedbackMail.generate_message(feedback_relation, self.logger)
 
@@ -189,9 +172,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         self.assertEqual(email, settings.EMAIL_ARRKOM)
 
         # Bedkom
-        feedback_relation = (
-            self.create_feedback_relation()
-        )  # Default param is event_type=2
+        feedback_relation = self.create_feedback_relation()  # Default param is event_type=2
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.EMAIL_BEDKOM)
 
@@ -223,12 +204,8 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
     def test_group_email(self):
         # Feedback email should be be to the organizing committee
         organizer_group: Group = G(Group)
-        online_group: OnlineGroup = G(
-            OnlineGroup, group=organizer_group, email="testkom@example.com"
-        )
-        feedback_relation = self.create_feedback_relation(
-            event_type=1, organizer=organizer_group
-        )
+        online_group: OnlineGroup = G(OnlineGroup, group=organizer_group, email='testkom@example.com')
+        feedback_relation = self.create_feedback_relation(event_type=1, organizer=organizer_group)
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, online_group.email)
         self.assertNotEqual(email, settings.EMAIL_ARRKOM)
@@ -244,15 +221,13 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         self.assertFalse(end_date)
 
     def test_mark_setting(self):
-        users = [User.objects.get(username="user1")]
+        users = [User.objects.get(username='user1')]
         all_users = User.objects.all()
         FeedbackMail.set_marks("test_title", users)
         mark = Mark.objects.get()
 
         self.assertEqual(set(users), set([mu.user for mu in mark.given_to.all()]))
-        self.assertNotEqual(
-            set(all_users), set([mu.user for mu in mark.given_to.all()])
-        )
+        self.assertNotEqual(set(all_users), set([mu.user for mu in mark.given_to.all()]))
 
     def test_login(self):
         client = Client()
@@ -263,10 +238,10 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         client.login(username="user1", password="Herpaderp123")
         feedback_relation = self.create_feedback_relation()
         response = client.post(feedback_relation.get_absolute_url())
-        for i in range(len(response.context["questions"])):
+        for i in range(len(response.context['questions'])):
             self.assertIn(
-                str(_("This field is required.")),
-                response.context["questions"][i].errors["answer"],
+                str(_('This field is required.')),
+                response.context['questions'][i].errors['answer']
             )
 
     def test_should_redirect(self):  # Login_required / not logged inn
@@ -294,30 +269,25 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
 
 
 class FeedbackViewTestCase(FeedbackTestCaseMixin, TestCase):
+
     def setUp(self):
         super().setUp()
         self.organizer: Group = G(Group)
         self.organizer.user_set.add(self.user1)
 
         self.feedback_relation = self.create_feedback_relation(organizer=self.organizer)
-        self.feedback_url = reverse(
-            "feedback",
-            args=(
-                "events",
-                "event",
-                str(self.event.id),
-                str(self.feedback_relation.id),
-            ),
+        self.feedback_url = reverse('feedback', args=(
+            'events',
+            'event',
+            str(self.event.id),
+            str(self.feedback_relation.id))
         )
-        self.results_url = reverse(
-            "result",
-            args=(
-                "events",
-                "event",
-                str(self.event.id),
-                str(self.feedback_relation.id),
-            ),
-        )
+        self.results_url = reverse('result', args=(
+            'events',
+            'event',
+            str(self.event.id),
+            str(self.feedback_relation.id)
+        ))
         self.client.force_login(self.user1, backend=None)
 
     def test_user_can_load_feedback_page(self):
@@ -345,6 +315,4 @@ class FeedbackViewTestCase(FeedbackTestCaseMixin, TestCase):
         admin_user: User = G(User, is_superuser=False)
         self.client.force_login(admin_user)
         response = self.client.get(self.results_url)
-        self.assertEqual(
-            response.status_code, 302
-        )  # No access returns a redirect for feedback results
+        self.assertEqual(response.status_code, 302)  # No access returns a redirect for feedback results

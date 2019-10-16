@@ -12,7 +12,7 @@ from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required
-@permission_required("companyprofile.view_company")
+@permission_required('companyprofile.view_company')
 def index(request):
     """
     This is the main companyprofile dashboard view
@@ -23,14 +23,14 @@ def index(request):
 
     context = get_base_context(request)
 
-    context["companies"] = Company.objects.all().order_by("name")
+    context['companies'] = Company.objects.all().order_by('name')
 
-    return render(request, "company/dashboard/index.html", context)
+    return render(request, 'company/dashboard/index.html', context)
 
 
 # GROUP MODULE VIEWS
 @login_required
-@permission_required("companyprofile.add_company")
+@permission_required('companyprofile.add_company')
 def new(request):
     """
     Create new companyprofile
@@ -41,25 +41,25 @@ def new(request):
 
     context = get_base_context(request)
 
-    if request.method == "POST":
+    if request.method == 'POST':
         company_form = CompanyForm(request.POST)
         if not company_form.is_valid():
-            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             company_form.save()
-            messages.success(request, "Bedriften ble opprettet.")
+            messages.success(request, 'Bedriften ble opprettet.')
 
             return redirect(index)
 
-        context["form"] = company_form
+        context['form'] = company_form
     else:
-        context["form"] = CompanyForm()
+        context['form'] = CompanyForm()
 
-    return render(request, "company/dashboard/new.html", context)
+    return render(request, 'company/dashboard/new.html', context)
 
 
 @login_required
-@permission_required("companyprofile.view_company")
+@permission_required('companyprofile.view_company')
 def detail(request, pk):
     """
     Detailed company view per PK
@@ -70,24 +70,24 @@ def detail(request, pk):
 
     context = get_base_context(request)
 
-    context["company"] = get_object_or_404(Company, pk=pk)
+    context['company'] = get_object_or_404(Company, pk=pk)
 
-    if request.method == "POST":
-        company_form = CompanyForm(request.POST, instance=context["company"])
+    if request.method == 'POST':
+        company_form = CompanyForm(request.POST, instance=context['company'])
         if not company_form.is_valid():
-            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
+            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
         else:
             company_form.save()
-            messages.success(request, "Bedriften ble oppdatert.")
-        context["form"] = company_form
+            messages.success(request, 'Bedriften ble oppdatert.')
+        context['form'] = company_form
     else:
-        context["form"] = CompanyForm(instance=context["company"])
+        context['form'] = CompanyForm(instance=context['company'])
 
-    return render(request, "company/dashboard/detail.html", context)
+    return render(request, 'company/dashboard/detail.html', context)
 
 
 @login_required
-@permission_required("companyprofile.delete_company")
+@permission_required('companyprofile.delete_company')
 def delete(request, pk):
     """
     Deletes the Company associated with the provided primary key
@@ -98,10 +98,10 @@ def delete(request, pk):
 
     context = get_base_context(request)
 
-    context["company"] = get_object_or_404(Company, pk=pk)
+    context['company'] = get_object_or_404(Company, pk=pk)
 
-    if request.method == "POST":
-        context["company"].delete()
+    if request.method == 'POST':
+        context['company'].delete()
         return redirect(index)
 
     raise PermissionDenied

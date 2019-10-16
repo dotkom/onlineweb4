@@ -9,14 +9,14 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [("events", "0016_event_organizer")]
+    dependencies = [
+        ('events', '0016_event_organizer'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="attendee",
-            name="show_as_attending_event",
-            field=models.BooleanField(
-                default=False, verbose_name="vis som påmeldt arrangementet"
-            ),
-        )
+            model_name='attendee',
+            name='show_as_attending_event',
+            field=models.BooleanField(default=False, verbose_name='vis som påmeldt arrangementet'),
+        ),
     ]

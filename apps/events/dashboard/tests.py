@@ -22,10 +22,10 @@ def create_generic_attendance_event():
 
 
 def add_permissions(user):
-    user.groups.add(G(Group, name="Komiteer"))
+    user.groups.add(G(Group, name='Komiteer'))
     user.user_permissions.add(
-        Permission.objects.filter(codename="view_event").first(),
-        Permission.objects.filter(codename="add_event").first(),
+        Permission.objects.filter(codename='view_event').first(),
+        Permission.objects.filter(codename='add_event').first()
     )
 
 
@@ -35,7 +35,7 @@ class DashboardEventsURLTestCase(TestCase):
         self.client.force_login(self.user)
 
     def test_dashboard_events_index_missing_permissions(self):
-        url = reverse("dashboard_events_index")
+        url = reverse('dashboard_events_index')
 
         response = self.client.get(url)
 
@@ -43,7 +43,7 @@ class DashboardEventsURLTestCase(TestCase):
 
     def test_dashboard_events_index_empty(self):
         add_permissions(self.user)
-        url = reverse("dashboard_events_index")
+        url = reverse('dashboard_events_index')
 
         response = self.client.get(url)
 
@@ -52,7 +52,7 @@ class DashboardEventsURLTestCase(TestCase):
     def test_events_index_exists(self):
         create_generic_attendance_event()
         add_permissions(self.user)
-        url = reverse("dashboard_events_index")
+        url = reverse('dashboard_events_index')
 
         response = self.client.get(url)
 
@@ -60,7 +60,7 @@ class DashboardEventsURLTestCase(TestCase):
 
     def test_dashboard_events_create(self):
         add_permissions(self.user)
-        url = reverse("dashboard_event_create")
+        url = reverse('dashboard_event_create')
 
         response = self.client.get(url)
 

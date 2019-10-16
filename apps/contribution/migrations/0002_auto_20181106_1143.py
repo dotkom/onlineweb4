@@ -7,19 +7,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("contribution", "0001_initial")]
+    dependencies = [
+        ('contribution', '0001_initial'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="repository",
-            name="issues",
+            model_name='repository',
+            name='issues',
             field=models.IntegerField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name="repository",
-            name="public_url",
-            field=models.URLField(default=""),
+            model_name='repository',
+            name='public_url',
+            field=models.URLField(default=''),
             preserve_default=False,
         ),
     ]

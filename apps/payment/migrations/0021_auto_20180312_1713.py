@@ -7,13 +7,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("payment", "0020_auto_20180221_1916")]
+    dependencies = [
+        ('payment', '0020_auto_20180221_1916'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="paymentprice",
-            name="description",
-            field=models.CharField(default="No description", max_length=128),
+            model_name='paymentprice',
+            name='description',
+            field=models.CharField(default='No description', max_length=128),
             preserve_default=False,
-        )
+        ),
     ]

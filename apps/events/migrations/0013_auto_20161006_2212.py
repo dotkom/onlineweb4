@@ -9,18 +9,14 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [("events", "0012_event_image")]
+    dependencies = [
+        ('events', '0012_event_image'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="event",
-            name="author",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name="oppretter",
-                to=settings.AUTH_USER_MODEL,
-            ),
-        )
+            model_name='event',
+            name='author',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='oppretter', to=settings.AUTH_USER_MODEL),
+        ),
     ]

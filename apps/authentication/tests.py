@@ -18,7 +18,7 @@ from apps.authentication.validators import validate_rfid
 class AuthenticationTest(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
-        self.user = G(OnlineUser, username="testuser")
+        self.user = G(OnlineUser, username='testuser')
         self.now = timezone.now()
 
     def testTokenActive(self):
@@ -46,12 +46,12 @@ class AuthenticationTest(TestCase):
         self.assertEqual(2, self.user.year)
 
     def testYearThreeBachelor(self):
-        self.user.started_date = self.now.date() - timedelta(days=365 * 2)
+        self.user.started_date = self.now.date() - timedelta(days=365*2)
         self.user.field_of_study = 1
         self.assertEqual(3, self.user.year)
 
     def testYearFourBachelorShouldNotBePossible(self):
-        self.user.started_date = self.now.date() - timedelta(days=365 * 3)
+        self.user.started_date = self.now.date() - timedelta(days=365*3)
         self.user.field_of_study = 1
         self.assertEqual(3, self.user.year)
 
@@ -66,7 +66,7 @@ class AuthenticationTest(TestCase):
         self.assertEqual(5, self.user.year)
 
     def testYearSixMasterShouldNotBePossible(self):
-        self.user.started_date = self.now.date() - timedelta(days=365 * 2)
+        self.user.started_date = self.now.date() - timedelta(days=365*2)
         self.user.field_of_study = 10
         self.assertEqual(5, self.user.year)
 
@@ -81,7 +81,7 @@ class AuthenticationTest(TestCase):
         self.assertEqual(6, self.user.year)
 
     def testPhdYearCouldBeInfinite(self):
-        self.user.started_date = self.now.date() - timedelta(days=365 * 5)
+        self.user.started_date = self.now.date() - timedelta(days=365*5)
         self.user.field_of_study = 80
         self.assertEqual(11, self.user.year)
 
@@ -114,9 +114,13 @@ class UserGroupSyncTestCase(TestCase):
         group_syncer_settings = deepcopy(settings)
         self.GROUP_SYNCER_SETTINGS = [
             {
-                "name": "Group syncer test",
-                "source": [self.source_group.id],
-                "destination": [self.destination_group.id],
+                'name': 'Group syncer test',
+                'source': [
+                    self.source_group.id,
+                ],
+                'destination': [
+                    self.destination_group.id
+                ]
             }
         ]
 
@@ -145,21 +149,21 @@ class UserGroupSyncTestCase(TestCase):
 
 class AuthenticationURLTestCase(TestCase):
     def test_auth_login_view(self):
-        url = reverse("auth_login")
+        url = reverse('auth_login')
 
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_auth_register_view(self):
-        url = reverse("auth_register")
+        url = reverse('auth_register')
 
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_auth_recover_view(self):
-        url = reverse("auth_recover")
+        url = reverse('auth_recover')
 
         response = self.client.get(url)
 
@@ -169,15 +173,15 @@ class AuthenticationURLTestCase(TestCase):
 class RfidValidatorTestCase(TestCase):
     def test_valid_8_char_rfid_passes_test(self):
         # Validation failure raises exception, we test this by expecting it not to raise an exception.
-        validate_rfid("12345678")
+        validate_rfid('12345678')
 
     def test_valid_10_char_rfid_passes_test(self):
         # Validation failure raises exception, we test this by expecting it not to raise an exception.
-        validate_rfid("1234567890")
+        validate_rfid('1234567890')
 
     def test_invalid_rfid_fails_test(self):
-        self.assertRaises(ValidationError, lambda: validate_rfid("1234567"))
-        self.assertRaises(ValidationError, lambda: validate_rfid("abcdefgh"))
-        self.assertRaises(ValidationError, lambda: validate_rfid("abcdefghij"))
-        self.assertRaises(ValidationError, lambda: validate_rfid("        "))
-        self.assertRaises(ValidationError, lambda: validate_rfid("          "))
+        self.assertRaises(ValidationError, lambda: validate_rfid('1234567'))
+        self.assertRaises(ValidationError, lambda: validate_rfid('abcdefgh'))
+        self.assertRaises(ValidationError, lambda: validate_rfid('abcdefghij'))
+        self.assertRaises(ValidationError, lambda: validate_rfid('        '))
+        self.assertRaises(ValidationError, lambda: validate_rfid('          '))

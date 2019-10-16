@@ -5,48 +5,35 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("authentication", "0038_auto_20190801_2147")]
+    dependencies = [
+        ('authentication', '0038_auto_20190801_2147'),
+    ]
 
     operations = [
         migrations.AlterModelOptions(
-            name="grouprole",
-            options={
-                "default_permissions": ("add", "change", "delete"),
-                "ordering": ("role_type",),
-                "permissions": (("view_grouprole", "View GroupRole"),),
-                "verbose_name": "Medlemskapsrolle",
-                "verbose_name_plural": "Medlemskapsroller",
-            },
+            name='grouprole',
+            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ('role_type',), 'permissions': (('view_grouprole', 'View GroupRole'),), 'verbose_name': 'Medlemskapsrolle', 'verbose_name_plural': 'Medlemskapsroller'},
         ),
         migrations.AddField(
-            model_name="grouprole",
-            name="memberships",
-            field=models.ManyToManyField(
-                related_name="roles",
-                to="authentication.GroupMember",
-                verbose_name="Medlemskap",
-            ),
+            model_name='grouprole',
+            name='memberships',
+            field=models.ManyToManyField(related_name='roles', to='authentication.GroupMember', verbose_name='Medlemskap'),
         ),
         migrations.AlterField(
-            model_name="grouprole",
-            name="role_type",
-            field=models.CharField(
-                choices=[
-                    ("leader", "Leder"),
-                    ("deputy_leader", "Nestleder"),
-                    ("treasurer", "Økonomiansvarlig"),
-                    ("member", "Medlem"),
-                    ("retired", "Pensjonert"),
-                    ("on_leave", "Permittert"),
-                    ("chief_editor", "Redaktør"),
-                ],
-                default="member",
-                max_length=256,
-                unique=True,
-                verbose_name="Rolle",
-            ),
+            model_name='grouprole',
+            name='role_type',
+            field=models.CharField(choices=[('leader', 'Leder'), ('deputy_leader', 'Nestleder'), ('treasurer', 'Økonomiansvarlig'), ('member', 'Medlem'), ('retired', 'Pensjonert'), ('on_leave', 'Permittert'), ('chief_editor', 'Redaktør')], default='member', max_length=256, unique=True, verbose_name='Rolle'),
         ),
-        migrations.AlterUniqueTogether(name="grouprole", unique_together=set()),
-        migrations.RemoveField(model_name="grouprole", name="added"),
-        migrations.RemoveField(model_name="grouprole", name="membership"),
+        migrations.AlterUniqueTogether(
+            name='grouprole',
+            unique_together=set(),
+        ),
+        migrations.RemoveField(
+            model_name='grouprole',
+            name='added',
+        ),
+        migrations.RemoveField(
+            model_name='grouprole',
+            name='membership',
+        ),
     ]

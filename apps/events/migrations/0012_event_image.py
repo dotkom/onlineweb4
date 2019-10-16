@@ -9,20 +9,14 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("gallery", "0012_auto_20160309_2133"),
-        ("events", "0011_auto_20161006_2151"),
+        ('gallery', '0012_auto_20160309_2133'),
+        ('events', '0011_auto_20161006_2151'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="event",
-            name="image",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                related_name="events",
-                to="gallery.ResponsiveImage",
-            ),
-        )
+            model_name='event',
+            name='image',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='events', to='gallery.ResponsiveImage'),
+        ),
     ]

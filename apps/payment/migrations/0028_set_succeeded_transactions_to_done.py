@@ -10,21 +10,25 @@ Transactions on the old format need to be converted to understand that they are 
 
 
 def load_data(apps, schema_editor):
-    PaymentTransaction = apps.get_model("payment", "PaymentTransaction")
+    PaymentTransaction = apps.get_model('payment', 'PaymentTransaction')
 
     success_transactions = PaymentTransaction.objects.filter(status=status.SUCCEEDED)
     for transaction in success_transactions:
         transaction.status = status.DONE
-        transaction.save(update_fields=["status"])
+        transaction.save(update_fields=['status'])
 
     refunded_transactions = PaymentTransaction.objects.filter(status=status.REFUNDED)
     for transaction in refunded_transactions:
         transaction.status = status.REMOVED
-        transaction.save(update_fields=["status"])
+        transaction.save(update_fields=['status'])
 
 
 class Migration(migrations.Migration):
 
-    dependencies = [("payment", "0027_auto_20190515_1412")]
+    dependencies = [
+        ('payment', '0027_auto_20190515_1412'),
+    ]
 
-    operations = [migrations.RunPython(load_data)]
+    operations = [
+        migrations.RunPython(load_data)
+    ]

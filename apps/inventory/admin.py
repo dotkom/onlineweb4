@@ -12,13 +12,13 @@ class ItemAdmin(admin.ModelAdmin):
     inlines = [BatchInline]
     model = Item
     list_display = [
-        "name",
-        "category",
-        "total_amount",
-        "oldest_expiration_date",
-        "last_added",
-        "available",
-        "price",
+        'name',
+        'category',
+        'total_amount',
+        'oldest_expiration_date',
+        'last_added',
+        'available',
+        'price',
     ]
 
 

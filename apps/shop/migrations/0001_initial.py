@@ -10,74 +10,39 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("contenttypes", "0001_initial"),
+        ('contenttypes', '0001_initial'),
     ]
 
     operations = [
         migrations.CreateModel(
-            name="Order",
+            name='Order',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        verbose_name="ID",
-                        serialize=False,
-                        auto_created=True,
-                        primary_key=True,
-                    ),
-                ),
-                ("object_id", models.PositiveIntegerField()),
-                (
-                    "price",
-                    models.DecimalField(max_digits=10, decimal_places=2, blank=True),
-                ),
-                (
-                    "quantity",
-                    models.PositiveIntegerField(
-                        default=1,
-                        validators=[django.core.validators.MinValueValidator(1)],
-                    ),
-                ),
-                (
-                    "content_type",
-                    models.ForeignKey(
-                        to="contenttypes.ContentType", on_delete=models.CASCADE
-                    ),
-                ),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('object_id', models.PositiveIntegerField()),
+                ('price', models.DecimalField(max_digits=10, decimal_places=2, blank=True)),
+                ('quantity', models.PositiveIntegerField(default=1, validators=[django.core.validators.MinValueValidator(1)])),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
             ],
-            options={},
+            options={
+            },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name="OrderLine",
+            name='OrderLine',
             fields=[
-                (
-                    "id",
-                    models.AutoField(
-                        verbose_name="ID",
-                        serialize=False,
-                        auto_created=True,
-                        primary_key=True,
-                    ),
-                ),
-                ("datetime", models.DateTimeField(auto_now_add=True)),
-                ("paid", models.BooleanField(default=False)),
-                (
-                    "user",
-                    models.ForeignKey(
-                        to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE
-                    ),
-                ),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('datetime', models.DateTimeField(auto_now_add=True)),
+                ('paid', models.BooleanField(default=False)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
-            options={},
+            options={
+            },
             bases=(models.Model,),
         ),
         migrations.AddField(
-            model_name="order",
-            name="order_line",
-            field=models.ForeignKey(
-                related_name="orders", to="shop.OrderLine", on_delete=models.CASCADE
-            ),
+            model_name='order',
+            name='order_line',
+            field=models.ForeignKey(related_name='orders', to='shop.OrderLine', on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

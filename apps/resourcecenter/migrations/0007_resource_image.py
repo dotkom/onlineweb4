@@ -7,20 +7,14 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("gallery", "0013_auto_20190506_1719"),
-        ("resourcecenter", "0006_remove_resource_image"),
+        ('gallery', '0013_auto_20190506_1719'),
+        ('resourcecenter', '0006_remove_resource_image'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="resource",
-            name="image",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                related_name="resources",
-                to="gallery.ResponsiveImage",
-            ),
-        )
+            model_name='resource',
+            name='image',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='resources', to='gallery.ResponsiveImage'),
+        ),
     ]

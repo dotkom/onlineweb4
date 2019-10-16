@@ -10,53 +10,41 @@ from apps.posters.models import Poster
 
 
 class AddForm(forms.ModelForm):
-    required_css_class = "required"
+    required_css_class = 'required'
     # @ToDo: Look at using event field as datalist
     description = forms.CharField(
-        label="Plakattekst",
+        label='Plakattekst',
         required=False,
-        widget=forms.Textarea(
-            attrs={"placeholder": "Detaljert hva du vil ha av tekst på plakaten"}
-        ),
+        widget=forms.Textarea(attrs={'placeholder': 'Detaljert hva du vil ha av tekst på plakaten'})
     )
     comments = forms.CharField(
-        label="Kommentarer",
+        label='Kommentarer',
         required=False,
-        widget=forms.Textarea(
-            attrs={
-                "placeholder": "Eventuell informasjon, kommentarer, lenker til bilder, osv..."
-            }
-        ),
+        widget=forms.Textarea(attrs={'placeholder': 'Eventuell informasjon, kommentarer, lenker til bilder, osv...'})
     )
     price = forms.DecimalField(
-        label="Pris",
+        label='Pris',
         required=False,
-        widget=forms.NumberInput(attrs={"placeholder": "Pris på event"}),
+        widget=forms.NumberInput(attrs={'placeholder': 'Pris på event'})
     )
     amount = forms.IntegerField(
-        label="Antall",
+        label='Antall',
         required=False,
-        widget=forms.NumberInput(
-            attrs={"placeholder": "Hvor mange vil du ha?", "value": "10"}
-        ),
+        widget=forms.NumberInput(attrs={'placeholder': 'Hvor mange vil du ha?', "value": "10"})
     )
     ordered_committee = forms.ModelChoiceField(
-        queryset=Group.objects.all(), empty_label=None
+        queryset=Group.objects.all(),
+        empty_label=None
     )
 
     class Meta:
         model = Poster
-        fields = [
-            "ordered_committee",
-            "amount",
-            "description",
-            "price",
-            "comments",
-            "display_from",
-        ]
-        dtp_fields = [("display_from", {})]
+        fields = ['ordered_committee', 'amount', 'description', 'price', 'comments', 'display_from']
+        dtp_fields = [('display_from', {})]
 
-        widgetlist = [(DatePickerInput, dtp_fields)]
+        widgetlist = [
+            (DatePickerInput, dtp_fields),
+        ]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
@@ -64,35 +52,26 @@ class AddForm(forms.ModelForm):
 
 class AddPosterForm(AddForm):
     bong = forms.IntegerField(
-        label="Bonger",
+        label='Bonger',
         required=False,
-        widget=forms.NumberInput(
-            attrs={
-                "placeholder": "Antall bonger du vil ha. La feltet stå tomt hvis du ikke ønsker noen."
-            }
-        ),
+        widget=forms.NumberInput(attrs={
+            'placeholder': 'Antall bonger du vil ha. La feltet stå tomt hvis du ikke ønsker noen.'
+        })
     )
     event = forms.ModelChoiceField(
-        label="Event",
-        queryset=Event.objects.order_by("-id").exclude(event_start__lte=timezone.now()),
-    )
+        label='Event',
+        queryset=Event.objects.order_by('-id').exclude(event_start__lte=timezone.now()))
 
     class Meta:
         model = Poster
-        fields = [
-            "ordered_committee",
-            "event",
-            "amount",
-            "bong",
-            "description",
-            "price",
-            "display_from",
-            "comments",
+        fields = ['ordered_committee', 'event', 'amount', 'bong', 'description',
+                  'price', 'display_from', 'comments']
+
+        dtp_fields = [('display_from', {})]
+
+        widgetlist = [
+            (DatePickerInput, dtp_fields),
         ]
-
-        dtp_fields = [("display_from", {})]
-
-        widgetlist = [(DatePickerInput, dtp_fields)]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
@@ -104,30 +83,23 @@ class AddBongForm(AddForm):
 
 class AddOtherForm(AddForm):
     title = forms.CharField(
-        label="Tittel",
+        label='Tittel',
         required=True,
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": "Tittelen til det du bestiller, vanligvis arrangementnavn"
-            }
-        ),
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Tittelen til det du bestiller, vanligvis arrangementnavn'
+        })
     )
 
     class Meta:
         model = Poster
-        fields = [
-            "ordered_committee",
-            "title",
-            "amount",
-            "price",
-            "description",
-            "display_from",
-            "comments",
+        fields = ['ordered_committee', 'title', 'amount', 'price', 'description',
+                  'display_from', 'comments']
+
+        dtp_fields = [('display_from', {})]
+
+        widgetlist = [
+            (DatePickerInput, dtp_fields),
         ]
-
-        dtp_fields = [("display_from", {})]
-
-        widgetlist = [(DatePickerInput, dtp_fields)]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
@@ -136,19 +108,14 @@ class AddOtherForm(AddForm):
 class EditPosterForm(AddPosterForm):
     class Meta:
         model = Poster
-        fields = [
-            "event",
-            "amount",
-            "bong",
-            "description",
-            "price",
-            "display_from",
-            "comments",
+        fields = ['event', 'amount', 'bong', 'description',
+                  'price', 'display_from', 'comments']
+
+        dtp_fields = [('display_from', {})]
+
+        widgetlist = [
+            (DatePickerInput, dtp_fields),
         ]
-
-        dtp_fields = [("display_from", {})]
-
-        widgetlist = [(DatePickerInput, dtp_fields)]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
@@ -157,11 +124,14 @@ class EditPosterForm(AddPosterForm):
 class EditOtherForm(AddOtherForm):
     class Meta:
         model = Poster
-        fields = ["title", "amount", "price", "description", "display_from", "comments"]
+        fields = ['title', 'amount', 'price', 'description',
+                  'display_from', 'comments']
 
-        dtp_fields = [("display_from", {})]
+        dtp_fields = [('display_from', {})]
 
-        widgetlist = [(DatePickerInput, dtp_fields)]
+        widgetlist = [
+            (DatePickerInput, dtp_fields),
+        ]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)

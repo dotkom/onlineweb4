@@ -8,7 +8,7 @@ from django.db.migrations import RunPython
 
 
 def forward(apps, schema_editor):
-    Payment = apps.get_model("payment", "Payment")
+    Payment = apps.get_model('payment', 'Payment')
 
     # Payment type 3 is 'Utsettelse'
     for payment in Payment.objects.filter(payment_type=3):
@@ -17,7 +17,7 @@ def forward(apps, schema_editor):
 
 
 def backward(apps, schema_editor):
-    Payment = apps.get_model("payment", "Payment")
+    Payment = apps.get_model('payment', 'Payment')
 
     # Payment type 3 is 'Utsettelse'
     for payment in Payment.objects.filter(payment_type=3):
@@ -27,6 +27,10 @@ def backward(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [("payment", "0022_payment_delay_duration")]
+    dependencies = [
+        ('payment', '0022_payment_delay_duration'),
+    ]
 
-    operations = [RunPython(forward, backward)]
+    operations = [
+        RunPython(forward, backward)
+    ]

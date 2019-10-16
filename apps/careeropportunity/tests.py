@@ -1,3 +1,4 @@
+
 import pytz
 from django.test import TestCase
 from django.urls import reverse
@@ -13,7 +14,7 @@ from .models import CareerOpportunity
 
 class CareerOpportunityURLTestCase(TestCase):
     def test_careeropportunity_index(self):
-        url = reverse("careeropportunity_index")
+        url = reverse('careeropportunity_index')
 
         response = self.client.get(url)
 
@@ -24,7 +25,7 @@ class CareerOpportunityURLTestCase(TestCase):
         future = timezone.now() + timezone.timedelta(days=1)
         careeropportunity = G(CareerOpportunity, start=past, end=future)
 
-        url = reverse("careeropportunity_details", args=(careeropportunity.id,))
+        url = reverse('careeropportunity_details', args=(careeropportunity.id,))
 
         response = self.client.get(url)
 
@@ -32,15 +33,19 @@ class CareerOpportunityURLTestCase(TestCase):
 
 
 class CompanyAPITestCase(OIDCTestCase):
-    def setUp(self):
-        self.url = reverse("careeropportunity-list")
-        self.id_url = lambda _id: self.url + str(_id) + "/"
 
-        self.company: Company = G(Company, name="online")
+    def setUp(self):
+        self.url = reverse('careeropportunity-list')
+        self.id_url = lambda _id: self.url + str(_id) + '/'
+
+        self.company: Company = G(Company, name='online')
         self.past = timezone.now() - timezone.timedelta(days=7)
         self.future = timezone.now() + timezone.timedelta(days=7)
         self.opportunity: CareerOpportunity = G(
-            CareerOpportunity, start=self.past, end=self.future, company=self.company
+            CareerOpportunity,
+            start=self.past,
+            end=self.future,
+            company=self.company
         )
 
     def test_careeropportunity_api_returns_200_ok(self):
@@ -52,24 +57,22 @@ class CompanyAPITestCase(OIDCTestCase):
         response = self.client.get(self.id_url(self.company.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get("title"), self.opportunity.title)
+        self.assertEqual(response.json().get('title'), self.opportunity.title)
 
     def test_client_can_filter_careeropportunity_by_name(self):
-        other_company: Company = G(Company, name="evilcorp")
+        other_company: Company = G(Company, name='evilcorp')
         other_opportunity: CareerOpportunity = G(
-            CareerOpportunity, start=self.past, end=self.future, company=other_company
+            CareerOpportunity,
+            start=self.past,
+            end=self.future,
+            company=other_company
         )
 
-        response = self.client.get(f"{self.url}?company={self.company.id}")
+        response = self.client.get(f'{self.url}?company={self.company.id}')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        opportunity_titles = list(
-            map(
-                lambda opportunity: opportunity.get("title"),
-                response.json().get("results"),
-            )
-        )
+        opportunity_titles = list(map(lambda opportunity: opportunity.get('title'), response.json().get('results')))
 
         self.assertIn(self.opportunity.title, opportunity_titles)
         self.assertNotIn(other_opportunity.title, opportunity_titles)

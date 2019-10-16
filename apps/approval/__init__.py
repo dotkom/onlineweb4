@@ -1,1 +1,1 @@
-default_app_config = "apps.approval.appconfig.ApprovalConfig"
+default_app_config = 'apps.approval.appconfig.ApprovalConfig'

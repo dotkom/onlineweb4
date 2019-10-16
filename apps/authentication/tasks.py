@@ -9,12 +9,13 @@ from apps.mommy.registry import Task
 
 
 class SynchronizeGroups(Task):
+
     @staticmethod
     def run():
-        logger = logging.getLogger("syncer.%s" % __name__)
+        logger = logging.getLogger('syncer.%s' % __name__)
 
         if hasattr(settings, "GROUP_SYNCER"):
-            logger.info("Running group syncer.")
+            logger.info('Running group syncer.')
             SynchronizeGroups.do_sync(logger)
 
     @staticmethod
@@ -22,7 +23,7 @@ class SynchronizeGroups(Task):
         # Loop all the syncs
         for job in settings.GROUP_SYNCER:
             # Log what job we are running
-            logger.info("Started: " + job.get("name"))
+            logger.info('Started: ' + job.get('name'))
 
             SynchronizeGroups.add_users(job, logger)
             SynchronizeGroups.remove_users(job, logger)
@@ -35,13 +36,12 @@ class SynchronizeGroups(Task):
 
         # Get all users in the source groups
         users_in_source = User.objects.filter(
-            groups__id__in=sync.get("source")
-        ).exclude(groups__id__in=sync.get("destination"))
+            groups__id__in=sync.get('source')).exclude(groups__id__in=sync.get('destination'))
 
         # Check if any users were found
         if len(users_in_source) > 0:
             # Loop all destination groups
-            for destination_group in sync.get("destination"):
+            for destination_group in sync.get('destination'):
                 # Create object for the current destination group
                 destination_group_object = Group.objects.get(id=destination_group)
 
@@ -54,10 +54,7 @@ class SynchronizeGroups(Task):
                     if destination_group_object not in user_groups:
                         # User is not in the current destination group, add
                         destination_group_object.user_set.add(user)
-                        logger.info(
-                            "%s added to group %s"
-                            % (user, destination_group_object.name)
-                        )
+                        logger.info('%s added to group %s' % (user, destination_group_object.name))
 
     @staticmethod
     def remove_users(sync, logger):
@@ -66,11 +63,8 @@ class SynchronizeGroups(Task):
         # Removing users from destination group(s) if they are not in the source group(s)
 
         # Get all users in the destination groups
-        users_in_destination = (
-            User.objects.filter(groups__id__in=sync.get("destination"))
-            .all()
-            .exclude(groups__id__in=sync.get("source"))
-        )
+        users_in_destination = User.objects.filter(
+            groups__id__in=sync.get('destination')).all().exclude(groups__id__in=sync.get('source'))
 
         # Check if any users were found
         if len(users_in_destination) > 0:
@@ -82,7 +76,7 @@ class SynchronizeGroups(Task):
                 # Get all groups the user is in
                 for user_group in user_groups:
                     # Check if the current user group is in the source list
-                    if user_group.id in sync.get("source"):
+                    if user_group.id in sync.get('source'):
                         # User group was found
                         user_in_source_group = True
 
@@ -94,13 +88,8 @@ class SynchronizeGroups(Task):
                     # User was not found, remove from all destination groups
                     for user_group in user_groups:
                         # Check if current group is in destination groups
-                        if user_group.id in sync.get("destination"):
+                        if user_group.id in sync.get('destination'):
                             # This group is a destination group, remove it from the user
-                            destination_group = Group.objects.filter(
-                                id=user_group.id
-                            ).first()
+                            destination_group = Group.objects.filter(id=user_group.id).first()
                             destination_group.user_set.remove(user)
-                            logger.info(
-                                "%s removed from group %s"
-                                % (user, destination_group.name)
-                            )
+                            logger.info('%s removed from group %s' % (user, destination_group.name))

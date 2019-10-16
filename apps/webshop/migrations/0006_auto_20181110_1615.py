@@ -9,24 +9,14 @@ import re
 
 class Migration(migrations.Migration):
 
-    dependencies = [("webshop", "0005_auto_20160428_2259")]
+    dependencies = [
+        ('webshop', '0005_auto_20160428_2259'),
+    ]
 
     operations = [
         migrations.AlterField(
-            model_name="product",
-            name="images_csv",
-            field=models.CharField(
-                blank=True,
-                default=None,
-                max_length=200,
-                null=True,
-                validators=[
-                    django.core.validators.RegexValidator(
-                        re.compile("^\\d+(?:\\,\\d+)*\\Z", 32),
-                        code="invalid",
-                        message="Enter only digits separated by commas.",
-                    )
-                ],
-            ),
-        )
+            model_name='product',
+            name='images_csv',
+            field=models.CharField(blank=True, default=None, max_length=200, null=True, validators=[django.core.validators.RegexValidator(re.compile('^\\d+(?:\\,\\d+)*\\Z', 32), code='invalid', message='Enter only digits separated by commas.')]),
+        ),
     ]

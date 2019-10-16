@@ -7,12 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("careeropportunity", "0002_careeropportunity_job_type")]
+    dependencies = [
+        ('careeropportunity', '0002_careeropportunity_job_type'),
+    ]
 
     operations = [
         migrations.AddField(
-            model_name="careeropportunity",
-            name="deadline",
-            field=models.DateField(blank=True, null=True, verbose_name="søknadsfrist"),
-        )
+            model_name='careeropportunity',
+            name='deadline',
+            field=models.DateField(blank=True, null=True, verbose_name='søknadsfrist'),
+        ),
     ]
