@@ -64,7 +64,7 @@ lint-only: lint-backend lint-frontend
 test-only: test-backend test-frontend
 
 lint-backend:
-	@docker-compose run --rm $(BACKEND_SERVICE_NAME) tox --recreate -e flake8 -e isort
+	@docker-compose run --rm $(BACKEND_SERVICE_NAME) tox --recreate -e flake8 -e isort -e black
 
 lint-frontend:
 	@docker-compose run --rm $(FRONTEND_SERVICE_NAME) npm run lint
@@ -75,3 +75,5 @@ test-backend:
 test-frontend:
 	@docker-compose run --rm $(FRONTEND_SERVICE_NAME) npm run test
 
+lint-backend-fix:
+	@docker-compose run --rm $(BACKEND_SERVICE_NAME) bash -c "isort -rc apps middleware scripts utils && black apps middleware scripts utils"
