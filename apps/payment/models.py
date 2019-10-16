@@ -362,7 +362,7 @@ class PaymentRelation(models.Model):
         return items
 
     def get_from_mail(self):
-        return settings.EMAIL_ARRKOM
+        return self.payment.responsible_mail()
 
     def get_to_mail(self):
         return self.user.email
@@ -385,10 +385,6 @@ class PaymentRelation(models.Model):
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
-        receipt = PaymentReceipt(
-            object_id=self.id, content_type=ContentType.objects.get_for_model(self)
-        )
-        receipt.save()
 
     def __str__(self):
         return self.payment.description() + " - " + str(self.user)
@@ -470,13 +466,6 @@ class PaymentTransaction(models.Model):
         return (
             str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
         )
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        receipt = PaymentReceipt(
-            object_id=self.id, content_type=ContentType.objects.get_for_model(self)
-        )
-        receipt.save()
 
     class Meta:
         ordering = ["-datetime"]
