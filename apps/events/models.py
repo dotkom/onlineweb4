@@ -894,6 +894,7 @@ class CompanyEvent(models.Model):
         )
         ordering = ('company',)
         default_permissions = ('add', 'change', 'delete')
+        unique_together = (('company', 'event',),)
 
 
 class Attendee(models.Model):

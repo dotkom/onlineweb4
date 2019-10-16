@@ -116,6 +116,23 @@ def item_delete(request, item_pk):
 
 
 @login_required
+@permission_required('inventory.change_item', return_403=True)
+def item_change_availability(request, item_pk):
+    if not has_access(request):
+        raise PermissionDenied
+
+    item = get_object_or_404(Item, pk=item_pk)
+
+    # AJAX
+    if request.method == 'POST':
+        if request.is_ajax and 'action' in request.POST:
+            item.available = not item.available
+            item.save()
+
+            return JsonResponse({'message': 'OK', 'status': 200})
+
+
+@login_required
 @permission_required('inventory.add_batch', return_403=True)
 def batch_new(request, item_pk):
     if not has_access(request):
