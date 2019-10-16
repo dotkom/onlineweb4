@@ -9,16 +9,15 @@ from apps.gallery.models import ResponsiveImage
 
 
 class ResponsiveImageForm(forms.ModelForm):
-
     class Meta:
         model = ResponsiveImage
-        fields = ['name', 'description', 'photographer', 'tags']
+        fields = ["name", "description", "photographer", "tags"]
         widgets = {
-            'tags': TagWidget(attrs={
-                'placeholder': 'Eksempel: kontoret, kjelleren, åre',
-            }),
-            'photographer': forms.TextInput(attrs={'placeholder': 'Eventuell(e) fotograf(er)...'})
+            "tags": TagWidget(
+                attrs={"placeholder": "Eksempel: kontoret, kjelleren, åre"}
+            ),
+            "photographer": forms.TextInput(
+                attrs={"placeholder": "Eventuell(e) fotograf(er)..."}
+            ),
         }
-        labels = {
-            'tags': 'Tags'
-        }
+        labels = {"tags": "Tags"}

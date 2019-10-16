@@ -22,11 +22,11 @@ from .utils import add_price_to_payment, generate_event_payment
 
 
 class IntentAction:
-    type = ''
+    type = ""
 
 
 class SuccessfulPaymentIntent:
-    status = 'succeeded'
+    status = "succeeded"
     next_action = IntentAction
 
 
@@ -35,44 +35,50 @@ def mock_payment_intent_confirm():
     Patches payment intent confirmation to work server side.
     A real implementation requires user interaction, like confirming with BankID.
     """
-    return mock.patch('stripe.PaymentIntent.confirm', return_value=SuccessfulPaymentIntent)
+    return mock.patch(
+        "stripe.PaymentIntent.confirm", return_value=SuccessfulPaymentIntent
+    )
 
 
 class PaymentRelationTestCase(OIDCTestCase):
-
     def setUp(self):
-        self.committee = G(Group, name='arrKom')
-        self.user = generate_user(username='test_user')
+        self.committee = G(Group, name="arrKom")
+        self.user = generate_user(username="test_user")
         self.token = self.generate_access_token(self.user)
-        self.headers = {
-            **self.generate_headers(),
-            **self.bare_headers,
-        }
+        self.headers = {**self.generate_headers(), **self.bare_headers}
 
-        self.url = reverse('payment_relations-list')
-        self.id_url = lambda _id: self.url + str(_id) + '/'
+        self.url = reverse("payment_relations-list")
+        self.id_url = lambda _id: self.url + str(_id) + "/"
         date_next_year = timezone.now() + timezone.timedelta(days=366)
         self.mock_card = {
-            'number': '4242424242424242',
-            'exp_month': 12,
-            'exp_year': date_next_year.year,
-            'cvc': '123'
+            "number": "4242424242424242",
+            "exp_month": 12,
+            "exp_year": date_next_year.year,
+            "cvc": "123",
         }
         self.mock_3d_secure_card = {
-            'number': '4000000000003220',
-            'exp_month': 12,
-            'exp_year': date_next_year.year,
-            'cvc': '123',
+            "number": "4000000000003220",
+            "exp_month": 12,
+            "exp_year": date_next_year.year,
+            "cvc": "123",
         }
-        stripe.api_key = settings.STRIPE_PUBLIC_KEYS['arrkom']
-        self.payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_card)
-        self.secure_payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_3d_secure_card)
+        stripe.api_key = settings.STRIPE_PUBLIC_KEYS["arrkom"]
+        self.payment_method = stripe.PaymentMethod.create(
+            type="card", card=self.mock_card
+        )
+        self.secure_payment_method = stripe.PaymentMethod.create(
+            type="card", card=self.mock_3d_secure_card
+        )
 
         self.event = generate_event(organizer=self.committee)
         self.event.event_end = timezone.now() + timezone.timedelta(days=3)
         self.event.event_start = timezone.now() + timezone.timedelta(days=2)
-        self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(days=1)
-        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(days=1)
+        self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(
+            days=1
+        )
+        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(
+            days=1
+        )
         self.event.save()
         self.event.attendance_event.save()
 
@@ -80,24 +86,34 @@ class PaymentRelationTestCase(OIDCTestCase):
         self.attendee = attend_user_to_event(self.event, self.user)
 
     def test_user_can_pay_for_an_event(self):
-        response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @mock_payment_intent_confirm()
-    def test_initiating_a_3d_secure_payment_results_in_a_pending_payment_relation(self, _):
-        response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.secure_payment_method.id,
-        }, **self.headers)
+    def test_initiating_a_3d_secure_payment_results_in_a_pending_payment_relation(
+        self, _
+    ):
+        response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.secure_payment_method.id,
+            },
+            **self.headers,
+        )
 
-        current_payment_status = response.json().get('status')
-        payment_intent_secret = response.json().get('payment_intent_secret')
+        current_payment_status = response.json().get("status")
+        payment_intent_secret = response.json().get("payment_intent_secret")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(current_payment_status, payment_status.PENDING)
@@ -105,11 +121,15 @@ class PaymentRelationTestCase(OIDCTestCase):
 
     @mock_payment_intent_confirm()
     def test_user_can_pay_for_event_with_3d_secure_required_card(self, _):
-        initial_response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.secure_payment_method.id,
-        }, **self.headers)
+        initial_response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.secure_payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(initial_response.status_code, status.HTTP_201_CREATED)
 
@@ -119,13 +139,17 @@ class PaymentRelationTestCase(OIDCTestCase):
         The response has been mocked in 3D secure tests, since it cannot be done with regular unit testing.
         https://stripe.com/docs/payments/payment-intents/quickstart#handling-next-actions
         """
-        transaction_id = initial_response.json().get('id')
-        confirm_response = self.client.patch(self.id_url(transaction_id), {
-            'payment_intent_id': '--some-fake-id--',
-            # Fake id works since actual validation has been disabled by the mock_payment_intent_confirm decorator
-        }, **self.headers)
+        transaction_id = initial_response.json().get("id")
+        confirm_response = self.client.patch(
+            self.id_url(transaction_id),
+            {
+                "payment_intent_id": "--some-fake-id--",
+                # Fake id works since actual validation has been disabled by the mock_payment_intent_confirm decorator
+            },
+            **self.headers,
+        )
 
-        current_payment_status = confirm_response.json().get('status')
+        current_payment_status = confirm_response.json().get("status")
 
         self.assertEqual(confirm_response.status_code, status.HTTP_200_OK)
         self.assertEqual(current_payment_status, payment_status.DONE)
@@ -141,70 +165,89 @@ class PaymentRelationTestCase(OIDCTestCase):
         response = self.client.get(self.id_url(payment_relation.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('payment').get('id'), self.payment.id)
+        self.assertEqual(response.json().get("payment").get("id"), self.payment.id)
 
     def test_user_cannot_view_other_users_payments(self):
-        other_user = generate_user(username='other_user')
+        other_user = generate_user(username="other_user")
         attend_user_to_event(self.event, other_user)
         payment_relation = pay_for_event(self.event, other_user)
 
         response = self.client.get(self.id_url(payment_relation.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json().get('detail'), 'Ikke funnet.')
+        self.assertEqual(response.json().get("detail"), "Ikke funnet.")
 
     def test_unauthenticated_client_cannot_access_payments(self):
         response = self.client.get(self.url, **self.bare_headers)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
+        self.assertEqual(
+            response.json().get("detail"), "Manglende autentiseringsinformasjon."
+        )
 
     def test_event_payment_fails_without_payment_method_id(self):
-        response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {"payment": self.payment.id, "payment_price": self.payment.price().id},
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json().get('payment_method_id'), ['Dette feltet er påkrevd.'])
+        self.assertEqual(
+            response.json().get("payment_method_id"), ["Dette feltet er påkrevd."]
+        )
 
     def test_event_payment_fails_with_fake_payment_method_id(self):
-        fake_payment_method_id = '--fake-token--'
+        fake_payment_method_id = "--fake-token--"
 
-        response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': fake_payment_method_id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": fake_payment_method_id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn(f'No such payment_method: {fake_payment_method_id}', response.json()[0])
+        self.assertIn(
+            f"No such payment_method: {fake_payment_method_id}", response.json()[0]
+        )
 
     def test_user_cannot_pay_for_event_with_wrong_payment_price(self):
         payment_1 = self.payment
         event_2 = generate_event(organizer=self.committee)
         payment_2 = generate_event_payment(event_2)
 
-        response = self.client.post(self.url, {
-            'payment': payment_1.id,
-            'payment_price': payment_2.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {
+                "payment": payment_1.id,
+                "payment_price": payment_2.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
-            response.json().get('non_field_errors'),
-            ['Supplied payment price is not valid for the supplied payment'],
+            response.json().get("non_field_errors"),
+            ["Supplied payment price is not valid for the supplied payment"],
         )
 
     def test_attendee_has_paid_after_paying_for_event(self):
         self.assertFalse(self.attendee.has_paid)
 
-        response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.attendee.refresh_from_db()
 
@@ -215,16 +258,20 @@ class PaymentRelationTestCase(OIDCTestCase):
     def test_attendee_has_not_paid_if_secure_payment_is_pending(self, _):
         self.assertFalse(self.attendee.has_paid)
 
-        response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.secure_payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.secure_payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.attendee.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.json().get('status'), payment_status.PENDING)
+        self.assertEqual(response.json().get("status"), payment_status.PENDING)
         self.assertFalse(self.attendee.has_paid)
 
     def test_attendee_has_paid_when_secure_payment_is_confirmed(self):
@@ -242,84 +289,124 @@ class PaymentRelationTestCase(OIDCTestCase):
         event = generate_event(organizer=self.committee)
         payment = generate_event_payment(event)
 
-        response = self.client.post(self.url, {
-            'payment': payment.id,
-            'payment_price': payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {
+                "payment": payment.id,
+                "payment_price": payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json(), ['Du har ikke tilgang til å betale for denne betalingen'])
+        self.assertEqual(
+            response.json(), ["Du har ikke tilgang til å betale for denne betalingen"]
+        )
 
     def test_user_can_pay_for_event_with_two_payments(self):
         second_price = add_price_to_payment(self.payment, price=1000)
 
-        response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': second_price.id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": second_price.id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_user_cannot_pay_for_event_twice(self):
-        response_1 = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response_1 = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
 
-        response_2 = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response_2 = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response_2.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response_2.json(), ['Du har ikke tilgang til å betale for denne betalingen'])
+        self.assertEqual(
+            response_2.json(), ["Du har ikke tilgang til å betale for denne betalingen"]
+        )
 
     def test_user_cannot_pay_for_event_twice_with_different_prices(self):
         second_price = add_price_to_payment(self.payment, price=1000)
 
-        response_1 = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response_1 = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
 
-        response_2 = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': second_price.id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response_2 = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": second_price.id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
 
         self.assertEqual(response_2.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response_2.json(), ['Du har ikke tilgang til å betale for denne betalingen'])
+        self.assertEqual(
+            response_2.json(), ["Du har ikke tilgang til å betale for denne betalingen"]
+        )
 
     def test_user_can_refund_event_payment(self):
-        create_response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
-        payment_relation_id = create_response.json().get('id')
+        create_response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
+        payment_relation_id = create_response.json().get("id")
 
         response = self.client.delete(self.id_url(payment_relation_id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('message'), 'Betalingen har blitt refundert.')
+        self.assertEqual(
+            response.json().get("message"), "Betalingen har blitt refundert."
+        )
 
     def test_event_payment_is_handled_as_refunded_after_user_refunds(self):
-        create_response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
-        payment_relation_id = create_response.json().get('id')
+        create_response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
+        payment_relation_id = create_response.json().get("id")
 
         self.client.delete(self.id_url(payment_relation_id), **self.headers)
 
@@ -330,79 +417,99 @@ class PaymentRelationTestCase(OIDCTestCase):
         self.assertEqual(payment_relation.is_refundable, False)
 
     def test_user_can_cancel_pending_event_payment(self):
-        create_response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.secure_payment_method.id,
-        }, **self.headers)
-        payment_relation_id = create_response.json().get('id')
+        create_response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.secure_payment_method.id,
+            },
+            **self.headers,
+        )
+        payment_relation_id = create_response.json().get("id")
 
         response = self.client.delete(self.id_url(payment_relation_id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get('message'), 'Betalingen har blitt refundert.')
+        self.assertEqual(
+            response.json().get("message"), "Betalingen har blitt refundert."
+        )
 
     def test_user_cannot_refund_after_unattend_deadline(self):
-        self.event.attendance_event.unattend_deadline = timezone.now() - timezone.timedelta(hours=1)
+        self.event.attendance_event.unattend_deadline = timezone.now() - timezone.timedelta(
+            hours=1
+        )
         self.event.attendance_event.save()
 
-        create_response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
-        payment_relation_id = create_response.json().get('id')
+        create_response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
+        payment_relation_id = create_response.json().get("id")
 
         response = self.client.delete(self.id_url(payment_relation_id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json().get('message'), 'Fristen for å melde seg av har utgått')
+        self.assertEqual(
+            response.json().get("message"), "Fristen for å melde seg av har utgått"
+        )
 
     def test_user_cannot_refund_after_the_event_has_started(self):
         self.event.event_start = timezone.now() - timezone.timedelta(hours=1)
         self.event.save()
 
-        create_response = self.client.post(self.url, {
-            'payment': self.payment.id,
-            'payment_price': self.payment.price().id,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
-        payment_relation_id = create_response.json().get('id')
+        create_response = self.client.post(
+            self.url,
+            {
+                "payment": self.payment.id,
+                "payment_price": self.payment.price().id,
+                "payment_method_id": self.payment_method.id,
+            },
+            **self.headers,
+        )
+        payment_relation_id = create_response.json().get("id")
 
         response = self.client.delete(self.id_url(payment_relation_id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json().get('message'), 'Dette arrangementet har allerede startet.')
+        self.assertEqual(
+            response.json().get("message"), "Dette arrangementet har allerede startet."
+        )
 
 
 class PaymentTransactionTestCase(OIDCTestCase):
-
     def setUp(self):
-        self.user = generate_user(username='test_user')
+        self.user = generate_user(username="test_user")
         self.token = self.generate_access_token(self.user)
-        self.headers = {
-            **self.generate_headers(),
-            **self.bare_headers,
-        }
+        self.headers = {**self.generate_headers(), **self.bare_headers}
 
-        self.url = reverse('payment_transactions-list')
-        self.id_url = lambda _id: self.url + str(_id) + '/'
+        self.url = reverse("payment_transactions-list")
+        self.id_url = lambda _id: self.url + str(_id) + "/"
         date_next_year = timezone.now() + timezone.timedelta(days=366)
         self.mock_card = {
-            'number': '4000000000003055',
-            'exp_month': 12,
-            'exp_year': date_next_year.year,
-            'cvc': '123'
+            "number": "4000000000003055",
+            "exp_month": 12,
+            "exp_year": date_next_year.year,
+            "cvc": "123",
         }
         self.mock_3d_secure_card = {
-            'number': '4000000000003220',
-            'exp_month': 12,
-            'exp_year': date_next_year.year,
-            'cvc': '123',
+            "number": "4000000000003220",
+            "exp_month": 12,
+            "exp_year": date_next_year.year,
+            "cvc": "123",
         }
-        stripe.api_key = settings.STRIPE_PUBLIC_KEYS['trikom']
-        self.payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_card)
-        self.secure_payment_method = stripe.PaymentMethod.create(type='card', card=self.mock_3d_secure_card)
+        stripe.api_key = settings.STRIPE_PUBLIC_KEYS["trikom"]
+        self.payment_method = stripe.PaymentMethod.create(
+            type="card", card=self.mock_card
+        )
+        self.secure_payment_method = stripe.PaymentMethod.create(
+            type="card", card=self.mock_3d_secure_card
+        )
         self.amount = 100
 
     def test_user_has_access_to_view_transactions(self):
@@ -414,26 +521,32 @@ class PaymentTransactionTestCase(OIDCTestCase):
         response = self.client.get(self.url, **self.bare_headers)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
+        self.assertEqual(
+            response.json().get("detail"), "Manglende autentiseringsinformasjon."
+        )
 
     def test_user_can_create_a_transaction_with_a_regular_card(self):
-        response = self.client.post(self.url, {
-            'amount': self.amount,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {"amount": self.amount, "payment_method_id": self.payment_method.id},
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.json().get('status'), payment_status.DONE)
+        self.assertEqual(response.json().get("status"), payment_status.DONE)
 
     @mock_payment_intent_confirm()
-    def test_initiating_a_3d_secure_transaction_results_in_a_pending_transaction(self, _):
-        response = self.client.post(self.url, {
-            'amount': self.amount,
-            'payment_method_id': self.secure_payment_method.id,
-        }, **self.headers)
+    def test_initiating_a_3d_secure_transaction_results_in_a_pending_transaction(
+        self, _
+    ):
+        response = self.client.post(
+            self.url,
+            {"amount": self.amount, "payment_method_id": self.secure_payment_method.id},
+            **self.headers,
+        )
 
-        current_payment_status = response.json().get('status')
-        payment_intent_secret = response.json().get('payment_intent_secret')
+        current_payment_status = response.json().get("status")
+        payment_intent_secret = response.json().get("payment_intent_secret")
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(current_payment_status, payment_status.PENDING)
@@ -441,10 +554,11 @@ class PaymentTransactionTestCase(OIDCTestCase):
 
     @mock_payment_intent_confirm()
     def test_user_can_complete_a_3d_secure_transaction(self, _):
-        initial_response = self.client.post(self.url, {
-            'amount': self.amount,
-            'payment_method_id': self.secure_payment_method.id,
-        }, **self.headers)
+        initial_response = self.client.post(
+            self.url,
+            {"amount": self.amount, "payment_method_id": self.secure_payment_method.id},
+            **self.headers,
+        )
 
         self.assertEqual(initial_response.status_code, status.HTTP_201_CREATED)
 
@@ -454,13 +568,17 @@ class PaymentTransactionTestCase(OIDCTestCase):
         The response has been mocked in 3D secure tests, since it cannot be done with regular unit testing.
         https://stripe.com/docs/payments/payment-intents/quickstart#handling-next-actions
         """
-        transaction_id = initial_response.json().get('id')
-        confirm_response = self.client.patch(self.id_url(transaction_id), {
-            'payment_intent_id': '--some-fake-id--',
-            # Fake id works since actual validation has been disabled by the mock_payment_intent_confirm decorator
-        }, **self.headers)
+        transaction_id = initial_response.json().get("id")
+        confirm_response = self.client.patch(
+            self.id_url(transaction_id),
+            {
+                "payment_intent_id": "--some-fake-id--",
+                # Fake id works since actual validation has been disabled by the mock_payment_intent_confirm decorator
+            },
+            **self.headers,
+        )
 
-        current_payment_status = confirm_response.json().get('status')
+        current_payment_status = confirm_response.json().get("status")
 
         self.assertEqual(confirm_response.status_code, status.HTTP_200_OK)
         self.assertEqual(current_payment_status, payment_status.DONE)
@@ -480,10 +598,11 @@ class PaymentTransactionTestCase(OIDCTestCase):
         starting_saldo = self.user.saldo
         expected_saldo = starting_saldo + self.amount
 
-        response = self.client.post(self.url, {
-            'amount': self.amount,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {"amount": self.amount, "payment_method_id": self.payment_method.id},
+            **self.headers,
+        )
 
         self.user.refresh_from_db()
 
@@ -495,10 +614,11 @@ class PaymentTransactionTestCase(OIDCTestCase):
         starting_saldo = self.user.saldo
         saldo_id_succeeded = starting_saldo + self.amount
 
-        response = self.client.post(self.url, {
-            'amount': self.amount,
-            'payment_method_id': self.secure_payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {"amount": self.amount, "payment_method_id": self.secure_payment_method.id},
+            **self.headers,
+        )
 
         self.user.refresh_from_db()
 
@@ -509,61 +629,70 @@ class PaymentTransactionTestCase(OIDCTestCase):
     def test_user_cannot_create_a_transaction_with_wrong_price(self):
         wrong_amount = 666
 
-        response = self.client.post(self.url, {
-            'amount': wrong_amount,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {"amount": wrong_amount, "payment_method_id": self.payment_method.id},
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json().get('amount'), [f'{wrong_amount} er ikke en gyldig betalingspris'])
+        self.assertEqual(
+            response.json().get("amount"),
+            [f"{wrong_amount} er ikke en gyldig betalingspris"],
+        )
 
     def test_transaction_fails_without_payment_method_id(self):
-        response = self.client.post(self.url, {
-            'amount': self.amount,
-        }, **self.headers)
+        response = self.client.post(self.url, {"amount": self.amount}, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json().get('payment_method_id'), ['Dette feltet er påkrevd.'])
+        self.assertEqual(
+            response.json().get("payment_method_id"), ["Dette feltet er påkrevd."]
+        )
 
     def test_event_payment_fails_with_fake_payment_method_id(self):
-        fake_payment_method_id = '--fake-token--'
+        fake_payment_method_id = "--fake-token--"
 
-        response = self.client.post(self.url, {
-            'amount': self.amount,
-            'payment_method_id': fake_payment_method_id,
-        }, **self.headers)
+        response = self.client.post(
+            self.url,
+            {"amount": self.amount, "payment_method_id": fake_payment_method_id},
+            **self.headers,
+        )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn(f'No such payment_method: {fake_payment_method_id}', response.json()[0])
+        self.assertIn(
+            f"No such payment_method: {fake_payment_method_id}", response.json()[0]
+        )
 
     def test_user_cannot_delete_transactions(self):
-        create_response = self.client.post(self.url, {
-            'amount': self.amount,
-            'payment_method_id': self.payment_method.id,
-        }, **self.headers)
+        create_response = self.client.post(
+            self.url,
+            {"amount": self.amount, "payment_method_id": self.payment_method.id},
+            **self.headers,
+        )
 
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
-        transaction_id = create_response.json().get('id')
+        transaction_id = create_response.json().get("id")
 
-        delete_response = self.client.delete(self.id_url(transaction_id), **self.headers)
+        delete_response = self.client.delete(
+            self.id_url(transaction_id), **self.headers
+        )
 
         self.assertEqual(delete_response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(delete_response.json().get('message'), 'Du kan ikke slette eksisterende transaksjoner')
+        self.assertEqual(
+            delete_response.json().get("message"),
+            "Du kan ikke slette eksisterende transaksjoner",
+        )
 
 
 class PaymentDelayTestCase(OIDCTestCase):
-
     def setUp(self):
-        self.user = generate_user(username='test_user')
+        self.user = generate_user(username="test_user")
         self.token = self.generate_access_token(self.user)
-        self.headers = {
-            **self.generate_headers(),
-            **self.bare_headers,
-        }
+        self.headers = {**self.generate_headers(), **self.bare_headers}
 
-        self.url = reverse('payment_delays-list')
-        self.id_url = lambda _id: self.url + str(_id) + '/'
+        self.url = reverse("payment_delays-list")
+        self.id_url = lambda _id: self.url + str(_id) + "/"
 
     def test_user_can_access_payment_delays(self):
         response = self.client.get(self.url, **self.headers)
@@ -574,21 +703,19 @@ class PaymentDelayTestCase(OIDCTestCase):
         response = self.client.get(self.url, **self.bare_headers)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
+        self.assertEqual(
+            response.json().get("detail"), "Manglende autentiseringsinformasjon."
+        )
 
 
 class PaymentPriceTestCase(OIDCTestCase):
-
     def setUp(self):
-        self.user = generate_user(username='test_user')
+        self.user = generate_user(username="test_user")
         self.token = self.generate_access_token(self.user)
-        self.headers = {
-            **self.generate_headers(),
-            **self.bare_headers,
-        }
+        self.headers = {**self.generate_headers(), **self.bare_headers}
 
-        self.url = reverse('payment_prices-list')
-        self.id_url = lambda _id: self.url + str(_id) + '/'
+        self.url = reverse("payment_prices-list")
+        self.id_url = lambda _id: self.url + str(_id) + "/"
 
     def test_user_can_access_payment_prices(self):
         response = self.client.get(self.url, **self.headers)
@@ -599,4 +726,6 @@ class PaymentPriceTestCase(OIDCTestCase):
         response = self.client.get(self.url, **self.bare_headers)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(response.json().get('detail'), 'Manglende autentiseringsinformasjon.')
+        self.assertEqual(
+            response.json().get("detail"), "Manglende autentiseringsinformasjon."
+        )

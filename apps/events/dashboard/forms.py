@@ -18,17 +18,25 @@ class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta:
         model = Event
         fields = (
-            'title', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description', 'event_type',
-            'image', 'organizer', 'visible',
+            "title",
+            "event_start",
+            "event_end",
+            "location",
+            "ingress_short",
+            "ingress",
+            "description",
+            "event_type",
+            "image",
+            "organizer",
+            "visible",
         )
 
-        img_fields = [('image', {'id': 'responsive-image-id'})]
-        dtp_fields = [('event_start', {"placeholder": "Arrangementsstart"}),
-                      ('event_end', {"placeholder": "Arrangementsslutt"})]
-        widgetlist = [
-            (DatetimePickerInput, dtp_fields),
-            (SingleImageInput, img_fields)
+        img_fields = [("image", {"id": "responsive-image-id"})]
+        dtp_fields = [
+            ("event_start", {"placeholder": "Arrangementsstart"}),
+            ("event_end", {"placeholder": "Arrangementsslutt"}),
         ]
+        widgetlist = [(DatetimePickerInput, dtp_fields), (SingleImageInput, img_fields)]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
@@ -38,16 +46,23 @@ class CreateAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta:
         model = AttendanceEvent
         fields = (
-            'max_capacity', 'registration_start', 'registration_end',
-            'unattend_deadline', 'automatically_set_marks', 'waitlist', 'guest_attendance',
-            'rule_bundles', 'extras'
+            "max_capacity",
+            "registration_start",
+            "registration_end",
+            "unattend_deadline",
+            "automatically_set_marks",
+            "waitlist",
+            "guest_attendance",
+            "rule_bundles",
+            "extras",
         )
 
-        dtp_fields = [('registration_start', {"placeholder": ""}), ('registration_end', {"placeholder": ""}),
-                      ('unattend_deadline', {"placeholder": ""})]
-        widgetlist = [
-            (DatetimePickerInput, dtp_fields),
+        dtp_fields = [
+            ("registration_start", {"placeholder": ""}),
+            ("registration_end", {"placeholder": ""}),
+            ("unattend_deadline", {"placeholder": ""}),
         ]
+        widgetlist = [(DatetimePickerInput, dtp_fields)]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
@@ -56,23 +71,28 @@ class CreateAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
 class AddCompanyForm(forms.ModelForm):
     class Meta:
         model = CompanyEvent
-        fields = ('company',)
+        fields = ("company",)
 
 
 class ChangeEventForm(forms.ModelForm, HTML5RequiredMixin):
-
     class Meta:
         model = Event
         fields = (
-            'title', 'event_type', 'event_start', 'event_end', 'location', 'ingress_short', 'ingress', 'description',
-            'image', 'visible',
+            "title",
+            "event_type",
+            "event_start",
+            "event_end",
+            "location",
+            "ingress_short",
+            "ingress",
+            "description",
+            "image",
+            "visible",
         )
 
-        dtp_fields = [('event_start', {}), ('event_end', {})]
+        dtp_fields = [("event_start", {}), ("event_end", {})]
 
-        widgetlist = [
-            (DatetimePickerInput, dtp_fields)
-        ]
+        widgetlist = [(DatetimePickerInput, dtp_fields)]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
@@ -82,58 +102,61 @@ class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta:
         model = AttendanceEvent
         fields = (
-            'event', 'max_capacity', 'waitlist', 'guest_attendance',
-            'registration_start', 'registration_end', 'unattend_deadline',
-            'automatically_set_marks', 'rule_bundles',
+            "event",
+            "max_capacity",
+            "waitlist",
+            "guest_attendance",
+            "registration_start",
+            "registration_end",
+            "unattend_deadline",
+            "automatically_set_marks",
+            "rule_bundles",
         )
 
-        dtp_fields = [('registration_start', {}), ('registration_end', {}), ('unattend_deadline', {})]
-
-        widgetlist = [
-            (DatetimePickerInput, dtp_fields)
+        dtp_fields = [
+            ("registration_start", {}),
+            ("registration_end", {}),
+            ("unattend_deadline", {}),
         ]
+
+        widgetlist = [(DatetimePickerInput, dtp_fields)]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
 
 
 class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
-
     def __init__(self, *args, **kwargs):
         super(CreateFeedbackRelationForm, self).__init__(*args, **kwargs)
         feedback = Feedback.objects.filter(available=True)
-        self.fields['feedback'].queryset = feedback
+        self.fields["feedback"].queryset = feedback
 
     class Meta:
         model = FeedbackRelation
-        fields = ('feedback', 'deadline', 'gives_mark')
+        fields = ("feedback", "deadline", "gives_mark")
 
-        dp_fields = [('deadline', {})]
-        widgetlist = [
-            (DatePickerInput, dp_fields)
-        ]
+        dp_fields = [("deadline", {})]
+        widgetlist = [(DatePickerInput, dp_fields)]
         widgets = multiple_widget_generator(widgetlist)
 
 
 class CreatePaymentForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta:
         model = Payment
-        fields = ('stripe_key', 'payment_type', 'deadline', 'delay')
+        fields = ("stripe_key", "payment_type", "deadline", "delay")
 
-        dtp_fields = [('deadline', {'placeholder': 'Betalingsfrist'})]
-        widgetlist = [
-            (DatetimePickerInput, dtp_fields)
-        ]
+        dtp_fields = [("deadline", {"placeholder": "Betalingsfrist"})]
+        widgetlist = [(DatetimePickerInput, dtp_fields)]
         widgets = multiple_widget_generator(widgetlist)
 
 
 class CreatePaymentPriceForm(forms.ModelForm, HTML5RequiredMixin):
     class Meta:
         model = PaymentPrice
-        fields = ('price', 'description')
+        fields = ("price", "description")
 
 
 class ChangeReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
-        exclude = ['attendance_event', ]
+        exclude = ["attendance_event"]

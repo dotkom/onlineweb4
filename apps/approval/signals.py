@@ -28,7 +28,7 @@ def new_membership_approval_handler(sender, instance, created, **kwargs):
     """
 
     if created and not instance.processed:
-        if settings.APPROVAL_SETTINGS.get('SEND_APPROVER_NOTIFICATION_EMAIL', False):
+        if settings.APPROVAL_SETTINGS.get("SEND_APPROVER_NOTIFICATION_EMAIL", False):
             send_approval_notification(instance)
 
 
@@ -49,13 +49,19 @@ def notify_membership_applicant_handler(sender, instance, created, **kwargs):
     """
 
     if not created and instance.processed and instance.applicant.primary_email:
-        if settings.APPROVAL_SETTINGS.get('SEND_APPLICANT_NOTIFICATION_EMAIL', False):
+        if settings.APPROVAL_SETTINGS.get("SEND_APPLICANT_NOTIFICATION_EMAIL", False):
             send_approval_status_update(instance)
 
 
 @receiver(post_save, sender=CommitteeApplication)
 def notify_new_committee_application(sender, instance, created, **kwargs):
     if created:
-        send_committee_application_notification(instance, [settings.EMAIL_OPPTAK], link_to_admin=True)
-        if settings.APPROVAL_SETTINGS.get('SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL', False):
-            send_committee_application_notification(instance, [instance.primary_email], link_to_admin=False)
+        send_committee_application_notification(
+            instance, [settings.EMAIL_OPPTAK], link_to_admin=True
+        )
+        if settings.APPROVAL_SETTINGS.get(
+            "SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL", False
+        ):
+            send_committee_application_notification(
+                instance, [instance.primary_email], link_to_admin=False
+            )

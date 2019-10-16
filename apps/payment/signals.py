@@ -18,7 +18,9 @@ def handle_payment_relation_status_change(sender, instance: PaymentRelation, **k
 
 
 @receiver(signal=pre_save, sender=PaymentTransaction)
-def handle_payment_transaction_status_change(sender, instance: PaymentTransaction, **kwargs):
+def handle_payment_transaction_status_change(
+    sender, instance: PaymentTransaction, **kwargs
+):
     # When a payment succeeds, ot should be stored to the DB
     if instance.status == status.SUCCEEDED:
         instance.user.change_saldo(instance.amount)
