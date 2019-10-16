@@ -15,10 +15,10 @@ def create_thumbnail(offline_issue: Issue):
     thumbnail_file = pdf_page_to_png(pdf=offline_issue.issue, page_number=0)
     responsive_image = create_responsive_image_from_file(
         file=thumbnail_file,
-        name=f'{offline_issue.title} - forsidebilde',
-        description=f'Forsidebilde for {offline_issue.title}',
-        photographer='Bildegeneratoren for Offline',
-        preset='offline',
+        name=f"{offline_issue.title} - forsidebilde",
+        description=f"Forsidebilde for {offline_issue.title}",
+        photographer="Bildegeneratoren for Offline",
+        preset="offline",
     )
     offline_issue.image = responsive_image
     offline_issue.save()

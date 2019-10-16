@@ -4,11 +4,12 @@ from django.db import migrations
 from django.conf import settings
 from datetime import date
 
+
 def load_data(apps, schema_editor):
-    Position = apps.get_model('authentication', 'Position')
+    Position = apps.get_model("authentication", "Position")
 
     for position in Position.objects.all():
-        start_year, end_year = position.period.split('-')
+        start_year, end_year = position.period.split("-")
         """ Set to start of year since that is how they were added before """
         start_date = date(int(start_year), 1, 1)
         end_date = date(int(end_year), 1, 1)
@@ -20,10 +21,6 @@ def load_data(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('authentication', '0032_auto_20190602_1939'),
-    ]
+    dependencies = [("authentication", "0032_auto_20190602_1939")]
 
-    operations = [
-        migrations.RunPython(load_data)
-    ]
+    operations = [migrations.RunPython(load_data)]

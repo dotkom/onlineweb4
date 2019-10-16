@@ -14,8 +14,8 @@ class InviteViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
         slack = SlackInvite()
         try:
-            slack.invite(request.data['email'])
+            slack.invite(request.data["email"])
         except SlackException as e:
-            raise serializers.ValidationError({'detail': str(e)})
+            raise serializers.ValidationError({"detail": str(e)})
 
         return Response()

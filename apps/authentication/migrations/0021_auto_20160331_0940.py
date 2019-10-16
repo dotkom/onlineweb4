@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('authentication', '0020_auto_20160309_2133'),
-    ]
+    dependencies = [("authentication", "0020_auto_20160309_2133")]
 
     operations = [
         migrations.AlterField(
-            model_name='registertoken',
-            name='token',
-            field=models.CharField(max_length=32, unique=True, verbose_name='token'),
-        ),
+            model_name="registertoken",
+            name="token",
+            field=models.CharField(max_length=32, unique=True, verbose_name="token"),
+        )
     ]

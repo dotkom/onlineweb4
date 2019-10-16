@@ -7,13 +7,16 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('events', '0013_auto_20161006_2212'),
-    ]
+    dependencies = [("events", "0013_auto_20161006_2212")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='companyevent',
-            options={'ordering': ('company',), 'permissions': (('view_companyevent', 'View CompanyEvent'),), 'verbose_name': 'bedrift', 'verbose_name_plural': 'bedrifter'},
-        ),
+            name="companyevent",
+            options={
+                "ordering": ("company",),
+                "permissions": (("view_companyevent", "View CompanyEvent"),),
+                "verbose_name": "bedrift",
+                "verbose_name_plural": "bedrifter",
+            },
+        )
     ]

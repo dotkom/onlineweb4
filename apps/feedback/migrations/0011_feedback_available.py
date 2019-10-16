@@ -5,14 +5,16 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('feedback', '0010_auto_20190227_2320'),
-    ]
+    dependencies = [("feedback", "0010_auto_20190227_2320")]
 
     operations = [
         migrations.AddField(
-            model_name='feedback',
-            name='available',
-            field=models.BooleanField(default=True, help_text='Dette brukes til å skjule ubrukte skjemaer, lager du et nytt, så ignorer denne.', verbose_name='Vis feedbackskjemaet'),
-        ),
+            model_name="feedback",
+            name="available",
+            field=models.BooleanField(
+                default=True,
+                help_text="Dette brukes til å skjule ubrukte skjemaer, lager du et nytt, så ignorer denne.",
+                verbose_name="Vis feedbackskjemaet",
+            ),
+        )
     ]

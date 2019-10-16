@@ -14,7 +14,7 @@ from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
 from rest_framework.exceptions import NotAcceptable
 
-from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType:
+from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
 

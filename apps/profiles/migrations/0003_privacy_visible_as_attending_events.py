@@ -7,14 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('profiles', '0002_auto_20150926_2339'),
-    ]
+    dependencies = [("profiles", "0002_auto_20150926_2339")]
 
     operations = [
         migrations.AddField(
-            model_name='privacy',
-            name='visible_as_attending_events',
-            field=models.BooleanField(default=False, verbose_name='synlig på alle sosiale arrangement'),
-        ),
+            model_name="privacy",
+            name="visible_as_attending_events",
+            field=models.BooleanField(
+                default=False, verbose_name="synlig på alle sosiale arrangement"
+            ),
+        )
     ]
