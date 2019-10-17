@@ -15,6 +15,7 @@ from django.utils import timezone
 from filebrowser.settings import VERSIONS
 from pytz import timezone as tz
 
+from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import TYPE_CHOICES, Attendee, Event, Extras
 from apps.payment.models import PaymentDelay, PaymentRelation
@@ -351,7 +352,7 @@ def handle_attend_event_payment(event, user):
         EmailMessage(subject, content, event.feedback_mail(), [user.primary_email]).send()
 
 
-def handle_mail_participants(event, _from_email, _to_email_value, subject, _message, _images,
+def handle_mail_participants(event, _to_email_value, subject, _message, _images,
                              all_attendees, attendees_on_waitlist, attendees_not_paid):
     logger = logging.getLogger(__name__)
 
@@ -361,31 +362,19 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
         '3': (attendees_not_paid, 'attendees not paid')
     }
 
-    # Decide from email
-    from_email = 'kontakt@online.ntnu.no'
-    from_email_value = _from_email
-
-    if from_email_value == '1' or from_email_value == '4':
-        from_email = settings.EMAIL_ARRKOM
-    elif from_email_value == '2':
-        from_email = settings.EMAIL_BEDKOM
-    elif from_email_value == '3':
-        from_email = settings.EMAIL_FAGKOM
-    elif from_email_value == '5':
-        from_email = settings.EMAIL_EKSKOM
-    elif from_email_value == '6':
-        from_email = settings.EMAIL_ITEX
-    elif from_email_value == '7':
-        from_email = settings.EMAIL_XSPORT
+    from_email = "kontakt@online.ntnu.no"
+    organizer_group: OnlineGroup = OnlineGroup.objects.filter(group=event.organizer).first()
+    if organizer_group and organizer_group.email:
+        from_email = organizer_group.email
 
     if _to_email_value not in _to_email_options:
         return False
     # Who to send emails to
     send_to_users = _to_email_options[_to_email_value][0]
 
-    signature = '\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+    signature = f"\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til {from_email})"
 
-    message = '%s%s' % (_message, signature)
+    message = f"{_message}{signature}"
 
     # Send mail
     try:

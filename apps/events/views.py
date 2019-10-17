@@ -337,7 +337,6 @@ def mail_participants(request, event_id):
         images = [(image.name, image.read(), image.content_type) for image in request.FILES.getlist('image')]
         mail_sent = handle_mail_participants(
             event,
-            request.POST.get('from_email'),
             request.POST.get('to_email'),
             subject,
             message,
