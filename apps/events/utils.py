@@ -12,51 +12,11 @@ from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
-from filebrowser.settings import VERSIONS
 from pytz import timezone as tz
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import TYPE_CHOICES, Attendee, Event, Extras
 from apps.payment.models import PaymentDelay, PaymentRelation
-
-
-def get_group_restricted_events(user, all_events=False):
-    """ Returns a queryset of events with attendance_event that a user has access to """
-    types_allowed = get_types_allowed(user)
-
-    if all_events:
-        return Event.objects.filter(event_type__in=types_allowed)
-    else:
-        return Event.objects.filter(attendance_event__isnull=False, event_type__in=types_allowed)
-
-
-def get_types_allowed(user):
-    types_allowed = []
-
-    groups = user.groups.all()
-
-    for group in groups:
-        if group.name == 'Hovedstyret' or group.name == 'dotKom':
-            types_allowed = [i + 1 for i in range(len(TYPE_CHOICES))]  # full access
-            return types_allowed
-
-        if group.name == 'arrKom':
-            types_allowed.append(1)  # sosialt
-            types_allowed.append(4)  # utflukt
-
-        if group.name == 'bedKom':
-            types_allowed.append(2)  # bedriftspresentasjon
-
-        if group.name == 'fagKom':
-            types_allowed.append(3)  # kurs
-
-        if group.name == 'eksKom':
-            types_allowed.append(5)  # ekskursjon
-
-        if group.name == 'Realfagskjelleren':
-            types_allowed.append(8)  # Realfagskjelleren
-
-    return types_allowed
 
 
 def handle_waitlist_bump(event, attendees, payment=None):
@@ -187,21 +147,6 @@ class EventCalendar(Calendar):
         self.cal.add_component(cal_event)
 
 
-def find_image_versions(image):
-    img = image
-    img_strings = []
-
-    for ver in VERSIONS.keys():
-        if ver.startswith('events_'):
-            img_strings.append(img.version_generate(ver).url)
-
-    return img_strings
-
-
-def handle_event_signup():
-    pass
-
-
 def handle_attendance_event_detail(event, user, context):
     attendance_event = event.attendance_event
 
@@ -322,10 +267,6 @@ def handle_event_extras(event, user, extras_id):
     attendee.save()
     resp['message'] = "Lagret ditt valg"
     return resp
-
-
-def handle_attend_event(event, user):
-    pass
 
 
 def handle_attend_event_payment(event, user):

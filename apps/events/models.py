@@ -160,29 +160,14 @@ class Event(models.Model):
     def feedback_mail(self):
         """
         Get feedback mail from organizer Online group.
-        Use old fallback if organizer has not been set up completly for the event/group yet
+        Use default from email if the organizer group does not have configured an email.
         """
         if self.organizer:
             organizer_group = OnlineGroup.objects.filter(pk=self.organizer.id).first()
             if organizer_group and organizer_group.email:
                 return organizer_group.email
 
-        return self._feedback_mail_fallback()
-
-    def _feedback_mail_fallback(self):
-        """
-        Fallback/old method for getting the email to an event organizer group
-        """
-        if self.event_type == 1 or self.event_type == 4:  # Sosialt & Utflukt
-            return settings.EMAIL_ARRKOM
-        elif self.event_type == 2:  # Bedpres
-            return settings.EMAIL_BEDKOM
-        elif self.event_type == 3:  # Kurs
-            return settings.EMAIL_FAGKOM
-        elif self.event_type == 5:  # Ekskursjon
-            return settings.EMAIL_EKSKOM
-        else:
-            return settings.DEFAULT_FROM_EMAIL
+        return settings.DEFAULT_FROM_EMAIL
 
     def can_display(self, user):
         restriction = GroupRestriction.objects.filter(event=self).first()
