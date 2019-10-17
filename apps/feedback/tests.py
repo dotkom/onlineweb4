@@ -161,33 +161,14 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         self.assertFalse(message.send)
 
     def test_committee_mails(self):
-        # Sosialt
-        feedback_relation = self.create_feedback_relation(event_type=1)
-        email = FeedbackMail.get_committee_email(feedback_relation)
-        self.assertEqual(email, settings.EMAIL_ARRKOM)
+        organizer_group: OnlineGroup = G(OnlineGroup, email='test@example.com')
 
-        # Bedkom
-        feedback_relation = self.create_feedback_relation()  # Default param is event_type=2
+        feedback_relation = self.create_feedback_relation(organizer=organizer_group.group)
         email = FeedbackMail.get_committee_email(feedback_relation)
-        self.assertEqual(email, settings.EMAIL_BEDKOM)
-
-        # Kurs
-        feedback_relation = self.create_feedback_relation(event_type=3)
-        email = FeedbackMail.get_committee_email(feedback_relation)
-        self.assertEqual(email, settings.EMAIL_FAGKOM)
-
-        # Utflukt
-        feedback_relation = self.create_feedback_relation(event_type=4)
-        email = FeedbackMail.get_committee_email(feedback_relation)
-        self.assertEqual(email, settings.EMAIL_ARRKOM)
-
-        # Ekskursjon
-        feedback_relation = self.create_feedback_relation(event_type=5)
-        email = FeedbackMail.get_committee_email(feedback_relation)
-        self.assertEqual(email, settings.EMAIL_EKSKOM)
+        self.assertEqual(email, organizer_group.email)
 
         # Default
-        feedback_relation = self.create_feedback_relation(event_type=6)
+        feedback_relation = self.create_feedback_relation()
         email = FeedbackMail.get_committee_email(feedback_relation)
         self.assertEqual(email, settings.DEFAULT_FROM_EMAIL)
 
