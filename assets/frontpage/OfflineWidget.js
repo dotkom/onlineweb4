@@ -28,7 +28,7 @@ function OfflineWidget() {
     const maxWidthPer = 156;
     const issuesPerSlide = Math.floor(maxWidth / maxWidthPer);
 
-    if (offlines.length <= 0) {
+    if (offlines && offlines.length <= 0) {
             // No issues added
       insertMe += '<p>Ingen utgaver funnet.</p>';
     } else {
