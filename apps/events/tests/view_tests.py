@@ -4,14 +4,14 @@ from unittest.mock import patch
 from captcha.client import RecaptchaResponse
 from django.contrib.auth.models import Group
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from freezegun import freeze_time
 from rest_framework import status
 
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import AllowedUsername, OnlineGroup
 from apps.marks.models import MarkRuleSet
 from apps.payment.models import PaymentDelay, PaymentPrice
 
@@ -655,21 +655,18 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         )
         self.assertEqual(len(mail.outbox), 0)
 
-    @override_settings(EMAIL_ARRKOM="arrkom@online.ntnu.no")
     def test_post_as_arrkom_successfully(self):
+        organizer_email = 'arrkom@online.ntnu.no'
         add_to_arrkom(self.user)
         event = generate_event(TYPE_CHOICES[0][0])
-        url = reverse("event_mail_participants", args=(event.id,))
+        G(OnlineGroup, email=organizer_email, group=event.organizer)
+        url = reverse('event_mail_participants', args=(event.id,))
 
-        response = self.client.post(
-            url,
-            {
-                "from_email": "1",
-                "to_email": "1",
-                "subject": "Test",
-                "message": "Test message",
-            },
-        )
+        response = self.client.post(url, {
+            'to_email': '1',
+            'subject': 'Test',
+            'message': 'Test message'
+        })
 
         self.assertEqual(response.context["event"], event)
         self.assertInMessages("Mailen ble sendt", response)
@@ -680,17 +677,14 @@ class EventMailParticipates(EventsTestMixin, TestCase):
     def test_post_as_arrkom_invalid_from_email_defaults_to_kontakt(self):
         add_to_arrkom(self.user)
         event = generate_event(TYPE_CHOICES[0][0])
-        url = reverse("event_mail_participants", args=(event.id,))
+        G(OnlineGroup, email='', group=event.organizer)
+        url = reverse('event_mail_participants', args=(event.id,))
 
-        response = self.client.post(
-            url,
-            {
-                "from_email": "1000",
-                "to_email": "1",
-                "subject": "Test",
-                "message": "Test message",
-            },
-        )
+        response = self.client.post(url, {
+            'to_email': '1',
+            'subject': 'Test',
+            'message': 'Test message'
+        })
 
         self.assertEqual(response.context["event"], event)
         self.assertInMessages("Mailen ble sendt", response)
@@ -704,15 +698,11 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         event = generate_event(TYPE_CHOICES[0][0])
         url = reverse("event_mail_participants", args=(event.id,))
 
-        response = self.client.post(
-            url,
-            {
-                "from_email": "1",
-                "to_email": "1000",
-                "subject": "Test",
-                "message": "Test message",
-            },
-        )
+        response = self.client.post(url, {
+            'to_email': '1000',
+            'subject': 'Test',
+            'message': 'Test message'
+        })
 
         self.assertEqual(response.context["event"], event)
         self.assertInMessages(
