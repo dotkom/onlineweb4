@@ -13,6 +13,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
 
+from apps.authentication.models import OnlineGroup
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 from apps.payment import status
@@ -130,17 +131,10 @@ class Payment(models.Model):
 
     def responsible_mail(self):
         if self._is_type(AttendanceEvent):
-            event_type = self.content_object.event.event_type
-            if event_type == 1 or event_type == 4:  # Sosialt & Utflukt
-                return settings.EMAIL_ARRKOM
-            elif event_type == 2:  # Bedpres
-                return settings.EMAIL_BEDKOM
-            elif event_type == 3:  # Kurs
-                return settings.EMAIL_FAGKOM
-            elif event_type == 5:  # Ekskursjon
-                return settings.EMAIL_EKSKOM
-            else:
-                return settings.DEFAULT_FROM_EMAIL
+            organizer = self.content_object.event.organizer
+            organizer_group: OnlineGroup = OnlineGroup.objects.filter(group=organizer).first()
+            if organizer_group and organizer_group.email:
+                return organizer_group.email
         elif self._is_type(OrderLine):
             return settings.EMAIL_PROKOM
         else:
