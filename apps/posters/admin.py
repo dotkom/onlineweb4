@@ -2,9 +2,10 @@ from django.contrib import admin
 from django.utils.translation import ugettext as _
 from reversion.admin import VersionAdmin
 
-from apps.posters.models import Poster
+from .models import Poster
 
 
+@admin.register(Poster)
 class PosterAdmin(VersionAdmin):
     model = Poster
     list_display = (
@@ -35,8 +36,6 @@ class PosterAdmin(VersionAdmin):
             },
         ),
     )
-    search_fields = ("title", "category", "company", "when")
+    search_fields = ('title', 'event__title', 'assigned_to__first_name', 'assigned_to__last_name',
+                     'ordered_by__first_name', 'ordered_by__last_name')
 
-
-admin.site.register(Poster, PosterAdmin)
-# username, expiration_date, registered, note
