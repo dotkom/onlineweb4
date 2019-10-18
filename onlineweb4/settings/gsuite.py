@@ -53,3 +53,8 @@ OW4_GSUITE_SYNC = {
         'techtalks' : 'techtalks'
     }
 }
+
+MAILING_LIST_USER_FIELDS_TO_LIST_NAME = {
+    'infomail': 'info',
+    'jobmail': 'oppdrag',
+}

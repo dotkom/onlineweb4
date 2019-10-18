@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -8,7 +9,7 @@ from .tasks import update_mailing_list
 
 User = get_user_model()
 
-MAILING_LIST_USER_FIELDS_TO_LIST_NAME = {"infomail": "info", "jobmail": "oppdrag"}
+MAILING_LIST_USER_FIELDS_TO_LIST_NAME = settings.MAILING_LIST_USER_FIELDS_TO_LIST_NAME
 
 logger = logging.getLogger(__name__)
 
