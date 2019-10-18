@@ -135,6 +135,8 @@ class Payment(models.Model):
             organizer_group: OnlineGroup = OnlineGroup.objects.filter(group=organizer).first()
             if organizer_group and organizer_group.email:
                 return organizer_group.email
+            else:
+                return settings.DEFAULT_FROM_EMAIL
         elif self._is_type(OrderLine):
             return settings.EMAIL_PROKOM
         else:
@@ -194,8 +196,7 @@ class Payment(models.Model):
 
         elif self._is_type(OrderLine):
             order_line: OrderLine = self.content_object
-            order_line.paid = True
-            order_line.save()
+            order_line.pay()
 
     def handle_refund(self, payment_relation):
         """
