@@ -18,11 +18,11 @@ class ImageField(forms.ImageField):
     def clean(self, data, initial=None):
         image_file: InMemoryUploadedFile = super().clean(data, initial)
         if image_file:
-            image_file.name = _get_correct_file_name(image_file)
+            image_file.name = get_correct_file_name(image_file)
         return image_file
 
 
-def _get_correct_file_name(uploaded_file):
+def get_correct_file_name(uploaded_file):
 
     file_name, file_extension = os.path.splitext(uploaded_file.name)
 

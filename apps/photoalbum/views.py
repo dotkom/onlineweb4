@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.utils import timezone
 from django.views.generic import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
 from django.views.generic.edit import FormView
@@ -10,12 +11,14 @@ from rest_framework import mixins, permissions, viewsets
 
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import ResponsiveImage
-from apps.photoalbum.forms import ReportPhotoForm
-from apps.photoalbum.models import Album, Photo
-from apps.photoalbum.utils import report_photo
 
-from .serializers import (AlbumReadOnlySerializer, PhotoReadOnlySerializer, UserTagCreateSerializer,
-                          UserTagReadOnlySerializer)
+from .filters import AlbumFilter, PhotoFilter, UserTagFilter
+from .forms import ReportPhotoForm
+from .models import Album, Photo, UserTag
+from .serializers import (AlbumCreateOrUpdateSerializer, AlbumReadOnlySerializer,
+                          PhotoCreateOrUpdateSerializer, PhotoReadOnlySerializer,
+                          UserTagCreateSerializer, UserTagReadOnlySerializer)
+from .utils import report_photo
 
 
 class AlbumsListView(ListView):
@@ -111,11 +114,18 @@ class PhotoDetailView(View):
         return view(request, *args, **kwargs)
 
 
-class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.AllowAny,)
+class AlbumViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     queryset = Album.objects_visible.all()
-    filterset_fields = ('published_date',)
-    serializer_class = AlbumReadOnlySerializer
+    filterset_class = AlbumFilter
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return AlbumCreateOrUpdateSerializer
+        if self.action in ['list', 'retrieve']:
+            return AlbumReadOnlySerializer
+
+        return super().get_serializer_class()
 
     def get_queryset(self):
         user: User = self.request.user
@@ -124,29 +134,39 @@ class AlbumViewSet(viewsets.ReadOnlyModelViewSet):
         return super().get_queryset()
 
 
-class AlbumPhotoViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (permissions.AllowAny,)
-    serializer_class = PhotoReadOnlySerializer
+class PhotoViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
+    queryset = Photo.objects.all()
+    filterset_class = PhotoFilter
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return PhotoCreateOrUpdateSerializer
+        if self.action in ['list', 'retrieve']:
+            return PhotoReadOnlySerializer
+
+        return super().get_serializer_class()
 
     def get_queryset(self):
         user: User = self.request.user
-        album_queryset = Album.objects_visible.all()
+        queryset = super().get_queryset()
+
+        published_query = Q(album__published_date__lte=timezone.now())
+
         if not user.is_authenticated:
-            album_queryset = Album.objects_public.all()
+            return queryset.filter(published_query & Q(album__public=True))
 
-        album_pk = self.kwargs.get('album_pk', None)
-        album = get_object_or_404(album_queryset, pk=album_pk)
-
-        return album.photos.all()
+        return queryset.filter(published_query)
 
 
-class PhotoUserTagViewSet(viewsets.GenericViewSet,
-                          mixins.ListModelMixin,
-                          mixins.RetrieveModelMixin,
-                          mixins.CreateModelMixin,
-                          mixins.DestroyModelMixin):
-
+class UserTagViewSet(viewsets.GenericViewSet,
+                     mixins.ListModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.CreateModelMixin,
+                     mixins.DestroyModelMixin):
+    queryset = UserTag.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
+    filterset_class = UserTagFilter
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -158,14 +178,11 @@ class PhotoUserTagViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         user: User = self.request.user
-        album_queryset = Album.objects_visible.all()
+        queryset = super().get_queryset()
+
+        published_query = Q(photo__album__published_date__lte=timezone.now())
+
         if not user.is_authenticated:
-            album_queryset = Album.objects_public.all()
+            return queryset.filter(published_query & Q(photo__album__public=True))
 
-        album_pk = self.kwargs.get('album_pk', None)
-        photo_pk = self.kwargs.get('photo_pk', None)
-
-        album = get_object_or_404(album_queryset, pk=album_pk)
-        photo = get_object_or_404(album.photos.all(), pk=photo_pk)
-
-        return photo.user_tags.all()
+        return queryset.filter(published_query)

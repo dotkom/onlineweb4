@@ -26,11 +26,9 @@ def send_report_on_photo(user: User, photo: Photo, description: str):
 
 @app.task(bind=True)
 def create_responsive_photo_task(self, photo_id: int):
-    logger.error(photo_id)
     photo = Photo.objects.get(pk=photo_id)
     raw_image = photo.raw_image
 
-    logger.error(raw_image)
     pillow_image = Image.open(raw_image.image.path)
     image_width, image_height = pillow_image.size
 
@@ -49,7 +47,6 @@ def create_responsive_photo_task(self, photo_id: int):
     }
 
     responsive_image_handler = ResponsiveImageHandler(raw_image)
-    logger.error(responsive_image_handler)
     status = responsive_image_handler.configure(config)
     if not status:
         logger.error(f'Fatal error when creating responsive image for photo {photo}, {status}')

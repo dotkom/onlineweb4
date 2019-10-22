@@ -12,10 +12,6 @@ urlpatterns = [
 
 # API v1
 router = SharedAPIRootRouter()
-router.register(r'albums', views.AlbumViewSet, basename='albums')
-router.register(r'albums/(?P<album_pk>\d+)/photos', views.AlbumPhotoViewSet, basename='album_photos')
-router.register(
-    prefix=r'albums/(?P<album_pk>\d+)/photos/(?P<photo_pk>\d+)/tags/',
-    viewset=views.PhotoUserTagViewSet,
-    basename='album_tags',
-)
+router.register(r'photoalbum/albums', views.AlbumViewSet, basename='albums')
+router.register(r'photoalbum/photos', views.PhotoViewSet, basename='album_photos')
+router.register(r'photoalbum/tags', views.UserTagViewSet, basename='album_tags')
