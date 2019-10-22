@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
@@ -11,15 +13,35 @@ from apps.online_oidc_provider.test import OIDCTestCase
 from apps.photoalbum.models import Album, Photo, UserTag
 
 
+def add_content_type_permission_to_group(group: Group, model):
+    content_type = ContentType.objects.get_for_model(model)
+    all_permissions = Permission.objects.filter(content_type=content_type)
+    for tag_permission in all_permissions:
+        group.permissions.add(tag_permission)
+
+
+def create_uploadable_file(name: str, static_location: str, content_type: str):
+    static_dir = f"{settings.PROJECT_ROOT_DIRECTORY}/files/static"
+    file = open(f"{static_dir}/{static_location}", "rb")
+    return SimpleUploadedFile(
+        name=name,
+        content=file.read(),
+        content_type=content_type,
+    )
+
+
 class AlbumTestCase(OIDCTestCase):
 
     def setUp(self):
-        self.url = reverse('albums-list')
-        self.id_url = lambda _id: reverse('albums-detail', args=[_id])
+        self.url = reverse("albums-list")
+        self.id_url = lambda _id: reverse("albums-detail", args=[_id])
 
         self.now = timezone.now()
         self.past = self.now - timezone.timedelta(days=1)
         self.future = self.now + timezone.timedelta(days=1)
+
+        self.photo_group: Group = G(Group)
+        add_content_type_permission_to_group(self.photo_group, Album)
 
         self.album: Album = G(Album, published_date=self.past)
         self.public_album: Album = G(Album, published_date=self.past, public=True)
@@ -43,6 +65,35 @@ class AlbumTestCase(OIDCTestCase):
         self.assertEqual(public_response.status_code, status.HTTP_200_OK)
         self.assertEqual(private_response.status_code, status.HTTP_200_OK)
 
+    def test_regular_user_cannot_create_albums(self):
+        response = self.client.post(self.url, {
+            "title": "Immball 2019",
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_permitted_user_can_create_albums(self):
+        self.photo_group.user_set.add(self.user)
+        response = self.client.post(self.url, {
+            "title": "Immball 2019",
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_permitted_user_can_update_albums(self):
+        self.photo_group.user_set.add(self.user)
+        response = self.client.patch(self.id_url(self.public_album.id), {
+            "title": "Åre 2020",
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_permitted_user_can_delete_albums(self):
+        self.photo_group.user_set.add(self.user)
+        response = self.client.delete(self.id_url(self.public_album.id), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
 
 class PhotoTestCase(OIDCTestCase):
 
@@ -51,6 +102,9 @@ class PhotoTestCase(OIDCTestCase):
         self.past = self.now - timezone.timedelta(days=1)
         self.future = self.now + timezone.timedelta(days=1)
 
+        self.photo_group: Group = G(Group)
+        add_content_type_permission_to_group(self.photo_group, Photo)
+
         self.album: Album = G(Album, published_date=self.past)
         self.public_album: Album = G(Album, published_date=self.past, public=True)
 
@@ -58,18 +112,31 @@ class PhotoTestCase(OIDCTestCase):
         self.public_photo: Photo = G(Photo, album=self.public_album)
 
     @staticmethod
-    def get_list_url(album: Album):
-        return reverse('album_photos-list', kwargs={'album_pk': album.pk})
+    def get_list_url():
+        return reverse("album_photos-list")
 
     @staticmethod
-    def get_detail_url(photo: Photo, album: Album = None):
-        return reverse('album_photos-detail', kwargs={
-            'pk': photo.pk,
-            'album_pk': album.pk if album else photo.album.id,
-        })
+    def get_detail_url(photo: Photo):
+        return reverse("album_photos-detail", args=[photo.pk])
+
+    @staticmethod
+    def get_upload_url(album: Album):
+        return reverse("albums-upload", args=[album.pk])
+
+    @property
+    def form_data_headers(self):
+        self.headers.pop("content_type")
+        return self.headers.copy()
+
+    def get_uploadable_static_file(self):
+        return create_uploadable_file(
+            name="åre.jpeg",
+            content_type="image/jpeg",
+            static_location="img/are.JPG",
+        )
 
     def test_photo_url_for_public_album_returns_ok_without_login(self):
-        response = self.client.get(self.get_list_url(self.public_album), **self.bare_headers)
+        response = self.client.get(self.get_list_url(), **self.bare_headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -87,10 +154,69 @@ class PhotoTestCase(OIDCTestCase):
         self.assertEqual(public_response.status_code, status.HTTP_200_OK)
         self.assertEqual(private_response.status_code, status.HTTP_200_OK)
 
-    def test_url_for_photo_with_wrong_album_returns_not_found(self):
-        response = self.client.get(self.get_detail_url(self.public_photo, self.album), **self.headers)
+    def test_regular_user_cannot_create_photos(self):
+        response = self.client.post(self.get_list_url(), {
+            "album": self.album.id,
+            "raw_image": self.get_uploadable_static_file(),
+        }, **self.form_data_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_permitted_user_can_create_photos(self):
+        self.photo_group.user_set.add(self.user)
+        response = self.client.post(self.get_list_url(), {
+            "album": self.album.id,
+            "raw_image": self.get_uploadable_static_file(),
+        }, **self.form_data_headers, )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        photo = Photo.objects.get(pk=response.json().get("id"))
+        self.assertEqual(photo.photographer, self.user)
+        self.assertIsNotNone(photo.title)
+        self.assertIsNotNone(photo.image)
+
+    def test_cannot_create_photo_without_upload(self):
+        self.photo_group.user_set.add(self.user)
+        response = self.client.post(self.get_list_url(), {
+            "album": self.album.id,
+        }, **self.form_data_headers, )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json().get("raw_image"), ["Ingen fil ble sendt."])
+
+    def test_user_cannot_upload_wrong_image_format(self):
+        unsupported_file = create_uploadable_file(
+            name="nyan.gif",
+            content_type="image/gif",
+            static_location="img/403nyan.gif",
+        )
+        self.photo_group.user_set.add(self.user)
+        response = self.client.post(self.get_list_url(), {
+            "album": self.album.id,
+            "raw_image": unsupported_file,
+        }, **self.form_data_headers)
+
+        self.assertIn("Filendelsen 'gif' er ikke tillatt.", response.json().get("raw_image")[0])
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_permitted_user_can_update_photos(self):
+        self.photo_group.user_set.add(self.user)
+        new_title = "Bilde av Åreturen"
+
+        response = self.client.patch(self.get_detail_url(self.photo), {
+            "title": new_title,
+        }, **self.headers)
+
+        self.photo.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(self.photo.title, response.json().get("title"))
+
+    def test_permitted_user_can_delete_photos(self):
+        self.photo_group.user_set.add(self.user)
+        response = self.client.delete(self.get_detail_url(self.photo), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
 class UserTagsTestCase(OIDCTestCase):
@@ -100,11 +226,8 @@ class UserTagsTestCase(OIDCTestCase):
         self.past = self.now - timezone.timedelta(days=1)
         self.future = self.now + timezone.timedelta(days=1)
 
-        tag_content_type = ContentType.objects.get_for_model(UserTag)
-        all_tag_permissions = Permission.objects.filter(content_type=tag_content_type)
         self.photo_group: Group = G(Group)
-        for tag_permission in all_tag_permissions:
-            self.photo_group.permissions.add(tag_permission)
+        add_content_type_permission_to_group(self.photo_group, UserTag)
 
         self.album: Album = G(Album, published_date=self.past)
         self.public_album: Album = G(Album, published_date=self.past, public=True)
@@ -116,22 +239,15 @@ class UserTagsTestCase(OIDCTestCase):
         self.public_tag: UserTag = G(UserTag, photo=self.public_photo)
 
     @staticmethod
-    def get_list_url(photo: Photo, album: Album):
-        return reverse('album_tags-list', kwargs={
-            'photo_pk': photo.pk,
-            'album_pk': album.pk,
-        })
+    def get_list_url():
+        return reverse("album_tags-list")
 
     @staticmethod
-    def get_detail_url(tag: UserTag, photo: Photo = None, album: Album = None):
-        return reverse('album_tags-detail', kwargs={
-            'pk': tag.pk,
-            'photo_pk': photo.pk if photo else tag.photo.pk,
-            'album_pk': album.pk if album else tag.photo.album.id,
-        })
+    def get_detail_url(tag: UserTag):
+        return reverse("album_tags-detail", args=[tag.pk])
 
     def test_photo_url_for_public_album_returns_ok_without_login(self):
-        response = self.client.get(self.get_list_url(self.public_photo, self.public_album), **self.bare_headers)
+        response = self.client.get(self.get_list_url(), **self.bare_headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -153,16 +269,11 @@ class UserTagsTestCase(OIDCTestCase):
         self.assertEqual(public_response.status_code, status.HTTP_200_OK)
         self.assertEqual(private_response.status_code, status.HTTP_200_OK)
 
-    def test_url_for_photo_with_wrong_album_returns_not_found(self):
-        response = self.client.get(self.get_detail_url(self.tag, self.public_photo, self.album), **self.headers)
-
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
     def test_regular_users_cannot_create_tags(self):
         user: User = G(User)
-        response = self.client.post(self.get_list_url(self.photo, self.album), {
-            'user': user.id,
-            'photo': self.photo.id,
+        response = self.client.post(self.get_list_url(), {
+            "user": user.id,
+            "photo": self.photo.id,
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -172,9 +283,9 @@ class UserTagsTestCase(OIDCTestCase):
         self.user.save()
 
         user: User = G(User)
-        response = self.client.post(self.get_list_url(self.photo, self.album), {
-            'user': user.id,
-            'photo': self.photo.id,
+        response = self.client.post(self.get_list_url(), {
+            "user": user.id,
+            "photo": self.photo.id,
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -183,9 +294,9 @@ class UserTagsTestCase(OIDCTestCase):
         self.photo_group.user_set.add(self.user)
 
         user: User = G(User)
-        response = self.client.post(self.get_list_url(self.photo, self.album), {
-            'user': user.id,
-            'photo': self.photo.id,
+        response = self.client.post(self.get_list_url(), {
+            "user": user.id,
+            "photo": self.photo.id,
         }, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
