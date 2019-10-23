@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 from django.shortcuts import render
-# API v1
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 

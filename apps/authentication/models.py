@@ -15,8 +15,6 @@ from django.utils.translation import ugettext as _
 from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
-# If this list is changed, remember to check that the year property on
-# OnlineUser is still correct!
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
 
