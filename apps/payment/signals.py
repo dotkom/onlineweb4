@@ -20,7 +20,9 @@ def handle_payment_relation_status_change(sender, instance: PaymentRelation, **k
 
 
 @receiver(signal=pre_save, sender=PaymentTransaction)
-def handle_payment_transaction_status_change(sender, instance: PaymentTransaction, **kwargs):
+def handle_payment_transaction_status_change(
+    sender, instance: PaymentTransaction, **kwargs
+):
     # When a payment succeeds, ot should be stored to the DB
     if instance.status == status.SUCCEEDED:
         instance.user.change_saldo(instance.amount)
@@ -40,7 +42,9 @@ def handle_payment_transaction_status_change(sender, instance: PaymentTransactio
 @receiver(signal=post_save, sender=PaymentTransaction)
 def send_receipt_after_payment(sender, instance, **kwargs):
     content_type = ContentType.objects.get_for_model(instance)
-    receipt_exists = PaymentReceipt.objects.filter(Q(object_id=instance.id) & Q(content_type=content_type)).exists()
+    receipt_exists = PaymentReceipt.objects.filter(
+        Q(object_id=instance.id) & Q(content_type=content_type)
+    ).exists()
     if instance.status == status.DONE and not receipt_exists:
         receipt = PaymentReceipt(object_id=instance.id, content_type=content_type)
         receipt.save()

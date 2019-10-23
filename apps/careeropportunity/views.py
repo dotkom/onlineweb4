@@ -11,14 +11,16 @@ from apps.careeropportunity.serializers import CareerSerializer
 
 
 def index(request, id=None):
-    return render(request, 'careeropportunity/index.html')
+    return render(request, "careeropportunity/index.html")
 
 
 class HundredItemsPaginator(PageNumberPagination):
     page_size = 100
 
 
-class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+class CareerViewSet(
+    viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin
+):
     """
     Viewset for Career serializer
     """
@@ -26,10 +28,9 @@ class CareerViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.L
     serializer_class = CareerSerializer
     permission_classes = (AllowAny,)
     pagination_class = HundredItemsPaginator
-    filterset_fields = ('company',)
+    filterset_fields = ("company",)
 
     def get_queryset(self, *args, **kwargs):
         return CareerOpportunity.objects.filter(
-            start__lte=timezone.now(),
-            end__gte=timezone.now()
-        ).order_by('-featured', '-start')
+            start__lte=timezone.now(), end__gte=timezone.now()
+        ).order_by("-featured", "-start")

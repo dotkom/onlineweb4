@@ -8,16 +8,16 @@ from oauth2_provider.decorators import protected_resource
 from apps.sso.userinfo import Onlineweb4Userinfo
 
 USERINFO_SCOPES = [
-    'authentication.onlineuser.username.read',
-    'authentication.onlineuser.first_name.read',
-    'authentication.onlineuser.last_name.read',
-    'authentication.onlineuser.email.read',
-    'authentication.onlineuser.is_member.read',
-    'authentication.onlineuser.is_staff.read',
-    'authentication.onlineuser.is_superuser.read',
-    'authentication.onlineuser.field_of_study.read',
-    'authentication.onlineuser.nickname.read',
-    'authentication.onlineuser.rfid.read'
+    "authentication.onlineuser.username.read",
+    "authentication.onlineuser.first_name.read",
+    "authentication.onlineuser.last_name.read",
+    "authentication.onlineuser.email.read",
+    "authentication.onlineuser.is_member.read",
+    "authentication.onlineuser.is_staff.read",
+    "authentication.onlineuser.is_superuser.read",
+    "authentication.onlineuser.field_of_study.read",
+    "authentication.onlineuser.nickname.read",
+    "authentication.onlineuser.rfid.read",
 ]
 
 
