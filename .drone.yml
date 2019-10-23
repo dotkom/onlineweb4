@@ -60,7 +60,7 @@ steps:
         - push
     group: testing
     commands:
-      - tox -e flake8 -e isort --recreate
+      - tox -e flake8 -e isort -e black --recreate
 
   - name: python-tests
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
