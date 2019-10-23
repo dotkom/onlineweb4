@@ -3,7 +3,7 @@ from django_dynamic_fixture import G
 
 from apps.authentication.models import Email, OnlineUser
 from apps.oauth2_provider.test import OAuth2TestCase
-from apps.oidc_provider.test import OIDCTestCase
+from apps.online_oidc_provider.test import OIDCTestCase
 from apps.sso.userinfo import Onlineweb4Userinfo
 
 from .endpoints import USERINFO_SCOPES

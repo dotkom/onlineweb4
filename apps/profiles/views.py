@@ -33,7 +33,7 @@ from apps.authentication.serializers import EmailReadOnlySerializer
 from apps.authentication.utils import create_online_mail_alias
 from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import create_g_suite_account, reset_password_g_suite_account
-from apps.marks.models import Mark, Suspension
+from apps.marks.models import Mark, MarkRuleSet, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
 from apps.profiles.filters import PublicProfileFilter
 from apps.profiles.forms import InternalServicesForm, PositionForm, PrivacyForm, ProfileForm
@@ -87,7 +87,8 @@ def _create_profile_context(request):
             'expires'),
 
         # marks
-        'mark_rules_accepted': request.user.mark_rules,
+        'mark_rule_set': MarkRuleSet.get_current_rule_set(),
+        'mark_rules_accepted': request.user.mark_rules_accepted,
         'marks': [
             # Tuple syntax ('title', list_of_marks, is_collapsed)
             (_('aktive prikker'), Mark.marks.active(request.user), False),
@@ -253,8 +254,7 @@ def update_mark_rules(request):
             accepted = request.POST.get('rules_accepted') == "true"
             if accepted:
                 return_status = json.dumps({'message': _("Du har valgt å akseptere prikkereglene.")})
-                request.user.mark_rules = True
-                request.user.save()
+                MarkRuleSet.accept_mark_rules(request.user)
             else:
                 return_status = json.dumps({'message': _("Du kan ikke endre din godkjenning av prikkereglene.")})
                 return HttpResponse(status=403, content=return_status)
@@ -355,7 +355,7 @@ def set_primary(request):
                 )
 
             # Deactivate the old primary, if there was one
-            primary_email = request.user.get_email()
+            primary_email = request.user.email_object
             if primary_email:
                 primary_email.primary = False
                 primary_email.save()
@@ -535,7 +535,7 @@ class GSuiteCreateAccount(View):
             create_g_suite_account(request.user)
             messages.success(request,
                              "Opprettet en G Suite konto til deg. Sjekk primærepostadressen din ({}) for instruksjoner."
-                             .format(request.user.get_email().email))
+                             .format(request.user.primary_email))
         except HttpError as err:
             if err.resp.status == 409:
                 messages.error(request, 'Det finnes allerede en brukerkonto med dette brukernavnet i G Suite. '

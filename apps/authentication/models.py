@@ -7,11 +7,12 @@ from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group
-from django.db import models
+from django.db import models, transaction
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext as _
+from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 # If this list is changed, remember to check that the year property on
@@ -122,8 +123,7 @@ class OnlineUser(AbstractUser):
     zip_code = models.CharField(_("postnummer"), max_length=4, blank=True, null=True)
 
     # Other
-    allergies = models.TextField(_("allergier"), blank=True, null=True)
-    mark_rules = models.BooleanField(_("godtatt prikkeregler"), default=False)
+    allergies = models.TextField(_("matallergier/preferanser"), blank=True, null=True)
     rfid = models.CharField(_("RFID"), max_length=50, unique=True, blank=True, null=True, validators=[validate_rfid])
     nickname = models.CharField(_("nickname"), max_length=50, blank=True, null=True)
     website = models.URLField(_("hjemmeside"), blank=True, null=True)
@@ -186,14 +186,19 @@ class OnlineUser(AbstractUser):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
 
-    def get_email(self):
-        email = self.get_emails().filter(primary=True)
-        if email:
-            return email[0]
+    @property
+    def primary_email(self) -> str:
+        email_object = self.email_object
+        if email_object:
+            return email_object.email
         return None
 
+    @property
+    def email_object(self) -> 'Email':
+        return self.get_emails().filter(primary=True).first()
+
     def get_emails(self):
-        return Email.objects.all().filter(user=self)
+        return Email.objects.filter(user=self)
 
     def get_online_mail(self):
         if self.online_mail:
@@ -210,6 +215,19 @@ class OnlineUser(AbstractUser):
         if not self.is_member:
             return None
         return AllowedUsername.objects.get(username=self.ntnu_username.lower())
+
+    def change_saldo(self, amount):
+        """
+        Update the saldo of a user with an atomic transaction.
+        """
+        with transaction.atomic():
+            self.refresh_from_db()
+            self.saldo += amount
+
+            if self.saldo < 0:
+                raise NotAcceptable('Insufficient funds')
+
+            self.save()
 
     @property
     def year(self):
@@ -269,6 +287,11 @@ class OnlineUser(AbstractUser):
             return self.privacy.visible_as_attending_events
         return False
 
+    @property
+    def mark_rules_accepted(self):
+        from apps.marks.models import MarkRuleSet
+        return MarkRuleSet.has_user_accepted_mark_rules(user=self)
+
     class Meta:
         ordering = ['first_name', 'last_name']
         verbose_name = _("brukerprofil")
@@ -286,7 +309,7 @@ class Email(models.Model):
     verified = models.BooleanField(_("verifisert"), default=False, editable=False)
 
     def save(self, *args, **kwargs):
-        primary_email = self.user.get_email()
+        primary_email = self.user.email_object
         if not primary_email:
             self.primary = True
         elif primary_email.email != self.email:

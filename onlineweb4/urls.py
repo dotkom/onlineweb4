@@ -140,7 +140,13 @@ if 'apps.hobbygroups' in settings.INSTALLED_APPS:
 
 if 'apps.marks' in settings.INSTALLED_APPS:
     urlpatterns += [
+        url(r'^marks/', include('apps.marks.urls')),
         url(r'^dashboard/marks/',          include('apps.marks.dashboard.urls')),
+    ]
+
+if 'apps.online_oidc_provider' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^oidc/', include('apps.online_oidc_provider.urls')),
     ]
 
 if 'apps.inventory' in settings.INSTALLED_APPS:
@@ -175,15 +181,6 @@ if 'apps.resourcecenter' in settings.INSTALLED_APPS and 'apps.mailinglists' in s
         url(r'^dashboard/resources/', include('apps.resourcecenter.dashboard.urls')),
     ]
 
-if 'apps.rutinator' in settings.INSTALLED_APPS:
-    urlpatterns += [
-        url(r'^dashboard/rutinator/', include(
-            'apps.rutinator.dashboard.urls',
-            namespace='dashboard',
-            app_name='rutinator'
-        )),
-    ]
-
 if 'apps.slack' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^slack/', include('apps.slack.urls'))
@@ -214,16 +211,6 @@ if 'apps.chunksapi' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^chunks/', include('apps.chunksapi.urls')),
     ]
-
-
-# feedme
-if 'feedme' in settings.INSTALLED_APPS:
-    feedme_urls = [
-        url(r'^feedme/', include('feedme.urls', namespace='feedme')),
-        url(r'^feedme-api/', include('feedme.api.urls', namespace='feedmeapi')),
-        url(r'^feedme-react/', include('feedme.react.urls', namespace='feedmereact'))
-    ]
-    urlpatterns += feedme_urls
 
 if 'apps.payment' in settings.INSTALLED_APPS:
     urlpatterns += [

@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^new/$', views.new, name='dashboard_inventory_new'),
     url(r'^item/(?P<item_pk>\d+)/$', views.details, name='dashboard_inventory_details'),
     url(r'^item/(?P<item_pk>\d+)/delete/$', views.item_delete, name='dashboard_inventory_delete'),
+    url(r'^item/(?P<item_pk>\d+)/change/$', views.item_change_availability, name='dashboard_inventory_change'),
     url(r'^item/(?P<item_pk>\d+)/batch/new/$', views.batch_new, name='dashboard_inventory_batch_new'),
     url(r'^item/(?P<item_pk>\d+)/batch/(?P<batch_pk>\d+)/$', views.batch, name='dashboard_inventory_batch'),
     url(r'^item/(?P<item_pk>\d+)/batch/(?P<batch_pk>\d+)/delete/$',

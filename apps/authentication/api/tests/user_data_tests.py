@@ -8,7 +8,7 @@ from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.events.tests.utils import generate_user
-from apps.oidc_provider.test import OIDCTestCase
+from apps.online_oidc_provider.test import OIDCTestCase
 
 
 class EmailTestCase(OIDCTestCase):
@@ -25,8 +25,8 @@ class EmailTestCase(OIDCTestCase):
         self.url = reverse('user_emails-list')
         self.id_url = lambda _id: self.url + str(_id) + '/'
 
-        self.email: Email = self.user.get_email()
-        self.other_email: Email = self.other_user.get_email()
+        self.email = self.user.email_object
+        self.other_email = self.other_user.email_object
 
     def test_emails_view_returns_200(self):
         response = self.client.get(self.url, **self.headers)

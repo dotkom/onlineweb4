@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import json
-import logging
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ValidationError
 from django.core.signing import Signer
-from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,12 +14,12 @@ from django.utils import timezone
 from django.utils.translation import ugettext as _
 # API v1
 from guardian.shortcuts import get_objects_for_user
-from rest_framework import mixins, permissions, status, views, viewsets
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from watson import search as watson
 
-from apps.authentication.models import OnlineUser as User
 from apps.events.filters import AttendanceEventFilter, EventDateFilter
 from apps.events.forms import CaptchaForm
 from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
@@ -32,12 +29,13 @@ from apps.events.serializers import (AttendanceEventSerializer,
                                      AttendeeRegistrationReadOnlySerializer,
                                      AttendeeRegistrationUpdateSerializer, AttendeeSerializer,
                                      CompanyEventSerializer, EventSerializer,
-                                     UserAttendanceEventSerializer)
+                                     RegisterAttendanceSerializer, UserAttendanceEventSerializer)
 from apps.events.utils import (handle_attend_event_payment, handle_attendance_event_detail,
                                handle_event_ajax, handle_event_payment, handle_mail_participants)
-from apps.oidc_provider.authentication import OidcOauth2Auth
+from apps.online_oidc_provider.authentication import OidcOauth2Auth
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
+from .constants import AttendStatus
 from .utils import EventCalendar
 
 
@@ -339,7 +337,6 @@ def mail_participants(request, event_id):
         images = [(image.name, image.read(), image.content_type) for image in request.FILES.getlist('image')]
         mail_sent = handle_mail_participants(
             event,
-            request.POST.get('from_email'),
             request.POST.get('to_email'),
             subject,
             message,
@@ -394,11 +391,15 @@ class EventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.Li
         """
         :return: Queryset filtered by these requirements:
             event is visible AND (event has NO group restriction OR user having access to restricted event)
+            OR the user is attending the event themselves
         """
-        return Event.by_registration.filter(
-            (Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=self.request.user.groups.all())) &
-            Q(visible=True)). \
-            distinct()
+        user = self.request.user
+        group_restriction_query = Q(group_restriction__isnull=True) | Q(group_restriction__groups__in=user.groups.all())
+        is_attending_query = (
+            Q(attendance_event__isnull=False) & Q(attendance_event__attendees__user=user)
+        ) if not user.is_anonymous else Q()
+        is_visible_query = Q(visible=True)
+        return Event.by_registration.filter(group_restriction_query & is_visible_query | is_attending_query).distinct()
 
 
 class RegistrationAttendaceEventViewSet(viewsets.ReadOnlyModelViewSet):
@@ -478,159 +479,33 @@ class AttendeeViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins
     def get_queryset(self):
         return self._get_allowed_attendees(self.request.user)
 
+    def get_serializer_class(self):
+        if self.action in ['list', 'create']:
+            return AttendeeSerializer
+        if self.action == 'register_attendance':
+            return RegisterAttendanceSerializer
+
+        return super().get_serializer_class()
+
+    @action(detail=False, methods=['post'])
+    def register_attendance(self, request, pk=None):
+        request_serializer = self.get_serializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+
+        attendee = request_serializer.get_attendee(request.data)
+        attendee.attended = True
+        attendee.save()
+
+        return Response({
+            'detail': {
+                'message': f'{attendee.user} er registrert som deltaker. Velkommen!',
+                'attend_status': AttendStatus.REGISTER_SUCCESS,
+                'attendee': attendee.id,
+            }
+        }, status=status.HTTP_200_OK)
+
 
 class CompanyEventViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     queryset = CompanyEvent.objects.all()
     serializer_class = CompanyEventSerializer
     permission_classes = (AllowAny,)
-
-
-class AttendViewSet(views.APIView):
-    authentication_classes = [OidcOauth2Auth]
-
-    @staticmethod
-    def _validate_attend_params(rfid, username):
-        logger = logging.getLogger(__name__)
-
-        if not (username or rfid):
-            return {
-                'message': 'Mangler både RFID og brukernavn. Vennligst prøv igjen.',
-                'attend_status': 41,
-            }
-
-        # If attendee has typed in username to bind a new card to their user
-        if username is not None and rfid is not None:
-            try:
-                user = User.objects.get(username=username)
-                user.rfid = rfid
-                user.save()
-                logger.debug('Storing new RFID to user "%s"' % user, extra={
-                    'user': user.pk,
-                    'rfid': rfid,
-                })
-            except User.DoesNotExist:
-                return {
-                    'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
-                               '(Prøv igjen, eller scan nytt kort for å avbryte.)',
-                    'attend_status': 50,
-                }
-            except (IntegrityError, ValidationError):
-                logger.error('Could not store RFID information for username "{}" with RFID "{}".'.format(
-                    username, rfid,
-                ))
-                return {
-                    'message': 'Det oppstod en feil da vi prøvde å lagre informasjonen. Vennligst prøv igjen. '
-                               'Dersom problemet vedvarer, ta kontakt med dotkom. '
-                               'Personen kan registreres med brukernavn i steden for RFID.',
-                    'attend_status': 51,
-                }
-
-        return {}
-
-    @staticmethod
-    def _authorize_user(user, event_id):
-        try:
-            if not user.is_authenticated:
-                return Response({
-                    'message': 'Administerende bruker må være logget inn for å registrere oppmøte',
-                    'attend_status': 60
-                    }, status=status.HTTP_401_UNAUTHORIZED)
-
-            if not event_id:
-                return Response({
-                    'message': 'Arrangementets id er ikke oppgitt',
-                    'attend_status': 42
-                    }, status=status.HTTP_400_BAD_REQUEST)
-
-            event_object = Event.objects.get(pk=event_id)
-            if not user.has_perm('events.change_event', event_object):
-                return Response({
-                    'message': 'Administerende bruker har ikke rettigheter til å registrere oppmøte '
-                               'på dette arrangementet',
-                    'attend_status': 61
-                    }, status=status.HTTP_403_FORBIDDEN)
-        except Event.DoesNotExist:
-            return Response({
-                'message': 'Det gitte arrangementet eksisterer ikke',
-                'attend_status': 62
-                }, status=status.HTTP_404_NOT_FOUND)
-        return False
-
-    def post(self, request, format=None):
-        logger = logging.getLogger(__name__)
-
-        rfid = request.data.get('rfid')
-        event = request.data.get('event')
-        username = request.data.get('username')
-        waitlist_approved = request.data.get('approved')
-
-        auth_error = self._authorize_user(request.user, event)
-        if auth_error:
-            return auth_error
-
-        error = self._validate_attend_params(rfid, username)
-        if 'message' in error and 'attend_status' in error:
-            return Response({'message': error.get('message'), 'attend_status': error.get('attend_status')},
-                            status=status.HTTP_400_BAD_REQUEST
-                            )
-
-        try:
-            # If attendee is trying to attend by username
-            if not rfid:
-                logger.debug('Retrieving attendee by username', extra={
-                    'event': event,
-                    'username': username,
-                    'rfid': rfid,
-                })
-                attendee = Attendee.objects.get(event=event, user__username=username)
-            else:
-                logger.debug('Retrieving attendee by rfid', extra={
-                    'event': event,
-                    'username': username,
-                    'rfid': rfid,
-                })
-                attendee = Attendee.objects.get(event=event, user__rfid=rfid)
-
-            # If attendee is already marked as attended
-            if attendee.attended:
-                logger.debug('Attendee already marked as attended.', extra={
-                    'user': attendee.user.id,
-                    'event': event,
-                })
-                return Response({'message': (attendee.user.get_full_name() +
-                                             ' har allerede registrert oppmøte.'), 'attend_status': 20},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-            # If attendee is on waitlist (bypassed if attendee has gotten the all-clear)
-            if attendee.is_on_waitlist() and not waitlist_approved:
-                return Response({'message': (attendee.user.get_full_name() +
-                                             ' er på venteliste. Registrer dem som møtt opp allikevel?'),
-                                 'attend_status': 30},
-                                status=status.HTTP_403_FORBIDDEN)
-
-            # All is clear, set attendee to attended and save
-            attendee.attended = True
-            attendee.save()
-
-        except Attendee.DoesNotExist:
-
-            # If attendee tried to attend by a username that isn't tied to a user
-            if rfid is None:
-                return Response({'message': 'Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! '
-                                            '(Prøv igjen, eller scan nytt kort for å avbryte.)', 'attend_status': 50},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-            # If attendee tried to attend by card, but card isn't tied to a user
-            else:
-                return Response({'message': 'Kortet finnes ikke i databasen. '
-                                            'Skriv inn et online.ntnu.no brukernavn for å '
-                                            'knytte kortet til brukeren og registrere oppmøte.',
-                                 'attend_status': 40}, status=status.HTTP_400_BAD_REQUEST)
-
-        # All is clear, attendee is attended
-        return Response({'message': (attendee.user.get_full_name() + ' er registrert som deltaker. Velkommen!'),
-                         'attend_status': 10, 'attendee': attendee.id}, status=status.HTTP_200_OK)
-
-    @staticmethod
-    def get_extra_actions():
-        return []

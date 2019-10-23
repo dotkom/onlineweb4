@@ -1,4 +1,5 @@
-from rest_framework import viewsets, permissions
+from rest_framework import permissions, viewsets
+
 
 class ModelPermission(permissions.BasePermission):
     """

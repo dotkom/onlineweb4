@@ -12,14 +12,16 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from rest_framework.exceptions import NotAcceptable
 
+from apps.authentication.models import OnlineGroup
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 from apps.payment import status
 from apps.webshop.models import OrderLine
 
 User = settings.AUTH_USER_MODEL
+
+logger = logging.getLogger(__name__)
 
 
 class Payment(models.Model):
@@ -129,15 +131,10 @@ class Payment(models.Model):
 
     def responsible_mail(self):
         if self._is_type(AttendanceEvent):
-            event_type = self.content_object.event.event_type
-            if event_type == 1 or event_type == 4:  # Sosialt & Utflukt
-                return settings.EMAIL_ARRKOM
-            elif event_type == 2:  # Bedpres
-                return settings.EMAIL_BEDKOM
-            elif event_type == 3:  # Kurs
-                return settings.EMAIL_FAGKOM
-            elif event_type == 5:  # Ekskursjon
-                return settings.EMAIL_EKSKOM
+            organizer = self.content_object.event.organizer
+            organizer_group: OnlineGroup = OnlineGroup.objects.filter(group=organizer).first()
+            if organizer_group and organizer_group.email:
+                return organizer_group.email
             else:
                 return settings.DEFAULT_FROM_EMAIL
         elif self._is_type(OrderLine):
@@ -199,8 +196,7 @@ class Payment(models.Model):
 
         elif self._is_type(OrderLine):
             order_line: OrderLine = self.content_object
-            order_line.paid = True
-            order_line.save()
+            order_line.pay()
 
     def handle_refund(self, payment_relation):
         """
@@ -210,8 +206,6 @@ class Payment(models.Model):
         :param str host: hostname to include in email
         :param PaymentRelation payment_relation: user payment to refund
         """
-        payment_relation.refunded = True
-        payment_relation.save()
 
         if self._is_type(AttendanceEvent):
             Attendee.objects.get(event=self.content_object,
@@ -318,7 +312,7 @@ class PaymentRelation(models.Model):
 
     unique_id = models.CharField(max_length=128, null=True, blank=True)
     """Unique ID for payment"""
-    stripe_id = models.CharField(max_length=128)
+    stripe_id = models.CharField(max_length=128, null=True, blank=True)
     """ID from Stripe payment"""
 
     status = models.CharField(
@@ -349,32 +343,29 @@ class PaymentRelation(models.Model):
         return items
 
     def get_from_mail(self):
-        return settings.EMAIL_ARRKOM
+        return self.payment.responsible_mail()
 
     def get_to_mail(self):
         return self.user.email
 
-    def _handle_status_change(self):
-        """
-        Called only from the save method. Saving should no be done here, as that would lead to recursion.
-        """
-        if self.status == status.SUCCEEDED:
-            """ Handle the completed payment. Remove delays, suspensions and marks """
-            self.payment.handle_payment(self.user)
-            self.status = status.DONE
-        elif self.status == status.REFUNDED:
-            self.refunded = True
-            self.payment.handle_refund(self)
-            self.status = status.REMOVED
+    def refund(self):
+        self.status = status.REFUNDED
+        self.save()
+
+    @property
+    def is_refundable(self) -> bool:
+        can_refund, reason = self.payment.check_refund(self)
+        return can_refund
+
+    @property
+    def is_refundable_reason(self) -> str:
+        can_refund, reason = self.payment.check_refund(self)
+        return reason
 
     def save(self, *args, **kwargs):
-        self._handle_status_change()
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
         super(PaymentRelation, self).save(*args, **kwargs)
-        receipt = PaymentReceipt(object_id=self.id,
-                                 content_type=ContentType.objects.get_for_model(self))
-        receipt.save()
 
     def __str__(self):
         return self.payment.description() + " - " + str(self.user)
@@ -426,6 +417,8 @@ class PaymentTransaction(models.Model):
         default=status.SUCCEEDED
     )
     """ Status of a Stripe payment """
+    stripe_id = models.CharField(max_length=128, null=True, blank=True)
+    """ID from Stripe payment"""
     payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
     """ Stripe payment intent secret key for verifying pending transactions/intents """
 
@@ -454,39 +447,6 @@ class PaymentTransaction(models.Model):
 
     def __str__(self):
         return str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
-
-    def _handle_status_change(self):
-        """
-        Should only be called from the save method.
-        TODO: Implement using pre-save signal.
-        """
-
-        """ When a payment succeeds, ot should be stored to the DB """
-        if self.status == status.SUCCEEDED:
-            self.user.saldo = self.user.saldo + self.amount
-
-            if self.user.saldo < 0:
-                raise NotAcceptable("Insufficient funds")
-
-            self.user.save()
-            """ Pass the transaction to the next step, which is DONE """
-            self.status = status.DONE
-
-        """ Handle when a transaction is being refunded by Stripe """
-        if self.status == status.REFUNDED:
-            self.user.saldo = self.user.saldo - self.amount
-            self.user.save()
-            """ Pass transaction to the next strip, which is REMOVED """
-            self.status = status.REMOVED
-
-    def save(self, *args, **kwargs):
-        """ Handle the currently set status of the transaction """
-        self._handle_status_change()
-
-        super().save(*args, **kwargs)
-        receipt = PaymentReceipt(object_id=self.id,
-                                 content_type=ContentType.objects.get_for_model(self))
-        receipt.save()
 
     class Meta:
         ordering = ['-datetime']

@@ -10,8 +10,9 @@ from rest_framework import status
 
 from apps.events.tests.utils import (attend_user_to_event, generate_event, generate_user,
                                      pay_for_event)
-from apps.oidc_provider.test import OIDCTestCase
+from apps.online_oidc_provider.test import OIDCTestCase
 from apps.payment import status as payment_status
+from apps.payment.models import PaymentRelation
 
 from .utils import add_price_to_payment, generate_event_payment
 
@@ -307,6 +308,22 @@ class PaymentRelationTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get('message'), 'Betalingen har blitt refundert.')
+
+    def test_event_payment_is_handled_as_refunded_after_user_refunds(self):
+        create_response = self.client.post(self.url, {
+            'payment': self.payment.id,
+            'payment_price': self.payment.price().id,
+            'payment_method_id': self.payment_method.id,
+        }, **self.headers)
+        payment_relation_id = create_response.json().get('id')
+
+        self.client.delete(self.id_url(payment_relation_id), **self.headers)
+
+        payment_relation = PaymentRelation.objects.get(pk=payment_relation_id)
+
+        self.assertEqual(payment_relation.refunded, True)
+        self.assertEqual(payment_relation.status, payment_status.REMOVED)
+        self.assertEqual(payment_relation.is_refundable, False)
 
     def test_user_can_cancel_pending_event_payment(self):
         create_response = self.client.post(self.url, {

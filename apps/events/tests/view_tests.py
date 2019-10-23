@@ -4,14 +4,15 @@ from unittest.mock import patch
 from captcha.client import RecaptchaResponse
 from django.contrib.auth.models import Group
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from freezegun import freeze_time
 from rest_framework import status
 
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import AllowedUsername, OnlineGroup
+from apps.marks.models import MarkRuleSet
 from apps.payment.models import PaymentDelay, PaymentPrice
 
 from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
@@ -29,6 +30,8 @@ class EventsTestMixin:
 
         self.user = generate_user('test')
         self.client.force_login(self.user)
+
+        self.mark_rule_set = G(MarkRuleSet)
 
         self.event = generate_event()
         self.event_url = reverse(
@@ -268,8 +271,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'WRONG'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         response = self.client.post(url, form_params, follow=True)
 
@@ -289,8 +291,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         response = self.client.post(url, form_params, follow=True)
 
@@ -312,8 +313,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         response = self.client.post(url, form_params, follow=True)
 
@@ -335,8 +335,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         self.client.post(url, form_params, follow=True)
         response = self.client.post(url, form_params, follow=True)
@@ -359,8 +358,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {'g-recaptcha-response': 'PASSED'}
         G(AllowedUsername, username=self.user.ntnu_username,
           expiration_date=timezone.now() + timedelta(days=1))
-        self.user.mark_rules = True
-        self.user.save()
+        MarkRuleSet.accept_mark_rules(self.user)
 
         self.client.post(url, form_params, follow=True)
 
@@ -610,14 +608,14 @@ class EventMailParticipates(EventsTestMixin, TestCase):
             'Vi klarte ikke å sende mailene dine. Prøv igjen', response)
         self.assertEqual(len(mail.outbox), 0)
 
-    @override_settings(EMAIL_ARRKOM='arrkom@online.ntnu.no')
     def test_post_as_arrkom_successfully(self):
+        organizer_email = 'arrkom@online.ntnu.no'
         add_to_arrkom(self.user)
         event = generate_event(TYPE_CHOICES[0][0])
+        G(OnlineGroup, email=organizer_email, group=event.organizer)
         url = reverse('event_mail_participants', args=(event.id,))
 
         response = self.client.post(url, {
-            'from_email': '1',
             'to_email': '1',
             'subject': 'Test',
             'message': 'Test message'
@@ -633,10 +631,10 @@ class EventMailParticipates(EventsTestMixin, TestCase):
     def test_post_as_arrkom_invalid_from_email_defaults_to_kontakt(self):
         add_to_arrkom(self.user)
         event = generate_event(TYPE_CHOICES[0][0])
+        G(OnlineGroup, email='', group=event.organizer)
         url = reverse('event_mail_participants', args=(event.id,))
 
         response = self.client.post(url, {
-            'from_email': '1000',
             'to_email': '1',
             'subject': 'Test',
             'message': 'Test message'
@@ -656,7 +654,6 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         url = reverse('event_mail_participants', args=(event.id,))
 
         response = self.client.post(url, {
-            'from_email': '1',
             'to_email': '1000',
             'subject': 'Test',
             'message': 'Test message'

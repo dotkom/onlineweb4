@@ -6,7 +6,7 @@ from django_dynamic_fixture import G
 from rest_framework import status
 
 from apps.events.tests.utils import generate_user
-from apps.oidc_provider.test import OIDCTestCase
+from apps.online_oidc_provider.test import OIDCTestCase
 from apps.webshop.models import Order, OrderLine, Product, ProductSize
 
 

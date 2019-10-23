@@ -8,7 +8,7 @@ from django_dynamic_fixture import G
 from rest_framework import status
 
 from apps.companyprofile.models import Company
-from apps.oidc_provider.test import OIDCTestCase
+from apps.online_oidc_provider.test import OIDCTestCase
 
 
 class CompanyTests(TestCase):

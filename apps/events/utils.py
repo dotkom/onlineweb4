@@ -12,51 +12,12 @@ from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
-from filebrowser.settings import VERSIONS
 from pytz import timezone as tz
 
+from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import TYPE_CHOICES, Attendee, Event, Extras
 from apps.payment.models import PaymentDelay, PaymentRelation
-
-
-def get_group_restricted_events(user, all_events=False):
-    """ Returns a queryset of events with attendance_event that a user has access to """
-    types_allowed = get_types_allowed(user)
-
-    if all_events:
-        return Event.objects.filter(event_type__in=types_allowed)
-    else:
-        return Event.objects.filter(attendance_event__isnull=False, event_type__in=types_allowed)
-
-
-def get_types_allowed(user):
-    types_allowed = []
-
-    groups = user.groups.all()
-
-    for group in groups:
-        if group.name == 'Hovedstyret' or group.name == 'dotKom':
-            types_allowed = [i + 1 for i in range(len(TYPE_CHOICES))]  # full access
-            return types_allowed
-
-        if group.name == 'arrKom':
-            types_allowed.append(1)  # sosialt
-            types_allowed.append(4)  # utflukt
-
-        if group.name == 'bedKom':
-            types_allowed.append(2)  # bedriftspresentasjon
-
-        if group.name == 'fagKom':
-            types_allowed.append(3)  # kurs
-
-        if group.name == 'eksKom':
-            types_allowed.append(5)  # ekskursjon
-
-        if group.name == 'Realfagskjelleren':
-            types_allowed.append(8)  # Realfagskjelleren
-
-    return types_allowed
 
 
 def handle_waitlist_bump(event, attendees, payment=None):
@@ -187,21 +148,6 @@ class EventCalendar(Calendar):
         self.cal.add_component(cal_event)
 
 
-def find_image_versions(image):
-    img = image
-    img_strings = []
-
-    for ver in VERSIONS.keys():
-        if ver.startswith('events_'):
-            img_strings.append(img.version_generate(ver).url)
-
-    return img_strings
-
-
-def handle_event_signup():
-    pass
-
-
 def handle_attendance_event_detail(event, user, context):
     attendance_event = event.attendance_event
 
@@ -324,10 +270,6 @@ def handle_event_extras(event, user, extras_id):
     return resp
 
 
-def handle_attend_event(event, user):
-    pass
-
-
 def handle_attend_event_payment(event, user):
     attendance_event = event.attendance_event
     payment = attendance_event.payment()
@@ -348,10 +290,10 @@ def handle_attend_event_payment(event, user):
             'price': payment.price().price
         })
 
-        EmailMessage(subject, content, event.feedback_mail(), [user.get_email().email]).send()
+        EmailMessage(subject, content, event.feedback_mail(), [user.primary_email]).send()
 
 
-def handle_mail_participants(event, _from_email, _to_email_value, subject, _message, _images,
+def handle_mail_participants(event, _to_email_value, subject, _message, _images,
                              all_attendees, attendees_on_waitlist, attendees_not_paid):
     logger = logging.getLogger(__name__)
 
@@ -361,35 +303,23 @@ def handle_mail_participants(event, _from_email, _to_email_value, subject, _mess
         '3': (attendees_not_paid, 'attendees not paid')
     }
 
-    # Decide from email
-    from_email = 'kontakt@online.ntnu.no'
-    from_email_value = _from_email
-
-    if from_email_value == '1' or from_email_value == '4':
-        from_email = settings.EMAIL_ARRKOM
-    elif from_email_value == '2':
-        from_email = settings.EMAIL_BEDKOM
-    elif from_email_value == '3':
-        from_email = settings.EMAIL_FAGKOM
-    elif from_email_value == '5':
-        from_email = settings.EMAIL_EKSKOM
-    elif from_email_value == '6':
-        from_email = settings.EMAIL_ITEX
-    elif from_email_value == '7':
-        from_email = settings.EMAIL_XSPORT
+    from_email = "kontakt@online.ntnu.no"
+    organizer_group: OnlineGroup = OnlineGroup.objects.filter(group=event.organizer).first()
+    if organizer_group and organizer_group.email:
+        from_email = organizer_group.email
 
     if _to_email_value not in _to_email_options:
         return False
     # Who to send emails to
     send_to_users = _to_email_options[_to_email_value][0]
 
-    signature = '\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til %s)' % from_email
+    signature = f"\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til {from_email})"
 
-    message = '%s%s' % (_message, signature)
+    message = f"{_message}{signature}"
 
     # Send mail
     try:
-        email_addresses = [a.user.get_email().email for a in send_to_users]
+        email_addresses = [a.user.primary_email for a in send_to_users]
         _email_sent = EmailMessage(
             str(subject),
             str(message),
