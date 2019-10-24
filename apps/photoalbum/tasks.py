@@ -1,27 +1,13 @@
 import logging
 
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMessage
 from onlineweb4.celery import app
 from PIL import Image
 
-from apps.authentication.models import OnlineUser as User
 from apps.gallery.util import ResponsiveImageHandler
 
 from .models import Photo
 
 logger = logging.getLogger(__name__)
-
-
-def send_report_on_photo(user: User, photo: Photo, description: str):
-    to_emails = [settings.EMAIL_PROKOM]
-    content = f'Bruker {user.get_full_name()} har rapportert bilde %s med begrunnelse {description}'
-
-    try:
-        EmailMessage("[Rapportering av bilde]", content, settings.DEFAULT_FROM_EMAIL, to_emails).send()
-    except ImproperlyConfigured:
-        logger.warning(f'Failed to send the report of the photo to prokom from user {user} on photo #{photo}.')
 
 
 @app.task(bind=True)

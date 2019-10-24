@@ -109,9 +109,6 @@ const webpackConfig = {
     profiles: [
       './assets/profiles/index',
     ],
-    photoalbum: [
-      './assets/photoalbum/index',
-    ],
     sso: [
       './assets/sso/index',
     ],

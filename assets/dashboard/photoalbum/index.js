@@ -24,21 +24,20 @@ const httpRequest = async (url, method, data) => {
   return null;
 };
 
-const createTag = async (userId, photoId, albumId) => {
-  const url = Urls['album_tags-list'](albumId, photoId);
+const createTag = async (userId, photoId) => {
+  const url = Urls['album_tags-list']();
   return await httpRequest(url, 'POST', { user: userId, photo: photoId });
 };
 
-const deleteTag = async (tagId, photoId, albumId) => {
-  const url = Urls['album_tags-detail'](albumId, photoId, tagId);
+const deleteTag = async (tagId) => {
+  const url = Urls['album_tags-detail'](tagId);
   return await httpRequest(url, 'DELETE');
 };
 
 const registerDeleteTagButton = (button) => {
-  const tagData = document.querySelector('#tag-data').dataset;
   button.addEventListener('click', async (event) => {
     event.preventDefault();
-    await deleteTag(button.dataset.tagpk, tagData.photopk, tagData.albumpk);
+    await deleteTag(button.dataset.tagpk);
     button.remove();
   });
 };
@@ -83,7 +82,6 @@ const init = () => {
     deletePhotoConfirm.addEventListener('click', () => {
       const url = reverseUrl(
         'dashboard-photoalbum:photo_delete',
-        deletePhotoButton.dataset.albumpk,
         deletePhotoButton.dataset.pk);
       postDeleteForm(url);
     });
@@ -105,7 +103,9 @@ const init = () => {
   plainUserTypeahead($('#usersearch'), async (e, datum) => {
     const tagData = document.querySelector('#tag-data').dataset;
     document.querySelector('#usersearch').value = '';
-    const data = await createTag(datum.id, tagData.photopk, tagData.albumpk);
+    const searchInput = document.querySelector('#usersearch');
+    searchInput.value = '';
+    const data = await createTag(datum.id, tagData.photopk);
     if (data) {
       renderNewTag(data.id, datum.value);
     }
