@@ -14,22 +14,30 @@ from .serializers import (AlbumCreateOrUpdateSerializer, AlbumReadOnlySerializer
 
 class AlbumViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = Album.objects_visible.all()
+    queryset = Album.objects.all()
     filterset_class = AlbumFilter
 
     def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
+        if self.action in ["create", "update", "partial_update"]:
             return AlbumCreateOrUpdateSerializer
-        if self.action in ['list', 'retrieve']:
+        if self.action in ["list", "retrieve"]:
             return AlbumReadOnlySerializer
 
         return super().get_serializer_class()
 
     def get_queryset(self):
         user: User = self.request.user
+        queryset = super().get_queryset()
+
+        if user.has_perm("photoalbum.view_album"):
+            return queryset
+
+        published_query = Q(published_date__lte=timezone.now())
+
         if not user.is_authenticated:
-            return Album.objects_public.all()
-        return super().get_queryset()
+            return queryset.filter(published_query & Q(public=True))
+
+        return queryset.filter(published_query)
 
 
 class PhotoViewSet(viewsets.ModelViewSet):
@@ -38,9 +46,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
     filterset_class = PhotoFilter
 
     def get_serializer_class(self):
-        if self.action in ['create', 'update', 'partial_update']:
+        if self.action in ["create", "update", "partial_update"]:
             return PhotoCreateOrUpdateSerializer
-        if self.action in ['list', 'retrieve']:
+        if self.action in ["list", "retrieve"]:
             return PhotoReadOnlySerializer
 
         return super().get_serializer_class()
@@ -48,6 +56,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user: User = self.request.user
         queryset = super().get_queryset()
+
+        if user.has_perm("photoalbum.view_photo"):
+            return queryset
 
         published_query = Q(album__published_date__lte=timezone.now())
 
@@ -67,9 +78,9 @@ class UserTagViewSet(viewsets.GenericViewSet,
     filterset_class = UserTagFilter
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action == "create":
             return UserTagCreateSerializer
-        if self.action in ['list', 'retrieve']:
+        if self.action in ["list", "retrieve"]:
             return UserTagReadOnlySerializer
 
         return super().get_serializer_class()
@@ -77,6 +88,9 @@ class UserTagViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         user: User = self.request.user
         queryset = super().get_queryset()
+
+        if user.has_perm("photoalbum.view_usertag"):
+            return queryset
 
         published_query = Q(photo__album__published_date__lte=timezone.now())
 

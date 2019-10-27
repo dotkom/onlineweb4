@@ -65,6 +65,28 @@ class AlbumTestCase(OIDCTestCase):
         self.assertEqual(public_response.status_code, status.HTTP_200_OK)
         self.assertEqual(private_response.status_code, status.HTTP_200_OK)
 
+    def test_only_permitted_user_can_see_unpublished_albums(self):
+        unpublished_album = G(Album, published_date=self.future)
+
+        response = self.client.get(self.id_url(unpublished_album.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        self.photo_group.user_set.add(self.user)
+
+        response = self.client.get(self.id_url(unpublished_album.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_public_filters_work(self):
+        response = self.client.get(self.url, {
+            "public": True,
+        }, **self.headers)
+        album_ids = [album.get("id") for album in response.json().get("results")]
+        self.assertNotIn(self.album.id, album_ids)
+
+        response = self.client.get(self.url, **self.headers)
+        album_ids = [album.get("id") for album in response.json().get("results")]
+        self.assertIn(self.album.id, album_ids)
+
     def test_regular_user_cannot_create_albums(self):
         response = self.client.post(self.url, {
             "title": "Immball 2019",
@@ -153,6 +175,18 @@ class PhotoTestCase(OIDCTestCase):
 
         self.assertEqual(public_response.status_code, status.HTTP_200_OK)
         self.assertEqual(private_response.status_code, status.HTTP_200_OK)
+
+    def test_only_permitted_user_can_see_unpublished_photos(self):
+        unpublished_album = G(Album, published_date=self.future)
+        unpublished_photo = G(Photo, album=unpublished_album)
+
+        response = self.client.get(self.get_detail_url(unpublished_photo), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        self.photo_group.user_set.add(self.user)
+
+        response = self.client.get(self.get_detail_url(unpublished_photo), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_regular_user_cannot_create_photos(self):
         response = self.client.post(self.get_list_url(), {
@@ -246,12 +280,12 @@ class UserTagsTestCase(OIDCTestCase):
     def get_detail_url(tag: UserTag):
         return reverse("album_tags-detail", args=[tag.pk])
 
-    def test_photo_url_for_public_album_returns_ok_without_login(self):
+    def test_photo_url_for_public_tags_returns_ok_without_login(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_un_authenticated_user_can_only_see_public_photos(self):
+    def test_un_authenticated_user_can_only_see_public_tags(self):
         public_url = self.get_detail_url(self.public_tag)
         private_url = self.get_detail_url(self.tag)
         public_response = self.client.get(public_url, **self.bare_headers)
@@ -260,7 +294,7 @@ class UserTagsTestCase(OIDCTestCase):
         self.assertEqual(public_response.status_code, status.HTTP_200_OK)
         self.assertEqual(private_response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_authenticated_user_can_see_public_and_private_albums(self):
+    def test_authenticated_user_can_see_public_and_private_tags(self):
         public_url = self.get_detail_url(self.public_tag)
         private_url = self.get_detail_url(self.tag)
         public_response = self.client.get(public_url, **self.headers)
@@ -268,6 +302,19 @@ class UserTagsTestCase(OIDCTestCase):
 
         self.assertEqual(public_response.status_code, status.HTTP_200_OK)
         self.assertEqual(private_response.status_code, status.HTTP_200_OK)
+
+    def test_only_permitted_user_can_see_unpublished_tags(self):
+        unpublished_album = G(Album, published_date=self.future)
+        unpublished_photo = G(Photo, album=unpublished_album)
+        unpublished_tag = G(UserTag, photo=unpublished_photo)
+
+        response = self.client.get(self.get_detail_url(unpublished_tag), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        self.photo_group.user_set.add(self.user)
+
+        response = self.client.get(self.get_detail_url(unpublished_tag), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_regular_users_cannot_create_tags(self):
         user: User = G(User)
