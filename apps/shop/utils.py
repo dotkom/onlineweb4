@@ -7,13 +7,21 @@ from .models import MagicToken
 
 
 def send_magic_link(user, token):
-    rfid_confirm_link = reverse('shop_set_rfid', args=[str(token.token)])
+    rfid_confirm_link = reverse("shop_set_rfid", args=[str(token.token)])
 
-    message = render_to_string('shop/email/magic_link.txt', {
-        'user': token.user,
-        'rfid_confirm_link': '{}{}'.format(settings.BASE_URL, rfid_confirm_link),
-    })
-    send_mail('Oppdatert RFID på online.ntnu.no', message, settings.DEFAULT_FROM_EMAIL, [user.primary_email])
+    message = render_to_string(
+        "shop/email/magic_link.txt",
+        {
+            "user": token.user,
+            "rfid_confirm_link": "{}{}".format(settings.BASE_URL, rfid_confirm_link),
+        },
+    )
+    send_mail(
+        "Oppdatert RFID på online.ntnu.no",
+        message,
+        settings.DEFAULT_FROM_EMAIL,
+        [user.primary_email],
+    )
 
     return token
 

@@ -6,5 +6,7 @@ urlpatterns = []
 
 # API v1
 router = SharedAPIRootRouter()
-router.register('marks/rule-sets', views.MarkRuleSetViewSet, basename='mark_rule_sets')
-router.register('marks/acceptance', views.RuleAccpetanceViewSet, basename='mark_rule_acceptance')
+router.register("marks/rule-sets", views.MarkRuleSetViewSet, basename="mark_rule_sets")
+router.register(
+    "marks/acceptance", views.RuleAccpetanceViewSet, basename="mark_rule_acceptance"
+)

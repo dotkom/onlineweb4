@@ -6,5 +6,6 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         from apps import mommy
+
         mommy.autodiscover()
         mommy.run()

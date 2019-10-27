@@ -13,20 +13,27 @@ from apps.marks.models import MarkUser
 
 class EventTest(TestCase):
     def setUp(self):
-        self.event = G(Event, title='Sjakkturnering')
-        self.attendance_event = G(
-            AttendanceEvent, event=self.event, max_capacity=2)
-        self.user = G(User, username='ola123', ntnu_username='ola123ntnu',
-                      first_name="ola", last_name="nordmann")
+        self.event = G(Event, title="Sjakkturnering")
+        self.attendance_event = G(AttendanceEvent, event=self.event, max_capacity=2)
+        self.user = G(
+            User,
+            username="ola123",
+            ntnu_username="ola123ntnu",
+            first_name="ola",
+            last_name="nordmann",
+        )
         # Setting registration start 1 hour in the past, end one week in the future.
         self.now = timezone.now()
-        self.attendance_event.registration_start = self.now - \
-            datetime.timedelta(hours=1)
-        self.attendance_event.registration_end = self.now + \
-            datetime.timedelta(days=7)
+        self.attendance_event.registration_start = self.now - datetime.timedelta(
+            hours=1
+        )
+        self.attendance_event.registration_end = self.now + datetime.timedelta(days=7)
         # Making the user a member.
-        self.allowed_username = G(AllowedUsername, username='ola123ntnu',
-                                  expiration_date=self.now + datetime.timedelta(weeks=1))
+        self.allowed_username = G(
+            AllowedUsername,
+            username="ola123ntnu",
+            expiration_date=self.now + datetime.timedelta(weeks=1),
+        )
 
     def testMommyNotAttended(self):
         G(Attendee, event=self.attendance_event, user=self.user, attended=False)
@@ -37,15 +44,16 @@ class EventTest(TestCase):
         self.assertEqual([], self.attendance_event.not_attended())
 
     def testMommyActiveEvents(self):
-        self.attendance_event.event.event_end = timezone.now() - datetime.timedelta(days=1)
+        self.attendance_event.event.event_end = timezone.now() - datetime.timedelta(
+            days=1
+        )
         self.attendance_event.event.save()
 
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
         self.attendance_event.save()
 
-        self.assertEqual(self.attendance_event,
-                         SetEventMarks.active_events()[0])
+        self.assertEqual(self.attendance_event, SetEventMarks.active_events()[0])
 
     def testMommyMarksHasBeenSet(self):
         self.attendance_event.marks_has_been_set = True
