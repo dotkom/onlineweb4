@@ -5,16 +5,19 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models.signals import m2m_changed, post_save, pre_delete
+from django.db.models.signals import m2m_changed, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
-from apps.authentication.models import GroupMember, OnlineGroup
+from apps.authentication.models import Email, GroupMember, OnlineGroup
 from apps.authentication.tasks import SynchronizeGroups
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
+from apps.gsuite.mail_syncer.tasks import update_mailing_list
 
 User = get_user_model()
 logger = logging.getLogger("syncer.%s" % __name__)
 sync_uuid = uuid.uuid1()
+
+MAILING_LIST_USER_FIELDS_TO_LIST_NAME = settings.MAILING_LIST_USER_FIELDS_TO_LIST_NAME
 
 
 def run_group_syncer(user):
@@ -103,3 +106,25 @@ def remove_online_group_members_from_django_group(
     user: User = instance.user
     if user in group.user_set.all():
         group.user_set.remove(user)
+
+
+@receiver(pre_save, sender=Email)
+def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
+    user: User = instance.user
+    jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
+    infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
+    if instance.pk:
+        stored_instance: Email = Email.objects.get(pk=instance.pk)
+
+        # Handle case when the instance is changed to primary
+        if instance.primary and not stored_instance.primary:
+            if user.jobmail:
+                update_mailing_list.delay(jobmail, email=instance.email, added=True)
+            if user.infomail:
+                update_mailing_list.delay(infomail, email=instance.email, added=True)
+        # Handle case when the instance is changed from primary
+        elif not instance.primary and stored_instance.primary:
+            if user.jobmail:
+                update_mailing_list.delay(jobmail, email=instance.email, added=False)
+            if user.infomail:
+                update_mailing_list.delay(infomail, email=instance.email, added=False)
