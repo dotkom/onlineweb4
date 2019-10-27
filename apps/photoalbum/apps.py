@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class PhotoalbumConfig(AppConfig):
-    name = 'apps.photoalbum'
-    verbose_name = 'Fotoalbum'
+    name = "apps.photoalbum"
+    verbose_name = "Fotoalbum"
 
     def ready(self):
         super().ready()

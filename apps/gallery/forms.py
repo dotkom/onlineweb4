@@ -15,6 +15,7 @@ class ImageField(forms.ImageField):
     """
     Image field that will handle JPEG images names as JPG correctly for PIL/Pillow
     """
+
     def clean(self, data, initial=None):
         image_file: InMemoryUploadedFile = super().clean(data, initial)
         if image_file:
@@ -37,15 +38,15 @@ class DocumentForm(forms.Form):
 
     def clean(self):
 
-        if 'file' not in self.cleaned_data:
-            self._errors['file'] = "File attribute missing."
+        if "file" not in self.cleaned_data:
+            self._errors["file"] = "File attribute missing."
             return self
         else:
-            form_data = self.cleaned_data['file']
+            form_data = self.cleaned_data["file"]
 
         filename, file_extension = os.path.splitext(form_data.name.lower())
 
         if file_extension not in ALLOWED_FILE_TYPES:
-            self._errors['file'] = "File type not allowed (jpg, jpeg, png, bmp)"
+            self._errors["file"] = "File type not allowed (jpg, jpeg, png, bmp)"
 
         return form_data

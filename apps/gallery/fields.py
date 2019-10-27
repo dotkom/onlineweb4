@@ -8,10 +8,11 @@ from .util import UploadImageHandler
 
 
 class UnhandledImageExtensionValidator(FileExtensionValidator):
-
     def __init__(self, message=None, code=None):
         allowed_extensions = [ext.replace(".", "") for ext in ALLOWED_FILE_TYPES]
-        super().__init__(allowed_extensions=allowed_extensions, message=message, code=code)
+        super().__init__(
+            allowed_extensions=allowed_extensions, message=message, code=code
+        )
 
     def __call__(self, value: UnhandledImage):
         super().__call__(value.image)
@@ -21,6 +22,7 @@ class ImageField(fields.ImageField):
     """
     Image field that will handle supported gallery uploads and name JPG files correctly for PIL/Pillow
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         file_type_validator = UnhandledImageExtensionValidator()

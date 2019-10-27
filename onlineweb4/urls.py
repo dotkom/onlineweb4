@@ -221,16 +221,6 @@ if 'apps.chunksapi' in settings.INSTALLED_APPS:
         url(r'^chunks/', include('apps.chunksapi.urls')),
     ]
 
-
-# feedme
-if 'feedme' in settings.INSTALLED_APPS:
-    feedme_urls = [
-        url(r'^feedme/', include('feedme.urls', namespace='feedme')),
-        url(r'^feedme-api/', include('feedme.api.urls', namespace='feedmeapi')),
-        url(r'^feedme-react/', include('feedme.react.urls', namespace='feedmereact'))
-    ]
-    urlpatterns += feedme_urls
-
 if 'apps.payment' in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r'^payment/',           include('apps.payment.urls')),

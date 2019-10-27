@@ -11,9 +11,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
 
 from apps.feedback.forms import create_forms
-from apps.feedback.models import (RATING_CHOICES, FeedbackRelation, FieldOfStudyAnswer,
-                                  RegisterToken, TextAnswer, TextQuestion)
-from apps.feedback.utils import can_delete, get_group_restricted_feedback_relations, has_permission
+from apps.feedback.models import (
+    RATING_CHOICES,
+    FeedbackRelation,
+    FieldOfStudyAnswer,
+    RegisterToken,
+    TextAnswer,
+    TextQuestion,
+)
+from apps.feedback.utils import (
+    can_delete,
+    get_group_restricted_feedback_relations,
+    has_permission,
+)
 
 
 @login_required
@@ -35,7 +45,9 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
             feedback_relation.save()
 
             # Set field of study automaticly
-            fosa = FieldOfStudyAnswer(feedback_relation=feedback_relation, answer=request.user.field_of_study)
+            fosa = FieldOfStudyAnswer(
+                feedback_relation=feedback_relation, answer=request.user.field_of_study
+            )
             fosa.save()
 
             messages.success(request, _("Takk for at du svarte."))
@@ -49,8 +61,8 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
 
     return render(
         request,
-        'feedback/answer.html',
-        {'questions': questions, 'description': description}
+        "feedback/answer.html",
+        {"questions": questions, "description": description},
     )
 
 
@@ -65,14 +77,14 @@ def result(request, applabel, appmodel, object_id, feedback_id):
     return feedback_results(request, feedback_relation)
 
 
-def results_token(request, applabel, appmodel, object_id, feedback_id,  token):
+def results_token(request, applabel, appmodel, object_id, feedback_id, token):
     feedback_relation = _get_fbr_or_404(applabel, appmodel, object_id, feedback_id)
     register_token = get_object_or_404(RegisterToken, token=token)
 
     if register_token.is_valid(feedback_relation):
         return feedback_results(request, feedback_relation, True)
     else:
-        return HttpResponse('Unauthorized', status=401)
+        return HttpResponse("Unauthorized", status=401)
 
 
 def feedback_results(request, feedback_relation, token=False):
@@ -81,34 +93,36 @@ def feedback_results(request, feedback_relation, token=False):
 
     for question in feedback_relation.questions:
         if (question.display or not token) and isinstance(question, TextQuestion):
-            question_and_answers.append(qa(question, feedback_relation.answers_to_question(question)))
+            question_and_answers.append(
+                qa(question, feedback_relation.answers_to_question(question))
+            )
 
     info = None
 
     if feedback_relation.feedback.display_info or not token:
         info = feedback_relation.content_info()
-        info[_('Besvarelser')] = feedback_relation.answered.count()
+        info[_("Besvarelser")] = feedback_relation.answered.count()
 
     register_token = get_object_or_404(RegisterToken, fbr=feedback_relation)
 
-    http_host = request.META.get('HTTP_HOST', None)
+    http_host = request.META.get("HTTP_HOST", None)
 
     token_url = "%s%sresults/%s" % (
         http_host,
         feedback_relation.get_absolute_url(),
-        register_token.token
+        register_token.token,
     )
 
     return render(
         request,
-        'feedback/results.html',
+        "feedback/results.html",
         {
-            'question_and_answers': question_and_answers,
-            'description': feedback_relation.description,
-            'token_url': token_url,
-            'token': token,
-            'info': info
-        }
+            "question_and_answers": question_and_answers,
+            "description": feedback_relation.description,
+            "token_url": token_url,
+            "token": token,
+            "info": info,
+        },
     )
 
 
@@ -130,14 +144,14 @@ def chart_data_token(request, applabel, appmodel, object_id, feedback_id, token)
     if register_token.is_valid(feedback_relation):
         return get_chart_data(request, feedback_relation, True)
     else:
-        return HttpResponse('Unauthorized', status=401)
+        return HttpResponse("Unauthorized", status=401)
 
 
 def get_chart_data(request, feedback_relation, token=False):
     rating_answers = []
     rating_titles = []
     answer_collection = dict()
-    answer_collection['replies'] = dict()
+    answer_collection["replies"] = dict()
     answer_length = int(len(RATING_CHOICES))
     for question in feedback_relation.ratingquestion:
         if question.display or not token:
@@ -166,25 +180,25 @@ def get_chart_data(request, feedback_relation, token=False):
                 answer_count[str(answer)] += 1
             mc_answer_count.append(list(answer_count.items()))
 
-    answer_collection['replies']['ratings'] = rating_answers
-    answer_collection['replies']['titles'] = rating_titles
-    answer_collection['replies']['mc_questions'] = mc_questions
-    answer_collection['replies']['mc_answers'] = mc_answer_count
-    answer_collection['replies']['fos'] = list(fos_answer_count.items())
+    answer_collection["replies"]["ratings"] = rating_answers
+    answer_collection["replies"]["titles"] = rating_titles
+    answer_collection["replies"]["mc_questions"] = mc_questions
+    answer_collection["replies"]["mc_answers"] = mc_answer_count
+    answer_collection["replies"]["fos"] = list(fos_answer_count.items())
 
-    return HttpResponse(json.dumps(answer_collection), content_type='application/json')
+    return HttpResponse(json.dumps(answer_collection), content_type="application/json")
 
 
 @login_required
 def index(request):
     feedback_relations = get_group_restricted_feedback_relations(request.user)
-    return render(request, 'feedback/index.html', {'feedbacks': feedback_relations})
+    return render(request, "feedback/index.html", {"feedbacks": feedback_relations})
 
 
 @login_required
 def delete_answer(request):
-    if request.method == 'POST':
-        answer_id = request.POST.get('answer_id')
+    if request.method == "POST":
+        answer_id = request.POST.get("answer_id")
         answer = get_object_or_404(TextAnswer, pk=answer_id)
 
         if can_delete(answer, request.user):
@@ -201,9 +215,7 @@ def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):
     try:
         ct = ContentType.objects.get(app_label=app_label, model=app_model)
         fbr = FeedbackRelation.objects.get(
-            content_type=ct,
-            object_id=object_id,
-            feedback_id=feedback_id
+            content_type=ct, object_id=object_id, feedback_id=feedback_id
         )
     except ObjectDoesNotExist:
         raise Http404

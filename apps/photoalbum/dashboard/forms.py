@@ -10,22 +10,17 @@ from apps.photoalbum.models import Album, Photo
 class AlbumCreateOrUpdateForm(forms.ModelForm):
     class Meta:
         model = Album
-        fields = ('title', 'description', 'published_date', 'tags',)
+        fields = ("title", "description", "published_date", "tags")
 
-        labels = {
-            'tags': 'Tags'
-        }
+        labels = {"tags": "Tags"}
 
-        dtp_fields = (('published_date', {}),)
-        widgetlist = [
-            (DatetimePickerInput, dtp_fields)
-        ]
+        dtp_fields = (("published_date", {}),)
+        widgetlist = [(DatetimePickerInput, dtp_fields)]
 
         widgets = multiple_widget_generator(widgetlist)
 
 
 class PhotoCreateForm(forms.ModelForm, DocumentForm):
-
     class Meta:
         model = Photo
-        fields = ('file', 'title', 'description', 'tags')
+        fields = ("file", "title", "description", "tags")

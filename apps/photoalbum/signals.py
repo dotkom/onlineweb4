@@ -16,12 +16,15 @@ def attach_missing_photo_attributes(sender, instance: Photo, **kwargs):
         instance.relative_id = instance.album.increment_photo_counter()
 
     if not instance.title:
-        instance.title = f'{instance.album.title} #{instance.relative_id}'
+        instance.title = f"{instance.album.title} #{instance.relative_id}"
 
     if not instance.description:
-        instance.description = f'Bilde i fotoalbum, {instance}'
+        instance.description = f"Bilde i fotoalbum, {instance}"
 
-    if instance.photographer and instance.photographer_name != instance.photographer.get_full_name():
+    if (
+        instance.photographer
+        and instance.photographer_name != instance.photographer.get_full_name()
+    ):
         instance.photographer_name = instance.photographer.get_full_name()
 
 

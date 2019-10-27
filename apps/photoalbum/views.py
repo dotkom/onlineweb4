@@ -7,9 +7,14 @@ from apps.authentication.models import OnlineUser as User
 
 from .filters import AlbumFilter, PhotoFilter, UserTagFilter
 from .models import Album, Photo, UserTag
-from .serializers import (AlbumCreateOrUpdateSerializer, AlbumReadOnlySerializer,
-                          PhotoCreateOrUpdateSerializer, PhotoReadOnlySerializer,
-                          UserTagCreateSerializer, UserTagReadOnlySerializer)
+from .serializers import (
+    AlbumCreateOrUpdateSerializer,
+    AlbumReadOnlySerializer,
+    PhotoCreateOrUpdateSerializer,
+    PhotoReadOnlySerializer,
+    UserTagCreateSerializer,
+    UserTagReadOnlySerializer,
+)
 
 
 class AlbumViewSet(viewsets.ModelViewSet):
@@ -68,11 +73,13 @@ class PhotoViewSet(viewsets.ModelViewSet):
         return queryset.filter(published_query)
 
 
-class UserTagViewSet(viewsets.GenericViewSet,
-                     mixins.ListModelMixin,
-                     mixins.RetrieveModelMixin,
-                     mixins.CreateModelMixin,
-                     mixins.DestroyModelMixin):
+class UserTagViewSet(
+    viewsets.GenericViewSet,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+):
     queryset = UserTag.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     filterset_class = UserTagFilter

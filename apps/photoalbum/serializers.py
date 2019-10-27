@@ -21,32 +21,48 @@ class PhotoReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = (
-            'id', 'album', 'relative_id', 'image', 'created_date', 'title', 'description', 'tags',
-            'photographer_name', 'photographer', 'user_tags',
+            "id",
+            "album",
+            "relative_id",
+            "image",
+            "created_date",
+            "title",
+            "description",
+            "tags",
+            "photographer_name",
+            "photographer",
+            "user_tags",
         )
         read_only = True
 
 
 class PhotoCreateOrUpdateSerializer(serializers.ModelSerializer):
     photographer = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(),
-        default=serializers.CurrentUserDefault(),
+        queryset=User.objects.all(), default=serializers.CurrentUserDefault()
     )
     title = serializers.CharField(required=False, default=None)
     tags = TagListSerializerField(required=False)
     raw_image = ImageField(required=True)
     album = serializers.PrimaryKeyRelatedField(
-        queryset=Album.objects.all(),
-        required=True,
+        queryset=Album.objects.all(), required=True
     )
 
     class Meta:
         model = Photo
         fields = (
-            'id', 'album', 'relative_id', 'image', 'created_date', 'title', 'description', 'tags', 'raw_image',
-            'photographer_name', 'photographer',
+            "id",
+            "album",
+            "relative_id",
+            "image",
+            "created_date",
+            "title",
+            "description",
+            "tags",
+            "raw_image",
+            "photographer_name",
+            "photographer",
         )
-        read_only_fields = ('image', 'created_date',)
+        read_only_fields = ("image", "created_date")
 
 
 class AlbumReadOnlySerializer(serializers.ModelSerializer):
@@ -57,8 +73,16 @@ class AlbumReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = (
-            'id', 'title', 'description', 'created_date', 'published_date', 'tags', 'photos', 'public', 'created_by',
-            'cover_photo',
+            "id",
+            "title",
+            "description",
+            "created_date",
+            "published_date",
+            "tags",
+            "photos",
+            "public",
+            "created_by",
+            "cover_photo",
         )
         read_only = True
 
@@ -73,8 +97,15 @@ class AlbumCreateOrUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = (
-            'id', 'title', 'description', 'created_date', 'published_date', 'tags', 'public', 'created_by',
-            'cover_photo',
+            "id",
+            "title",
+            "description",
+            "created_date",
+            "published_date",
+            "tags",
+            "public",
+            "created_by",
+            "cover_photo",
         )
 
 
@@ -83,9 +114,7 @@ class UserTagReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserTag
-        fields = (
-            'id', 'user', 'created_date', 'photo',
-        )
+        fields = ("id", "user", "created_date", "photo")
         read_only = True
 
 
@@ -95,6 +124,4 @@ class UserTagCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserTag
-        fields = (
-            'id', 'user', 'created_date', 'photo',
-        )
+        fields = ("id", "user", "created_date", "photo")

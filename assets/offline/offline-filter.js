@@ -262,7 +262,7 @@ $(() => {
       $('.offline-nav').eq(clickedIndex).parent().addClass('active');
 
       // Getting the current selected page-id
-      const newSelectedIndex = $('#offline-nav ul li.active a').attr('id').split('-')[1];
+      const newSelectedIndex = Number($('#offline-nav ul li.active a').attr('id').split('-')[1]);
 
       // Just checking if we have more than one page...
       if ($('.offline-nav').length > 1) {

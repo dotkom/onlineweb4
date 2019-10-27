@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class AuthenticationConfig(AppConfig):
-    name = 'apps.authentication'
-    verbose_name = 'Authentication for OW4'
+    name = "apps.authentication"
+    verbose_name = "Authentication for OW4"
 
     def ready(self):
         super(AuthenticationConfig, self).ready()
@@ -17,4 +17,6 @@ class AuthenticationConfig(AppConfig):
         from apps.authentication.models import OnlineUser, RegisterToken
 
         reversion.register(RegisterToken)
-        watson.register(OnlineUser, fields=('first_name', 'last_name', 'ntnu_username', 'nickname'))
+        watson.register(
+            OnlineUser, fields=("first_name", "last_name", "ntnu_username", "nickname")
+        )

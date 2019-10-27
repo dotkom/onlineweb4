@@ -5,11 +5,10 @@ from apps.authentication.serializers import UserNameSerializer
 
 
 class UserConsentReadOnlySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = UserConsent
         read_only = True
-        fields = ('id', 'date_given', 'expires_at', 'client', 'scope', 'has_expired',)
+        fields = ("id", "date_given", "expires_at", "client", "scope", "has_expired")
 
 
 class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
@@ -20,10 +19,20 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = (
-            'id', 'name', 'owner', 'date_created', 'website_url', 'terms_url', 'contact_email', 'logo',
-            'require_consent', 'reuse_consent', 'scope', 'response_types',
+            "id",
+            "name",
+            "owner",
+            "date_created",
+            "website_url",
+            "terms_url",
+            "contact_email",
+            "logo",
+            "require_consent",
+            "reuse_consent",
+            "scope",
+            "response_types",
         )
-        read_only_fields = ('date_created', 'reuse_consent', 'require_consent', 'scope',)
+        read_only_fields = ("date_created", "reuse_consent", "require_consent", "scope")
 
 
 class ClientReadOnlySerializer(serializers.ModelSerializer):
@@ -33,14 +42,23 @@ class ClientReadOnlySerializer(serializers.ModelSerializer):
         model = Client
         read_only = True
         fields = (
-            'id', 'name', 'owner', 'date_created', 'website_url', 'terms_url', 'contact_email', 'logo',
-            'require_consent', 'reuse_consent', 'scope', 'response_types',
+            "id",
+            "name",
+            "owner",
+            "date_created",
+            "website_url",
+            "terms_url",
+            "contact_email",
+            "logo",
+            "require_consent",
+            "reuse_consent",
+            "scope",
+            "response_types",
         )
 
 
 class ResponseTypeReadOnlySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = ResponseType
         read_only = True
-        fields = ('id', 'value', 'description',)
+        fields = ("id", "value", "description")

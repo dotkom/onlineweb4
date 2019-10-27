@@ -82,7 +82,8 @@ $(window).scroll(scrollspy);
 
 $(window).resize(() => {
   if (cleanHash()) {
-    const elementAnchor = $($(location).attr('hash').replace(/^#!/, '')).offset();
+    const anchor = $(location).attr('hash').replace(/^#!/, '').replace('/', '-');
+    const elementAnchor = $(anchor).offset();
     if (elementAnchor) {
       $(window).scrollTop(elementAnchor.top - TOP_OFFSET_ADJUST);
     }
