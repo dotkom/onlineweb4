@@ -50,14 +50,14 @@ class OIDCTestCase(TestCase):
     def _pre_setup(self):
         super()._pre_setup()
         self.id_token_response = self._get_response_type()
-        self._user = G(User)
+        self.user = G(User)
         self.token = self.generate_access_token(
-            self._user, client_id="999", refresh_token="888"
+            self.user, client_id="999", refresh_token="888"
         )
-        self.headers = self.generate_headers()
         self.bare_headers = {
             "Accepts": "application/json",
             "Content-Type": "application/json",
             "content_type": "application/json",
             "format": "json",
         }
+        self.headers = self.generate_headers(self.bare_headers)

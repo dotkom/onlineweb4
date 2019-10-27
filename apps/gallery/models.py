@@ -43,14 +43,11 @@ class UnhandledImage(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class ResponsiveImage(models.Model):
-    name = models.CharField("Navn", max_length=200, null=False)
-    timestamp = models.DateTimeField(
-        auto_now_add=True, editable=False, null=False, blank=False
-    )
-    description = models.TextField(
-        "Beskrivelse", blank=True, default="", max_length=2048
-    )
+class BaseResponsiveImage(models.Model):
+    """
+    Base class for handling the storage part of a Responsive Image
+    """
+
     image_original = models.ImageField(
         "Originalbilde", upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH
     )
@@ -72,11 +69,8 @@ class ResponsiveImage(models.Model):
     thumbnail = models.ImageField(
         "Thumbnail", upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH
     )
-    photographer = models.CharField(
-        "Fotograf", max_length=100, null=False, blank=True, default=""
-    )
-    tags = TaggableManager(
-        help_text="En komma eller mellomrom-separert liste med tags."
+    timestamp = models.DateTimeField(
+        auto_now_add=True, editable=False, null=False, blank=False
     )
 
     def __str__(self):
@@ -179,11 +173,25 @@ class ResponsiveImage(models.Model):
         return humanize_size(total)
 
     class Meta:
-        """
-        ResponsiveImage Metaclass
-        """
-
         verbose_name = _("Responsivt Bilde")
         verbose_name_plural = _("Responsive Bilder")
         permissions = (("view_responsiveimage", _("View ResponsiveImage")),)
         default_permissions = ("add", "change", "delete")
+        abstract = True
+
+
+class ResponsiveImage(BaseResponsiveImage):
+    """
+    Regular responsive images
+    """
+
+    name = models.CharField("Navn", max_length=200, null=False)
+    description = models.TextField(
+        "Beskrivelse", blank=True, default="", max_length=2048
+    )
+    photographer = models.CharField(
+        "Fotograf", max_length=100, null=False, blank=True, default=""
+    )
+    tags = TaggableManager(
+        help_text="En komma eller mellomrom-separert liste med tags."
+    )

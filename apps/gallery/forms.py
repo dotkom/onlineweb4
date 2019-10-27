@@ -1,14 +1,40 @@
 # -*- coding: utf-8 -*-
+import logging
 import os
 
 from django import forms
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 ALLOWED_FILE_TYPES = [".jpg", ".jpeg", ".png", ".bmp"]
 
 
-class DocumentForm(forms.Form):
+logger = logging.getLogger(__name__)
 
-    file = forms.ImageField()
+
+class ImageField(forms.ImageField):
+    """
+    Image field that will handle JPEG images names as JPG correctly for PIL/Pillow
+    """
+
+    def clean(self, data, initial=None):
+        image_file: InMemoryUploadedFile = super().clean(data, initial)
+        if image_file:
+            image_file.name = get_correct_file_name(image_file)
+        return image_file
+
+
+def get_correct_file_name(uploaded_file):
+
+    file_name, file_extension = os.path.splitext(uploaded_file.name)
+
+    if file_extension.lower() == ".jpg":
+        file_extension = ".jpeg"
+
+    return "{0}{1}".format(file_name, file_extension)
+
+
+class DocumentForm(forms.Form):
+    file = ImageField()
 
     def clean(self):
 
@@ -18,23 +44,9 @@ class DocumentForm(forms.Form):
         else:
             form_data = self.cleaned_data["file"]
 
-        # Legacy fix for PIL, not sure if needed anymore
-        correct_file_name = _get_correct_file_name(form_data)
-        form_data.name = correct_file_name
-
         filename, file_extension = os.path.splitext(form_data.name.lower())
 
         if file_extension not in ALLOWED_FILE_TYPES:
             self._errors["file"] = "File type not allowed (jpg, jpeg, png, bmp)"
 
         return form_data
-
-
-def _get_correct_file_name(uploaded_file):
-
-    file_name, file_extension = os.path.splitext(uploaded_file.name)
-
-    if file_extension.lower() == ".jpg":
-        file_extension = ".jpeg"
-
-    return "{0}{1}".format(file_name, file_extension)

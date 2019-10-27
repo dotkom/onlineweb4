@@ -67,6 +67,21 @@ OFFLINE = {
         "xs": (156, 200),
     },
 }
+PHOTOALBUM = {
+    "name": "photoalbum",
+    "description": "Fotoalbum",
+    "aspect_ratio": False,
+    "aspect_ratio_x": 4,
+    "aspect_ratio_y": 3,
+    "min_width": 200,
+    "min_height": 150,
+    "sizes": {
+        "lg": (2400, 1800),
+        "md": (1200, 900),
+        "sm": (600, 450),
+        "xs": (300, 225),
+    },
+}
 PRODUCT = {
     "name": "product",
     "description": "Produktbilde",
@@ -97,7 +112,8 @@ MODELS = {
     "offline": OFFLINE,
     "product": PRODUCT,
     "resource": RESOURCE,
+    "photoalbum": PHOTOALBUM,
 }
 
 # Active presets
-PRESETS = [EVENT, ARTICLE, COMPANY, PRODUCT, RESOURCE]
+PRESETS = [EVENT, ARTICLE, COMPANY, PRODUCT, RESOURCE, PHOTOALBUM]
