@@ -111,8 +111,8 @@ def remove_online_group_members_from_django_group(
 @receiver(pre_save, sender=Email)
 def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
     user: User = instance.user
-    jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get('jobmail')
-    infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get('infomail')
+    jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
+    infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
     if instance.pk:
         stored_instance: Email = Email.objects.get(pk=instance.pk)
 
