@@ -83,7 +83,8 @@ def get_bachelor_year(groups):
                 # If we don't know the end date, only add the years for the course.
                 years.append(get_add_years(group))
 
-    return max(years)
+    # Allows for users with extended bachelors to retain year 3 privileges.
+    return max(years) if max(years) <= 3 else 3
 
 
 def get_master_year(groups):
