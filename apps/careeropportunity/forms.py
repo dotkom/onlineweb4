@@ -26,7 +26,7 @@ class AddCareerOpportunityForm(forms.ModelForm):
             attrs={"placeholder": "Detaljert beskrivelse av karrieremuligheten"}
         ),
     )
-    applicationLink = forms.URLField(
+    application_link = forms.URLField(
         label="Søknadslenke",
         required=False,
         widget=forms.TextInput(attrs={"placeholder": "Søknadslenke"}),
@@ -54,7 +54,7 @@ class AddCareerOpportunityForm(forms.ModelForm):
             "title",
             "ingress",
             "description",
-            "applicationLink",
+            "application_link",
             "start",
             "end",
             "featured",

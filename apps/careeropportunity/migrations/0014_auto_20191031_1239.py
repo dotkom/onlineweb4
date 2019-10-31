@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='careeropportunity',
-            name='applicationLink',
+            name='application_link',
             field=models.URLField(blank=True, null=True, verbose_name='søknadslenke'),
         ),
     ]
