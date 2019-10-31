@@ -67,12 +67,18 @@ const InfoBox = props => (
 
             <div className="row">
               <div className="col-md-12">
-                <p>Nettsted: <a href={props.website}> {props.website} </a></p>
                 <p>Type: {props.type}</p>
                 <p>Sted: {formatLocations(props.locations)}</p>
                 <p>Frist: {props.deadline}</p>
               </div>
             </div>
+          </div>
+          <div className="apply company">
+            <a href="#">
+              <div className="row">
+                <h3 className="col-md-12">Søk her!</h3>
+              </div>
+            </a>
           </div>
         </div>
       </div>
@@ -86,7 +92,7 @@ InfoBox.propTypes = {
   locations: PropTypes.arrayOf(PropTypes.string),
   companyId: PropTypes.number,
   description: PropTypes.string,
-  website: PropTypes.string,
+  applicationLink: PropTypes.string,
   type: PropTypes.string,
   companyName: PropTypes.string,
   companyDescription: PropTypes.string,
