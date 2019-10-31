@@ -29,7 +29,7 @@ const normalizeData = job => ({
   title: job.title,
   ingress: job.ingress,
   description: job.description,
-  website: job.website,
+  applicationLink: job.applicationLink,
   type: job.employment.name,
   id: job.id,
   featured: job.featured,

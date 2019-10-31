@@ -74,7 +74,7 @@ const InfoBox = props => (
             </div>
           </div>
           <div className="apply company">
-            <a href="#">
+            <a href={props.applicationLink}>
               <div className="row">
                 <h3 className="col-md-12">Søk her!</h3>
               </div>
