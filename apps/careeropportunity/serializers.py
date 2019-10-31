@@ -27,7 +27,7 @@ class CareerSerializer(TaggitSerializer, serializers.ModelSerializer):
             "title",
             "ingress",
             "description",
-            "website",
+            "applicationLink",
             "start",
             "end",
             "featured",

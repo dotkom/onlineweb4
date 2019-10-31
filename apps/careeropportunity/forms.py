@@ -26,10 +26,10 @@ class AddCareerOpportunityForm(forms.ModelForm):
             attrs={"placeholder": "Detaljert beskrivelse av karrieremuligheten"}
         ),
     )
-    website = forms.URLField(
-        label="Nettside",
+    applicationLink = forms.URLField(
+        label="Søknadslenke",
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "Nettadresse"}),
+        widget=forms.TextInput(attrs={"placeholder": "Søknadslenke"}),
     )
     start = forms.DateTimeField(
         label="Start-tid",
@@ -54,7 +54,7 @@ class AddCareerOpportunityForm(forms.ModelForm):
             "title",
             "ingress",
             "description",
-            "website",
+            "applicationLink",
             "start",
             "end",
             "featured",
