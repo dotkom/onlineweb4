@@ -28,6 +28,7 @@ from .course_test_data import (
     PROJECT1_ACTIVE,
     PROJECT1_EXPIRED,
     PROJECT2_ACTIVE,
+    PROJECT2_EXPIRED,
     PVS_ACTIVE,
     load_course,
 )
@@ -141,6 +142,16 @@ class DataProcessingTestCase(TestCase):
             load_course(ITGK_EXPIRED, years_ago=2),
             load_course(PROJECT1_EXPIRED, years_ago=1),
             load_course(PROJECT2_ACTIVE, years_ago=0),
+        ]
+
+        self.assertEqual(3, get_bachelor_year(groups))
+
+    @freeze_time("2010-10-01 12:00")
+    def test_get_bachelor_year_3rd_grader_extended_year_fall(self):
+        groups = [
+            load_course(ITGK_EXPIRED, years_ago=3),
+            load_course(PROJECT1_EXPIRED, years_ago=2),
+            load_course(PROJECT2_EXPIRED, years_ago=1),
         ]
 
         self.assertEqual(3, get_bachelor_year(groups))
@@ -327,6 +338,18 @@ class GetStudyTestCase(TestCase):
     def test_find_study_3rd_grader_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "3rd_grader_2018.json")
+        with open(fname, "r") as f:
+            groups = json.load(f)
+
+        field_of_study = get_field_of_study(groups)
+        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
+
+        self.assertEqual(3, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
+
+    @freeze_time("2017-10-01 12:00")
+    def test_find_study_3rd_grader_extended_fall(self):
+        dumps_dir = os.path.join(DIR_NAME, "data")
+        fname = os.path.join(dumps_dir, "3rd_grader_extended_1_year_2018.json")
         with open(fname, "r") as f:
             groups = json.load(f)
 
