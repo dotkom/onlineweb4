@@ -7,7 +7,6 @@ from freezegun import freeze_time
 
 from apps.authentication.constants import FieldOfStudyType
 from apps.dataporten.study.courses import GROUP_IDENTIFIERS
-<<<<<<< HEAD
 from apps.dataporten.study.utils import (
     get_bachelor_year,
     get_course_finish_date,
@@ -33,17 +32,6 @@ from .course_test_data import (
     PVS_ACTIVE,
     load_course,
 )
-=======
-from apps.dataporten.study.utils import (get_bachelor_year, get_course_finish_date,
-                                         get_field_of_study, get_group_name, get_master_year,
-                                         get_study, get_year, get_year_from_course)
-
-from .course_test_data import (INFORMATICS_BACHELOR_STUDY_PROGRAMME,
-                               INFORMATICS_MASTER_PVS_SPECIALIZATION,
-                               INFORMATICS_MASTER_STUDY_PROGRAMME, ITGK_ACTIVE, ITGK_EXPIRED,
-                               NON_INFORMATICS_COURSE_EXPIRED, PROJECT1_ACTIVE, PROJECT1_EXPIRED,
-                               PROJECT2_ACTIVE, PROJECT2_EXPIRED, PVS_ACTIVE, load_course)
->>>>>>> 28e82ff3... test correct lock of year on courses
 
 DIR_NAME = os.path.dirname(os.path.realpath(__file__))
 
@@ -161,9 +149,9 @@ class DataProcessingTestCase(TestCase):
     @freeze_time("2010-10-01 12:00")
     def test_get_bachelor_year_3rd_grader_extended_year_fall(self):
         groups = [
-                load_course(ITGK_EXPIRED, years_ago=3),
-                load_course(PROJECT1_EXPIRED, years_ago=2),
-                load_course(PROJECT2_EXPIRED, years_ago=1),
+            load_course(ITGK_EXPIRED, years_ago=3),
+            load_course(PROJECT1_EXPIRED, years_ago=2),
+            load_course(PROJECT2_EXPIRED, years_ago=1),
         ]
 
         self.assertEqual(3, get_bachelor_year(groups))
@@ -360,15 +348,15 @@ class GetStudyTestCase(TestCase):
 
     @freeze_time("2017-10-01 12:00")
     def test_find_study_3rd_grader_extended_fall(self):
-        dumps_dir = os.path.join(DIR_NAME, 'data')
-        fname = os.path.join(dumps_dir, '3rd_grader_extended_1_year_2018.json')
-        with open(fname, 'r') as f:
+        dumps_dir = os.path.join(DIR_NAME, "data")
+        fname = os.path.join(dumps_dir, "3rd_grader_extended_1_year_2018.json")
+        with open(fname, "r") as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
         self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
 
-        self.assertEqual(3, get_year(GROUP_IDENTIFIERS['BACHELOR'], groups))
+        self.assertEqual(3, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
 
     @freeze_time("2017-10-01 12:00")
     def test_find_study_4th_grader_dbs_fall(self):
