@@ -359,6 +359,18 @@ class GetStudyTestCase(TestCase):
         self.assertEqual(3, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
 
     @freeze_time("2017-10-01 12:00")
+    def test_find_study_3rd_grader_extended_fall(self):
+        dumps_dir = os.path.join(DIR_NAME, 'data')
+        fname = os.path.join(dumps_dir, '3rd_grader_extended_1_year_2018.json')
+        with open(fname, 'r') as f:
+            groups = json.load(f)
+
+        field_of_study = get_field_of_study(groups)
+        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
+
+        self.assertEqual(3, get_year(GROUP_IDENTIFIERS['BACHELOR'], groups))
+
+    @freeze_time("2017-10-01 12:00")
     def test_find_study_4th_grader_dbs_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "4th_grader_2018_dbs.json")
