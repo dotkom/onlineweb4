@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-
 from django.conf.urls import url
 
+from apps.api.utils import SharedAPIRootRouter
 from apps.feedback import views
 
 base_url = (
@@ -25,3 +25,32 @@ urlpatterns = [
     ),
     url(r"^deleteanswer/$", views.delete_answer, name="delete_anwer"),
 ]
+
+
+# API v1
+router = SharedAPIRootRouter()
+router.register(
+    prefix="feedback/relations",
+    viewset=views.FeedbackRelationViewSet,
+    basename="feedback_relations",
+)
+router.register(
+    prefix="feedback/sessions",
+    viewset=views.SessionViewSet,
+    basename="feedback_sessions",
+)
+router.register(
+    prefix="feedback/answers/text",
+    viewset=views.TextAnswerViewSet,
+    basename="feedback_answer_text",
+)
+router.register(
+    prefix="feedback/answers/multiple",
+    viewset=views.MultipleChoiceAnswerViewSet,
+    basename="feedback_answer_multiple_choice",
+)
+router.register(
+    prefix="feedback/answers/rating",
+    viewset=views.RatingAnswerViewSet,
+    basename="feedback_answer_rating",
+)

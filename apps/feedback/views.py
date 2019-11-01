@@ -9,13 +9,21 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
+from apps.authentication.models import OnlineUser as User
+from apps.feedback import serializers
 from apps.feedback.forms import create_forms
 from apps.feedback.models import (
     RATING_CHOICES,
     FeedbackRelation,
     FieldOfStudyAnswer,
+    MultipleChoiceAnswer,
+    RatingAnswer,
     RegisterToken,
+    Session,
     TextAnswer,
     TextQuestion,
 )
@@ -221,3 +229,101 @@ def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):
         raise Http404
 
     return fbr
+
+
+class FeedbackRelationViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = serializers.FeedbackRelationReadSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = FeedbackRelation.objects.all()
+
+    def get_queryset(self):
+        user: User = self.request.user
+        queryset = super().get_queryset()
+
+        return queryset.filter(answered=user).union(
+            FeedbackRelation.objects.can_answer(user)
+        )
+
+
+class SessionViewSet(
+    viewsets.GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.RetrieveModelMixin,
+):
+    queryset = Session.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+
+    @action(detail=True, methods=["PUT"])
+    def submit(self, request, pk=None):
+        queryset = self.get_queryset()
+        session = get_object_or_404(queryset, pk=pk)
+
+        FieldOfStudyAnswer.objects.create(
+            feedback_relation=session.feedback_relation,
+            answer=request.user.field_of_study,
+        )
+
+        session.handle_submit()
+        return Response(
+            {"message": "Takk for at du svarte!"}, status=status.HTTP_200_OK
+        )
+
+    def get_serializer_class(self):
+        if self.action in ["list", "retrieve"]:
+            return serializers.SessionReadSerializer
+        if self.action == "create":
+            return serializers.SessionCreateSerializer
+
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        user: User = self.request.user
+        queryset = super().get_queryset()
+
+        return queryset.filter(user=user)
+
+
+class BaseAnswerViewSet(
+    viewsets.GenericViewSet,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.CreateModelMixin,
+):
+    permission_classes = (permissions.IsAuthenticated,)
+    create_serializer = None
+    read_serializer = None
+
+    def get_queryset(self):
+        user: User = self.request.user
+        queryset = super().get_queryset()
+
+        return queryset.filter(session__user=user)
+
+    def get_serializer_class(self):
+        if self.action in ["list", "retrieve"]:
+            return self.read_serializer
+        if self.action == "create":
+            return self.create_serializer
+
+        return super().get_serializer_class()
+
+
+class TextAnswerViewSet(BaseAnswerViewSet):
+    queryset = TextAnswer.objects.all()
+    create_serializer = serializers.TextAnswerCreateSerializer
+    read_serializer = serializers.TextAnswerReadSerializer
+
+
+class RatingAnswerViewSet(BaseAnswerViewSet):
+    queryset = RatingAnswer.objects.all()
+    create_serializer = serializers.RatingAnswerCreateSerializer
+    read_serializer = serializers.RatingAnswerCreateSerializer
+
+
+class MultipleChoiceAnswerViewSet(BaseAnswerViewSet):
+    queryset = MultipleChoiceAnswer.objects.all()
+    create_serializer = serializers.MultipleChoiceAnswerCreateSerializer
+    read_serializer = serializers.MultipleChoiceAnswerReadSerializer
