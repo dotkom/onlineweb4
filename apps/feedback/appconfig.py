@@ -6,7 +6,7 @@ class FeedbackConfig(AppConfig):
     verbose_name = "Feedback"
 
     def ready(self):
-        super(FeedbackConfig, self).ready()
+        super().ready()
 
         from reversion import revisions as reversion
 
@@ -23,3 +23,7 @@ class FeedbackConfig(AppConfig):
         reversion.register(RatingAnswer)
         reversion.register(RegisterToken)
         reversion.register(TextAnswer)
+
+        # The following stops pycharm from nagging about unused import statement
+        # noinspection PyUnresolvedReferences
+        import apps.feedback.signals  # noqa: F401
