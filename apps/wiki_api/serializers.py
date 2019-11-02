@@ -8,7 +8,7 @@ from apps.wiki_api.fields import WikiPermissionField
 class PreviousArticleRevisionReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = ArticleRevision
-        fields = ('id', 'title',)
+        fields = ("id", "title")
         read_only = True
 
 
@@ -19,8 +19,19 @@ class ArticleRevisionReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = ArticleRevision
         fields = (
-            'id', 'title', 'content', 'revision_number', 'user_message', 'automatic_log', 'ip_address', 'modified',
-            'created', 'previous_revision', 'deleted', 'locked', 'user',
+            "id",
+            "title",
+            "content",
+            "revision_number",
+            "user_message",
+            "automatic_log",
+            "ip_address",
+            "modified",
+            "created",
+            "previous_revision",
+            "deleted",
+            "locked",
+            "user",
         )
         read_only = True
 
@@ -39,8 +50,20 @@ class ArticleReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = (
-            'group_read', 'group_write', 'other_read', 'other_write', 'created', 'modified', 'owner', 'group',
-            'can_read', 'can_write', 'can_delete', 'can_moderate', 'can_assign', 'current_revision',
+            "group_read",
+            "group_write",
+            "other_read",
+            "other_write",
+            "created",
+            "modified",
+            "owner",
+            "group",
+            "can_read",
+            "can_write",
+            "can_delete",
+            "can_moderate",
+            "can_assign",
+            "current_revision",
         )
         read_only = True
 
@@ -53,7 +76,7 @@ class RelatedURLPathSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = URLPath
-        fields = ('slug', 'absolute_url',)
+        fields = ("slug", "absolute_url")
 
 
 class URLPathReadOnlySerializer(serializers.ModelSerializer):
@@ -69,5 +92,14 @@ class URLPathReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = URLPath
-        fields = ('article', 'slug', 'parent', 'moved_to', 'path', 'is_deleted', 'absolute_url', 'children')
+        fields = (
+            "article",
+            "slug",
+            "parent",
+            "moved_to",
+            "path",
+            "is_deleted",
+            "absolute_url",
+            "children",
+        )
         read_only = True
