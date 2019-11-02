@@ -7,7 +7,7 @@ from django_dynamic_fixture import G
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.splash.models import SplashEvent
+from apps.splash.models import AudienceGroup, SplashEvent
 
 
 class SplashModelsTestCase(TestCase):
@@ -29,7 +29,7 @@ class SplashURLTestCase(APITestCase):
 
 class SplashAPIURLTestCase(APITestCase):
     def test_splash_events_list_no_events(self):
-        url = reverse("splashevent-list")
+        url = reverse("splash_events-list")
 
         response = self.client.get(url)
 
@@ -37,7 +37,7 @@ class SplashAPIURLTestCase(APITestCase):
 
     def test_splash_events_list_with_events_exist(self):
         G(SplashEvent)
-        url = reverse("splashevent-list")
+        url = reverse("splash_events-list")
 
         response = self.client.get(url)
 
@@ -50,7 +50,7 @@ class SplashAPIURLTestCase(APITestCase):
         G(SplashEvent, start_time=last_week, end_time=last_week)
         next_week_event = G(SplashEvent, start_time=next_week, end_time=next_week)
 
-        url = reverse("splashevent-list")
+        url = reverse("splash_events-list")
 
         url += "?start_time__gte=%s" % datetime.datetime.now()
 
@@ -61,3 +61,30 @@ class SplashAPIURLTestCase(APITestCase):
         self.assertEqual(
             next_week_event.title, response.data.get("results")[0].get("title")
         )
+
+    def test_audience_group_filter(self):
+        url = reverse("splash_events-list")
+
+        audience = G(AudienceGroup)
+        G(SplashEvent)
+        event_with_audience = G(SplashEvent, target_audience=audience)
+
+        response = self.client.get(url, {"target_audience": audience.id})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(1, response.data.get("count"))
+        self.assertEqual(
+            event_with_audience.id, response.data.get("results")[0].get("id")
+        )
+
+    def test_get_audience_groups(self):
+        url = reverse("splash_audience-list")
+
+        G(AudienceGroup)
+        G(AudienceGroup)
+        G(AudienceGroup)
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(3, response.data.get("count"))
