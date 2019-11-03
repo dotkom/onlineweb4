@@ -18,25 +18,28 @@ WINTER = ((12, 1), (1, 15))
 
 def get_expiration_date(user):
     if user:
-        marks = MarkUser.objects.filter(user=user).order_by('-expiration_date')
+        marks = MarkUser.objects.filter(user=user).order_by("-expiration_date")
         if marks:
             return marks[0].expiration_date
     return None
 
 
 class MarksManager(models.Manager):
-
     @staticmethod
     def all_active():
         return Mark.objects.filter(given_to__expiration_date__gt=timezone.now().date())
 
     @staticmethod
     def active(user):
-        return MarkUser.objects.filter(user=user).filter(expiration_date__gt=timezone.now().date())
+        return MarkUser.objects.filter(user=user).filter(
+            expiration_date__gt=timezone.now().date()
+        )
 
     @staticmethod
     def inactive(user=None):
-        return MarkUser.objects.filter(user=user).filter(expiration_date__lte=timezone.now().date())
+        return MarkUser.objects.filter(user=user).filter(
+            expiration_date__lte=timezone.now().date()
+        )
 
 
 class Mark(models.Model):
@@ -59,9 +62,11 @@ class Mark(models.Model):
         editable=False,
         null=True,
         blank=True,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
-    last_changed_date = models.DateTimeField(_("sist redigert"), auto_now=True, editable=False)
+    last_changed_date = models.DateTimeField(
+        _("sist redigert"), auto_now=True, editable=False
+    )
     last_changed_by = models.ForeignKey(
         User,
         related_name="marks_last_changed_by",
@@ -69,7 +74,7 @@ class Mark(models.Model):
         editable=False,
         null=True,
         blank=False,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     description = models.CharField(
         _("beskrivelse"),
@@ -77,9 +82,11 @@ class Mark(models.Model):
         help_text=_(
             "Hvis dette feltet etterlates blankt vil det fylles med en standard grunn for typen prikk som er valgt."
         ),
-        blank=True
+        blank=True,
     )
-    category = models.SmallIntegerField(_("kategori"), choices=CATEGORY_CHOICES, default=0)
+    category = models.SmallIntegerField(
+        _("kategori"), choices=CATEGORY_CHOICES, default=0
+    )
 
     # managers
     objects = models.Manager()  # default manager
@@ -102,16 +109,15 @@ class Mark(models.Model):
     class Meta:
         verbose_name = _("Prikk")
         verbose_name_plural = _("Prikker")
-        permissions = (
-            ('view_mark', 'View Mark'),
-        )
-        default_permissions = ('add', 'change', 'delete')
+        permissions = (("view_mark", "View Mark"),)
+        default_permissions = ("add", "change", "delete")
 
 
 class MarkUser(models.Model):
     """
     One entry for a user that has received a mark.
     """
+
     mark = models.ForeignKey(Mark, related_name="given_to", on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -135,11 +141,9 @@ class MarkUser(models.Model):
 
     class Meta:
         unique_together = ("user", "mark")
-        ordering = ('expiration_date',)
-        permissions = (
-            ('view_userentry', 'View UserEntry'),
-        )
-        default_permissions = ('add', 'change', 'delete')
+        ordering = ("expiration_date",)
+        permissions = (("view_userentry", "View UserEntry"),)
+        default_permissions = ("add", "change", "delete")
 
 
 def _fix_mark_history(user):
@@ -155,17 +159,22 @@ def _fix_mark_history(user):
      * a new MarkUser entry is made
      * an existing MarkUser entry is deleted
     """
-    markusers = MarkUser.objects.filter(user=user).order_by('mark__added_date')
+    markusers = MarkUser.objects.filter(user=user).order_by("mark__added_date")
     last_expiry_date = None
     for entry in markusers:
         # If there's a last_expiry date, it means a mark has been processed already.
         # If that expiration date is within a DURATION of this added date, build on it.
-        if last_expiry_date and entry.mark.added_date - timedelta(days=DURATION) < last_expiry_date:
+        if (
+            last_expiry_date
+            and entry.mark.added_date - timedelta(days=DURATION) < last_expiry_date
+        ):
             entry.expiration_date = _get_with_duration_and_vacation(last_expiry_date)
         # If there is no last_expiry_date or the last expiry date is over a DURATION old
         # we add DURATIION days from the added date of the mark.
         else:
-            entry.expiration_date = _get_with_duration_and_vacation(entry.mark.added_date)
+            entry.expiration_date = _get_with_duration_and_vacation(
+                entry.mark.added_date
+            )
         entry.save()
         last_expiry_date = entry.expiration_date
 
@@ -199,7 +208,9 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
         expiry_date += timedelta(days=(first_winter_end_date - added_date).days)
     # And for before the vacation
     elif 0 < (first_winter_start_date - added_date).days < DURATION:
-        expiry_date += timedelta(days=(first_winter_end_date - first_winter_start_date).days)
+        expiry_date += timedelta(
+            days=(first_winter_end_date - first_winter_start_date).days
+        )
     # Then we need to check the edge case where now is between newyears and and of winter vacation
     elif second_winter_end_date > added_date:
         expiry_date += timedelta(days=(second_winter_end_date - added_date).days)
@@ -210,7 +221,7 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
 class Suspension(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(_('tittel'), max_length=64)
+    title = models.CharField(_("tittel"), max_length=64)
     description = models.CharField(_("beskrivelse"), max_length=255)
     active = models.BooleanField(default=True)
     added_date = models.DateTimeField(auto_now=True, editable=False)
@@ -223,6 +234,77 @@ class Suspension(models.Model):
         return "Suspension: " + str(self.user)
 
     class Meta:
-        default_permissions = ('add', 'change', 'delete')
+        default_permissions = ("add", "change", "delete")
 
     # TODO URL
+
+
+class MarkRuleSet(models.Model):
+    """
+    A version of the mark rules set by Linjeforeningen Online
+    """
+
+    created_date = models.DateTimeField(auto_now_add=True, editable=False)
+    valid_from_date = models.DateTimeField(auto_now_add=True)
+    """ Rules written in markdown """
+    content = models.TextField(
+        verbose_name="Regler", help_text="Regelsett skrevet i markdown"
+    )
+    version = models.CharField(max_length=128, verbose_name="Versjon", unique=True)
+
+    @classmethod
+    def get_current_rule_set(cls) -> "MarkRuleSet":
+        """
+        The latest set of mark rules which have become active
+        """
+        return (
+            cls.objects.order_by("-valid_from_date")
+            .exclude(valid_from_date__gt=timezone.now())
+            .first()
+        )
+
+    @classmethod
+    def has_user_accepted_mark_rules(cls, user: User) -> bool:
+        current_rules = cls.get_current_rule_set()
+        return RuleAcceptance.objects.filter(user=user, rule_set=current_rules).exists()
+
+    @classmethod
+    def accept_mark_rules(cls, user: User):
+        current_rules = cls.get_current_rule_set()
+        if not cls.has_user_accepted_mark_rules(user):
+            RuleAcceptance.objects.create(user=user, rule_set=current_rules)
+
+    def __str__(self):
+        return self.version
+
+    class Meta:
+        verbose_name = "Prikkegelsett"
+        verbose_name_plural = "Prikkeregelsett"
+        ordering = ("-valid_from_date",)
+
+
+class RuleAcceptance(models.Model):
+    user = models.ForeignKey(
+        to=User,
+        related_name="accepted_mark_rule_sets",
+        verbose_name="Godkjente prikkeregelsett",
+        on_delete=models.CASCADE,
+        editable=False,
+    )
+    rule_set = models.ForeignKey(
+        to=MarkRuleSet,
+        related_name="user_accepts",
+        verbose_name="Brukere som har akseptert",
+        on_delete=models.CASCADE,
+        editable=False,
+    )
+    accepted_date = models.DateTimeField(auto_now_add=True, editable=False)
+
+    def __str__(self):
+        return f"{self.rule_set} - {self.user}"
+
+    class Meta:
+        verbose_name = "Regelgodkjenning"
+        verbose_name_plural = "Regelgodkjennelser"
+        unique_together = (("user", "rule_set"),)
+        ordering = ("rule_set", "accepted_date")

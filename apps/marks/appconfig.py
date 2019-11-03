@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class MarksConfig(AppConfig):
-    name = 'apps.marks'
-    verbose_name = 'Marks'
+    name = "apps.marks"
+    verbose_name = "Marks"

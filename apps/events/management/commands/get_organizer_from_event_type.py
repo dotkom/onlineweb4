@@ -7,10 +7,10 @@ from apps.events.utils import get_organizer_by_event_type
 
 def traverse_relations(event):
     # Check if this is an attendance event, and if so, save it.
-    if hasattr(event, 'attendance_event'):
+    if hasattr(event, "attendance_event"):
         event.attendance_event.save()
 
-        if hasattr(event, 'companies'):
+        if hasattr(event, "companies"):
             for company_event in event.companies.all():
                 company_event.save()
 
@@ -19,7 +19,7 @@ def traverse_relations(event):
             attendee.save()
 
         # Check if the event has any reservations, and if so, save it.
-        if hasattr(event.attendance_event, 'reserved_seats'):
+        if hasattr(event.attendance_event, "reserved_seats"):
             event.attendance_event.reserved_seats.save()
 
             # Save all reservees as too
@@ -28,25 +28,42 @@ def traverse_relations(event):
 
 
 class Command(BaseCommand):
-
     def add_arguments(self, parser):
-        parser.add_argument('--all', help='Save all event-related objects as well',
-                            default=False, dest='save_all', action='store_true')
-        parser.add_argument('--debug', help='Show which events are saved. Errors will be printed even with this off.',
-                            default=False, dest='print_debug', action='store_true')
+        parser.add_argument(
+            "--all",
+            help="Save all event-related objects as well",
+            default=False,
+            dest="save_all",
+            action="store_true",
+        )
+        parser.add_argument(
+            "--debug",
+            help="Show which events are saved. Errors will be printed even with this off.",
+            default=False,
+            dest="print_debug",
+            action="store_true",
+        )
 
     def handle(self, *args, **options):
-        save_all = options.get('save_all', False)
+        save_all = options.get("save_all", False)
 
-        print('Will {}save all objects related to each event.'.format('' if save_all else '*not* '))
+        print(
+            "Will {}save all objects related to each event.".format(
+                "" if save_all else "*not* "
+            )
+        )
 
         for event in Event.objects.all():
-            if options.get('print_debug', False):
+            if options.get("print_debug", False):
                 print('Triggering save for "{}"'.format(event.title))
 
             organizer_obj = get_organizer_by_event_type(event.event_type)
             if not organizer_obj:
-                print('Could not get organizer for "{}" (#{})'.format(event.title, event.pk))
+                print(
+                    'Could not get organizer for "{}" (#{})'.format(
+                        event.title, event.pk
+                    )
+                )
                 continue
 
             event.organizer = Group.objects.get(id=organizer_obj.id)

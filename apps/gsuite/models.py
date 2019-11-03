@@ -12,11 +12,12 @@ class GsuiteGroup(models.Model):
     """
     Represents a group in Gsuite
     """
-    email_name = models.CharField(_('E-postnavn'), max_length=128)
+
+    email_name = models.CharField(_("E-postnavn"), max_length=128)
     main_group = models.ForeignKey(
         to=OnlineGroup,
-        related_name='gsuite_group',
-        verbose_name=_('Hovedgruppe'),
+        related_name="gsuite_group",
+        verbose_name=_("Hovedgruppe"),
         on_delete=models.CASCADE,
     )
 
@@ -27,8 +28,8 @@ class GsuiteGroup(models.Model):
 
     @property
     def email(self):
-        gsuite_domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
-        return f'{self.email_name}@{gsuite_domain}'
+        gsuite_domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
+        return f"{self.email_name}@{gsuite_domain}"
 
     @property
     def name(self):
@@ -39,15 +40,15 @@ class GsuiteGroup(models.Model):
         return self.main_group.description_short
 
     def __str__(self):
-        return f'{self.email} ({self.main_group})'
+        return f"{self.email} ({self.main_group})"
 
 
 class GsuiteAlias(models.Model):
-    email_name = models.CharField(_('E-postnavn'), max_length=128)
+    email_name = models.CharField(_("E-postnavn"), max_length=128)
     gsuite_group = models.ForeignKey(
         to=GsuiteGroup,
-        related_name='alias_set',
-        verbose_name=_('Gsuite gruppe'),
+        related_name="alias_set",
+        verbose_name=_("Gsuite gruppe"),
         on_delete=models.CASCADE,
     )
     """ Group's unique ID in Gsuite """
@@ -55,8 +56,8 @@ class GsuiteAlias(models.Model):
 
     @property
     def email(self):
-        gsuite_domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
-        return f'{self.email_name}@{gsuite_domain}'
+        gsuite_domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
+        return f"{self.email_name}@{gsuite_domain}"
 
     def __str__(self):
         return self.email
@@ -67,32 +68,33 @@ class GroupSync(models.Model):
     Relates an Online group to a Gsuite group
     An Online group can be synced to many groups in Gsuite
     """
+
     gsuite_group = models.ForeignKey(
         to=GsuiteGroup,
-        related_name='sync_groups',
-        verbose_name=_('Google-gruppe'),
+        related_name="sync_groups",
+        verbose_name=_("Google-gruppe"),
         on_delete=models.CASCADE,
     )
     online_group = models.ForeignKey(
         to=OnlineGroup,
-        related_name='gsuite_syncs',
-        verbose_name=_('Online-gruppe'),
+        related_name="gsuite_syncs",
+        verbose_name=_("Online-gruppe"),
         on_delete=models.CASCADE,
     )
     """ Roles can be added to restrict syncing to a specific set of roles in a Group """
     roles = models.ManyToManyField(
         to=GroupRole,
-        related_name='sync_groups',
-        verbose_name=_('Synkroniserte roller'),
+        related_name="sync_groups",
+        verbose_name=_("Synkroniserte roller"),
         blank=True,
     )
     """ Sync group members as a specific role """
     gsuite_role = models.CharField(
-        verbose_name=_('Rolle i Gsuite'),
+        verbose_name=_("Rolle i Gsuite"),
         max_length=64,
         default=GsuiteRoleType.MEMBER,
         choices=GsuiteRoleType.ALL_CHOICES,
     )
 
     def __str__(self):
-        return f'{self.online_group} - {self.gsuite_group}'
+        return f"{self.online_group} - {self.gsuite_group}"

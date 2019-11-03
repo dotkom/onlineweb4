@@ -1,20 +1,25 @@
 import logging
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db.models.signals import pre_save, post_delete, post_save, pre_delete
+from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
 from apps.gsuite.models import GsuiteAlias, GsuiteGroup
 
-from .tasks import (update_mailing_list, create_gsuite_group_task, update_gsuite_group_task, delete_gsuite_group_task,
-                    update_gsuite_alias_task, delete_gsuite_alias_task, create_gsuite_alias_task)
+from .tasks import (
+    create_gsuite_alias_task,
+    create_gsuite_group_task,
+    delete_gsuite_alias_task,
+    delete_gsuite_group_task,
+    update_gsuite_alias_task,
+    update_gsuite_group_task,
+    update_mailing_list,
+)
 
 User = get_user_model()
 
-MAILING_LIST_USER_FIELDS_TO_LIST_NAME = {
-    'infomail': 'info',
-    'jobmail': 'oppdrag',
-}
+MAILING_LIST_USER_FIELDS_TO_LIST_NAME = settings.MAILING_LIST_USER_FIELDS_TO_LIST_NAME
 
 logger = logging.getLogger(__name__)
 
@@ -25,9 +30,9 @@ def get_updated_mailing_list_fields(user):
         # Get the current user and find out what's about to change
         current_user = User.objects.get(pk=user.pk)
         if user.infomail != current_user.infomail:
-            updated_mailing_lists.append('infomail')
+            updated_mailing_lists.append("infomail")
         if user.jobmail != current_user.jobmail:
-            updated_mailing_lists.append('jobmail')
+            updated_mailing_lists.append("jobmail")
     except User.DoesNotExist:
         # Find out which mailing lists are opted into if the user did not previously exist
         for mailing_list in MAILING_LIST_USER_FIELDS_TO_LIST_NAME.keys():
@@ -51,8 +56,8 @@ def toggle_mailing_lists(sender, instance, **kwargs):
 
             update_mailing_list.delay(
                 g_suite_mailing_list,
-                instance.get_email().email,
-                getattr(instance, mailing_list)
+                instance.primary_email,
+                getattr(instance, mailing_list),
             )
 
 
@@ -79,4 +84,6 @@ def alias_created_or_updated(sender, instance: GsuiteAlias, created=False, **kwa
 
 @receiver(signal=post_delete, sender=GsuiteAlias)
 def alias_deleted(sender, instance: GsuiteAlias, **kwargs):
-    delete_gsuite_alias_task.delay(group_id=instance.gsuite_group.id, alias_key=instance.email)
+    delete_gsuite_alias_task.delay(
+        group_id=instance.gsuite_group.id, alias_key=instance.email
+    )

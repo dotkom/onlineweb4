@@ -35,7 +35,9 @@ def sync_order_line_subtotal_to_payment_price(sender, instance: Order, **kwargs)
 
 
 @receiver(post_save, sender=OrderLine)
-def create_payment_for_order_line(sender, instance: OrderLine, created: bool = False, **kwargs):
+def create_payment_for_order_line(
+    sender, instance: OrderLine, created: bool = False, **kwargs
+):
     """
     Order Lines should have a payment connected to them when they are created.
     There should only be a single payment connected to each Webshop Order Line, with a single price.
@@ -43,8 +45,5 @@ def create_payment_for_order_line(sender, instance: OrderLine, created: bool = F
     if not instance.payment and created:
         """ Webshop Payments are always made to Prokom, and always require immediate payment """
         Payment.objects.create(
-            stripe_key='prokom',
-            payment_type=1,
-            content_object=instance,
-            active=True,
+            stripe_key="prokom", payment_type=1, content_object=instance, active=True
         )

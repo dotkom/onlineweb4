@@ -14,7 +14,7 @@ class Client(AbstractApplication):
     scopes on a per-client basis.
     """
 
-    scopes = TextField(verbose_name=_('Tilganger'), blank=True)
+    scopes = TextField(verbose_name=_("Tilganger"), blank=True)
 
     def get_scopes(self):
         """
@@ -30,7 +30,7 @@ class Client(AbstractApplication):
         :param scopes: A list of scope strings
         """
 
-        self.scopes = ' '.join(scopes)
+        self.scopes = " ".join(scopes)
 
     def get_redirect_uris(self):
         """
@@ -41,7 +41,5 @@ class Client(AbstractApplication):
         return self.redirect_uris.split()
 
     class Meta:
-        permissions = (
-            ('view_client', 'View Client'),
-        )
-        default_permissions = ('add', 'change', 'delete')
+        permissions = (("view_client", "View Client"),)
+        default_permissions = ("add", "change", "delete")

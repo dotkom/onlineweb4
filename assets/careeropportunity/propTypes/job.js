@@ -6,6 +6,7 @@ export default {
   deadline: PropTypes.string,
   companyImage: companyImageProps,
   companyName: PropTypes.string,
+  applicationLink: PropTypes.string,
   title: PropTypes.string,
   ingress: PropTypes.string,
   type: PropTypes.string,

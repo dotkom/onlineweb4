@@ -6,26 +6,33 @@ from apps.authentication.serializers import UserReadOnlySerializer
 
 
 class CommitteeSerializer(serializers.ModelSerializer):
-    group_name = serializers.SerializerMethodField(source='group')
+    group_name = serializers.SerializerMethodField(source="group")
 
     class Meta:
         model = CommitteePriority
-        fields = ('group', 'group_name', 'priority')
+        fields = ("group", "group_name", "priority")
 
     def get_group_name(self, instance):
         return instance.group.name
 
 
 class CommitteeApplicationSerializer(serializers.ModelSerializer):
-    committees = CommitteeSerializer(many=True, source='committeepriority_set')
+    committees = CommitteeSerializer(many=True, source="committeepriority_set")
     applicant = UserReadOnlySerializer(read_only=True)
 
     class Meta:
         model = CommitteeApplication
-        fields = ('name', 'email', 'applicant', 'application_text', 'prioritized', 'committees')
+        fields = (
+            "name",
+            "email",
+            "applicant",
+            "application_text",
+            "prioritized",
+            "committees",
+        )
 
     def create(self, validated_data):
-        committees = validated_data.pop('committeepriority_set')
+        committees = validated_data.pop("committeepriority_set")
         application = CommitteeApplication(**validated_data)
         try:
             application.clean()
@@ -34,6 +41,8 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
         application.save()
 
         for committee in committees:
-            CommitteePriority.objects.create(committee_application=application, **committee)
+            CommitteePriority.objects.create(
+                committee_application=application, **committee
+            )
 
         return CommitteeApplication.objects.get(pk=application.pk)

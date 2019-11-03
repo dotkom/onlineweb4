@@ -14,7 +14,6 @@ from apps.mommy.registry import Task
 
 
 class FeedbackMail(Task):
-
     @staticmethod
     def run():
         logger = logging.getLogger("feedback")
@@ -32,18 +31,18 @@ class FeedbackMail(Task):
                     str(message),
                     message.committee_mail,
                     [],
-                    message.attended_mails
+                    message.attended_mails,
                 ).send()
-                logger.info('Emails sent to: ' + str(message.attended_mails))
+                logger.info("Emails sent to: " + str(message.attended_mails))
 
                 if message.results_message:
                     EmailMessage(
                         "Feedback resultat",
                         message.results_message,
                         "online@online.ntnu.no",
-                        [message.committee_mail]
+                        [message.committee_mail],
                     ).send()
-                    logger.info('Results mail sent to :' + message.committee_mail)
+                    logger.info("Results mail sent to :" + message.committee_mail)
 
     @staticmethod
     def generate_message(feedback, logger):
@@ -64,13 +63,13 @@ class FeedbackMail(Task):
             return message
 
         not_responded = FeedbackMail.get_users(feedback)
-        logger.info('Not responded: ' + str(not_responded))
+        logger.info("Not responded: " + str(not_responded))
 
         # Return if everyone has answered
         if not not_responded:
             feedback.active = False
             feedback.save()
-            message.status = 'Everyone has answered'
+            message.status = "Everyone has answered"
             return message
 
         message.attended_mails = FeedbackMail.get_user_mails(not_responded)
@@ -84,9 +83,11 @@ class FeedbackMail(Task):
         deadline_diff = (feedback.deadline - today).days
 
         message.subject = "Feedback: " + title
-        message.intro = "Hei, vi ønsker tilbakemelding på \"" + title + "\""
+        message.intro = 'Hei, vi ønsker tilbakemelding på "' + title + '"'
         message.mark = FeedbackMail.mark_message(feedback)
-        message.contact = "\n\nEventuelle spørsmål sendes til %s " % message.committee_mail
+        message.contact = (
+            "\n\nEventuelle spørsmål sendes til %s " % message.committee_mail
+        )
         message.date = FeedbackMail.date_message(end_date)
 
         if deadline_diff < 0:  # Deadline passed
@@ -98,7 +99,10 @@ class FeedbackMail(Task):
             if feedback.gives_mark:
                 FeedbackMail.set_marks(title, not_responded)
 
-                message.intro = "Fristen for å svare på \"%s\" har gått ut og du har fått en prikk." % title
+                message.intro = (
+                    'Fristen for å svare på "%s" har gått ut og du har fått en prikk.'
+                    % title
+                )
                 message.mark = ""
                 message.date = ""
                 message.link = ""
@@ -107,20 +111,32 @@ class FeedbackMail(Task):
             logger.info("Marks given to: " + str(not_responded))
 
         elif deadline_diff < 1:  # Last warning
-            message.deadline = "\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
+            message.deadline = (
+                "\n\nI dag innen 23:59 er siste frist til å svare på skjemaet."
+            )
 
-            message.results_message = "Hei, siste purremail på feedback skjema har blitt sendt til alle gjenværende " \
-                "deltagere på \"{}\".\nDere kan se feedback-resultatene på:\n{}\n".format(title, results_link)
+            message.results_message = (
+                "Hei, siste purremail på feedback skjema har blitt sendt til alle gjenværende "
+                'deltagere på "{}".\nDere kan se feedback-resultatene på:\n{}\n'.format(
+                    title, results_link
+                )
+            )
             message.send = True
             message.status = "Last warning"
         elif deadline_diff < 3 and feedback.gives_mark:  # 3 days from the deadline
-            message.deadline = "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
+            message.deadline = (
+                "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
+            )
             message.send = True
             message.status = "Warning message"
         elif not feedback.first_mail_sent:
-            message.deadline = "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
-            message.results_message = "Hei, nå har feedbackmail blitt sendt til alle deltagere på \"{}\"." \
+            message.deadline = (
+                "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
+            )
+            message.results_message = (
+                'Hei, nå har feedbackmail blitt sendt til alle deltagere på "{}".'
                 "\nDere kan se resultatene på:\n{}\n".format(title, results_link)
+            )
             message.send = True
             message.status = "First message"
 
@@ -175,8 +191,10 @@ class FeedbackMail(Task):
     @staticmethod
     def mark_message(feedback):
         if feedback.gives_mark:
-            return "\nVær oppmerksom på at du får prikk dersom du ikke svarer " \
+            return (
+                "\nVær oppmerksom på at du får prikk dersom du ikke svarer "
                 "på disse spørsmålene innen fristen."
+            )
         else:
             return ""
 
@@ -185,7 +203,9 @@ class FeedbackMail(Task):
         mark = Mark()
         mark.title = "Manglende tilbakemelding på %s" % title
         mark.category = 4  # Missed feedback
-        mark.description = "Du har fått en prikk fordi du ikke har levert tilbakemelding."
+        mark.description = (
+            "Du har fått en prikk fordi du ikke har levert tilbakemelding."
+        )
         mark.save()
 
         for user in not_responded:
@@ -219,9 +239,9 @@ class Message(object):
             self.deadline,
             self.mark,
             self.contact,
-            self.end
+            self.end,
         )
         return message
 
 
-schedule.register(FeedbackMail, day_of_week='mon-sun', hour=8, minute=00)
+schedule.register(FeedbackMail, day_of_week="mon-sun", hour=8, minute=00)

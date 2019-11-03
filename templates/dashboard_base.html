@@ -144,6 +144,18 @@
                         </ul>
                     </li>
                     {% endif %}
+                    {% if request.user.is_superuser %} <!-- TODO: Fix! -->
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-image blue"></i> <span>Fotalbum</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'dashboard-photoalbum:albums' %}"><i class="fa fa-angle-double-right orange"></i> Alle album</a></li>
+                            <li><a href="{% url 'dashboard-photoalbum:index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
                     {% if 'authentication.change_onlineuser' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
@@ -230,13 +242,6 @@
                     <li>
                         <a href="/dashboard/resources">
                             <i class="fa fa-universal-access blue"></i> <span>Ressurser</span>
-                        </a>
-                    </li>
-                    {% endif %}
-                    {% if request.user.is_superuser %}
-                    <li>
-                        <a href="/dashboard/rutinator/">
-                            <i class="fa fa-trophy blue"></i> <span>Rutinator</span>
                         </a>
                     </li>
                     {% endif %}

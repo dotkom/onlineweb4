@@ -2,12 +2,10 @@
 
 from django.conf.urls import url
 
-from apps.events import views as event_views
 from apps.shop import views as shop_views
 from apps.sso import views as sso_views
 
 urlpatterns = [
-    url(r'^v1/rfid/$', shop_views.SetRFIDView.as_view(), name='set_rfid'),
-    url(r'^v1/auth/$', sso_views.TokenView.as_view(), name='oauth2_provider_token'),
-    url(r'^v1/attend/$', event_views.AttendViewSet.as_view(), name='event_attend'),
+    url(r"^v1/rfid/$", shop_views.SetRFIDView.as_view(), name="set_rfid"),
+    url(r"^v1/auth/$", sso_views.TokenView.as_view(), name="oauth2_provider_token"),
 ]

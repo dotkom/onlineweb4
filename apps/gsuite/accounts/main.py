@@ -15,8 +15,8 @@ logger = logging.getLogger(__name__)
 
 # Scopes for the directory API
 scopes = [
-    'https://www.googleapis.com/auth/admin.directory.user',
-    'https://www.googleapis.com/auth/admin.directory.user.alias',
+    "https://www.googleapis.com/auth/admin.directory.user",
+    "https://www.googleapis.com/auth/admin.directory.user.alias",
 ]
 
 
@@ -27,16 +27,24 @@ def setup_g_suite_client():
     :return: Google API Client
     :rtype: googleapiclient.discovery.Resource
     """
-    if not settings.OW4_GSUITE_ACCOUNTS.get('ENABLED', False):
-        logger.debug('Trying to setup G Suite API client, but OW4_GSUITE_ACCOUNTS is not enabled.')
+    if not settings.OW4_GSUITE_ACCOUNTS.get("ENABLED", False):
+        logger.debug(
+            "Trying to setup G Suite API client, but OW4_GSUITE_ACCOUNTS is not enabled."
+        )
         return
-    if not settings.OW4_GSUITE_SETTINGS.get('DELEGATED_ACCOUNT'):
-        logger.error('To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT.')
-    if settings.OW4_GSUITE_ACCOUNTS.get('ENABLED') and not settings.OW4_GSUITE_ACCOUNTS.get('ENABLE_INSERT'):
-        logger.warning('To be able to execute unsafe calls towards G Suite you must allow this in settings.'
-                       '"ENABLE_INSERT" is not enabled.')
+    if not settings.OW4_GSUITE_SETTINGS.get("DELEGATED_ACCOUNT"):
+        logger.error(
+            "To be able to actually execute calls towards G Suite you must define DELEGATED_ACCOUNT."
+        )
+    if settings.OW4_GSUITE_ACCOUNTS.get(
+        "ENABLED"
+    ) and not settings.OW4_GSUITE_ACCOUNTS.get("ENABLE_INSERT"):
+        logger.warning(
+            "To be able to execute unsafe calls towards G Suite you must allow this in settings."
+            '"ENABLE_INSERT" is not enabled.'
+        )
 
-    return build_and_authenticate_g_suite_service('admin', 'directory_v1', scopes)
+    return build_and_authenticate_g_suite_service("admin", "directory_v1", scopes)
 
 
 def create_temporary_password():
@@ -52,32 +60,44 @@ def create_g_suite_account(ow4_user):
 
     password = create_temporary_password()
 
-    domain = settings.OW4_GSUITE_SETTINGS.get('DOMAIN')
+    domain = settings.OW4_GSUITE_SETTINGS.get("DOMAIN")
 
-    query = directory.users().insert(body={
-        "primaryEmail": "{}@{}".format(ow4_user.online_mail, domain),
-        "password": password,
-        "name": {
-            "givenName": ow4_user.first_name,
-            "familyName": ow4_user.last_name,
-            "fullName": ow4_user.get_full_name(),
-        },
-        "changePasswordAtNextLogin": True
-    })
+    query = directory.users().insert(
+        body={
+            "primaryEmail": "{}@{}".format(ow4_user.online_mail, domain),
+            "password": password,
+            "name": {
+                "givenName": ow4_user.first_name,
+                "familyName": ow4_user.last_name,
+                "fullName": ow4_user.get_full_name(),
+            },
+            "changePasswordAtNextLogin": True,
+        }
+    )
 
     try:
         resp = query.execute()
     except HttpError as err:
-        logger.error('HttpError while requesting G Suite Account creation: {}'.format(err.content),
-                     extra={"error": err})
+        logger.error(
+            "HttpError while requesting G Suite Account creation: {}".format(
+                err.content
+            ),
+            extra={"error": err},
+        )
         if err.resp.status == 409:
-            logger.error('G Suite account creation: User "{}@online.ntnu.no" already exists.'
-                         .format(ow4_user.online_mail))
+            logger.error(
+                'G Suite account creation: User "{}@online.ntnu.no" already exists.'.format(
+                    ow4_user.online_mail
+                )
+            )
         raise err
 
-    logger.info('Created G Suite account for "{user}" with username "{gsuite_username}"'.format(
-        user=ow4_user, gsuite_username=resp.get('primaryEmail')))
-    logger.debug('Created G Suite account, response: {}'.format(resp))
+    logger.info(
+        'Created G Suite account for "{user}" with username "{gsuite_username}"'.format(
+            user=ow4_user, gsuite_username=resp.get("primaryEmail")
+        )
+    )
+    logger.debug("Created G Suite account, response: {}".format(resp))
 
     notify_g_suite_user_account(ow4_user, password)
 
@@ -88,30 +108,41 @@ def create_g_suite_account(ow4_user):
 
 def reset_password_g_suite_account(ow4_user):
     if not ow4_user.online_mail:
-        raise ValueError('Det finnes ingen G Suite konto for denne epostadressen.')
+        raise ValueError("Det finnes ingen G Suite konto for denne epostadressen.")
 
     directory = setup_g_suite_client()
 
     password = create_temporary_password()
 
-    user_key = get_user_key(settings.OW4_GSUITE_SETTINGS.get('DOMAIN'), ow4_user.online_mail)
+    user_key = get_user_key(
+        settings.OW4_GSUITE_SETTINGS.get("DOMAIN"), ow4_user.online_mail
+    )
 
-    logger.debug('Resetting G Suite password for {}.'.format(ow4_user))
+    logger.debug("Resetting G Suite password for {}.".format(ow4_user))
 
-    resp = directory.users().update(body={
-        "password": password,
-        "changePasswordAtNextLogin": True,
-    }, userKey=user_key).execute()
+    resp = (
+        directory.users()
+        .update(
+            body={"password": password, "changePasswordAtNextLogin": True},
+            userKey=user_key,
+        )
+        .execute()
+    )
 
-    logger.debug('Reset G Suite password for {}, resp: {}'.format(ow4_user, resp))
+    logger.debug("Reset G Suite password for {}, resp: {}".format(ow4_user, resp))
 
     notify_g_suite_user_account(ow4_user, password)
 
 
 def notify_g_suite_user_account(user, password):
-    logger.debug('Notifying user about new G Suite account')
-    message = render_to_string('authentication/email/gsuite_account_notification.txt', {
-        "user": user,
-        "password": password,
-    })
-    send_mail('Informasjon om G Suite konto fra Online', message, settings.EMAIL_DOTKOM, [user.get_email().email])
+    logger.debug("Notifying user about new G Suite account")
+    message = render_to_string(
+        "authentication/email/gsuite_account_notification.txt",
+        {"user": user, "password": password},
+    )
+    send_mail(
+        "Informasjon om G Suite konto fra Online",
+        message,
+        settings.EMAIL_DOTKOM,
+        [user.primary_email],
+    )

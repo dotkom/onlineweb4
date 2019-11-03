@@ -49,7 +49,6 @@ USER_SEARCH_GROUPS = [
     24,  # itex
 ]
 
-# Slack inviter
 SLACK_INVITER = {
     # e.g. onlinentnu
     'team_name': config("OW4_DJANGO_SLACK_INVITER_TEAM_NAME", default='team_name_here'),
@@ -108,8 +107,10 @@ RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=Tr
 
 
 # oidc_provider - OpenID Connect Provider
-OIDC_USERINFO = 'apps.oidc_provider.claims.userinfo'
-OIDC_EXTRA_SCOPE_CLAIMS = 'apps.oidc_provider.claims.Onlineweb4ScopeClaims'
+OIDC_USERINFO = 'apps.online_oidc_provider.claims.userinfo'
+OIDC_EXTRA_SCOPE_CLAIMS = 'apps.online_oidc_provider.claims.Onlineweb4ScopeClaims'
 
 USE_X_FORWARDED_HOST = config("OW4_DJANGO_DEVELOPMENT_HTTPS", cast=bool, default=False)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if USE_X_FORWARDED_HOST else None
+
+VIMEO_API_TOKEN = config('OW4_VIMEO_API_TOKEN', default=None)

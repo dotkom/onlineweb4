@@ -8,54 +8,123 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('authentication', '0044_remove_onlinegroup_email'),
-    ]
+    dependencies = [("authentication", "0044_remove_onlinegroup_email")]
 
     operations = [
         migrations.CreateModel(
-            name='GroupSync',
+            name="GroupSync",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('gsuite_role', models.CharField(choices=[('MANAGER', 'Manager'), ('MEMBER', 'Medlem'), ('OWNER', 'Eier')], default='MEMBER', max_length=64, verbose_name='Rolle i Gsuite')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "gsuite_role",
+                    models.CharField(
+                        choices=[
+                            ("MANAGER", "Manager"),
+                            ("MEMBER", "Medlem"),
+                            ("OWNER", "Eier"),
+                        ],
+                        default="MEMBER",
+                        max_length=64,
+                        verbose_name="Rolle i Gsuite",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='GsuiteAlias',
+            name="GsuiteAlias",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email_name', models.CharField(max_length=128, verbose_name='E-postnavn')),
-                ('gsutie_id', models.CharField(blank=True, max_length=512, null=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "email_name",
+                    models.CharField(max_length=128, verbose_name="E-postnavn"),
+                ),
+                ("gsutie_id", models.CharField(blank=True, max_length=512, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='GsuiteGroup',
+            name="GsuiteGroup",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('email_name', models.CharField(max_length=128, verbose_name='E-postnavn')),
-                ('gsuite_id', models.CharField(blank=True, max_length=512, null=True)),
-                ('etag', models.CharField(blank=True, max_length=512, null=True)),
-                ('main_group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='gsuite_group', to='authentication.OnlineGroup', verbose_name='Hovedgruppe')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "email_name",
+                    models.CharField(max_length=128, verbose_name="E-postnavn"),
+                ),
+                ("gsuite_id", models.CharField(blank=True, max_length=512, null=True)),
+                ("etag", models.CharField(blank=True, max_length=512, null=True)),
+                (
+                    "main_group",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="gsuite_group",
+                        to="authentication.OnlineGroup",
+                        verbose_name="Hovedgruppe",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='gsuitealias',
-            name='gsuite_group',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='alias_set', to='gsuite.GsuiteGroup', verbose_name='Gsuite gruppe'),
+            model_name="gsuitealias",
+            name="gsuite_group",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="alias_set",
+                to="gsuite.GsuiteGroup",
+                verbose_name="Gsuite gruppe",
+            ),
         ),
         migrations.AddField(
-            model_name='groupsync',
-            name='gsuite_group',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='sync_groups', to='gsuite.GsuiteGroup', verbose_name='Google-gruppe'),
+            model_name="groupsync",
+            name="gsuite_group",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="sync_groups",
+                to="gsuite.GsuiteGroup",
+                verbose_name="Google-gruppe",
+            ),
         ),
         migrations.AddField(
-            model_name='groupsync',
-            name='online_group',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='gsuite_syncs', to='authentication.OnlineGroup', verbose_name='Online-gruppe'),
+            model_name="groupsync",
+            name="online_group",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="gsuite_syncs",
+                to="authentication.OnlineGroup",
+                verbose_name="Online-gruppe",
+            ),
         ),
         migrations.AddField(
-            model_name='groupsync',
-            name='roles',
-            field=models.ManyToManyField(blank=True, null=True, related_name='sync_groups', to='authentication.GroupRole', verbose_name='Synkroniserte roller'),
+            model_name="groupsync",
+            name="roles",
+            field=models.ManyToManyField(
+                blank=True,
+                null=True,
+                related_name="sync_groups",
+                to="authentication.GroupRole",
+                verbose_name="Synkroniserte roller",
+            ),
         ),
     ]

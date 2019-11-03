@@ -10,11 +10,9 @@ class LanguagesInLine(admin.TabularInline):
 
 class RepositoryAdmin(admin.ModelAdmin):
     model = Repository
-    ordering = ['-updated_at']
-    list_display = ['id', 'name', 'updated_at']
-    inlines = [
-        LanguagesInLine,
-    ]
+    ordering = ["-updated_at"]
+    list_display = ["id", "name", "updated_at"]
+    inlines = [LanguagesInLine]
 
 
 admin.site.register(Repository, RepositoryAdmin)

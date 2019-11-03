@@ -6,4 +6,8 @@ urlpatterns = []
 
 # API v1
 router = SharedAPIRootRouter()
-router.register('committeeapplications', CommitteeApplicationViewSet, basename='committeeapplications')
+router.register(
+    "committeeapplications",
+    CommitteeApplicationViewSet,
+    basename="committeeapplications",
+)

@@ -24,7 +24,7 @@ const webpackConfig = {
       './assets/authentication/index',
     ],
     careeropportunity: [
-      './assets/careeropportunity/index'
+      './assets/careeropportunity/index',
     ],
     core: [
       'react-hot-loader/patch',
@@ -69,6 +69,9 @@ const webpackConfig = {
     ],
     dashboardMarks: [
       './assets/dashboard/marks/index',
+    ],
+    dashboardPhotoAlbum: [
+      './assets/dashboard/photoalbum/index',
     ],
     dashboardPosters: [
       './assets/dashboard/posters/index',

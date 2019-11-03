@@ -5,15 +5,20 @@ from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from googleapiclient.errors import HttpError
+from onlineweb4.celery import app
 
 from apps.gsuite import models
 from apps.gsuite.mail_syncer.utils import insert_email_into_g_suite_group
-from onlineweb4.celery import app
 
-from . import serializers
 from .main import remove_g_suite_user_from_group
-from .utils import (create_or_sync_gsuite_group, update_gsuite_group, delete_gsuite_group,
-                    add_alias_to_gsuite_group, delete_alias_from_gsuite_group, update_alias)
+from .utils import (
+    add_alias_to_gsuite_group,
+    create_or_sync_gsuite_group,
+    delete_alias_from_gsuite_group,
+    delete_gsuite_group,
+    update_alias,
+    update_gsuite_group,
+)
 
 User = get_user_model()
 
@@ -25,7 +30,7 @@ def _get_error_message_from_httperror(err: HttpError) -> str:
     :return: The error message.
     """
     json_error = json.loads(str(err.content.decode()))
-    return json_error.get('error', {}).get('message', '')
+    return json_error.get("error", {}).get("message", "")
 
 
 def insert_user_into_group_pass_if_already_member(domain: str, group: str, email: str):
@@ -43,8 +48,10 @@ def insert_user_into_group_pass_if_already_member(domain: str, group: str, email
     except HttpError as err:
         error_message = _get_error_message_from_httperror(err)
 
-        if 'Member already exists' in error_message:
-            logger.warning(f'Email address "{email}" was already subscribed to mailing list "{group}"!')
+        if "Member already exists" in error_message:
+            logger.warning(
+                f'Email address "{email}" was already subscribed to mailing list "{group}"!'
+            )
         else:
             raise err
 
@@ -64,19 +71,25 @@ def remove_user_from_group_pass_if_not_subscribed(domain: str, group: str, email
     except HttpError as err:
         error_message = _get_error_message_from_httperror(err)
 
-        if 'Resource Not Found' in error_message:
-            logger.warning(f'Email address "{email}" was not subscribed to mailing list "{group}"!')
+        if "Resource Not Found" in error_message:
+            logger.warning(
+                f'Email address "{email}" was not subscribed to mailing list "{group}"!'
+            )
         else:
             raise err
 
 
 @shared_task
 def update_mailing_list(g_suite_mailing_list, email, added):
-    domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
+    domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
     if added:
-        insert_user_into_group_pass_if_already_member(domain, g_suite_mailing_list, email)
+        insert_user_into_group_pass_if_already_member(
+            domain, g_suite_mailing_list, email
+        )
     else:
-        remove_user_from_group_pass_if_not_subscribed(domain, g_suite_mailing_list, email)
+        remove_user_from_group_pass_if_not_subscribed(
+            domain, g_suite_mailing_list, email
+        )
 
 
 @app.task(bind=True)

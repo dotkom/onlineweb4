@@ -15,9 +15,13 @@ class Command(BaseCommand):
         # We only sync in members of the Komiteer group
         group = Group.objects.get(name="Komiteer")
         # Fetch all users that do not currently have an alias
-        nomail = group.user_set.filter(Q(online_mail__isnull=True) | Q(online_mail__exact='')).order_by('id')
+        nomail = group.user_set.filter(
+            Q(online_mail__isnull=True) | Q(online_mail__exact="")
+        ).order_by("id")
         # Find a list of all taken email aliases in the system already
-        online_mails = OnlineUser.objects.filter(online_mail__isnull=False).exclude(online_mail__exact='')
+        online_mails = OnlineUser.objects.filter(online_mail__isnull=False).exclude(
+            online_mail__exact=""
+        )
         taken_mails = [u.online_mail for u in online_mails]
 
         for user in nomail:
@@ -29,7 +33,7 @@ class Command(BaseCommand):
                 continue
 
             # set to empty string so nothing is appended if not needed
-            i = ''
+            i = ""
             while True:
                 # Start with a suggestion that is only lower case name replaced spaces with dots
                 suggestion = re.sub(r"\s+", ".", name)

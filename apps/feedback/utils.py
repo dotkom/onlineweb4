@@ -17,7 +17,7 @@ def has_permission(feedback_relation, user: User):
             return False
         if user.is_superuser:
             return True
-        return user.has_perm('events.change_event', event)
+        return user.has_perm("events.change_event", event)
 
     # If the object is not an event return false by default
     return False
@@ -35,6 +35,10 @@ def get_group_restricted_feedback_relations(user: User):
     elif user.is_superuser:
         events = Event.objects.all()
     else:
-        events = get_objects_for_user(user, 'events.change_event', accept_global_perms=False)
+        events = get_objects_for_user(
+            user, "events.change_event", accept_global_perms=False
+        )
 
-    return FeedbackRelation.objects.filter(object_id__in=events, content_type=ContentType.objects.get(model="event"))
+    return FeedbackRelation.objects.filter(
+        object_id__in=events, content_type=ContentType.objects.get(model="event")
+    )
