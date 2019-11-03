@@ -67,7 +67,7 @@
                         {% if user.is_staff %}
                             <li><a href="/admin/">Administrasjon</a></li>
                         {% endif %}
-                        {% if user.is_committee %}
+                        {% if user.is_staff %}
                             <li><a href="/dashboard/">Dashboard</a></li>
                         {% endif %}
                         <li>

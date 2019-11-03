@@ -25,18 +25,13 @@ class AddPosterTestCase(TestCase):
 
         self.client.force_login(user)
 
-        group = G(Group, name="Komiteer")
+        group = G(Group)
 
         ow4_gsuite_sync = settings.OW4_GSUITE_SYNC
         ow4_gsuite_sync["ENABLED"] = False
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             user.groups.add(group)
             user.save()
-
-        # Create prokom group as permissions are assigned to prokom after creation
-        G(Group, name="proKom")
-        # Create dotkom group because the redirect assertion wants to check if the user is in dotkom group
-        G(Group, name="dotKom")
 
         data = {
             "title": "test",

@@ -1,9 +1,6 @@
 # -*- encoding: utf-8 -*-
-
-from datetime import date
-
-from django.contrib.auth.models import Group
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import PermissionDenied
+from django.utils.timezone import datetime
 from guardian.mixins import PermissionRequiredMixin
 
 from apps.approval.models import MembershipApproval
@@ -16,19 +13,8 @@ def has_access(request):
     """
     This helper method does a basic check to see if the logged in user
     has access to the dashboard.
-
-    We might add additional checks here later.
     """
-
-    if request.user.is_superuser:
-        return True
-
-    try:
-        committees = Group.objects.get(name="Komiteer")
-    except ObjectDoesNotExist:
-        committees = None
-
-    if committees and committees in request.user.groups.all():
+    if request.user.is_superuser or request.user.is_staff:
         return True
 
     return False
@@ -66,7 +52,7 @@ def get_base_context(request):
 
     # Check if there exists a batch in inventory that has expired
     if request.user.has_perm("inventory.view_item"):
-        if Batch.objects.filter(expiration_date__lt=date.today()):
+        if Batch.objects.filter(expiration_date__lt=datetime.date.today()):
             context["inventory_expired"] = True
 
     if request.user.has_perm("posters.view_poster"):

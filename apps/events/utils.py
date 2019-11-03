@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
-from datetime import timedelta
 
 import icalendar
 from django.conf import settings
-from django.contrib.auth.models import Group
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage, send_mail
@@ -16,7 +14,7 @@ from pytz import timezone as tz
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import TYPE_CHOICES, Attendee, Event, Extras
+from apps.events.models import Attendee, Event, Extras
 from apps.payment.models import PaymentDelay, PaymentRelation
 
 
@@ -43,7 +41,7 @@ def handle_waitlist_bump(event, attendees, payment=None):
 
 
 def _handle_waitlist_bump_payment(payment, attendees):
-    extended_deadline = timezone.now() + timedelta(days=2)
+    extended_deadline = timezone.now() + timezone.timedelta(days=2)
     message = ""
 
     if payment.payment_type == 1:  # Instant
@@ -77,7 +75,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
             "Dette arrangementet krever betaling og du må betale innen %s (%s)."
             % (
                 deadline.strftime("%-d %B %Y kl. %H:%M"),
-                naturaltime(deadline + timedelta(seconds=5)),
+                naturaltime(deadline + timezone.timedelta(seconds=5)),
             )
         )
     if len(payment.prices()) == 1:
@@ -390,40 +388,3 @@ def handle_mail_participants(
             'Something went wrong while trying to send mail to %s for event "%s"\n%s'
             % (_to_email_options[_to_email_value][1], event, e)
         )
-
-
-def get_organizer_by_event_type(event_type):
-    logger = logging.getLogger(__name__)
-
-    try:
-        if event_type == TYPE_CHOICES[0][0]:
-            return Group.objects.get(name__iexact="arrkom")
-        elif event_type == TYPE_CHOICES[1][0]:
-            return Group.objects.get(name__iexact="bedkom")
-        elif event_type == TYPE_CHOICES[2][0]:
-            return Group.objects.get(name__iexact="fagkom")
-        elif event_type == TYPE_CHOICES[4][0]:
-            return Group.objects.get(name__iexact="ekskom")
-        elif event_type == TYPE_CHOICES[5][0]:
-            return Group.objects.get(name__iexact="arrkom")
-        elif event_type == TYPE_CHOICES[7][0]:
-            return Group.objects.get(name__iexact="trikom")
-        elif event_type == TYPE_CHOICES[8][0]:
-            return Group.objects.get(name__iexact="Realfagskjelleren")
-    except Group.DoesNotExist:
-        logger.warning('Group for event type "{}" does not exist.'.format(event_type))
-
-    else:
-        return None
-
-
-def get_organizer_for_event(event):
-    logger = logging.getLogger(__name__)
-    event_type = get_organizer_by_event_type(event.event_type)
-
-    if not event_type:
-        logger.warning(
-            'Could not get organizer for event "{}" (#{})!'.format(event, event.pk)
-        )
-
-    return event_type
