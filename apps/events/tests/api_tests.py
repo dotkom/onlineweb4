@@ -35,7 +35,7 @@ def generate_valid_rfid():
 class CreateAttendeeTestCase(OIDCTestCase):
     def setUp(self):
 
-        self.committee = G(Group, name="arrKom")
+        self.committee = G(Group, name="Arrkom")
         self.user = generate_user(username="_user")
         self.privacy = G(Privacy, user=self.user)
         self.token = self.generate_access_token(self.user)
@@ -342,7 +342,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
 class EventsAPITestCase(OIDCTestCase):
     def setUp(self):
 
-        self.committee = G(Group, name="bedKom")
+        self.committee = G(Group, name="Bedkom")
         self.user = generate_user(username="_user")
         self.privacy = G(Privacy, user=self.user)
         self.token = self.generate_access_token(self.user)
@@ -419,7 +419,7 @@ class EventsAPITestCase(OIDCTestCase):
 
 class AttendAPITestCase(OIDCTestCase):
     def setUp(self):
-        self.committee = G(Group, name="arrKom")
+        self.committee = G(Group, name="Arrkom")
         self.user = G(OnlineUser, name="test_user", groups=[self.committee])
         self.token = self.generate_access_token(self.user)
         self.headers = {
@@ -662,7 +662,7 @@ class AttendAPITestCase(OIDCTestCase):
         )
 
     def test_wrong_committee_registering_attendance(self):
-        wrong_committee = G(Group, name="bedKom")
+        wrong_committee = G(Group, name="Bedkom")
         self.committee.user_set.remove(self.user)
         self.committee.save()
         self.user.groups.add(wrong_committee)
