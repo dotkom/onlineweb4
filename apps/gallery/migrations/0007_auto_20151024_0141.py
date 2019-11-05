@@ -6,13 +6,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('gallery', '0006_auto_20151018_0707'),
-    ]
+    dependencies = [("gallery", "0006_auto_20151018_0707")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='unhandledimage',
-            options={'verbose_name': 'Ubehandlet bilde', 'verbose_name_plural': 'Ubehandlede bilder', 'permissions': (('view_unhandledimage', 'View UnhandledImage'),)},
-        ),
+            name="unhandledimage",
+            options={
+                "verbose_name": "Ubehandlet bilde",
+                "verbose_name_plural": "Ubehandlede bilder",
+                "permissions": (("view_unhandledimage", "View UnhandledImage"),),
+            },
+        )
     ]
