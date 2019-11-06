@@ -1,0 +1,1002 @@
+[
+  {
+    "model": "events.rule",
+    "pk": 1,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 2,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 3,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 4,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 5,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 6,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 7,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 8,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 9,
+    "fields": {
+      "offset": 72
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 10,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 11,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 12,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 13,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 14,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 15,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 16,
+    "fields": {
+      "offset": 72
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 18,
+    "fields": {
+      "offset": 72
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 20,
+    "fields": {
+      "offset": 72
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 21,
+    "fields": {
+      "offset": 72
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 23,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 24,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 25,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 26,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 27,
+    "fields": {
+      "offset": 24
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 28,
+    "fields": {
+      "offset": 24
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 38,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 39,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 40,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 41,
+    "fields": {
+      "offset": 24
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 43,
+    "fields": {
+      "offset": 24
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 44,
+    "fields": {
+      "offset": 24
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 45,
+    "fields": {
+      "offset": 24
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 46,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 47,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 48,
+    "fields": {
+      "offset": 0
+    }
+  },
+  {
+    "model": "events.rule",
+    "pk": 49,
+    "fields": {
+      "offset": 48
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 11,
+    "fields": {
+      "grade": 3
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 12,
+    "fields": {
+      "grade": 1
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 13,
+    "fields": {
+      "grade": 2
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 14,
+    "fields": {
+      "grade": 4
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 15,
+    "fields": {
+      "grade": 5
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 16,
+    "fields": {
+      "grade": 4
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 18,
+    "fields": {
+      "grade": 5
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 20,
+    "fields": {
+      "grade": 1
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 21,
+    "fields": {
+      "grade": 2
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 23,
+    "fields": {
+      "grade": 1
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 24,
+    "fields": {
+      "grade": 2
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 26,
+    "fields": {
+      "grade": 2
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 27,
+    "fields": {
+      "grade": 1
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 28,
+    "fields": {
+      "grade": 2
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 38,
+    "fields": {
+      "grade": 4
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 39,
+    "fields": {
+      "grade": 5
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 40,
+    "fields": {
+      "grade": 3
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 43,
+    "fields": {
+      "grade": 3
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 44,
+    "fields": {
+      "grade": 5
+    }
+  },
+  {
+    "model": "events.graderule",
+    "pk": 45,
+    "fields": {
+      "grade": 4
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 1,
+    "fields": {
+      "field_of_study": 10
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 2,
+    "fields": {
+      "field_of_study": 11
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 3,
+    "fields": {
+      "field_of_study": 12
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 4,
+    "fields": {
+      "field_of_study": 13
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 5,
+    "fields": {
+      "field_of_study": 14
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 6,
+    "fields": {
+      "field_of_study": 15
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 7,
+    "fields": {
+      "field_of_study": 30
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 8,
+    "fields": {
+      "field_of_study": 80
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 9,
+    "fields": {
+      "field_of_study": 1
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 10,
+    "fields": {
+      "field_of_study": 1
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 25,
+    "fields": {
+      "field_of_study": 1
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 41,
+    "fields": {
+      "field_of_study": 80
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 46,
+    "fields": {
+      "field_of_study": 16
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 47,
+    "fields": {
+      "field_of_study": 80
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 48,
+    "fields": {
+      "field_of_study": 40
+    }
+  },
+  {
+    "model": "events.fieldofstudyrule",
+    "pk": 49,
+    "fields": {
+      "field_of_study": 40
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 1,
+    "fields": {
+      "description": "Mastere og PhD, BiT etter 3 dager",
+      "field_of_study_rules": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        46
+      ],
+      "grade_rules": [],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 2,
+    "fields": {
+      "description": "Mastere og PhD",
+      "field_of_study_rules": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        46
+      ],
+      "grade_rules": [],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 3,
+    "fields": {
+      "description": "Mastere, PhD + 3. klasse",
+      "field_of_study_rules": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        46
+      ],
+      "grade_rules": [
+        11
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 4,
+    "fields": {
+      "description": "Bachelor",
+      "field_of_study_rules": [
+        10
+      ],
+      "grade_rules": [],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 5,
+    "fields": {
+      "description": "1. og 2. klasse",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        12,
+        13
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 6,
+    "fields": {
+      "description": "Bachelor, Master og PhD",
+      "field_of_study_rules": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        10,
+        46
+      ],
+      "grade_rules": [],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 7,
+    "fields": {
+      "description": "",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        12
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 8,
+    "fields": {
+      "description": "2. - 5. klasse",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        11,
+        13,
+        14,
+        15
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 9,
+    "fields": {
+      "description": "1. - 3. Klasse",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        11,
+        12,
+        13
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 10,
+    "fields": {
+      "description": "4. og 5. etter 72 timer",
+      "field_of_study_rules": [
+        3
+      ],
+      "grade_rules": [
+        16,
+        18
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 11,
+    "fields": {
+      "description": "",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        15
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 12,
+    "fields": {
+      "description": "2. - 4. klasse",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        11,
+        13,
+        14
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 13,
+    "fields": {
+      "description": "1. og 2. etter 72 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        20,
+        21
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 14,
+    "fields": {
+      "description": "1. og 2. etter 48 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        23,
+        24
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 15,
+    "fields": {
+      "description": "Mastere, BiT etter 2 dager",
+      "field_of_study_rules": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        25,
+        46
+      ],
+      "grade_rules": [],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 16,
+    "fields": {
+      "description": "",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        26
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 17,
+    "fields": {
+      "description": "1. og 2. etter 24 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        27,
+        28
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 19,
+    "fields": {
+      "description": "4. og 5. etter 48 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        38,
+        39
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 20,
+    "fields": {
+      "description": "1. etter 48 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        23
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 21,
+    "fields": {
+      "description": "2. og 3. ",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        11,
+        13
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 22,
+    "fields": {
+      "description": "Alle utenom 1. og 4. etter 24 timer",
+      "field_of_study_rules": [
+        41
+      ],
+      "grade_rules": [
+        28,
+        43,
+        44
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 23,
+    "fields": {
+      "description": "",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        14
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 24,
+    "fields": {
+      "description": "",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        43
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 25,
+    "fields": {
+      "description": "3., 2. og 4. etter 24 timer, 1. og 5. etter 48 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        11,
+        23,
+        28,
+        39,
+        45
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 26,
+    "fields": {
+      "description": "1., 2. og 5. etter 48 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        11,
+        14,
+        23,
+        24,
+        39
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 27,
+    "fields": {
+      "description": "3. klasse",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        11
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 28,
+    "fields": {
+      "description": "Mastere",
+      "field_of_study_rules": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        46
+      ],
+      "grade_rules": [],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 29,
+    "fields": {
+      "description": "4. klasse etter 24 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        45
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 30,
+    "fields": {
+      "description": "Alle utenom 1. og 4. etter 48 timer",
+      "field_of_study_rules": [
+        47,
+        49
+      ],
+      "grade_rules": [
+        26,
+        39,
+        40
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 31,
+    "fields": {
+      "description": "Sosialt medlem",
+      "field_of_study_rules": [
+        48
+      ],
+      "grade_rules": [],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 32,
+    "fields": {
+      "description": "3. - 5. klasse",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        11,
+        14,
+        15
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 33,
+    "fields": {
+      "description": "4. - 5. klasse",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        14,
+        15
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 34,
+    "fields": {
+      "description": "2. klasse etter 24 timer",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        28
+      ],
+      "user_group_rules": []
+    }
+  },
+  {
+    "model": "events.rulebundle",
+    "pk": 35,
+    "fields": {
+      "description": "1. og 4. klasse",
+      "field_of_study_rules": [],
+      "grade_rules": [
+        12,
+        14
+      ],
+      "user_group_rules": []
+    }
+  }
+]
