@@ -20,7 +20,7 @@ The API uses [Django REST framework](http://www.django-rest-framework.org/)
 
 
 ## Installation - Git and repository setup
-
+### Setting up your Git user and cloning the repo
 ```bash
 $ git config --global core.autocrlf false
 $ git config --global user.name "<your github username>"
@@ -28,6 +28,30 @@ $ git config --global user.email your.github@email.com
 $ git clone git@github.com:dotkom/onlineweb4.git
 $ cd onlineweb4
 ```
+### Setting up the onlineweb4
+Download dependencies by running
+```bash
+make
+```
+
+Lets apply all the django changes to the database by running
+```bash
+# creates migrations by packaging model changes into individual migration files
+make makemigrations
+
+# applies the migrations/changes to your database
+make migrate
+```
+
+Last but not least, lets create a superuser, a user with all types of permissions.
+```bash
+# bash into the docker container
+make bash-backend
+
+# createa a super user from inside the container
+python manage.py createsuperuser
+```
+Now follow the instructions by typing a name, password and an email.
 
 ## Development environment
 
