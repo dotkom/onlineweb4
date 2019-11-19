@@ -240,7 +240,7 @@
             const coundown = () => {
                 const time = new Date(toTime - new Date());
                 if (time > 0){
-                const days = dd(time.getDate() - 1)
+                const days = dd(time.getUTCDate() - 1)
                 const hours = dd((time.getHours() - 1 + 24) % 24 )
                 const minutes = dd(time.getMinutes())
                 const seconds = dd(time.getSeconds())
