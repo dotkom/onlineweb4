@@ -9,6 +9,4 @@ class OfflineIssueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Issue
-        fields = (
-            'description', 'id', 'issue', 'release_date', 'title', 'image',
-        )
+        fields = ("description", "id", "issue", "release_date", "title", "image")

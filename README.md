@@ -1,5 +1,5 @@
 # Onlineweb 4
-[![Build Status](https://ci.online.ntnu.no/api/badges/dotkom/onlineweb4/status.svg?branch=develop)](https://ci.online.ntnu.no/dotkom/onlineweb4) [![codecov](https://codecov.io/gh/dotKom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotKom/onlineweb4) [![Requirements Status](https://requires.io/github/dotkom/onlineweb4/requirements.svg?branch=develop)](https://requires.io/github/dotkom/onlineweb4/requirements/?branch=develop)
+[![Build Status](https://ci.online.ntnu.no/api/badges/dotkom/onlineweb4/status.svg?branch=develop)](https://ci.online.ntnu.no/dotkom/onlineweb4) [![codecov](https://codecov.io/gh/dotKom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotKom/onlineweb4) [![Requirements Status](https://requires.io/github/dotkom/onlineweb4/requirements.svg?branch=develop)](https://requires.io/github/dotkom/onlineweb4/requirements/?branch=develop)[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
 ## Frameworks
@@ -74,9 +74,9 @@ Pull requests trigger containerized builds that perform code style checks and te
 
 ## Tools
 
-Builds will fail if our requirements for code style is not met. To ensure that you adhere to our code guidelines, we recommend you run linting tools locally before pushing your code. Running `make test` will run our tests and linters all at once. Look to our [Makefile](https://github.com/dotkom/onlineweb4/blob/86ef0e267bdad3346a705551d2a3d377b2802d81/Makefile#L55) for more specific commands.
+Builds will fail if our requirements for code style are not met. To ensure that you adhere to our code guidelines, we recommend you run linting tools locally before pushing your code. This can be done by running `make lint`, and you can automatically fix the backend linting by running `make lint-backend-fix`. Running `make test` will run our tests and linters all at once. Look to our [Makefile](https://github.com/dotkom/onlineweb4/blob/86ef0e267bdad3346a705551d2a3d377b2802d81/Makefile#L55) for more specific commands.
 
-Running `make test` frequently can be quite inefficient, which is why we recommend using editors that support linting your code as you go. For JavaScript, we use [ESLint](https://eslint.org/docs/about/), with editor plugins available [here](https://eslint.org/docs/user-guide/integrations). Correspondingly, we use [stylelint](https://stylelint.io) for our stylesheets, with editor plugins available [here](https://github.com/stylelint/stylelint/blob/master/docs/user-guide/complementary-tools.md#editor-plugins). For Python, we use [isort](https://github.com/timothycrosley/isort) and [Flake8](http://flake8.pycqa.org/).
+Running `make test` frequently can be quite inefficient, which is why we recommend using editors that support linting your code as you go. For JavaScript, we use [ESLint](https://eslint.org/docs/about/), with editor plugins available [here](https://eslint.org/docs/user-guide/integrations). Correspondingly, we use [stylelint](https://stylelint.io) for our stylesheets, with editor plugins available [here](https://github.com/stylelint/stylelint/blob/master/docs/user-guide/complementary-tools.md#editor-plugins). For Python, we use [Black](https://black.readthedocs.io/en/stable/), [isort](https://github.com/timothycrosley/isort) and [Flake8](http://flake8.pycqa.org/). We highly recommend setting up your editor to automatically fix linting issues, which can be done for [Black](https://black.readthedocs.io/en/stable/editor_integration.html), and [isort](https://github.com/timothycrosley/isort/wiki/isort-Plugins)
 
 ### Our recommendation
 

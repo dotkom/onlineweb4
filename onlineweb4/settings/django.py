@@ -220,6 +220,7 @@ INSTALLED_APPS = (
     'apps.online_oidc_provider',
     'apps.inventory',
     'apps.payment',
+    'apps.photoalbum',
     'apps.posters',
     'apps.slack',
     'apps.sso',

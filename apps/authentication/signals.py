@@ -5,16 +5,19 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models.signals import m2m_changed, post_save, pre_delete
+from django.db.models.signals import m2m_changed, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
-from apps.authentication.models import GroupMember, OnlineGroup
+from apps.authentication.models import Email, GroupMember, OnlineGroup
 from apps.authentication.tasks import SynchronizeGroups
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
+from apps.gsuite.mail_syncer.tasks import update_mailing_list
 
 User = get_user_model()
-logger = logging.getLogger('syncer.%s' % __name__)
+logger = logging.getLogger("syncer.%s" % __name__)
 sync_uuid = uuid.uuid1()
+
+MAILING_LIST_USER_FIELDS_TO_LIST_NAME = settings.MAILING_LIST_USER_FIELDS_TO_LIST_NAME
 
 
 def run_group_syncer(user):
@@ -25,15 +28,17 @@ def run_group_syncer(user):
     :return: None
     """
     SynchronizeGroups.run()
-    if settings.OW4_GSUITE_SYNC.get('ENABLED', False):
-        ow4_gsuite_domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
+    if settings.OW4_GSUITE_SYNC.get("ENABLED", False):
+        ow4_gsuite_domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
         if isinstance(user, User):
-            logger.debug('Running G Suite syncer for user {}'.format(user))
+            logger.debug("Running G Suite syncer for user {}".format(user))
             update_g_suite_user(ow4_gsuite_domain, user, suppress_http_errors=True)
         elif isinstance(user, Group):
             group = user
-            logger.debug('Running G Suite syncer for group {}'.format(group))
-            update_g_suite_group(ow4_gsuite_domain, group.name, suppress_http_errors=True)
+            logger.debug("Running G Suite syncer for group {}".format(group))
+            update_g_suite_group(
+                ow4_gsuite_domain, group.name, suppress_http_errors=True
+            )
 
 
 @receiver(post_save, sender=Group)
@@ -55,23 +60,36 @@ def trigger_group_syncer(sender, instance, created=False, **kwargs):
         # then we need to detach the signal hook listening to m2m changes on
         # those models as they will trigger a recursive call to this method.
         if sender == User.groups.through:
-            logger.debug('Disconnect m2m_changed signal hook with uuid %s before synchronizing groups' % sync_uuid)
+            logger.debug(
+                "Disconnect m2m_changed signal hook with uuid %s before synchronizing groups"
+                % sync_uuid
+            )
             if m2m_changed.disconnect(sender=sender, dispatch_uid=sync_uuid):
-                logger.debug('Signal with uuid %s disconnected' % sync_uuid)
+                logger.debug("Signal with uuid %s disconnected" % sync_uuid)
                 run_group_syncer(instance)
 
             sync_uuid = uuid.uuid1()
-            logger.debug('m2m_changed signal hook reconnected with uuid: %s' % sync_uuid)
-            m2m_changed.connect(receiver=trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through)
+            logger.debug(
+                "m2m_changed signal hook reconnected with uuid: %s" % sync_uuid
+            )
+            m2m_changed.connect(
+                receiver=trigger_group_syncer,
+                dispatch_uid=sync_uuid,
+                sender=User.groups.through,
+            )
         else:
             run_group_syncer(instance)
 
 
-m2m_changed.connect(trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through)
+m2m_changed.connect(
+    trigger_group_syncer, dispatch_uid=sync_uuid, sender=User.groups.through
+)
 
 
 @receiver(post_save, sender=GroupMember)
-def add_online_group_member_to_django_group(sender, instance: GroupMember, created=False, **kwargs):
+def add_online_group_member_to_django_group(
+    sender, instance: GroupMember, created=False, **kwargs
+):
     online_group: OnlineGroup = instance.group
     group: Group = online_group.group
     user: User = instance.user
@@ -80,9 +98,33 @@ def add_online_group_member_to_django_group(sender, instance: GroupMember, creat
 
 
 @receiver(pre_delete, sender=GroupMember)
-def remove_online_group_members_from_django_group(sender, instance: GroupMember, **kwargs):
+def remove_online_group_members_from_django_group(
+    sender, instance: GroupMember, **kwargs
+):
     online_group: OnlineGroup = instance.group
     group: Group = online_group.group
     user: User = instance.user
     if user in group.user_set.all():
         group.user_set.remove(user)
+
+
+@receiver(pre_save, sender=Email)
+def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
+    user: User = instance.user
+    jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
+    infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
+    if instance.pk:
+        stored_instance: Email = Email.objects.get(pk=instance.pk)
+
+        # Handle case when the instance is changed to primary
+        if instance.primary and not stored_instance.primary:
+            if user.jobmail:
+                update_mailing_list.delay(jobmail, email=instance.email, added=True)
+            if user.infomail:
+                update_mailing_list.delay(infomail, email=instance.email, added=True)
+        # Handle case when the instance is changed from primary
+        elif not instance.primary and stored_instance.primary:
+            if user.jobmail:
+                update_mailing_list.delay(jobmail, email=instance.email, added=False)
+            if user.infomail:
+                update_mailing_list.delay(infomail, email=instance.email, added=False)

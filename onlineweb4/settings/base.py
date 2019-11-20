@@ -49,7 +49,6 @@ USER_SEARCH_GROUPS = [
     24,  # itex
 ]
 
-# Slack inviter
 SLACK_INVITER = {
     # e.g. onlinentnu
     'team_name': config("OW4_DJANGO_SLACK_INVITER_TEAM_NAME", default='team_name_here'),

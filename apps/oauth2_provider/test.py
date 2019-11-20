@@ -20,6 +20,7 @@ class OAuth2TestCase(TestCase):
     It creates an OAuth2 Client Application and an access token for it.
     The access token is created for the user who owns the application.
     """
+
     scopes = OAUTH2_SCOPES.keys()
 
     def generate_access_token(self, user):
@@ -28,16 +29,14 @@ class OAuth2TestCase(TestCase):
             token=str(uuid.uuid4()),
             application=self.application,
             scope=self.application.scopes,
-            expires=timezone.now() + timedelta(days=1)
+            expires=timezone.now() + timedelta(days=1),
         )
 
     def generate_headers(self, headers={}):
         _headers = {}
         _headers.update(headers)
 
-        _headers.update({
-            'HTTP_AUTHORIZATION': 'Bearer ' + self.access_token.token,
-        })
+        _headers.update({"HTTP_AUTHORIZATION": "Bearer " + self.access_token.token})
 
         return _headers
 
@@ -45,11 +44,12 @@ class OAuth2TestCase(TestCase):
         super()._pre_setup()
         self._user = G(User)
         self.application = Application.objects.create(
-            name='test_client', user=self._user,
+            name="test_client",
+            user=self._user,
             client_type=Application.CLIENT_PUBLIC,
             authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
-            scopes=' '.join(self.scopes),
-            redirect_uris='http://localhost',
+            scopes=" ".join(self.scopes),
+            redirect_uris="http://localhost",
         )
 
         self.access_token = self.generate_access_token(self._user)
