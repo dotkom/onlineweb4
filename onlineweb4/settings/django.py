@@ -228,7 +228,6 @@ INSTALLED_APPS = (
     'apps.shop',
     'apps.webshop',
     'apps.chunksapi',
-    'apps.lillebror',
     'scripts',
 
     #External apps

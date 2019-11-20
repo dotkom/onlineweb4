@@ -226,11 +226,6 @@ if 'apps.payment' in settings.INSTALLED_APPS:
         url(r'^payment/',           include('apps.payment.urls')),
     ]
 
-if 'apps.lillebror' in settings.INSTALLED_APPS:
-    urlpatterns += [
-        url(r'^lillebror/', include('apps.lillebror.urls')),
-    ]
-
 # redwine
 if 'redwine' in settings.INSTALLED_APPS:
     urlpatterns += [
