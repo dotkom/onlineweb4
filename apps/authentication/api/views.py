@@ -58,7 +58,13 @@ class UserViewSet(
                 return User.objects.all()
             return get_objects_for_user(user, "authentication.view_onlineuser")
 
-        if self.action in ["destroy", "update", "partial_update", "change_password", "anonymize_user"]:
+        if self.action in [
+            "destroy",
+            "update",
+            "partial_update",
+            "change_password",
+            "anonymize_user"
+        ]:
             return User.objects.filter(pk=user.id)
 
         return super().get_queryset()
@@ -72,7 +78,7 @@ class UserViewSet(
             return UserReadOnlySerializer
         if self.action == "change_password":
             return PasswordUpdateSerializer
-        if self.action == 'anonymize_user':
+        if self.action == "anonymize_user":
             return AnonymizeUserSerializer
 
         return super().get_serializer_class()
@@ -86,7 +92,7 @@ class UserViewSet(
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=['put'], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["put"], permission_classes=[IsAuthenticated])
     def anonymize_user(self, request, pk=None):
         user: User = self.get_object()
         serializer = self.get_serializer(user, data=request.data)

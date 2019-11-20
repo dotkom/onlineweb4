@@ -1,6 +1,6 @@
 import hashlib
-import string
 import random
+import string
 from datetime import date
 
 from django.contrib.auth.models import Group
@@ -76,24 +76,24 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField()
 
     def validate_password(self, password):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if not request:
-            raise serializers.ValidationError('Serializer missing request')
+            raise serializers.ValidationError("Serializer missing request")
 
         user: User = request.user
         if user.has_usable_password() and not user.check_password(password):
-            raise serializers.ValidationError('Nåværende passord stemmer ikke')
+            raise serializers.ValidationError("Nåværende passord stemmer ikke")
 
         return password
 
     def validate_username(self, username):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if not request:
-            raise serializers.ValidationError('Serializer missing request')
+            raise serializers.ValidationError("Serializer missing request")
 
         user: User = request.user
         if user.get_username() != username:
-            raise serializers.ValidationError('Dette er ikke riktig bruker')
+            raise serializers.ValidationError("Dette er ikke riktig bruker")
 
         return username
 
@@ -101,14 +101,14 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
         return attrs
 
     def update(self, instance: User, validated_data: dict):
-        username = hashlib.sha256(str(instance.username).encode('utf-8')).hexdigest()
-        password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-        password = hashlib.sha256(str(password).encode('utf-8')).hexdigest()
+        username = hashlib.sha256(str(instance.username).encode("utf-8")).hexdigest()
+        password = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        password = hashlib.sha256(str(password).encode("utf-8")).hexdigest()
 
         # Django related fields
-        instance.first_name = ''
-        instance.last_name = ''
-        instance.email = ''
+        instance.first_name = ""
+        instance.last_name = ""
+        instance.email = ""
         instance.passord = instance.set_password(password)
         instance.username = username
         instance.groups.clear()
@@ -141,8 +141,8 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
         instance.website = None
         instance.github = None
         instance.linkedin = None
-        instance.gender = 'male'
-        instance.bio = ''
+        instance.gender = "male"
+        instance.bio = ""
         # saldo = serializers.PositiveSmallIntegerField()
 
         # NTNU credentials
@@ -153,7 +153,7 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password')
+        fields = ("username", "password")
 
 
 class UserCreateSerializer(serializers.ModelSerializer):
