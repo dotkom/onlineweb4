@@ -1,3 +1,8 @@
+import hashlib
+import string
+import random
+from datetime import date
+
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
 from onlineweb4.fields.recaptcha import RecaptchaField
@@ -64,6 +69,91 @@ class PasswordUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('current_password', 'new_password', 'new_password_confirm')
+
+
+class AnonymizeUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(max_length=150)
+    password = serializers.CharField()
+
+    def validate_password(self, password):
+        request = self.context.get('request')
+        if not request:
+            raise serializers.ValidationError('Serializer missing request')
+
+        user: User = request.user
+        if user.has_usable_password() and not user.check_password(password):
+            raise serializers.ValidationError('Nåværende passord stemmer ikke')
+
+        return password
+
+    def validate_username(self, username):
+        request = self.context.get('request')
+        if not request:
+            raise serializers.ValidationError('Serializer missing request')
+
+        user: User = request.user
+        if user.get_username() != username:
+            raise serializers.ValidationError('Dette er ikke riktig bruker')
+
+        return username
+
+    def validate(self, attrs):
+        return attrs
+
+    def update(self, instance: User, validated_data: dict):
+        username = hashlib.sha256(str(instance.username).encode('utf-8')).hexdigest()
+        password = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        password = hashlib.sha256(str(password).encode('utf-8')).hexdigest()
+
+        # Django related fields
+        instance.first_name = ''
+        instance.last_name = ''
+        instance.email = ''
+        instance.passord = instance.set_password(password)
+        instance.username = username
+        instance.groups.clear()
+        instance.user_permissions.clear()
+        instance.is_staff = False
+        instance.is_active = False
+        instance.is_superuser = False
+        instance.last_login = date(2000, 1, 1)
+        instance.date_joined = date(2000, 1, 1)
+
+        # Online related fields
+        instance.field_of_study = 0
+        instance.started_date = date(2000, 1, 1)
+        instance.compiled = False
+
+        # Mail
+        instance.infomail = False
+        instance.jobmail = False
+        instance.online_mail = None
+
+        # Address
+        instance.phone_number = None
+        instance.address = None
+        instance.zip_code = None
+
+        # Other
+        instance.allergies = None
+        instance.rfid = None
+        instance.nickname = None
+        instance.website = None
+        instance.github = None
+        instance.linkedin = None
+        instance.gender = 'male'
+        instance.bio = ''
+        # saldo = serializers.PositiveSmallIntegerField()
+
+        # NTNU credentials
+        instance.ntnu_username = None
+
+        instance.save()
+        return instance
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

@@ -8,7 +8,8 @@ from rest_framework.response import Response
 from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
-from apps.authentication.serializers import (EmailCreateSerializer, EmailReadOnlySerializer,
+from apps.authentication.serializers import (AnonymizeUserSerializer,
+                                             EmailCreateSerializer, EmailReadOnlySerializer,
                                              EmailUpdateSerializer, GroupMemberCreateSerializer,
                                              GroupMemberReadOnlySerializer,
                                              GroupMemberUpdateSerializer, GroupReadOnlySerializer,
@@ -47,7 +48,7 @@ class UserViewSet(viewsets.GenericViewSet,
                 return User.objects.all()
             return get_objects_for_user(user, 'authentication.view_onlineuser')
 
-        if self.action in ['destroy', 'update', 'partial_update', 'change_password']:
+        if self.action in ['destroy', 'update', 'partial_update', 'change_password', 'anonymize_user']:
             return User.objects.filter(pk=user.id)
 
         return super().get_queryset()
@@ -61,11 +62,22 @@ class UserViewSet(viewsets.GenericViewSet,
             return UserReadOnlySerializer
         if self.action == 'change_password':
             return PasswordUpdateSerializer
+        if self.action == 'anonymize_user':
+            return AnonymizeUserSerializer
 
         return super().get_serializer_class()
 
     @action(detail=True, methods=['put'], permission_classes=[IsAuthenticated])
     def change_password(self, request, pk=None):
+        user: User = self.get_object()
+        serializer = self.get_serializer(user, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['put'], permission_classes=[IsAuthenticated])
+    def anonymize_user(self, request, pk=None):
         user: User = self.get_object()
         serializer = self.get_serializer(user, data=request.data)
         serializer.is_valid(raise_exception=True)
