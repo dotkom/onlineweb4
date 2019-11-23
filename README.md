@@ -34,7 +34,7 @@ Download dependencies by running
 make
 ```
 
-Lets apply all the django changes to the database by running
+Let's apply all the django changes to the database by running
 ```bash
 # creates migrations by packaging model changes into individual migration files
 make makemigrations
@@ -43,7 +43,7 @@ make makemigrations
 make migrate
 ```
 
-Last but not least, lets create a superuser, a user with all types of permissions.
+Last but not least, let's create a superuser, a user with all types of permissions.
 ```bash
 # bash into the docker container
 make bash-backend
