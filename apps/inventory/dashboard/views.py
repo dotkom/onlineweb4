@@ -33,7 +33,7 @@ def index(request):
     return render(request, "inventory/dashboard/index.html", context)
 
 @login_required
-@permission_required("inventory.view_discontinued", return_403=True)
+@permission_required("inventory.view_item", return_403=True)
 def discontinued(request):
   if not has_access(request):
         raise PermissionDenied
