@@ -32,18 +32,20 @@ def index(request):
 
     return render(request, "inventory/dashboard/index.html", context)
 
+
 @login_required
 @permission_required("inventory.view_item", return_403=True)
 def discontinued(request):
-  if not has_access(request):
+    if not has_access(request):
         raise PermissionDenied
 
-  # Create the base context needed for the sidebar
-  context = get_base_context(request)
-  # Select all items that are not available for purchase
-  context["items"] = Item.objects.filter(available=False).order_by("name")
+    # Create the base context needed for the sidebar
+    context = get_base_context(request)
+    # Select all items that are not available for purchase
+    context["items"] = Item.objects.filter(available=False).order_by("name")
 
-  return render(request, "inventory/dashboard/discontinued.html", context)
+    return render(request, "inventory/dashboard/discontinued.html", context)
+
 
 @login_required
 @permission_required("inventory.add_item", return_403=True)
