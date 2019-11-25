@@ -43,7 +43,7 @@ def discontinued(request):
   # Select all items that are not available for purchase
   context["items"] = Item.objects.filter(available=False).order_by("name")
 
-  return render(request, "inventory/dashboard/index.html", context)
+  return render(request, "inventory/dashboard/discontinued.html", context)
 
 @login_required
 @permission_required("inventory.add_item", return_403=True)
