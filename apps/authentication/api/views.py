@@ -63,7 +63,7 @@ class UserViewSet(
             "update",
             "partial_update",
             "change_password",
-            "anonymize_user"
+            "anonymize_user",
         ]:
             return User.objects.filter(pk=user.id)
 
