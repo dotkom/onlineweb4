@@ -265,72 +265,7 @@ class Feedback(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class Session(models.Model):
-    """
-    Represents a users session answering a feedback schema.
-    Every answer for a feedback relation is connected to a session until the feedback is completed.
-    The session is deleted when the feedback is completed, resulting in the answers being anonymous.
-    """
-
-    user = models.ForeignKey(
-        to=User,
-        related_name="feedback_sessions",
-        on_delete=models.CASCADE,
-        editable=False,
-    )
-    feedback_relation = models.ForeignKey(
-        to=FeedbackRelation,
-        related_name="sessions",
-        on_delete=models.CASCADE,
-        editable=False,
-    )
-    created_date = models.DateTimeField(auto_now_add=True)
-
-    def validate_answers(self) -> bool:
-        """
-        A session has all answers as valid when all questions are accounted for.
-        Could specifically check every question directly if there is a related answer,
-        but that would require many expensive queries.
-        """
-        feedback = self.feedback_relation.feedback
-        return all(
-            [
-                feedback.text_questions.count() == self.text_answers.count(),
-                feedback.rating_questions.count() == self.rating_answers.count(),
-                feedback.multiple_choice_questions.count()
-                == self.multiple_choice_answers.count(),
-            ]
-        )
-
-    def handle_timeout_delete(self):
-        """
-        Remove all related data resulting from a stale session, as well as the session itself.
-        """
-        self.field_of_study_answers.all().delete()
-        self.multiple_choice_answers.all().delete()
-        self.text_answers.all().delete()
-        self.rating_answers.all().delete()
-        self.delete()
-
-    def handle_submit(self):
-        """
-        Store the user as answered for the feedback relation and delete the session to keep anonymity.
-        """
-        self.feedback_relation.answered.add(self.user)
-        self.delete()
-
-    class Meta:
-        ordering = ("created_date",)
-        unique_together = (("user", "feedback_relation"),)
-
-
 class FieldOfStudyAnswer(models.Model):
-    session = models.ForeignKey(
-        to=Session,
-        related_name="field_of_study_answers",
-        on_delete=models.SET_NULL,
-        null=True,
-    )
     feedback_relation = models.ForeignKey(
         FeedbackRelation,
         related_name="field_of_study_answers",
@@ -372,9 +307,6 @@ class TextAnswer(models.Model):
     question = models.ForeignKey(
         TextQuestion, related_name="answer", on_delete=models.CASCADE
     )
-    session = models.ForeignKey(
-        to=Session, related_name="text_answers", on_delete=models.SET_NULL, null=True
-    )
     feedback_relation = models.ForeignKey(
         FeedbackRelation, related_name="text_answers", on_delete=models.CASCADE
     )
@@ -393,7 +325,6 @@ class TextAnswer(models.Model):
         verbose_name_plural = _("Tekstsvar")
         permissions = (("view_textanswer", "View TextAnswer"),)
         default_permissions = ("add", "change", "delete")
-        unique_together = (("session", "question"),)
 
 
 RATING_CHOICES = [(k, str(k)) for k in range(1, 7)]  # 1 to 6
@@ -422,9 +353,6 @@ class RatingQuestion(models.Model):
 
 
 class RatingAnswer(models.Model):
-    session = models.ForeignKey(
-        to=Session, related_name="rating_answers", on_delete=models.SET_NULL, null=True
-    )
     feedback_relation = models.ForeignKey(
         FeedbackRelation, related_name="rating_answers", on_delete=models.CASCADE
     )
@@ -446,7 +374,6 @@ class RatingAnswer(models.Model):
         verbose_name_plural = _("Vurderingssvar")
         permissions = (("view_ratinganswer", "View RatingAnswer"),)
         default_permissions = ("add", "change", "delete")
-        unique_together = (("session", "question"),)
 
 
 class MultipleChoiceQuestion(models.Model):
@@ -463,9 +390,7 @@ class MultipleChoiceQuestion(models.Model):
 
 
 class MultipleChoiceRelation(models.Model):
-    multiple_choice_relation = models.ForeignKey(
-        MultipleChoiceQuestion, on_delete=models.CASCADE
-    )
+    question = models.ForeignKey(MultipleChoiceQuestion, on_delete=models.CASCADE)
     order = models.SmallIntegerField(_("Rekkefølge"), default=30)
     display = models.BooleanField(_("Vis til bedrift"), default=True)
     feedback = models.ForeignKey(
@@ -473,7 +398,7 @@ class MultipleChoiceRelation(models.Model):
     )
 
     def __str__(self):
-        return self.multiple_choice_relation.label
+        return self.question.label
 
     class Meta:
         verbose_name = _("Flervalgsrelasjon")
@@ -499,12 +424,6 @@ class Choice(models.Model):
 
 
 class MultipleChoiceAnswer(models.Model):
-    session = models.ForeignKey(
-        to=Session,
-        related_name="multiple_choice_answers",
-        on_delete=models.SET_NULL,
-        null=True,
-    )
     feedback_relation = models.ForeignKey(
         FeedbackRelation,
         related_name="multiple_choice_answers",
@@ -527,7 +446,6 @@ class MultipleChoiceAnswer(models.Model):
         verbose_name_plural = _("Flervalgssvar")
         permissions = (("view_multiplechoiceanswer", "View MultipleChoiceAnswer"),)
         default_permissions = ("add", "change", "delete")
-        unique_together = (("session", "question"),)
 
 
 # For creating a link for others(companies) to see the results page

@@ -30,27 +30,32 @@ urlpatterns = [
 # API v1
 router = SharedAPIRootRouter()
 router.register(
+    prefix="feedback/templates",
+    viewset=views.FeedbackTemplateViewSet,
+    basename="feedback_templates",
+)
+router.register(
     prefix="feedback/relations",
     viewset=views.FeedbackRelationViewSet,
     basename="feedback_relations",
 )
 router.register(
-    prefix="feedback/sessions",
-    viewset=views.SessionViewSet,
-    basename="feedback_sessions",
+    prefix="feedback/questions/text",
+    viewset=views.TextQuestionViewSet,
+    basename="feedback_question_text",
 )
 router.register(
-    prefix="feedback/answers/text",
-    viewset=views.TextAnswerViewSet,
-    basename="feedback_answer_text",
+    prefix="feedback/questions/rating",
+    viewset=views.RatingQuestionViewSet,
+    basename="feedback_question_rating",
 )
 router.register(
-    prefix="feedback/answers/multiple",
-    viewset=views.MultipleChoiceAnswerViewSet,
-    basename="feedback_answer_multiple_choice",
+    prefix="feedback/questions/multiple-choice-objects",
+    viewset=views.MultipleChoiceQuestionViewSet,
+    basename="feedback_question_multiple_choice",
 )
 router.register(
-    prefix="feedback/answers/rating",
-    viewset=views.RatingAnswerViewSet,
-    basename="feedback_answer_rating",
+    prefix="feedback/questions/multiple-choice-relations",
+    viewset=views.MultipleChoiceRelationViewSet,
+    basename="feedback_question_multiple_choice_relation",
 )

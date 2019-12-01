@@ -6,12 +6,12 @@ from .models import (
     Choice,
     Feedback,
     FeedbackRelation,
+    FieldOfStudyAnswer,
     MultipleChoiceAnswer,
     MultipleChoiceQuestion,
     MultipleChoiceRelation,
     RatingAnswer,
     RatingQuestion,
-    Session,
     TextAnswer,
     TextQuestion,
 )
@@ -19,145 +19,65 @@ from .models import (
 logger = logging.getLogger(__name__)
 
 
-class AnswerCreateMixin(serializers.Serializer):
-    session = serializers.PrimaryKeyRelatedField(queryset=Session.objects.all())
-    feedback_relation = serializers.PrimaryKeyRelatedField(
-        queryset=FeedbackRelation.objects.all()
-    )
-
-    def validate_session(self, session: Session):
-        request = self.context.get("request")
-        if not request.user == session.user:
-            raise serializers.ValidationError(
-                "Du kan ikke svare på tilbakemeldingsskjemaer for andre."
-            )
-
-        return session
-
-    def validate_feedback_relation(self, feedback_relation: FeedbackRelation):
-        request = self.context.get("request")
-        if not feedback_relation.can_answer(request.user):
-            raise serializers.ValidationError(
-                "Du har ikke rettighetene til å svare på dette tilbakemeldingsskjemaet"
-            )
-
-        return feedback_relation
-
-    def validate(self, attrs):
-        session: Session = attrs.get("session")
-        feedback_relation: FeedbackRelation = attrs.get("feedback_relation")
-        if session.feedback_relation != feedback_relation:
-            raise serializers.ValidationError("Session må tilhøre riktig feedback")
-
-        return super().validate(attrs)
-
-
-class SessionReadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Session
-        fields = ("id", "user", "feedback_relation", "created_date")
-        read_only = True
-
-
-class SessionCreateSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    feedback_relation = serializers.PrimaryKeyRelatedField(
-        queryset=FeedbackRelation.objects.all()
-    )
-
-    def validate_feedback_relation(self, feedback_relation: FeedbackRelation):
-        request = self.context.get("request")
-        if not feedback_relation.can_answer(request.user):
-            raise serializers.ValidationError(
-                "Du har ikke rettighetene til å svare på dette tilbakemeldingsskjemaet"
-            )
-
-        return feedback_relation
-
-    class Meta:
-        model = Session
-        fields = ("id", "user", "feedback_relation", "created_date")
-
-
-class TextQuestionReadSerializer(serializers.ModelSerializer):
+class TextQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TextQuestion
         fields = ("id", "feedback", "order", "label", "display")
-        read_only = True
 
 
-class TextAnswerReadSerializer(serializers.ModelSerializer):
+class TextAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = TextAnswer
-        fields = ("id", "question", "feedback_relation", "answer", "order", "session")
-        read_only = True
+        fields = ("id", "question", "answer", "order")
 
 
-class TextAnswerCreateSerializer(serializers.ModelSerializer, AnswerCreateMixin):
-    class Meta:
-        model = TextAnswer
-        fields = ("id", "question", "feedback_relation", "answer", "order", "session")
-
-
-class RatingQuestionReadSerializer(serializers.ModelSerializer):
+class RatingQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = RatingQuestion
         fields = ("id", "feedback", "order", "label", "display")
-        read_only = True
 
 
-class RatingAnswerReadSerializer(serializers.ModelSerializer):
+class RatingAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = RatingAnswer
-        fields = ("id", "feedback_relation", "answer", "question", "order", "session")
-        read_only = True
+        fields = ("id", "answer", "question", "order")
 
 
-class RatingAnswerCreateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = RatingAnswer
-        fields = ("id", "feedback_relation", "answer", "question", "order", "session")
-        read_only = True
-
-
-class ChoiceReadSerializer(serializers.ModelSerializer):
+class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
         fields = ("id", "choice", "question")
 
 
-class MultipleChoiceQuestionReadSerializer(serializers.ModelSerializer):
-    choices = ChoiceReadSerializer(many=True)
+class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
+    choices = ChoiceSerializer(many=True)
 
     class Meta:
         model = MultipleChoiceQuestion
         fields = ("id", "label", "choices")
 
 
-class MultipleChoiceRelationReadSerializer(serializers.ModelSerializer):
-    question = MultipleChoiceQuestionReadSerializer(source="multiple_choice_relation")
+class MultipleChoiceRelationManageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MultipleChoiceRelation
+        fields = ("id", "order", "display", "question", "feedback")
+
+
+class MultipleChoiceRelationSerializer(serializers.ModelSerializer):
+    question = MultipleChoiceQuestionSerializer()
 
     class Meta:
         model = MultipleChoiceRelation
         fields = ("id", "order", "display", "question")
 
 
-class MultipleChoiceAnswerReadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = MultipleChoiceAnswer
-        fields = ("id", "feedback_relation", "answer", "question", "order", "session")
-        read_only = True
-
-
-class MultipleChoiceAnswerCreateSerializer(
-    serializers.ModelSerializer, AnswerCreateMixin
-):
+class MultipleChoiceAnswerSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
-        question: MultipleChoiceRelation = attrs.get("question")
+        question_relation: MultipleChoiceRelation = attrs.get("question")
         answer: str = attrs.get("answer")
 
         allowed_answers = [
-            choice.choice for choice in question.multiple_choice_relation.choices.all()
+            choice.choice for choice in question_relation.question.choices.all()
         ]
         if answer not in allowed_answers:
             raise serializers.ValidationError(
@@ -169,13 +89,32 @@ class MultipleChoiceAnswerCreateSerializer(
 
     class Meta:
         model = MultipleChoiceAnswer
-        fields = ("id", "feedback_relation", "answer", "question", "order", "session")
+        fields = ("id", "answer", "question", "order")
 
 
-class FeedbackReadSerializer(serializers.ModelSerializer):
-    text_questions = TextQuestionReadSerializer(many=True)
-    rating_questions = RatingQuestionReadSerializer(many=True)
-    multiple_choice_questions = MultipleChoiceRelationReadSerializer(many=True)
+class FeedbackAdminSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="feedback_id", read_only=True, required=False)
+    author = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Feedback
+        fields = (
+            "id",
+            "author",
+            "description",
+            "display_field_of_study",
+            "display_info",
+            "available",
+            "text_questions",
+            "rating_questions",
+            "multiple_choice_questions",
+        )
+
+
+class FeedbackReadAllSerializer(serializers.ModelSerializer):
+    text_questions = TextQuestionSerializer(many=True)
+    rating_questions = RatingQuestionSerializer(many=True)
+    multiple_choice_questions = MultipleChoiceRelationSerializer(many=True)
     id = serializers.IntegerField(source="feedback_id")
 
     class Meta:
@@ -196,7 +135,7 @@ class FeedbackReadSerializer(serializers.ModelSerializer):
 
 class FeedbackRelationReadSerializer(serializers.ModelSerializer):
     answered = serializers.SerializerMethodField()
-    feedback = FeedbackReadSerializer()
+    feedback = FeedbackReadAllSerializer()
 
     def get_answered(self, obj: FeedbackRelation):
         request = self.context.get("request")
@@ -208,10 +147,139 @@ class FeedbackRelationReadSerializer(serializers.ModelSerializer):
             "id",
             "gives_mark",
             "deadline",
-            "feedback",
             "active",
             "created_date",
             "first_mail_sent",
             "answered",
+            "description",
+            "content_title",
+            "feedback",
         )
         read_only = True
+
+
+class FeedbackRelationListSerializer(serializers.ModelSerializer):
+    answered = serializers.SerializerMethodField()
+
+    def get_answered(self, obj: FeedbackRelation):
+        request = self.context.get("request")
+        return obj.answered.filter(pk=request.user.id).exists()
+
+    class Meta:
+        model = FeedbackRelation
+        fields = (
+            "id",
+            "gives_mark",
+            "deadline",
+            "active",
+            "created_date",
+            "first_mail_sent",
+            "answered",
+            "description",
+            "content_title",
+            "feedback",
+        )
+        read_only = True
+
+
+class FeedbackRelationSubmitSerializer(serializers.ModelSerializer):
+    text_answers = TextAnswerSerializer(many=True, default=[])
+    rating_answers = RatingAnswerSerializer(many=True, default=[])
+    multiple_choice_answers = MultipleChoiceAnswerSerializer(many=True, default=[])
+
+    @staticmethod
+    def _check_answer_ids(answers: [dict], question_queryset: list) -> bool:
+        """
+        Check if the submitted answer contains an answer for all questions.
+        :param answers: list containing the data for all submitted answers of a type.
+        :param question_queryset: the questions of a type which should be answered for this feedback.
+        """
+        question_ids = sorted([question.id for question in question_queryset])
+        answer_question_ids = sorted([answer.get("question").id for answer in answers])
+        return answer_question_ids == question_ids
+
+    def validate_text_answers(self, answers: [dict]):
+        relation: FeedbackRelation = self.instance
+        if not self._check_answer_ids(answers, relation.feedback.text_questions.all()):
+            raise serializers.ValidationError(
+                "Du har svart på enten for mange eller for få tekstspørsmål"
+            )
+
+        return answers
+
+    def validate_rating_answers(self, answers: [dict]):
+        relation: FeedbackRelation = self.instance
+        if not self._check_answer_ids(
+            answers, relation.feedback.rating_questions.all()
+        ):
+            raise serializers.ValidationError(
+                "Du har svart på enten for mange eller for få vurderingssørsmål"
+            )
+
+        return answers
+
+    def validate_multiple_choice_answers(self, answers: [dict]):
+        relation: FeedbackRelation = self.instance
+        if not self._check_answer_ids(
+            answers, relation.feedback.multiple_choice_questions.all()
+        ):
+            raise serializers.ValidationError(
+                "Du har svart på enten for mange eller for få flervalgsspørsmål"
+            )
+
+        return answers
+
+    def validate(self, data):
+        """
+        A user should only be allowed to answer if they have are allowed to, and have not previously
+        answered the schema.
+        """
+        request = self.context.get("request")
+        relation: FeedbackRelation = self.instance
+
+        if not relation.can_answer(request.user):
+            raise serializers.ValidationError(
+                "Du har ikke tilgang til å svare på denne undersøkelsen"
+            )
+
+        has_answered = relation.answered.filter(pk=request.user.id).exists()
+        if has_answered:
+            raise serializers.ValidationError(
+                "Du har allerede svart på denne undersøkelsen"
+            )
+
+        return super().validate(data)
+
+    def update(self, instance: FeedbackRelation, validated_data):
+        """
+        Submitting an answer for a feedback schema does not allow updating the feedback-relation itself.
+        It does only allow updating of the related answers.
+        The instance is only manipulated to add the answering user to the set of answered users.
+        """
+        request = self.context.get("request")
+
+        for answer in validated_data.get("text_answers", []):
+            TextAnswer.objects.create(feedback_relation=instance, **answer)
+
+        for answer in validated_data.get("rating_answers", []):
+            RatingAnswer.objects.create(feedback_relation=instance, **answer)
+
+        for answer in validated_data.get("multiple_choice_answers", []):
+            MultipleChoiceAnswer.objects.create(feedback_relation=instance, **answer)
+
+        FieldOfStudyAnswer.objects.create(
+            feedback_relation=instance, answer=request.user.field_of_study
+        )
+
+        instance.answered.add(request.user)
+        return instance
+
+    class Meta:
+        model = FeedbackRelation
+        fields = (
+            "id",
+            "answered",
+            "text_answers",
+            "rating_answers",
+            "multiple_choice_answers",
+        )
