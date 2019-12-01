@@ -29,6 +29,10 @@ from apps.feedback.models import (
     TextAnswer,
     TextQuestion,
 )
+from apps.feedback.permissions import (
+    RestrictedModelPermission,
+    RestrictedObjectPermission,
+)
 from apps.feedback.utils import (
     can_delete,
     get_group_restricted_feedback_relations,
@@ -268,12 +272,6 @@ class FeedbackRelationViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
-class RestrictedObjectPermission(permissions.DjangoObjectPermissions):
-    def __init__(self):
-        self.perms_map.update({"GET": ["%(app_label)s.view_%(model_name)s"]})
-        super().__init__()
-
-
 class GenericSurveyViewSet(viewsets.ModelViewSet):
     permission_classes = (RestrictedObjectPermission,)
     queryset = GenericSurvey.objects.all()
@@ -306,12 +304,6 @@ class FeedbackTemplateViewSet(viewsets.ModelViewSet):
             )
 
         super().destroy(request, *args, **kwargs)
-
-
-class RestrictedModelPermission(permissions.DjangoModelPermissions):
-    def __init__(self):
-        self.perms_map.update({"GET": ["%(app_label)s.view_%(model_name)s"]})
-        super().__init__()
 
 
 class TextQuestionViewSet(viewsets.ModelViewSet):
