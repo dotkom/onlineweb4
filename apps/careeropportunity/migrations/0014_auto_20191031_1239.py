@@ -5,18 +5,13 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('careeropportunity', '0013_careeropportunity_website'),
-    ]
+    dependencies = [("careeropportunity", "0013_careeropportunity_website")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='careeropportunity',
-            name='website',
-        ),
+        migrations.RemoveField(model_name="careeropportunity", name="website"),
         migrations.AddField(
-            model_name='careeropportunity',
-            name='application_link',
-            field=models.URLField(blank=True, null=True, verbose_name='søknadslenke'),
+            model_name="careeropportunity",
+            name="application_link",
+            field=models.URLField(blank=True, null=True, verbose_name="søknadslenke"),
         ),
     ]

@@ -70,7 +70,7 @@ lint-frontend:
 	@docker-compose run --rm $(FRONTEND_SERVICE_NAME) npm run lint
 
 lint-backend-fix:
-	@docker-compose run --rm $(BACKEND_SERVICE_NAME) bash -c "isort -rc apps middleware scripts utils && black --exclude \"migrations/*$\\" apps middleware scripts utils" 
+	@docker-compose run --rm $(BACKEND_SERVICE_NAME) bash -c "isort -rc apps middleware scripts utils && black apps middleware scripts utils onlineweb4"
 
 test-backend:
 	@docker-compose run --rm $(BACKEND_SERVICE_NAME) py.test $(BACKEND_TEST_FOLDERS)
