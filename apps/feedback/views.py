@@ -21,6 +21,7 @@ from apps.feedback.models import (
     Feedback,
     FeedbackRelation,
     FieldOfStudyAnswer,
+    GenericSurvey,
     MultipleChoiceQuestion,
     MultipleChoiceRelation,
     RatingQuestion,
@@ -265,6 +266,18 @@ class FeedbackRelationViewSet(viewsets.ReadOnlyModelViewSet):
         serializer.save()
 
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+
+class RestrictedObjectPermission(permissions.DjangoObjectPermissions):
+    def __init__(self):
+        self.perms_map.update({"GET": ["%(app_label)s.view_%(model_name)s"]})
+        super().__init__()
+
+
+class GenericSurveyViewSet(viewsets.ModelViewSet):
+    permission_classes = (RestrictedObjectPermission,)
+    queryset = GenericSurvey.objects.all()
+    serializer_class = serializers.GenericSurveySerializer
 
 
 """

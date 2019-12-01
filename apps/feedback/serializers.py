@@ -7,6 +7,7 @@ from .models import (
     Feedback,
     FeedbackRelation,
     FieldOfStudyAnswer,
+    GenericSurvey,
     MultipleChoiceAnswer,
     MultipleChoiceQuestion,
     MultipleChoiceRelation,
@@ -17,6 +18,30 @@ from .models import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class GenericSurveySerializer(serializers.ModelSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    def update(self, instance: GenericSurvey, validated_data):
+        """
+        Make sure the original owner is referenced even when another user changes the object.
+        """
+        validated_data.update({"owner": instance.owner})
+        return super().update(instance, validated_data)
+
+    class Meta:
+        model = GenericSurvey
+        fields = (
+            "id",
+            "feedback",
+            "deadline",
+            "allowed_users",
+            "created_date",
+            "owner",
+            "owner_group",
+            "title",
+        )
 
 
 class TextQuestionSerializer(serializers.ModelSerializer):

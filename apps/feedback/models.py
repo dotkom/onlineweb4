@@ -11,15 +11,18 @@ very many database lookups.
 """
 import logging
 import uuid
+from collections import OrderedDict
 
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.auth.models import Group
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError, models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from apps.authentication.constants import FieldOfStudyType
+from apps.authentication.models import OnlineUser
 
 User = settings.AUTH_USER_MODEL
 
@@ -228,6 +231,10 @@ class Feedback(models.Model):
     )
 
     @property
+    def id(self):
+        return self.feedback_id
+
+    @property
     def ratingquestions(self):
         rating_question = []
         rating_question.extend(self.rating_questions.all())
@@ -263,6 +270,82 @@ class Feedback(models.Model):
         verbose_name_plural = _("tilbakemeldingsskjemaer")
         permissions = (("view_feedback", "View Feedback"),)
         default_permissions = ("add", "change", "delete")
+
+
+class GenericSurvey(models.Model):
+    """
+    A Generic survey that may be answered by a specific set of users.
+    """
+
+    title = models.CharField(max_length=128, verbose_name=_("Tittel"))
+    feedback = models.ForeignKey(
+        to=Feedback,
+        related_name="generic_survey",
+        verbose_name=_("Undersøkelsesmal"),
+        on_delete=models.CASCADE,
+    )
+    deadline = models.DateField(_("Tidsfrist"))
+    created_date = models.DateTimeField(
+        auto_now_add=True, verbose_name=_("Opprettet dato")
+    )
+    allowed_users = models.ManyToManyField(
+        to=User,
+        related_name="allowed_generic_surveys",
+        verbose_name=_("Brukere som kan svare"),
+        blank=True,
+    )
+    owner = models.ForeignKey(
+        to=User,
+        related_name="owned_generic_surveys",
+        verbose_name=_("Eier"),
+        on_delete=models.DO_NOTHING,
+    )
+    owner_group = models.ForeignKey(
+        to=Group,
+        related_name="owned_generic_surveys",
+        verbose_name=_("Eiergruppe"),
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    feedback_relation = GenericRelation(FeedbackRelation)
+
+    def get_feedback_relation(self):
+        return FeedbackRelation.objects.get(
+            content_type=ContentType.objects.get_for_model(self), object_id=self.id
+        )
+
+    def feedback_users(self):
+        if self.allowed_users.exists():
+            return self.allowed_users.all()
+        else:
+            return OnlineUser.objects.all()
+
+    def feedback_email(self):
+        if (
+            self.owner_group
+            and self.owner_group.online_group
+            and self.owner_group.online_group.email
+        ):
+            return self.owner_group.online_group.email
+        else:
+            return self.owner.primary_email
+
+    def feedback_title(self):
+        return self.title
+
+    def feedback_date(self):
+        return self.created_date
+
+    def feedback_info(self):
+        info = OrderedDict()
+        info[_("Antall mulig svar")] = len(self.feedback_users())
+        return info
+
+    class Meta:
+        verbose_name = _("Generisk undersøkelse")
+        verbose_name_plural = _("Generiske undersøkelser")
+        ordering = ("created_date", "title")
 
 
 class FieldOfStudyAnswer(models.Model):

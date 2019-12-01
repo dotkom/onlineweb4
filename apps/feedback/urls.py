@@ -30,6 +30,11 @@ urlpatterns = [
 # API v1
 router = SharedAPIRootRouter()
 router.register(
+    prefix="feedback/generic-surveys",
+    viewset=views.GenericSurveyViewSet,
+    basename="feedback_generic_surveys",
+)
+router.register(
     prefix="feedback/templates",
     viewset=views.FeedbackTemplateViewSet,
     basename="feedback_templates",

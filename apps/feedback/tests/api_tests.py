@@ -3,13 +3,16 @@ import logging
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
+from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
 
+from apps.authentication.models import OnlineUser as User
 from apps.feedback.models import (
     Choice,
     Feedback,
     FeedbackRelation,
+    GenericSurvey,
     MultipleChoiceQuestion,
     MultipleChoiceRelation,
     RatingQuestion,
@@ -46,6 +49,16 @@ class FeedbackAPITestCase(FeedbackTestCaseMixin, OIDCTestCase):
 
     def create_feedback_relation(self, *args, **kwargs):
         return super().create_feedback_relation(feedback=self.feedback, *args, **kwargs)
+
+    def create_generic_survey(self, **kwargs):
+        survey: GenericSurvey = G(
+            GenericSurvey,
+            feedback=self.feedback,
+            deadline=(timezone.now() + timezone.timedelta(days=2)).date(),
+            **kwargs,
+        )
+
+        return survey
 
     def create_text_question(self) -> TextQuestion:
         return G(TextQuestion, feedback=self.feedback)
@@ -227,6 +240,36 @@ class FeedbackRelationTest(FeedbackAPITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_allowed_users_can_answer_generic_survey(self):
+        question = self.create_text_question()
+        survey = self.create_generic_survey(allowed_users=[self.user])
+        response = self.client.post(
+            self.get_submit_url(survey.get_feedback_relation()),
+            {"text_answers": [{"question": question.id, "answer": "Dette er et svar"}]},
+            **self.headers,
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_user_cannot_answer_generic_survey_without_being_allowed(self):
+        question = self.create_text_question()
+        survey = self.create_generic_survey(allowed_users=[G(User)])
+        response = self.client.post(
+            self.get_submit_url(survey.get_feedback_relation()),
+            {"text_answers": [{"question": question.id, "answer": "Dette er et svar"}]},
+            **self.headers,
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_user_can_answer_generic_survey_when_no_allowed_users_are_defined(self):
+        question = self.create_text_question()
+        survey = self.create_generic_survey(allowed_users=[])
+        response = self.client.post(
+            self.get_submit_url(survey.get_feedback_relation()),
+            {"text_answers": [{"question": question.id, "answer": "Dette er et svar"}]},
+            **self.headers,
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
 
 class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
     url_basename = "feedback_question_text"
@@ -383,3 +426,94 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(RatingQuestion.objects.filter(pk=question.id).count(), 0)
+
+
+class GenericSurveyTestCase(OIDCTestCase):
+    url_basename = "feedback_generic_surveys"
+
+    def setUp(self):
+        super().setUp()
+        self.group: Group = G(Group)
+        add_content_type_permission_to_group(self.group, GenericSurvey)
+        self.feedback: Feedback = G(Feedback)
+
+    def get_list_url(self):
+        return reverse(f"{self.url_basename}-list")
+
+    def get_detail_url(self, obj: GenericSurvey):
+        return reverse(f"{self.url_basename}-detail", args=[obj.id])
+
+    def create_survey(self, owner: User = None, owner_group: Group = None):
+        survey: GenericSurvey = G(
+            GenericSurvey,
+            feedback=self.feedback,
+            owner=owner if owner else self.user,
+            owner_group=owner_group if owner_group else self.group,
+        )
+        return survey
+
+    def test_cannot_view_without_login(self):
+        response = self.client.get(self.get_list_url(), **self.bare_headers)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_view_without_permission(self):
+        response = self.client.get(self.get_list_url(), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_permitted_can_list_surveys(self):
+        self.group.user_set.add(self.user)
+        response = self.client.get(self.get_list_url(), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_owner_user_can_retrieve_their_own_survey(self):
+        self.group.user_set.add(self.user)
+        survey = self.create_survey()
+        response = self.client.get(self.get_detail_url(survey), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_other_user_cannot_retrieve_survey_without_ownership(self):
+        self.group.user_set.add(self.user)
+        survey = self.create_survey(G(User), G(Group))
+        response = self.client.get(self.get_detail_url(survey), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        survey.owner_group = self.group
+        survey.save()
+
+        response = self.client.get(self.get_detail_url(survey), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_user_can_create_survey(self):
+        self.group.user_set.add(self.user)
+        survey_data = {
+            "title": "The very best survey",
+            "feedback": self.feedback.id,
+            "deadline": (timezone.datetime.now() + timezone.timedelta(days=7)).date(),
+        }
+        response = self.client.post(self.get_list_url(), survey_data, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_user_can_update_survey(self):
+        self.group.user_set.add(self.user)
+        survey = self.create_survey()
+        survey_data = {
+            "deadline": (timezone.datetime.now() + timezone.timedelta(days=14)).date()
+        }
+
+        response = self.client.patch(
+            self.get_detail_url(survey), survey_data, **self.headers
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_updating_survey_does_not_change_owner(self):
+        self.group.user_set.add(self.user)
+        survey = self.create_survey(G(User), self.group)
+        survey_data = {"title": "A way better title"}
+
+        response = self.client.patch(
+            self.get_detail_url(survey), survey_data, **self.headers
+        )
+        survey.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(self.user, survey.owner)
