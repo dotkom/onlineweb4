@@ -1,0 +1,65 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+Utgått varelager - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardInventory' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardInventory' 'js' %}
+{% endblock %}
+
+{% block page-header %}
+Utgått varelager
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Utgått varelager</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Vareoversikt</h3>
+            </div>
+            <div class="panel-body">
+                <p>Her finner du en oversikt over utgåtte varer. Varene som er her blir ikke solgt på Nibble.</p>
+                <table class="table table-striped table-condensed tablesorter" id="inventory_item_list">
+                    <thead>
+                        <tr>
+                            <th>Navn</th>
+                            <th>Mengde</th>
+                            <th>Kategori</th>
+                            <th>Pris</th>
+                            <th>Til salgs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td><a href="/dashboard/inventory/item/{{ item.id }}/">{{ item.name }}</a></td>
+                            <td>{{ item.total_amount }}</td>
+                            <td>{{ item.category}}</td>
+                            <td>{% if item.available %}{{ item.price }},-{% else %}-{% endif %}</td>
+                            <td>
+                                <a href="#" data-id="{{ item.id }}" class="toggle-inventory-item in-stock">
+                                <i class="checkbox fa fa-lg {% if item.available %} fa-check-square-o checked {% else %} fa-square-o {% endif %}"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

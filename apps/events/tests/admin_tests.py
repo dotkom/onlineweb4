@@ -6,22 +6,28 @@ from django_dynamic_fixture import G
 from apps.authentication.models import OnlineUser
 
 from ..models import TYPE_CHOICES
-from .utils import add_to_arrkom, add_to_bedkom, add_to_fagkom, add_to_trikom, generate_event
+from .utils import (
+    add_to_arrkom,
+    add_to_bedkom,
+    add_to_fagkom,
+    add_to_trikom,
+    generate_event,
+)
 
-EVENTS_ADMIN_LIST_URL = reverse_lazy('admin:events_event_changelist')
-EVENTS_DASHBOARD_INDEX_URL = reverse_lazy('dashboard_events_index')
+EVENTS_ADMIN_LIST_URL = reverse_lazy("admin:events_event_changelist")
+EVENTS_DASHBOARD_INDEX_URL = reverse_lazy("dashboard_events_index")
 
 
 def event_admin(event):
-    return reverse('admin:events_event_change', args=(event.id,))
+    return reverse("admin:events_event_change", args=(event.id,))
 
 
 def attendance_list(event):
-    return reverse('event_attendees_pdf', args=(event.id,))
+    return reverse("event_attendees_pdf", args=(event.id,))
 
 
 def event_dashboard(event):
-    return reverse('dashboard_events_edit', args=(event.id,))
+    return reverse("dashboard_events_edit", args=(event.id,))
 
 
 class EventAdminTestCase(TestCase):

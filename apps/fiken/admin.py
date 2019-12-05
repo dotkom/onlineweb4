@@ -1,32 +1,60 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
-from .models import FikenAccount, FikenCustomer, FikenOrderLine, FikenSale, FikenSaleAttachment
+from .models import (
+    FikenAccount,
+    FikenCustomer,
+    FikenOrderLine,
+    FikenSale,
+    FikenSaleAttachment,
+)
 
 
 class FikenSaleAttachmentInlineAdmin(admin.StackedInline):
     model = FikenSaleAttachment
     extra = 0
-    classes = ('grp-collapse grp-open',)
+    classes = ("grp-collapse grp-open",)
     fields = (
-        'filename', 'file', 'comment', 'attach_to_sale', 'attach_to_payment', 'created_date',
+        "filename",
+        "file",
+        "comment",
+        "attach_to_sale",
+        "attach_to_payment",
+        "created_date",
     )
     readonly_fields = (
-        'filename', 'file', 'comment', 'attach_to_sale', 'attach_to_payment', 'created_date',
+        "filename",
+        "file",
+        "comment",
+        "attach_to_sale",
+        "attach_to_payment",
+        "created_date",
     )
 
 
 class FikenOrderLineInlineAdmin(admin.StackedInline):
     model = FikenOrderLine
     extra = 0
-    classes = ('grp-collapse grp-open',)
+    classes = ("grp-collapse grp-open",)
     fields = (
-        'price', 'vat_type', 'description', 'price_without_fee', 'net_price', 'vat_price', 'vat_percentage',
-        'account',
+        "price",
+        "vat_type",
+        "description",
+        "price_without_fee",
+        "net_price",
+        "vat_price",
+        "vat_percentage",
+        "account",
     )
     readonly_fields = (
-        'price', 'vat_type', 'description', 'price_without_fee', 'net_price', 'vat_price', 'vat_percentage',
-        'account',
+        "price",
+        "vat_type",
+        "description",
+        "price_without_fee",
+        "net_price",
+        "vat_price",
+        "vat_percentage",
+        "account",
     )
 
 
@@ -34,14 +62,45 @@ class FikenOrderLineInlineAdmin(admin.StackedInline):
 class FikenSaleAdmin(VersionAdmin):
     model = FikenSale
     inlines = (FikenOrderLineInlineAdmin, FikenSaleAttachmentInlineAdmin)
-    list_display = ('__str__', 'stripe_key', 'created_date', 'amount', 'original_amount',)
+    list_display = (
+        "__str__",
+        "stripe_key",
+        "created_date",
+        "amount",
+        "original_amount",
+    )
     fields = (
-        'stripe_key', 'account', 'amount', 'original_amount', 'date', 'kind', 'paid', 'transaction_type', 'status',
-        'fiken_id', 'content_type', 'object_id', 'created_date', 'identifier', 'customer',
+        "stripe_key",
+        "account",
+        "amount",
+        "original_amount",
+        "date",
+        "kind",
+        "paid",
+        "transaction_type",
+        "status",
+        "fiken_id",
+        "content_type",
+        "object_id",
+        "created_date",
+        "identifier",
+        "customer",
     )
     readonly_fields = (
-        'stripe_key', 'account', 'amount', 'original_amount', 'date', 'kind', 'paid', 'transaction_type', 'status',
-        'fiken_id', 'content_type', 'object_id', 'created_date', 'identifier',
+        "stripe_key",
+        "account",
+        "amount",
+        "original_amount",
+        "date",
+        "kind",
+        "paid",
+        "transaction_type",
+        "status",
+        "fiken_id",
+        "content_type",
+        "object_id",
+        "created_date",
+        "identifier",
     )
 
 
@@ -53,6 +112,6 @@ class FikenCustomerAdmin(VersionAdmin):
 @admin.register(FikenAccount)
 class FikenAccountAdmin(VersionAdmin):
     model = FikenAccount
-    list_display = ('name', 'code', 'identifier', 'active',)
-    fields = ('name', 'code', 'identifier', 'active', 'created_date',)
-    readonly_fields = ('created_date',)
+    list_display = ("name", "code", "identifier", "active")
+    fields = ("name", "code", "identifier", "active", "created_date")
+    readonly_fields = ("created_date",)

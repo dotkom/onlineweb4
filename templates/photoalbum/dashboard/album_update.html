@@ -1,0 +1,84 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{% if album %}
+Rediger album - Online Dashboard
+{% else %}
+Nytt album - Online Dashboard
+{% endif %}
+
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardPhotoAlbum' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardPhotoAlbum' 'js' %}
+{% endblock %}
+
+{% block page-header %}
+Fotoalbum - {{ album|default:"Legg til" }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-photoalbum:albums' %}">Albumer</a></li>
+    <li>{{ album|default:"Legg til" }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <form method="POST" action="">
+    <div class="col-md-12">
+        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Lagre</button>
+        {% if album %}
+        <a href="#modal-delete-album" id="photoalbum-delete-album" data-toggle="modal" data-pk="{{ album.pk }}" class="btn btn-danger pull-right">
+            <i class="fa fa-times fa-lg"></i> Slett album
+        </a>
+        {% endif %}
+    </div>
+</div>
+<br>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Bilde</h3>
+    </div>
+    <div class="panel-body">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group {% if field.errors %}has-error{% endif %}">
+                <label for="{{field.auto_id }}">{{ field.label }}</label>
+                {{ field|addclass:"form-control" }}
+                {% if field.errors %}
+                <p>{{ field.errors }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </form>
+    </div>
+</div>
+{% if album %}
+<div id="modal-delete-album" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>Bekreft sletting av {{ album }}</h3>
+            </div>
+            <div class="modal-body">
+                <p>Er du sikker på at du vil slette {{ album }}?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
+                <button class="btn btn-danger confirm-delete-album" data-dismiss="modal" aria-hidden="true">Slett</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}

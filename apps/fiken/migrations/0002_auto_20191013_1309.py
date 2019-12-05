@@ -5,12 +5,10 @@ from apps.fiken.settings import NIBBLE_ACCOUNT_IDENTIFIER
 
 
 def load_data(apps, schema_editor):
-    FikenAccount = apps.get_model('fiken', 'FikenAccount')
+    FikenAccount = apps.get_model("fiken", "FikenAccount")
 
     FikenAccount.objects.get_or_create(
-        identifier=NIBBLE_ACCOUNT_IDENTIFIER,
-        name='Salgsinntekt Nibble',
-        code='0000',
+        identifier=NIBBLE_ACCOUNT_IDENTIFIER, name="Salgsinntekt Nibble", code="0000"
     )
 
 
@@ -20,10 +18,6 @@ def remove_data(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('fiken', '0001_initial'),
-    ]
+    dependencies = [("fiken", "0001_initial")]
 
-    operations = [
-        migrations.RunPython(load_data, remove_data)
-    ]
+    operations = [migrations.RunPython(load_data, remove_data)]

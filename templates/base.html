@@ -218,14 +218,43 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-12 col-md-4">
-                    <div id="footer-map"></div>
-                </div>
+                <div class="col-xs-12 col-md-4"></div>
             </div>
         </div>
     </section>
 
     {% block js %}
+    <script>
+        const toTime = new Date(2019, 10, 22, 12, 0, 0)
+        const fromTime = new Date(2019, 10, 22 - 3, 12, 0, 0)
+        
+        if (toTime - Date.now()>0 && Date.now() - fromTime > 0){
+        
+            const parents = [];
+            const imgs = document.querySelectorAll("img[src$='online_logo.svg'").forEach(e => parents.push(e.parentElement))
+            let intervalID = null;
+
+            const dd = (x) => x.toLocaleString(undefined, {minimumIntegerDigits: 2})
+            
+
+            const coundown = () => {
+                const time = new Date(toTime - new Date());
+                if (time > 0){
+                const days = dd(time.getUTCDate() - 1)
+                const hours = dd((time.getHours() - 1 + 24) % 24 )
+                const minutes = dd(time.getMinutes())
+                const seconds = dd(time.getSeconds())
+
+                parents.forEach(e => e.innerHTML = `<div style="color: white;"> ${days} : ${hours} : ${minutes} : ${seconds} </div>`)
+                } else {
+                    clearInterval(intervalID)
+                    window.location.reload()
+                }
+         }
+            intervalID = setInterval(coundown, 1000)
+        }
+
+    </script>
         <script src="https://cdn.ravenjs.com/3.17.0/raven.min.js" crossorigin="anonymous"></script>
         <script>Raven.config('{% sentry_public_dsn "https" %}').install()</script>
 
@@ -237,7 +266,6 @@
         <script>
             window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-2.2.4.min.js"><\/script>');
         </script>
-        <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=true"></script>
         <script src="{% url 'js_reverse' %}" type="text/javascript"></script>
         {% render_bundle 'common' 'js' %}
         {% render_bundle 'core' 'js' %}

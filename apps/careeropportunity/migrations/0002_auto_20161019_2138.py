@@ -10,57 +10,95 @@ import taggit.managers
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('taggit', '0002_auto_20150616_2121'),
-        ('careeropportunity', '0001_squashed_0003_auto_20151017_2258'),
+        ("taggit", "0002_auto_20150616_2121"),
+        ("careeropportunity", "0001_squashed_0003_auto_20151017_2258"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CareerOpportunityEmploymentTag',
+            name="CareerOpportunityEmploymentTag",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.CreateModel(
-            name='CareerOpportunityLocationTag',
+            name="CareerOpportunityLocationTag",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                )
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False},
         ),
         migrations.AddField(
-            model_name='careeropportunitylocationtag',
-            name='content_object',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='careeropportunity.CareerOpportunity'),
+            model_name="careeropportunitylocationtag",
+            name="content_object",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="careeropportunity.CareerOpportunity",
+            ),
         ),
         migrations.AddField(
-            model_name='careeropportunitylocationtag',
-            name='tag',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='careeropportunity_careeropportunitylocationtag_items', to='taggit.Tag'),
+            model_name="careeropportunitylocationtag",
+            name="tag",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="careeropportunity_careeropportunitylocationtag_items",
+                to="taggit.Tag",
+            ),
         ),
         migrations.AddField(
-            model_name='careeropportunityemploymenttag',
-            name='content_object',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='careeropportunity.CareerOpportunity'),
+            model_name="careeropportunityemploymenttag",
+            name="content_object",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="careeropportunity.CareerOpportunity",
+            ),
         ),
         migrations.AddField(
-            model_name='careeropportunityemploymenttag',
-            name='tag',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='careeropportunity_careeropportunityemploymenttag_items', to='taggit.Tag'),
+            model_name="careeropportunityemploymenttag",
+            name="tag",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="careeropportunity_careeropportunityemploymenttag_items",
+                to="taggit.Tag",
+            ),
         ),
         migrations.AddField(
-            model_name='careeropportunity',
-            name='employment',
-            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', through='careeropportunity.CareerOpportunityEmploymentTag', to='taggit.Tag', verbose_name='Tags'),
+            model_name="careeropportunity",
+            name="employment",
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                through="careeropportunity.CareerOpportunityEmploymentTag",
+                to="taggit.Tag",
+                verbose_name="Tags",
+            ),
         ),
         migrations.AddField(
-            model_name='careeropportunity',
-            name='location',
-            field=taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', through='careeropportunity.CareerOpportunityLocationTag', to='taggit.Tag', verbose_name='Tags'),
+            model_name="careeropportunity",
+            name="location",
+            field=taggit.managers.TaggableManager(
+                blank=True,
+                help_text="A comma-separated list of tags.",
+                through="careeropportunity.CareerOpportunityLocationTag",
+                to="taggit.Tag",
+                verbose_name="Tags",
+            ),
         ),
     ]

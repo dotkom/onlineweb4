@@ -1,3 +1,3 @@
 import os
 
-DOCUMENTATION_PATH = os.path.join('documentation', 'applications')
+DOCUMENTATION_PATH = os.path.join("documentation", "applications")

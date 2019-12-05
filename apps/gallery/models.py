@@ -30,34 +30,48 @@ class UnhandledImage(models.Model):
 
     @property
     def resolution(self):
-        return '%sx%s' % (self.image.width, self.image.height)
+        return "%sx%s" % (self.image.width, self.image.height)
 
     class Meta:
         """
         UnhandledImage Metaclass
         """
 
-        verbose_name = _('Ubehandlet bilde')
-        verbose_name_plural = _('Ubehandlede bilder')
-        permissions = (
-            ('view_unhandledimage', _('View UnhandledImage')),
-        )
-        default_permissions = ('add', 'change', 'delete')
+        verbose_name = _("Ubehandlet bilde")
+        verbose_name_plural = _("Ubehandlede bilder")
+        permissions = (("view_unhandledimage", _("View UnhandledImage")),)
+        default_permissions = ("add", "change", "delete")
 
 
-class ResponsiveImage(models.Model):
-    name = models.CharField('Navn', max_length=200, null=False)
-    timestamp = models.DateTimeField(auto_now_add=True, editable=False, null=False, blank=False)
-    description = models.TextField('Beskrivelse', blank=True, default='', max_length=2048)
-    image_original = models.ImageField('Originalbilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_wide = models.ImageField('Bredformat', upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)
-    image_lg = models.ImageField('LG Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_md = models.ImageField('MD Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_sm = models.ImageField('SM Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    image_xs = models.ImageField('XS Bilde', upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH)
-    thumbnail = models.ImageField('Thumbnail', upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH)
-    photographer = models.CharField('Fotograf', max_length=100, null=False, blank=True, default='')
-    tags = TaggableManager(help_text="En komma eller mellomrom-separert liste med tags.")
+class BaseResponsiveImage(models.Model):
+    """
+    Base class for handling the storage part of a Responsive Image
+    """
+
+    image_original = models.ImageField(
+        "Originalbilde", upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH
+    )
+    image_wide = models.ImageField(
+        "Bredformat", upload_to=gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
+    )
+    image_lg = models.ImageField(
+        "LG Bilde", upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH
+    )
+    image_md = models.ImageField(
+        "MD Bilde", upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH
+    )
+    image_sm = models.ImageField(
+        "SM Bilde", upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH
+    )
+    image_xs = models.ImageField(
+        "XS Bilde", upload_to=gallery_settings.RESPONSIVE_IMAGES_PATH
+    )
+    thumbnail = models.ImageField(
+        "Thumbnail", upload_to=gallery_settings.RESPONSIVE_THUMBNAIL_PATH
+    )
+    timestamp = models.DateTimeField(
+        auto_now_add=True, editable=False, null=False, blank=False
+    )
 
     def __str__(self):
         """
@@ -67,7 +81,7 @@ class ResponsiveImage(models.Model):
         :return: The RELATIVE path to the LG image version
         """
 
-        return '%s%s' % (settings.MEDIA_URL, self.image_lg)
+        return "%s%s" % (settings.MEDIA_URL, self.image_lg)
 
     def file_status_ok(self):
         """
@@ -87,10 +101,10 @@ class ResponsiveImage(models.Model):
             assert self.image_sm.width is not None
             assert self.image_xs.width is not None
         except OSError:
-            log.warning('Caught OSError for image file reference for ResponsiveImage %d (%s)' % (
-                self.id,
-                self.filename
-            ))
+            log.warning(
+                "Caught OSError for image file reference for ResponsiveImage %d (%s)"
+                % (self.id, self.filename)
+            )
             return False
 
         return True
@@ -110,7 +124,9 @@ class ResponsiveImage(models.Model):
             total += self.image_wide.size
             total += self.image_original.size
         except OSError:
-            logging.getLogger(__name__).error('Orphaned ResponsiveImage object: %d (%s)' % (self.id, self.filename))
+            logging.getLogger(__name__).error(
+                "Orphaned ResponsiveImage object: %d (%s)" % (self.id, self.filename)
+            )
 
         return total
 
@@ -120,31 +136,31 @@ class ResponsiveImage(models.Model):
 
     @property
     def original(self):
-        return '%s%s' % (settings.MEDIA_URL, self.image_original)
+        return "%s%s" % (settings.MEDIA_URL, self.image_original)
 
     @property
     def wide(self):
-        return '%s%s' % (settings.MEDIA_URL, self.image_wide)
+        return "%s%s" % (settings.MEDIA_URL, self.image_wide)
 
     @property
     def lg(self):
-        return '%s%s' % (settings.MEDIA_URL, self.image_lg)
+        return "%s%s" % (settings.MEDIA_URL, self.image_lg)
 
     @property
     def md(self):
-        return '%s%s' % (settings.MEDIA_URL, self.image_md)
+        return "%s%s" % (settings.MEDIA_URL, self.image_md)
 
     @property
     def sm(self):
-        return '%s%s' % (settings.MEDIA_URL, self.image_sm)
+        return "%s%s" % (settings.MEDIA_URL, self.image_sm)
 
     @property
     def xs(self):
-        return '%s%s' % (settings.MEDIA_URL, self.image_xs)
+        return "%s%s" % (settings.MEDIA_URL, self.image_xs)
 
     @property
     def thumb(self):
-        return '%s%s' % (settings.MEDIA_URL, self.thumbnail)
+        return "%s%s" % (settings.MEDIA_URL, self.thumbnail)
 
     @property
     def sizeof_total(self):
@@ -157,13 +173,25 @@ class ResponsiveImage(models.Model):
         return humanize_size(total)
 
     class Meta:
-        """
-        ResponsiveImage Metaclass
-        """
+        verbose_name = _("Responsivt Bilde")
+        verbose_name_plural = _("Responsive Bilder")
+        permissions = (("view_responsiveimage", _("View ResponsiveImage")),)
+        default_permissions = ("add", "change", "delete")
+        abstract = True
 
-        verbose_name = _('Responsivt Bilde')
-        verbose_name_plural = _('Responsive Bilder')
-        permissions = (
-            ('view_responsiveimage', _('View ResponsiveImage')),
-        )
-        default_permissions = ('add', 'change', 'delete')
+
+class ResponsiveImage(BaseResponsiveImage):
+    """
+    Regular responsive images
+    """
+
+    name = models.CharField("Navn", max_length=200, null=False)
+    description = models.TextField(
+        "Beskrivelse", blank=True, default="", max_length=2048
+    )
+    photographer = models.CharField(
+        "Fotograf", max_length=100, null=False, blank=True, default=""
+    )
+    tags = TaggableManager(
+        help_text="En komma eller mellomrom-separert liste med tags."
+    )

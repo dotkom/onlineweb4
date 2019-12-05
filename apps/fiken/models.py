@@ -13,58 +13,80 @@ from .pdf_generator import FikenSalePDF
 
 
 class FikenAccount(models.Model):
-    identifier = models.CharField('Identifikator', max_length=64, null=False, blank=False,
-                                  help_text='Kodeord som brukes for å referere til kontoen, f.eks "nibble"',)
-    name = models.CharField('Navn', max_length=128, unique=True, null=False, blank=False,
-                            help_text='Navnet kontoen har i Fiken')
-    code = models.CharField('Kontokode', max_length=128, unique=True, null=False, blank=False,
-                            help_text='ID-en til kontoen i Fiken')
-    created_date = models.DateTimeField('Opprettelsesdato', auto_now_add=True)
-    active = models.BooleanField('Aktiv', default=True,
-                                 help_text='Om kontoen fortsatt er i aktiv bruk. Sett heller som inaktiv enn å slette')
+    identifier = models.CharField(
+        "Identifikator",
+        max_length=64,
+        null=False,
+        blank=False,
+        help_text='Kodeord som brukes for å referere til kontoen, f.eks "nibble"',
+    )
+    name = models.CharField(
+        "Navn",
+        max_length=128,
+        unique=True,
+        null=False,
+        blank=False,
+        help_text="Navnet kontoen har i Fiken",
+    )
+    code = models.CharField(
+        "Kontokode",
+        max_length=128,
+        unique=True,
+        null=False,
+        blank=False,
+        help_text="ID-en til kontoen i Fiken",
+    )
+    created_date = models.DateTimeField("Opprettelsesdato", auto_now_add=True)
+    active = models.BooleanField(
+        "Aktiv",
+        default=True,
+        help_text="Om kontoen fortsatt er i aktiv bruk. Sett heller som inaktiv enn å slette",
+    )
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = 'Konto i Fiken'
-        verbose_name_plural = 'Kontoer i Fiken'
-        ordering = ('created_date', 'name',)
+        verbose_name = "Konto i Fiken"
+        verbose_name_plural = "Kontoer i Fiken"
+        ordering = ("created_date", "name")
 
 
 class FikenCustomer(models.Model):
     user = models.OneToOneField(
         to=User,
-        related_name='fiken_customer',
+        related_name="fiken_customer",
         on_delete=models.DO_NOTHING,
-        verbose_name='Bruker',
+        verbose_name="Bruker",
     )
-    fiken_customer_number = models.IntegerField('Kundenummer', null=True, blank=True, unique=True)
+    fiken_customer_number = models.IntegerField(
+        "Kundenummer", null=True, blank=True, unique=True
+    )
 
     def __str__(self):
-        customer_number = self.fiken_customer_number if self.fiken_customer_number else 'Ikke synkronisert'
-        return f'{self.user} ({customer_number})'
+        customer_number = (
+            self.fiken_customer_number
+            if self.fiken_customer_number
+            else "Ikke synkronisert"
+        )
+        return f"{self.user} ({customer_number})"
 
     class Meta:
-        verbose_name = 'Kunde i Fiken'
-        verbose_name_plural = 'Kunder i Fiken'
-        ordering = ('user', 'fiken_customer_number',)
+        verbose_name = "Kunde i Fiken"
+        verbose_name_plural = "Kunder i Fiken"
+        ordering = ("user", "fiken_customer_number")
 
 
 class FikenSale(models.Model):
     stripe_key = models.CharField(
-        'Stripe key',
-        max_length=20,
-        choices=StripeKey.ALL_CHOICES,
+        "Stripe key", max_length=20, choices=StripeKey.ALL_CHOICES
     )
     transaction_type = models.CharField(
-        'Transaction Type',
-        max_length=20,
-        choices=TransactionType.ALL_CHOICES,
+        "Transaction Type", max_length=20, choices=TransactionType.ALL_CHOICES
     )
     original_amount = models.IntegerField()
     kind = models.CharField(
-        'Fiken Sale kind',
+        "Fiken Sale kind",
         max_length=20,
         choices=FikenSaleKind.ALL_CHOICES,
         default=FikenSaleKind.EXTERNAL_INVOICE,
@@ -72,15 +94,13 @@ class FikenSale(models.Model):
     paid = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
-        max_length=30,
-        null=False,
-        choices=status.PAYMENT_STATUS_CHOICES,
+        max_length=30, null=False, choices=status.PAYMENT_STATUS_CHOICES
     )
     fiken_id = models.IntegerField(null=True, blank=True)
     customer = models.ForeignKey(
         to=FikenCustomer,
-        related_name='sales',
-        verbose_name='Kunde',
+        related_name="sales",
+        verbose_name="Kunde",
         on_delete=models.DO_NOTHING,
     )
 
@@ -100,8 +120,8 @@ class FikenSale(models.Model):
     @property
     def identifier(self) -> str:
         if self.status == status.REMOVED:
-            return f'REFUND-{self.id}'
-        return f'{self.transaction_type.upper()}-{self.id}'
+            return f"REFUND-{self.id}"
+        return f"{self.transaction_type.upper()}-{self.id}"
 
     @property
     def date(self):
@@ -135,9 +155,7 @@ class FikenSale(models.Model):
 
     def create_attachment(self):
         sale_attachment = FikenSaleAttachment.objects.create(
-            sale=self,
-            filename=f'sale-attachment-{self.identifier}.pdf',
-            comment='',
+            sale=self, filename=f"sale-attachment-{self.identifier}.pdf", comment=""
         )
         attachment_file = FikenSalePDF(self).render_pdf()
         sale_attachment.file.save(sale_attachment.filename, File(attachment_file))
@@ -147,20 +165,22 @@ class FikenSale(models.Model):
         return self.identifier
 
     class Meta:
-        verbose_name = 'Salg i Fiken'
-        verbose_name_plural = 'Salg i Fiken'
-        ordering = ('created_date', 'customer',)
+        verbose_name = "Salg i Fiken"
+        verbose_name_plural = "Salg i Fiken"
+        ordering = ("created_date", "customer")
 
 
 class FikenOrderLine(models.Model):
-    sale = models.ForeignKey(to=FikenSale, related_name='order_lines', on_delete=models.CASCADE, null=True)
+    sale = models.ForeignKey(
+        to=FikenSale, related_name="order_lines", on_delete=models.CASCADE, null=True
+    )
     price = models.IntegerField()
     vat_type = models.CharField(max_length=200, choices=VatTypeSale.ALL_CHOICES)
     description = models.CharField(max_length=200)
     account = models.ForeignKey(
         to=FikenAccount,
-        related_name='order_lines',
-        verbose_name='Konto i Fiken',
+        related_name="order_lines",
+        verbose_name="Konto i Fiken",
         on_delete=models.DO_NOTHING,
     )
 
@@ -189,32 +209,32 @@ class FikenOrderLine(models.Model):
         return vat_price
 
     def __str__(self):
-        return f'{self.description} ({int(self.price / 100)} kr)'
+        return f"{self.description} ({int(self.price / 100)} kr)"
 
     class Meta:
-        verbose_name = 'Ordrelinje i Fiken'
-        verbose_name_plural = 'Ordrelinjer i Fiken'
-        ordering = ('sale', 'pk',)
+        verbose_name = "Ordrelinje i Fiken"
+        verbose_name_plural = "Ordrelinjer i Fiken"
+        ordering = ("sale", "pk")
 
 
 class FikenSaleAttachment(models.Model):
     sale = models.ForeignKey(
         to=FikenSale,
-        related_name='attachments',
+        related_name="attachments",
         on_delete=models.DO_NOTHING,
-        verbose_name='Salg',
+        verbose_name="Salg",
     )
-    filename = models.CharField('Filnavn', max_length=200)
-    file = models.FileField('Fil', upload_to=settings.OW4_FIKEN_FILE_ROOT)
-    comment = models.CharField('Kommentar', max_length=4000)
-    attach_to_sale = models.BooleanField('Koble til salg', default=False)
-    attach_to_payment = models.BooleanField('Koble til betaling', default=True)
-    created_date = models.DateTimeField('Opprettelsesdato', auto_now_add=True)
+    filename = models.CharField("Filnavn", max_length=200)
+    file = models.FileField("Fil", upload_to=settings.OW4_FIKEN_FILE_ROOT)
+    comment = models.CharField("Kommentar", max_length=4000)
+    attach_to_sale = models.BooleanField("Koble til salg", default=False)
+    attach_to_payment = models.BooleanField("Koble til betaling", default=True)
+    created_date = models.DateTimeField("Opprettelsesdato", auto_now_add=True)
 
     def __str__(self):
-        return f'{self.filename} ({self.created_date})'
+        return f"{self.filename} ({self.created_date})"
 
     class Meta:
-        verbose_name = 'Bilag i Fiken'
-        verbose_name_plural = 'Bilag i Fiken'
-        ordering = ('sale', 'created_date',)
+        verbose_name = "Bilag i Fiken"
+        verbose_name_plural = "Bilag i Fiken"
+        ordering = ("sale", "created_date")

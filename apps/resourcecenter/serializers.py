@@ -9,11 +9,17 @@ class ResourceSerializer(serializers.ModelSerializer):
 
     image = ResponsiveImageSerializer(read_only=True)
     image_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source='image',
-        queryset=ResponsiveImage.objects.all()
+        write_only=True, source="image", queryset=ResponsiveImage.objects.all()
     )
 
     class Meta:
         model = Resource
-        fields = ('id', 'title', 'description', 'image', 'image_id', 'priority', 'active')
+        fields = (
+            "id",
+            "title",
+            "description",
+            "image",
+            "image_id",
+            "priority",
+            "active",
+        )

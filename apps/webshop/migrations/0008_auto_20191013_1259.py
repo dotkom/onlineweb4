@@ -8,20 +8,41 @@ import re
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('fiken', '0001_initial'),
-        ('webshop', '0007_auto_20190506_1719'),
-    ]
+    dependencies = [("fiken", "0001_initial"), ("webshop", "0007_auto_20190506_1719")]
 
     operations = [
         migrations.AddField(
-            model_name='product',
-            name='fiken_account',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='products', to='fiken.FikenAccount', verbose_name='Konto i Fiken'),
+            model_name="product",
+            name="fiken_account",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                related_name="products",
+                to="fiken.FikenAccount",
+                verbose_name="Konto i Fiken",
+            ),
         ),
         migrations.AddField(
-            model_name='product',
-            name='vat_type',
-            field=models.CharField(choices=[('NONE', 'Ingen mva-behandling (inntekter)'), ('HIGH', 'Utgående merverdiavgift, 25 %'), ('MEDIUM', 'Utgående merverdiavgift, 15 %'), ('RAW_FISH', 'Utgående merverdiavgift, 11,11 %'), ('LOW', 'Utgående merverdiavgift, 12 %'), ('EXEMPT_IMPORT_EXPORT', 'Utførsel av varer og tjenester, 0 %'), ('EXEMPT', 'Innenlands omsetning og uttak fritatt for merverdiavgift, 0 %'), ('OUTSIDE', 'Omsetning utenfor merverdiavgiftsloven'), ('EXEMPT_REVERSE', 'Ingen mva-behandling (inntekter)')], default='NONE', max_length=200, verbose_name='Momstype'),
+            model_name="product",
+            name="vat_type",
+            field=models.CharField(
+                choices=[
+                    ("NONE", "Ingen mva-behandling (inntekter)"),
+                    ("HIGH", "Utgående merverdiavgift, 25 %"),
+                    ("MEDIUM", "Utgående merverdiavgift, 15 %"),
+                    ("RAW_FISH", "Utgående merverdiavgift, 11,11 %"),
+                    ("LOW", "Utgående merverdiavgift, 12 %"),
+                    ("EXEMPT_IMPORT_EXPORT", "Utførsel av varer og tjenester, 0 %"),
+                    (
+                        "EXEMPT",
+                        "Innenlands omsetning og uttak fritatt for merverdiavgift, 0 %",
+                    ),
+                    ("OUTSIDE", "Omsetning utenfor merverdiavgiftsloven"),
+                    ("EXEMPT_REVERSE", "Ingen mva-behandling (inntekter)"),
+                ],
+                default="NONE",
+                max_length=200,
+                verbose_name="Momstype",
+            ),
         ),
     ]

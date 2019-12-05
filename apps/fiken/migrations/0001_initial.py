@@ -11,97 +11,310 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='FikenAccount',
+            name="FikenAccount",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('identifier', models.CharField(help_text='Kodeord som brukes for å referere til kontoen, f.eks "nibble"', max_length=64, verbose_name='Identifikator')),
-                ('name', models.CharField(help_text='Navnet kontoen har i Fiken', max_length=128, unique=True, verbose_name='Navn')),
-                ('code', models.CharField(help_text='ID-en til kontoen i Fiken', max_length=128, unique=True, verbose_name='Kontokode')),
-                ('created_date', models.DateTimeField(auto_now_add=True, verbose_name='Opprettelsesdato')),
-                ('active', models.BooleanField(default=True, help_text='Om kontoen fortsatt er i aktiv bruk. Sett heller som inaktiv enn å slette', verbose_name='Aktiv')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "identifier",
+                    models.CharField(
+                        help_text='Kodeord som brukes for å referere til kontoen, f.eks "nibble"',
+                        max_length=64,
+                        verbose_name="Identifikator",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text="Navnet kontoen har i Fiken",
+                        max_length=128,
+                        unique=True,
+                        verbose_name="Navn",
+                    ),
+                ),
+                (
+                    "code",
+                    models.CharField(
+                        help_text="ID-en til kontoen i Fiken",
+                        max_length=128,
+                        unique=True,
+                        verbose_name="Kontokode",
+                    ),
+                ),
+                (
+                    "created_date",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Opprettelsesdato"
+                    ),
+                ),
+                (
+                    "active",
+                    models.BooleanField(
+                        default=True,
+                        help_text="Om kontoen fortsatt er i aktiv bruk. Sett heller som inaktiv enn å slette",
+                        verbose_name="Aktiv",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Konto i Fiken',
-                'verbose_name_plural': 'Kontoer i Fiken',
-                'ordering': ('created_date', 'name'),
+                "verbose_name": "Konto i Fiken",
+                "verbose_name_plural": "Kontoer i Fiken",
+                "ordering": ("created_date", "name"),
             },
         ),
         migrations.CreateModel(
-            name='FikenCustomer',
+            name="FikenCustomer",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('fiken_customer_number', models.IntegerField(blank=True, null=True, unique=True, verbose_name='Kundenummer')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.DO_NOTHING, related_name='fiken_customer', to=settings.AUTH_USER_MODEL, verbose_name='Bruker')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "fiken_customer_number",
+                    models.IntegerField(
+                        blank=True, null=True, unique=True, verbose_name="Kundenummer"
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="fiken_customer",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Bruker",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Kunde i Fiken',
-                'verbose_name_plural': 'Kunder i Fiken',
-                'ordering': ('user', 'fiken_customer_number'),
+                "verbose_name": "Kunde i Fiken",
+                "verbose_name_plural": "Kunder i Fiken",
+                "ordering": ("user", "fiken_customer_number"),
             },
         ),
         migrations.CreateModel(
-            name='FikenOrderLine',
+            name="FikenOrderLine",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('price', models.IntegerField()),
-                ('vat_type', models.CharField(choices=[('NONE', 'Ingen mva-behandling (inntekter)'), ('HIGH', 'Utgående merverdiavgift, 25 %'), ('MEDIUM', 'Utgående merverdiavgift, 15 %'), ('RAW_FISH', 'Utgående merverdiavgift, 11,11 %'), ('LOW', 'Utgående merverdiavgift, 12 %'), ('EXEMPT_IMPORT_EXPORT', 'Utførsel av varer og tjenester, 0 %'), ('EXEMPT', 'Innenlands omsetning og uttak fritatt for merverdiavgift, 0 %'), ('OUTSIDE', 'Omsetning utenfor merverdiavgiftsloven'), ('EXEMPT_REVERSE', 'Ingen mva-behandling (inntekter)')], max_length=200)),
-                ('description', models.CharField(max_length=200)),
-                ('account', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='order_lines', to='fiken.FikenAccount', verbose_name='Konto i Fiken')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("price", models.IntegerField()),
+                (
+                    "vat_type",
+                    models.CharField(
+                        choices=[
+                            ("NONE", "Ingen mva-behandling (inntekter)"),
+                            ("HIGH", "Utgående merverdiavgift, 25 %"),
+                            ("MEDIUM", "Utgående merverdiavgift, 15 %"),
+                            ("RAW_FISH", "Utgående merverdiavgift, 11,11 %"),
+                            ("LOW", "Utgående merverdiavgift, 12 %"),
+                            (
+                                "EXEMPT_IMPORT_EXPORT",
+                                "Utførsel av varer og tjenester, 0 %",
+                            ),
+                            (
+                                "EXEMPT",
+                                "Innenlands omsetning og uttak fritatt for merverdiavgift, 0 %",
+                            ),
+                            ("OUTSIDE", "Omsetning utenfor merverdiavgiftsloven"),
+                            ("EXEMPT_REVERSE", "Ingen mva-behandling (inntekter)"),
+                        ],
+                        max_length=200,
+                    ),
+                ),
+                ("description", models.CharField(max_length=200)),
+                (
+                    "account",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="order_lines",
+                        to="fiken.FikenAccount",
+                        verbose_name="Konto i Fiken",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Ordrelinje i Fiken',
-                'verbose_name_plural': 'Ordrelinjer i Fiken',
-                'ordering': ('sale', 'pk'),
+                "verbose_name": "Ordrelinje i Fiken",
+                "verbose_name_plural": "Ordrelinjer i Fiken",
+                "ordering": ("sale", "pk"),
             },
         ),
         migrations.CreateModel(
-            name='FikenSale',
+            name="FikenSale",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('stripe_key', models.CharField(choices=[('arrkom', 'arrkom'), ('prokom', 'prokom'), ('trikom', 'trikom'), ('fagkom', 'fagkom')], max_length=20, verbose_name='Stripe key')),
-                ('transaction_type', models.CharField(choices=[('kiosk', 'kiosk'), ('webshop', 'webshop'), ('event', 'event')], max_length=20, verbose_name='Transaction Type')),
-                ('original_amount', models.IntegerField()),
-                ('kind', models.CharField(choices=[('CASH_SALE', 'CASH_SALE'), ('INVOICE', 'INVOICE'), ('EXTERNAL_INVOICE', 'EXTERNAL_INVOICE')], default='EXTERNAL_INVOICE', max_length=20, verbose_name='Fiken Sale kind')),
-                ('paid', models.BooleanField(default=True)),
-                ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('status', models.CharField(choices=[('pending', 'pending'), ('succeeded', 'succeeded'), ('done', 'done'), ('refunded', 'refunded'), ('removed', 'removed')], max_length=30)),
-                ('fiken_id', models.IntegerField(blank=True, null=True)),
-                ('object_id', models.PositiveIntegerField(null=True)),
-                ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='fiken_sales', to=settings.AUTH_USER_MODEL, verbose_name='Kunde')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "stripe_key",
+                    models.CharField(
+                        choices=[
+                            ("arrkom", "arrkom"),
+                            ("prokom", "prokom"),
+                            ("trikom", "trikom"),
+                            ("fagkom", "fagkom"),
+                        ],
+                        max_length=20,
+                        verbose_name="Stripe key",
+                    ),
+                ),
+                (
+                    "transaction_type",
+                    models.CharField(
+                        choices=[
+                            ("kiosk", "kiosk"),
+                            ("webshop", "webshop"),
+                            ("event", "event"),
+                        ],
+                        max_length=20,
+                        verbose_name="Transaction Type",
+                    ),
+                ),
+                ("original_amount", models.IntegerField()),
+                (
+                    "kind",
+                    models.CharField(
+                        choices=[
+                            ("CASH_SALE", "CASH_SALE"),
+                            ("INVOICE", "INVOICE"),
+                            ("EXTERNAL_INVOICE", "EXTERNAL_INVOICE"),
+                        ],
+                        default="EXTERNAL_INVOICE",
+                        max_length=20,
+                        verbose_name="Fiken Sale kind",
+                    ),
+                ),
+                ("paid", models.BooleanField(default=True)),
+                ("created_date", models.DateTimeField(auto_now_add=True)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "pending"),
+                            ("succeeded", "succeeded"),
+                            ("done", "done"),
+                            ("refunded", "refunded"),
+                            ("removed", "removed"),
+                        ],
+                        max_length=30,
+                    ),
+                ),
+                ("fiken_id", models.IntegerField(blank=True, null=True)),
+                ("object_id", models.PositiveIntegerField(null=True)),
+                (
+                    "content_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.ContentType",
+                    ),
+                ),
+                (
+                    "customer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="fiken_sales",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Kunde",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Salg i Fiken',
-                'verbose_name_plural': 'Salg i Fiken',
-                'ordering': ('created_date', 'customer'),
+                "verbose_name": "Salg i Fiken",
+                "verbose_name_plural": "Salg i Fiken",
+                "ordering": ("created_date", "customer"),
             },
         ),
         migrations.CreateModel(
-            name='FikenSaleAttachment',
+            name="FikenSaleAttachment",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('filename', models.CharField(max_length=200, verbose_name='Filnavn')),
-                ('file', models.FileField(upload_to='files/fiken/attachments', verbose_name='Fil')),
-                ('comment', models.CharField(max_length=4000, verbose_name='Kommentar')),
-                ('attach_to_sale', models.BooleanField(default=False, verbose_name='Koble til salg')),
-                ('attach_to_payment', models.BooleanField(default=True, verbose_name='Koble til betaling')),
-                ('created_date', models.DateTimeField(auto_now_add=True, verbose_name='Opprettelsesdato')),
-                ('sale', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='attachments', to='fiken.FikenSale', verbose_name='Salg')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("filename", models.CharField(max_length=200, verbose_name="Filnavn")),
+                (
+                    "file",
+                    models.FileField(
+                        upload_to="files/fiken/attachments", verbose_name="Fil"
+                    ),
+                ),
+                (
+                    "comment",
+                    models.CharField(max_length=4000, verbose_name="Kommentar"),
+                ),
+                (
+                    "attach_to_sale",
+                    models.BooleanField(default=False, verbose_name="Koble til salg"),
+                ),
+                (
+                    "attach_to_payment",
+                    models.BooleanField(
+                        default=True, verbose_name="Koble til betaling"
+                    ),
+                ),
+                (
+                    "created_date",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Opprettelsesdato"
+                    ),
+                ),
+                (
+                    "sale",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="attachments",
+                        to="fiken.FikenSale",
+                        verbose_name="Salg",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Bilag i Fiken',
-                'verbose_name_plural': 'Bilag i Fiken',
-                'ordering': ('sale', 'created_date'),
+                "verbose_name": "Bilag i Fiken",
+                "verbose_name_plural": "Bilag i Fiken",
+                "ordering": ("sale", "created_date"),
             },
         ),
         migrations.AddField(
-            model_name='fikenorderline',
-            name='sale',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='order_lines', to='fiken.FikenSale'),
+            model_name="fikenorderline",
+            name="sale",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="order_lines",
+                to="fiken.FikenSale",
+            ),
         ),
     ]

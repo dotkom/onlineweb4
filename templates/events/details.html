@@ -158,11 +158,13 @@
                                         {% else %}
                                             <p class="status-text">Du er meldt på dette arrangementet.</p>
                                         {% endif %}
-                                        {% if event.event_type == 1 %}
+                                    {% endif %}
+                                        {% if user_status.status or user_attending %}
                                             <div class="btn-group">
                                                 <div class="action col-md-6 col-sm-6 col-xs-6"><a href="#attendees" role="button" class="btn btn-large btn-info" data-toggle="modal">Vis påmeldte</a></div>
                                             </div>
                                         {% endif %}
+                                    {% if user_attending %}
                                         {% if attendance_event.extras.all %}
                                           {% if attendance_event.registration_end > now or attendance_event.unattend_deadline > now %}
                                             {% include 'events/extras.html' %}
@@ -400,61 +402,60 @@
                 </div>
             </div>
 
-            {% if event.event_type == 1 %}
-                {% if user_status.status or user_attending %}
-                <div id="attendees" class="modal fade">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                <h3>Påmeldte til {{ event.title }} </h3>
-                                <span>Siden dette er et sosialt arrangement kan du ønske å vise deg som påmeldt for andre å se.</span>
-                            </div>
-                            <div class="modal-body">
-                                <table class="table table-striped table-condensed tablesorter attendees" id="extras-table">
-                                    <thead>
-                                        <tr>
-                                            <th><b>Fornavn</b></th>
-                                            <th><b>Etternavn</b></th>
-                                            <th><b>Årstrinn</b></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="attendee_list">
-                                        {% for attendee in event.attendance_event.visible_attending_attendees %}
-                                        <tr>
-                                            {% if attendee.visible %}
-                                                <td>{{ attendee.first_name }}</td>
-                                                <td>{{ attendee.last_name }}</td>
-                                            {% else %}
-                                                <td colspan="2" class="event-social-list-anon"><i>{{ attendee.first_name }}</i></td>
-                                            {% endif %}
-                                            <td>{{ attendee.year }}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                                {% if user_setting_show_as_attending %}
-                                    <i>Du vises automatisk som påmeldt alle fremtidige sosiale arrangement du er meldt på, dette kan endres under personvern på <a href="{% url 'profile_privacy' %}">profilen din her.</a></i>
+
+            {% if user_status.status or user_attending %}
+            <div id="attendees" class="modal fade">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h3>Påmeldte til {{ event.title }} </h3>
+                            <span>Siden dette er et påmeldingsarrangement kan du ønske å vise deg som påmeldt for andre å se.</span>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-striped table-condensed tablesorter attendees" id="extras-table">
+                                <thead>
+                                    <tr>
+                                        <th><b>Fornavn</b></th>
+                                        <th><b>Etternavn</b></th>
+                                        <th><b>Årstrinn</b></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendee_list">
+                                    {% for attendee in event.attendance_event.visible_attending_attendees %}
+                                    <tr>
+                                        {% if attendee.visible %}
+                                            <td>{{ attendee.first_name }}</td>
+                                            <td>{{ attendee.last_name }}</td>
+                                        {% else %}
+                                            <td colspan="2" class="event-social-list-anon"><i>{{ attendee.first_name }}</i></td>
+                                        {% endif %}
+                                        <td>{{ attendee.year }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                            {% if user_setting_show_as_attending %}
+                                <i>Du vises automatisk som påmeldt alle fremtidige sosiale arrangement du er meldt på, dette kan endres under personvern på <a href="{% url 'profile_privacy' %}">profilen din her.</a></i>
+                            {% else %}
+                                <i>Under <a href="{% url 'profile_privacy' %}">personvern på profilen din</a> kan du endre til at du automatisk vises som påmeldte for alle fremtidige sosiale arrangement du blir meldt på.</i>
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            {% if user_attending and not place_on_wait_list %}
+                                {% if show_as_attending and user_attending %}
+                                    <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-warning">Ikke vis meg som påmeldt</button></a>
                                 {% else %}
-                                    <i>Under <a href="{% url 'profile_privacy' %}">personvern på profilen din</a> kan du endre til at du automatisk vises som påmeldte for alle fremtidige sosiale arrangement du blir meldt på.</i>
+                                    <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-success">Gjør meg synlig som påmeldt</button></a>
                                 {% endif %}
-                            </div>
-                            <div class="modal-footer">
-                                {% if user_attending and not place_on_wait_list %}
-                                    {% if show_as_attending and user_attending %}
-                                        <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-warning">Ikke vis meg som påmeldt</button></a>
-                                    {% else %}
-                                        <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-success">Gjør meg synlig som påmeldt</button></a>
-                                    {% endif %}
-                                {% endif %}
-                                <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
-                            </div>
+                            {% endif %}
+                            <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
                         </div>
                     </div>
                 </div>
-                {% endif %}
+            </div>
             {% endif %}
-
+            
             {% if payment_relation_id %}
             <div id="refund" class="modal fade">
                 <div class="modal-dialog">

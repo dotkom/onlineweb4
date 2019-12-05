@@ -21,22 +21,24 @@ class NewClientForm(forms.ModelForm):
         clean override to check the validity of both redirect uri's and scopes
         """
         cleaned_data = super(NewClientForm, self).clean()
-        scopes = cleaned_data.get('scopes')
-        redirect_uris = cleaned_data.get('redirect_uris')
+        scopes = cleaned_data.get("scopes")
+        redirect_uris = cleaned_data.get("redirect_uris")
 
         # Preliminary check that the data has passed per-field cleaning
         if scopes and redirect_uris:
             # Split the scopes and check that the requested scopes are a subset of the available ones
-            scopes_list = scopes.split(' ')
-            if not set(scopes_list) <= set([s for s, k in oauth2_settings.user_settings['SCOPES'].items()]):
-                self.add_error('scopes', 'Feltet inneholder ugyldige tilganger.')
+            scopes_list = scopes.split(" ")
+            if not set(scopes_list) <= set(
+                [s for s, k in oauth2_settings.user_settings["SCOPES"].items()]
+            ):
+                self.add_error("scopes", "Feltet inneholder ugyldige tilganger.")
 
             # Validate the uris
             try:
                 validator = URIValidator()
                 validator(redirect_uris)
             except ValidationError:
-                self.add_error('redirect_uris', 'Feltet inneholder ugyldige URIer.')
+                self.add_error("redirect_uris", "Feltet inneholder ugyldige URIer.")
 
     class Meta:
         """
@@ -44,4 +46,4 @@ class NewClientForm(forms.ModelForm):
         """
 
         model = Client
-        exclude = ['client_id', 'client_secret', 'skip_authorization', 'user']
+        exclude = ["client_id", "client_secret", "skip_authorization", "user"]

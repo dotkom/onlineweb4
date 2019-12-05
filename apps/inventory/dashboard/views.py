@@ -18,7 +18,7 @@ from apps.shop.models import Order
 
 
 @login_required
-@permission_required('inventory.view_item', return_403=True)
+@permission_required("inventory.view_item", return_403=True)
 def index(request):
 
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
@@ -27,14 +27,28 @@ def index(request):
 
     # Create the base context needed for the sidebar
     context = get_base_context(request)
+    # Select all items that are available for purchase
+    context["items"] = Item.objects.filter(available=True).order_by("name")
 
-    context['items'] = Item.objects.all().order_by('name')
-
-    return render(request, 'inventory/dashboard/index.html', context)
+    return render(request, "inventory/dashboard/index.html", context)
 
 
 @login_required
-@permission_required('inventory.add_item', return_403=True)
+@permission_required("inventory.view_item", return_403=True)
+def discontinued(request):
+    if not has_access(request):
+        raise PermissionDenied
+
+    # Create the base context needed for the sidebar
+    context = get_base_context(request)
+    # Select all items that are not available for purchase
+    context["items"] = Item.objects.filter(available=False).order_by("name")
+
+    return render(request, "inventory/dashboard/discontinued.html", context)
+
+
+@login_required
+@permission_required("inventory.add_item", return_403=True)
 def new(request):
 
     if not has_access(request):
@@ -43,26 +57,26 @@ def new(request):
     # Get base context
     context = get_base_context(request)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         inventory_form = ItemForm(request.POST)
 
         if not inventory_form.is_valid():
-            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
         else:
             item = inventory_form.save()
-            messages.success(request, 'Varen ble opprettet')
+            messages.success(request, "Varen ble opprettet")
             return redirect(details, item.id)
 
-        context['form'] = inventory_form
+        context["form"] = inventory_form
 
     else:
-        context['form'] = ItemForm()
+        context["form"] = ItemForm()
 
-    return render(request, 'inventory/dashboard/new.html', context)
+    return render(request, "inventory/dashboard/new.html", context)
 
 
 @login_required
-@permission_required('inventory.view_item', return_403=True)
+@permission_required("inventory.view_item", return_403=True)
 def details(request, item_pk):
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
@@ -71,44 +85,45 @@ def details(request, item_pk):
     # Create the base context needed for the sidebar
     context = get_base_context(request)
 
-    context['item'] = get_object_or_404(Item, pk=item_pk)
+    context["item"] = get_object_or_404(Item, pk=item_pk)
 
-    if request.method == 'POST':
-        if 'inventory.change_item' not in context['user_permissions']:
+    if request.method == "POST":
+        if "inventory.change_item" not in context["user_permissions"]:
             raise PermissionDenied
 
-        item_form = ItemForm(request.POST, instance=context['item'])
+        item_form = ItemForm(request.POST, instance=context["item"])
         if not item_form.is_valid():
-            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
         else:
             item_form.save()
-            messages.success(request, 'Varen ble oppdatert')
-        context['form'] = item_form
+            messages.success(request, "Varen ble oppdatert")
+        context["form"] = item_form
     else:
-        context['form'] = ItemForm(instance=context['item'])
+        context["form"] = ItemForm(instance=context["item"])
 
-    context['new_batch_form'] = BatchForm()
+    context["new_batch_form"] = BatchForm()
 
-    context['batch_forms'] = [
-        (b.id, BatchForm(instance=b)) for b in Batch.objects.filter(item=context['item'])
+    context["batch_forms"] = [
+        (b.id, BatchForm(instance=b))
+        for b in Batch.objects.filter(item=context["item"])
     ]
 
-    return render(request, 'inventory/dashboard/details.html', context)
+    return render(request, "inventory/dashboard/details.html", context)
 
 
 @login_required
-@permission_required('inventory.delete_item', return_403=True)
+@permission_required("inventory.delete_item", return_403=True)
 def item_delete(request, item_pk):
     if not has_access(request):
         raise PermissionDenied
 
     item = get_object_or_404(Item, pk=item_pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         item.delete()
 
-        messages.success(request, 'Varen %s ble slettet.' % item.name)
+        messages.success(request, "Varen %s ble slettet." % item.name)
 
         return redirect(index)
 
@@ -116,7 +131,7 @@ def item_delete(request, item_pk):
 
 
 @login_required
-@permission_required('inventory.change_item', return_403=True)
+@permission_required("inventory.change_item", return_403=True)
 def item_change_availability(request, item_pk):
     if not has_access(request):
         raise PermissionDenied
@@ -124,43 +139,46 @@ def item_change_availability(request, item_pk):
     item = get_object_or_404(Item, pk=item_pk)
 
     # AJAX
-    if request.method == 'POST':
-        if request.is_ajax and 'action' in request.POST:
+    if request.method == "POST":
+        if request.is_ajax and "action" in request.POST:
             item.available = not item.available
             item.save()
 
-            return JsonResponse({'message': 'OK', 'status': 200})
+            return JsonResponse({"message": "OK", "status": 200})
 
 
 @login_required
-@permission_required('inventory.add_batch', return_403=True)
+@permission_required("inventory.add_batch", return_403=True)
 def batch_new(request, item_pk):
     if not has_access(request):
         raise PermissionDenied
 
     # Field mapper
-    fieldmap = {
-        'amount': 'Mengde',
-        'expiration_date': 'Utløpsdato',
-    }
+    fieldmap = {"amount": "Mengde", "expiration_date": "Utløpsdato"}
 
     item = get_object_or_404(Item, pk=item_pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         batch_form = BatchForm(request.POST)
 
         if not batch_form.is_valid():
             # Dirty hack to display errors since the form is not passed in redirect context
             error_reply = "Feil i felt:"
             for field, error in batch_form.errors.items():
-                error_reply += ' ' + fieldmap[field] + ' (' + batch_form.error_class.as_text(error) + '),'
+                error_reply += (
+                    " "
+                    + fieldmap[field]
+                    + " ("
+                    + batch_form.error_class.as_text(error)
+                    + "),"
+                )
 
-            messages.error(request, error_reply.rstrip(','))
+            messages.error(request, error_reply.rstrip(","))
         else:
             b = batch_form.save(commit=False)
             b.item = item
             b.save()
-            messages.success(request, 'Batchen ble lagt til.')
+            messages.success(request, "Batchen ble lagt til.")
 
         return redirect(details, item_pk=item_pk)
 
@@ -168,7 +186,7 @@ def batch_new(request, item_pk):
 
 
 @login_required
-@permission_required('inventory.change_batch', return_403=True)
+@permission_required("inventory.change_batch", return_403=True)
 def batch(request, item_pk, batch_pk):
     if not has_access(request):
         raise PermissionDenied
@@ -178,14 +196,14 @@ def batch(request, item_pk, batch_pk):
     get_object_or_404(Item, pk=item_pk)
     b = get_object_or_404(Batch, pk=batch_pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         batch_form = BatchForm(request.POST, instance=b)
 
         if not batch_form.is_valid():
-            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
         else:
             batch_form.save()
-            messages.success(request, 'Batchen ble oppdatert.')
+            messages.success(request, "Batchen ble oppdatert.")
 
         return redirect(details, item_pk=item_pk)
 
@@ -193,17 +211,17 @@ def batch(request, item_pk, batch_pk):
 
 
 @login_required
-@permission_required('inventory.delete_batch', return_403=True)
+@permission_required("inventory.delete_batch", return_403=True)
 def batch_delete(request, item_pk, batch_pk):
     if not has_access(request):
         raise PermissionDenied
 
     b = get_object_or_404(Batch, pk=batch_pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         b.delete()
-        messages.success(request, 'Batchen ble slettet.')
+        messages.success(request, "Batchen ble slettet.")
 
         return redirect(details, item_pk=item_pk)
 
@@ -211,7 +229,7 @@ def batch_delete(request, item_pk, batch_pk):
 
 
 @login_required
-@permission_required('inventory.view_itemcategory', return_403=True)
+@permission_required("inventory.view_itemcategory", return_403=True)
 def category_index(request):
 
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
@@ -221,13 +239,13 @@ def category_index(request):
     # Create the base context needed for the sidebar
     context = get_base_context(request)
 
-    context['categories'] = ItemCategory.objects.all()
+    context["categories"] = ItemCategory.objects.all()
 
-    return render(request, 'inventory/dashboard/category_index.html', context)
+    return render(request, "inventory/dashboard/category_index.html", context)
 
 
 @login_required
-@permission_required('inventory.view_itemcategory', return_403=True)
+@permission_required("inventory.view_itemcategory", return_403=True)
 def category_details(request, category_pk):
     # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
     if not has_access(request):
@@ -236,27 +254,27 @@ def category_details(request, category_pk):
     # Create the base context needed for the sidebar
     context = get_base_context(request)
 
-    context['category'] = get_object_or_404(ItemCategory, pk=category_pk)
+    context["category"] = get_object_or_404(ItemCategory, pk=category_pk)
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
-        form = CategoryForm(request.POST, instance=context['category'])
+        form = CategoryForm(request.POST, instance=context["category"])
         if not form.is_valid():
-            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
         else:
             form.save()
-            messages.success(request, 'Kategorien ble oppdatert')
+            messages.success(request, "Kategorien ble oppdatert")
             return redirect(category_index)
 
-        context['form'] = form
+        context["form"] = form
     else:
-        context['form'] = CategoryForm(instance=context['category'])
+        context["form"] = CategoryForm(instance=context["category"])
 
-    return render(request, 'inventory/dashboard/category_new.html', context)
+    return render(request, "inventory/dashboard/category_new.html", context)
 
 
 @login_required
-@permission_required('inventory.add_itemcategory', return_403=True)
+@permission_required("inventory.add_itemcategory", return_403=True)
 def category_new(request):
 
     if not has_access(request):
@@ -265,25 +283,25 @@ def category_new(request):
     # Get base context
     context = get_base_context(request)
 
-    if request.method == 'POST':
+    if request.method == "POST":
         form = CategoryForm(request.POST)
 
         if not form.is_valid():
-            messages.error(request, 'Noen av de påkrevde feltene inneholder feil.')
+            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
         else:
             form.save()
-            messages.success(request, 'Kategorien ble opprettet')
+            messages.success(request, "Kategorien ble opprettet")
             return redirect(category_index)
 
-        context['form'] = form
+        context["form"] = form
     else:
-        context['form'] = CategoryForm()
+        context["form"] = CategoryForm()
 
-    return render(request, 'inventory/dashboard/category_new.html', context)
+    return render(request, "inventory/dashboard/category_new.html", context)
 
 
 @login_required
-@permission_required('inventory.delete_itemcategory', return_403=True)
+@permission_required("inventory.delete_itemcategory", return_403=True)
 def category_delete(request, category_pk):
     if not has_access(request):
         raise PermissionDenied
@@ -298,7 +316,7 @@ def category_delete(request, category_pk):
         item.save()
 
     category.delete()
-    messages.success(request, 'Kategorien %s ble slettet.' % category.name)
+    messages.success(request, "Kategorien %s ble slettet." % category.name)
     return redirect(category_index)
 
     raise PermissionDenied
@@ -312,7 +330,7 @@ def statistics(request):
 
     context = get_base_context(request)
 
-    return render(request, 'inventory/dashboard/statistics.html', context)
+    return render(request, "inventory/dashboard/statistics.html", context)
 
 
 @login_required
@@ -321,19 +339,26 @@ def order_statistics(request):
 
     statistics = dict()
 
-    counts = Order.objects.all().values('object_id', 'content_type').annotate(total=Count('object_id'))
+    counts = (
+        Order.objects.all()
+        .values("object_id", "content_type")
+        .annotate(total=Count("object_id"))
+    )
     item_type = ContentType.objects.get_for_model(Item)
 
     for count in counts:
         print(count)
-        if item_type.id == count['content_type']:
+        if item_type.id == count["content_type"]:
             try:
-                item = Item.objects.get(pk=count['object_id'])
+                item = Item.objects.get(pk=count["object_id"])
             except Item.DoesNotExist:
-                getLogger(__name__).error('Item with pk %s does not exist (DoesNotExist error)' % count['object_id'])
+                getLogger(__name__).error(
+                    "Item with pk %s does not exist (DoesNotExist error)"
+                    % count["object_id"]
+                )
             except KeyError:
                 getLogger(__name__).error('Key "object_id" does not exist')
-            if count['total'] > 0:
-                statistics[item.name] = count['total']
+            if count["total"] > 0:
+                statistics[item.name] = count["total"]
 
     return JsonResponse(statistics)

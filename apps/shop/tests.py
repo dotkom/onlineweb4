@@ -11,7 +11,7 @@ from apps.shop.models import MagicToken
 
 class ShopAPIURLTestCase(APITestCase):
     def test_item_list_empty(self):
-        url = reverse('item-list')
+        url = reverse("item-list")
 
         response = self.client.get(url)
 
@@ -19,7 +19,7 @@ class ShopAPIURLTestCase(APITestCase):
 
     def test_item_list_exists(self):
         G(Item, available=True)
-        url = reverse('item-list')
+        url = reverse("item-list")
 
         response = self.client.get(url)
 
@@ -27,7 +27,7 @@ class ShopAPIURLTestCase(APITestCase):
 
     def test_item_detail(self):
         item = G(Item, available=True)
-        url = reverse('item-detail', args=(item.id,))
+        url = reverse("item-detail", args=(item.id,))
 
         response = self.client.get(url)
 
@@ -35,7 +35,7 @@ class ShopAPIURLTestCase(APITestCase):
 
 
 class ShopSetRFIDTestCase(OAuth2TestCase):
-    scopes = ['shop.readwrite', 'read', 'write']
+    scopes = ["shop.readwrite", "read", "write"]
 
     def setUp(self):
         super().setUp()
@@ -44,12 +44,8 @@ class ShopSetRFIDTestCase(OAuth2TestCase):
 
     def test_get_magic_link(self):
         G(Email, user=self.user)
-        data = {
-            'username': self.user.username,
-            'rfid': '1234',
-            'magic_link': True,
-        }
-        url = reverse('set_rfid')
+        data = {"username": self.user.username, "rfid": "1234", "magic_link": True}
+        url = reverse("set_rfid")
 
         token_count_pre = MagicToken.objects.count()
 

@@ -7,14 +7,21 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('gallery', '0013_auto_20190506_1719'),
-        ('offline', '0003_auto_20190506_1719'),
+        ("gallery", "0013_auto_20190506_1719"),
+        ("offline", "0003_auto_20190506_1719"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='issue',
-            name='image',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='offline_issues', to='gallery.ResponsiveImage', verbose_name='Forsidebilde'),
-        ),
+            model_name="issue",
+            name="image",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="offline_issues",
+                to="gallery.ResponsiveImage",
+                verbose_name="Forsidebilde",
+            ),
+        )
     ]

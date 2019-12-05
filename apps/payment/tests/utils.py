@@ -25,5 +25,7 @@ def generate_event_payment(event, price=100, *args, **kwargs):
 
 
 def get_fiken_account() -> FikenAccount:
-    account, created = FikenAccount.objects.get_or_create(name='Fly', code='1225', identifier='fly')
+    account, created = FikenAccount.objects.get_or_create(
+        name="Fly", code="1225", identifier="fly"
+    )
     return account

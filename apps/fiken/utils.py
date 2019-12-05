@@ -27,10 +27,12 @@ def _get_nibble_account():
     try:
         return FikenAccount.objects.get(identifier=NIBBLE_ACCOUNT_IDENTIFIER)
     except FikenAccount.DoesNotExist:
-        raise ImproperlyConfigured('Nibble account object does not exist')
+        raise ImproperlyConfigured("Nibble account object does not exist")
 
 
-def create_sale_from_transaction(transaction: PaymentTransaction, amount: int, sale_status: str) -> FikenSale:
+def create_sale_from_transaction(
+    transaction: PaymentTransaction, amount: int, sale_status: str
+) -> FikenSale:
     ore_amount = amount * 100  # Transaction amount is in Kr, sale amount is in øre
     nibble_account = _get_nibble_account()
     customer = get_customer_for_user(transaction.user)
@@ -45,7 +47,7 @@ def create_sale_from_transaction(transaction: PaymentTransaction, amount: int, s
     )
     FikenOrderLine.objects.create(
         sale=sale,
-        description=f'{transaction.get_description()} - {transaction.user.get_full_name()}',
+        description=f"{transaction.get_description()} - {transaction.user.get_full_name()}",
         price=ore_amount,
         vat_type=VatTypeSale.OUTSIDE,
         account=nibble_account,
@@ -53,7 +55,9 @@ def create_sale_from_transaction(transaction: PaymentTransaction, amount: int, s
     return sale
 
 
-def create_sale_from_relation(relation: PaymentRelation, amount: int, sale_status: str) -> FikenSale:
+def create_sale_from_relation(
+    relation: PaymentRelation, amount: int, sale_status: str
+) -> FikenSale:
     ore_amount = amount * 100  # Payment price is in Kr, sale amount is in Øre
     customer = get_customer_for_user(relation.user)
     sale = FikenSale.objects.create(
@@ -69,7 +73,7 @@ def create_sale_from_relation(relation: PaymentRelation, amount: int, sale_statu
     if relation.payment.is_type(AttendanceEvent):
         FikenOrderLine.objects.create(
             sale=sale,
-            description=f'{relation.get_description()} - {relation.user.get_full_name()}',
+            description=f"{relation.get_description()} - {relation.user.get_full_name()}",
             price=ore_amount,
             vat_type=VatTypeSale.OUTSIDE,
             account=relation.payment.fiken_account,
@@ -79,8 +83,9 @@ def create_sale_from_relation(relation: PaymentRelation, amount: int, sale_statu
         for order in order_line.orders.all():
             FikenOrderLine.objects.create(
                 sale=sale,
-                description=f'{order_line} - {relation.user.get_full_name()}',
-                price=order.price * 100,  # Webshop price is in Kr, Fiken price is in Øre
+                description=f"{order_line} - {relation.user.get_full_name()}",
+                price=order.price
+                * 100,  # Webshop price is in Kr, Fiken price is in Øre
                 vat_type=order.product.vat_type,
                 account=order.product.fiken_account,
             )
