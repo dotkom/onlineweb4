@@ -1,5 +1,7 @@
 import logging
+from collections import OrderedDict
 
+from django.utils.translation import ugettext as _
 from rest_framework import serializers
 
 from .models import (
@@ -13,6 +15,7 @@ from .models import (
     MultipleChoiceRelation,
     RatingAnswer,
     RatingQuestion,
+    RegisterToken,
     TextAnswer,
     TextQuestion,
 )
@@ -42,6 +45,17 @@ class GenericSurveySerializer(serializers.ModelSerializer):
             "owner_group",
             "title",
         )
+
+
+class FieldOfStudyAnswerSerializer(serializers.ModelSerializer):
+    answer_display = serializers.SerializerMethodField()
+
+    def get_answer_display(self, obj: FieldOfStudyAnswer):
+        return obj.get_answer_display()
+
+    class Meta:
+        model = FieldOfStudyAnswer
+        fields = ("id", "answer", "answer_display")
 
 
 class TextQuestionSerializer(serializers.ModelSerializer):
@@ -117,6 +131,12 @@ class MultipleChoiceAnswerSerializer(serializers.ModelSerializer):
         fields = ("id", "answer", "question", "order")
 
 
+class RegisterTokenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RegisterToken
+        fields = ("id", "token", "created")
+
+
 class FeedbackAdminSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source="feedback_id", read_only=True, required=False)
     author = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -161,6 +181,7 @@ class FeedbackReadAllSerializer(serializers.ModelSerializer):
 class FeedbackRelationReadSerializer(serializers.ModelSerializer):
     answered = serializers.SerializerMethodField()
     feedback = FeedbackReadAllSerializer()
+    token_objects = RegisterTokenSerializer(many=True)
 
     def get_answered(self, obj: FeedbackRelation):
         request = self.context.get("request")
@@ -179,6 +200,45 @@ class FeedbackRelationReadSerializer(serializers.ModelSerializer):
             "description",
             "content_title",
             "feedback",
+            "token_objects",
+        )
+        read_only = True
+
+
+class FeedbackAnswersSerializer(serializers.ModelSerializer):
+    feedback = FeedbackReadAllSerializer()
+    field_of_study_answers = FieldOfStudyAnswerSerializer(many=True)
+    rating_answers = RatingAnswerSerializer(many=True)
+    text_answers = TextAnswerSerializer(many=True)
+    multiple_choice_answers = MultipleChoiceAnswerSerializer(many=True)
+    extra_info = serializers.SerializerMethodField()
+
+    def get_extra_info(self, obj: FeedbackRelation):
+        info = OrderedDict()
+        uses_token = self.context.get("token", True)
+        if obj.feedback.display_info and not uses_token:
+            info.update(obj.content_info())
+            info[_("Besvarelser")] = obj.answered.count()
+
+        return info
+
+    class Meta:
+        model = FeedbackRelation
+        fields = (
+            "id",
+            "gives_mark",
+            "deadline",
+            "active",
+            "created_date",
+            "first_mail_sent",
+            "description",
+            "content_title",
+            "feedback",
+            "field_of_study_answers",
+            "rating_answers",
+            "text_answers",
+            "multiple_choice_answers",
+            "extra_info",
         )
         read_only = True
 

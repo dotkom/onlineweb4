@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from guardian.shortcuts import assign_perm
 
-from .models import FeedbackRelation, GenericSurvey
+from .models import FeedbackRelation, GenericSurvey, RegisterToken
 
 
 @receiver(signal=post_save, sender=GenericSurvey)
@@ -35,3 +35,9 @@ def handle_generic_survey_permissions(sender, instance: GenericSurvey, **kwargs)
         assign_perm(permission, instance.owner, obj=instance)
         if instance.owner_group:
             assign_perm(permission, instance.owner_group, obj=instance)
+
+
+@receiver(signal=post_save, sender=FeedbackRelation)
+def create_feedback_relation_token(sender, instance: FeedbackRelation, **kwargs):
+    if not instance.token_objects.exists():
+        RegisterToken.objects.create(fbr=instance)

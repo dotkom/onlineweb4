@@ -9,7 +9,6 @@ An Answer is related to an Object and a Question.
 This implementation is not very database friendly however, as it does
 very many database lookups.
 """
-import logging
 import uuid
 from collections import OrderedDict
 
@@ -17,7 +16,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from django.db import IntegrityError, models
+from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
@@ -184,24 +183,6 @@ class FeedbackRelation(models.Model):
             return self.content_object.feedback_info()
         else:
             return dict()
-
-    def save(self, *args, **kwargs):
-        log = logging.getLogger(__name__)
-        new_fbr = not self.pk
-        super(FeedbackRelation, self).save(*args, **kwargs)
-        if new_fbr:
-            token = uuid.uuid4().hex
-            try:
-                rt = RegisterToken(fbr=self, token=token)
-                rt.save()
-                log.info(
-                    "Successfully registered token for fbr %s with token %s"
-                    % (self, token)
-                )
-            except IntegrityError:
-                log.error(
-                    "Failed to register token for fbr %s with token %s" % (self, token)
-                )
 
 
 class Feedback(models.Model):
@@ -534,9 +515,11 @@ class MultipleChoiceAnswer(models.Model):
 # For creating a link for others(companies) to see the results page
 class RegisterToken(models.Model):
     fbr = models.ForeignKey(
-        FeedbackRelation, related_name="Feedback_relation", on_delete=models.CASCADE
+        FeedbackRelation, related_name="token_objects", on_delete=models.CASCADE
     )
-    token = models.CharField(_("token"), max_length=32)
+    token = models.UUIDField(
+        _("Token"), default=uuid.uuid4, editable=False, unique=True
+    )
     created = models.DateTimeField(
         _("opprettet dato"), editable=False, auto_now_add=True
     )

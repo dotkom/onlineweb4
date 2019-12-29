@@ -45,6 +45,16 @@ router.register(
     basename="feedback_relations",
 )
 router.register(
+    prefix="feedback/results-auth",
+    viewset=views.FeedbackResultsViewSet,
+    basename="feedback_results",
+)
+router.register(
+    prefix="feedback/results-token",
+    viewset=views.FeedbackTokenResultsViewSet,
+    basename="feedback_results_token",
+)
+router.register(
     prefix="feedback/questions/text",
     viewset=views.TextQuestionViewSet,
     basename="feedback_question_text",
