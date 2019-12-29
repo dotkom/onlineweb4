@@ -6,6 +6,7 @@ from taggit_serializer.serializers import TagListSerializerField
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.serializers import UserNameSerializer
 from apps.gallery.fields import ImageField
+from apps.gallery.models import ResponsiveImage
 from apps.gallery.serializers import ResponsiveImageSerializer
 
 from .models import Album, Photo, UserTag
@@ -13,7 +14,30 @@ from .models import Album, Photo, UserTag
 logger = logging.getLogger(__name__)
 
 
-class PhotoReadOnlySerializer(serializers.ModelSerializer):
+class ResponsiveImagePreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResponsiveImage
+        fields = ("id", "thumb", "lg", "md", "sm", "xs")
+
+
+class PhotoListSerializer(serializers.ModelSerializer):
+    image = ResponsiveImagePreviewSerializer()
+
+    class Meta:
+        model = Photo
+        fields = (
+            "id",
+            "album",
+            "created_date",
+            "title",
+            "photographer_name",
+            "image",
+            "user_tags",
+        )
+        read_only = True
+
+
+class PhotoRetrieveSerializer(serializers.ModelSerializer):
     photographer = UserNameSerializer()
     tags = TagListSerializerField()
     image = ResponsiveImageSerializer()
@@ -65,10 +89,30 @@ class PhotoCreateOrUpdateSerializer(serializers.ModelSerializer):
         read_only_fields = ("image", "created_date")
 
 
-class AlbumReadOnlySerializer(serializers.ModelSerializer):
+class AlbumListSerializer(serializers.ModelSerializer):
+    tags = TagListSerializerField()
+    cover_photo = PhotoListSerializer()
+
+    class Meta:
+        model = Album
+        fields = (
+            "id",
+            "title",
+            "description",
+            "created_date",
+            "published_date",
+            "tags",
+            "public",
+            "created_by",
+            "cover_photo",
+        )
+        read_only = True
+
+
+class AlbumRetrieveSerializer(serializers.ModelSerializer):
     created_by = UserNameSerializer()
     tags = TagListSerializerField()
-    cover_photo = PhotoReadOnlySerializer()
+    cover_photo = PhotoRetrieveSerializer()
 
     class Meta:
         model = Album
@@ -90,7 +134,7 @@ class AlbumReadOnlySerializer(serializers.ModelSerializer):
 class AlbumCreateOrUpdateSerializer(serializers.ModelSerializer):
     created_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
     tags = TagListSerializerField(required=False)
-    cover_photo = PhotoReadOnlySerializer(required=False)
+    cover_photo = PhotoRetrieveSerializer(required=False)
     published_date = serializers.DateTimeField(required=False)
     public = serializers.BooleanField(default=False)
 
@@ -109,7 +153,14 @@ class AlbumCreateOrUpdateSerializer(serializers.ModelSerializer):
         )
 
 
-class UserTagReadOnlySerializer(serializers.ModelSerializer):
+class UserTagListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserTag
+        fields = ("id", "user", "created_date", "photo")
+        read_only = True
+
+
+class UserTagRetrieveSerializer(serializers.ModelSerializer):
     user = UserNameSerializer()
 
     class Meta:

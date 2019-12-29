@@ -9,11 +9,14 @@ from .filters import AlbumFilter, PhotoFilter, UserTagFilter
 from .models import Album, Photo, UserTag
 from .serializers import (
     AlbumCreateOrUpdateSerializer,
-    AlbumReadOnlySerializer,
+    AlbumListSerializer,
+    AlbumRetrieveSerializer,
     PhotoCreateOrUpdateSerializer,
-    PhotoReadOnlySerializer,
+    PhotoListSerializer,
+    PhotoRetrieveSerializer,
     UserTagCreateSerializer,
-    UserTagReadOnlySerializer,
+    UserTagListSerializer,
+    UserTagRetrieveSerializer,
 )
 
 
@@ -25,8 +28,10 @@ class AlbumViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
             return AlbumCreateOrUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return AlbumReadOnlySerializer
+        if self.action in ["retrieve"]:
+            return AlbumRetrieveSerializer
+        if self.action in ["list"]:
+            return AlbumListSerializer
 
         return super().get_serializer_class()
 
@@ -53,8 +58,10 @@ class PhotoViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action in ["create", "update", "partial_update"]:
             return PhotoCreateOrUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return PhotoReadOnlySerializer
+        if self.action in ["retrieve"]:
+            return PhotoRetrieveSerializer
+        if self.action in ["list"]:
+            return PhotoListSerializer
 
         return super().get_serializer_class()
 
@@ -87,8 +94,10 @@ class UserTagViewSet(
     def get_serializer_class(self):
         if self.action == "create":
             return UserTagCreateSerializer
-        if self.action in ["list", "retrieve"]:
-            return UserTagReadOnlySerializer
+        if self.action in ["retrieve"]:
+            return UserTagRetrieveSerializer
+        if self.action in ["list"]:
+            return UserTagListSerializer
 
         return super().get_serializer_class()
 
