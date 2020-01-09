@@ -28,6 +28,8 @@ from apps.authentication.serializers import (
     UserUpdateSerializer,
 )
 
+from .filters import UserFilter
+
 
 class UserViewSet(
     viewsets.GenericViewSet,
@@ -41,7 +43,7 @@ class UserViewSet(
     """
 
     permission_classes = (AllowAny,)
-    filterset_fields = ("first_name", "last_name", "rfid")
+    filterset_class = UserFilter
 
     def get_queryset(self):
         """
