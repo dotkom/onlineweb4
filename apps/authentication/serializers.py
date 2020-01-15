@@ -315,6 +315,7 @@ class OnlineGroupReadOnlySerializer(serializers.ModelSerializer):
             "verbose_type",
             "group",
             "members",
+            "gsuite_name",
         )
         read_only = True
 
@@ -346,4 +347,5 @@ class OnlineGroupCreateOrUpdateSerializer(serializers.ModelSerializer):
             "description_long",
             "email",
             "group_type",
+            "gsuite_name",
         )

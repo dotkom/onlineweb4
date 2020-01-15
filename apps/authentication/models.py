@@ -500,7 +500,7 @@ class OnlineGroup(models.Model):
     description_long = models.TextField(
         _("Beskrivelse (helhetlig)"), max_length=2048, blank=True
     )
-    email = models.EmailField(_("E-post"), max_length=128, blank=True)
+    gsuite_name = models.CharField(_("Gsuite navn"), max_length=128, blank=True)
     image = models.ForeignKey(
         ResponsiveImage,
         related_name="online_groups",
@@ -523,6 +523,13 @@ class OnlineGroup(models.Model):
     def id(self):
         """ Proxy primary key/id from group object """
         return self.group.id
+
+    @property
+    def email(self):
+        if self.gsuite_name:
+            gsuite_domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
+            return f"{self.gsuite_name}@{gsuite_domain}"
+        return None
 
     def get_members_with_role(self, role: RoleType):
         member_ids = [

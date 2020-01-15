@@ -2,10 +2,20 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db.models.signals import pre_save
+from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 
-from .tasks import update_mailing_list
+from apps.gsuite.models import GsuiteAlias, GsuiteGroup
+
+from .tasks import (
+    create_gsuite_alias_task,
+    create_gsuite_group_task,
+    delete_gsuite_alias_task,
+    delete_gsuite_group_task,
+    update_gsuite_alias_task,
+    update_gsuite_group_task,
+    update_mailing_list,
+)
 
 User = get_user_model()
 
@@ -49,3 +59,31 @@ def toggle_mailing_lists(sender, instance, **kwargs):
                 instance.primary_email,
                 getattr(instance, mailing_list),
             )
+
+
+@receiver(signal=post_save, sender=GsuiteGroup)
+def group_created_or_updated(sender, instance: GsuiteGroup, created=False, **kwargs):
+    if created:
+        create_gsuite_group_task.delay(group_id=instance.id)
+    else:
+        update_gsuite_group_task.delay(group_id=instance.id)
+
+
+@receiver(signal=pre_delete, sender=GsuiteGroup)
+def group_deleted(sender, instance: GsuiteGroup, **kwargs):
+    delete_gsuite_group_task.delay(group_key=instance.gsuite_id)
+
+
+@receiver(signal=post_save, sender=GsuiteAlias)
+def alias_created_or_updated(sender, instance: GsuiteAlias, created=False, **kwargs):
+    if created:
+        create_gsuite_alias_task.delay(alias_id=instance.id)
+    else:
+        update_gsuite_alias_task.delay(alias_id=instance.id)
+
+
+@receiver(signal=post_delete, sender=GsuiteAlias)
+def alias_deleted(sender, instance: GsuiteAlias, **kwargs):
+    delete_gsuite_alias_task.delay(
+        group_id=instance.gsuite_group.id, alias_key=instance.email
+    )
