@@ -1,4 +1,9 @@
+import logging
+
 from django_filters import filters, filterset
+from watson import search as watson_search
+
+logger = logging.getLogger(__name__)
 
 
 class CharInFilter(filters.BaseInFilter, filters.CharFilter):
@@ -10,6 +15,13 @@ class TagsFilterMixin:
     tags__in = CharInFilter(field_name="tags__name", lookup_expr="in")
 
 
+class WatsonFilter(filters.CharFilter):
+    def filter(self, queryset, value):
+        if value and value != "":
+            queryset = watson_search.filter(queryset, value)
+        return queryset
+
+
 class AlbumFilter(filterset.FilterSet, TagsFilterMixin):
     published_date__lte = filters.DateTimeFilter(
         field_name="published_date", lookup_expr="lte"
@@ -18,6 +30,7 @@ class AlbumFilter(filterset.FilterSet, TagsFilterMixin):
         field_name="published_date", lookup_expr="gte"
     )
     public = filters.BooleanFilter(field_name="public")
+    query = WatsonFilter()
 
 
 class PhotoFilter(filterset.FilterSet, TagsFilterMixin):
@@ -29,6 +42,7 @@ class PhotoFilter(filterset.FilterSet, TagsFilterMixin):
     )
     album = filters.NumberFilter(field_name="album")
     photographer = filters.NumberFilter(field_name="photographer")
+    query = WatsonFilter()
 
 
 class UserTagFilter(filterset.FilterSet):
@@ -40,3 +54,4 @@ class UserTagFilter(filterset.FilterSet):
     )
     user = filters.NumberFilter(field_name="user")
     album = filters.NumberFilter(field_name="photo__album")
+    query = WatsonFilter()

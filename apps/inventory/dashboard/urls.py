@@ -6,6 +6,7 @@ from apps.inventory.dashboard import views
 
 urlpatterns = [
     url(r"^$", views.index, name="dashboard_inventory_index"),
+    url(r"^discontinued", views.discontinued, name="dashboard_discontinued_index"),
     url(r"^statistics/$", views.statistics, name="dashboard_inventory_statistics"),
     url(
         r"^statistics/orders/$",

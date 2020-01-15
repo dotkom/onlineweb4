@@ -7,14 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('payment', '0021_auto_20180312_1713'),
-    ]
+    dependencies = [("payment", "0021_auto_20180312_1713")]
 
     operations = [
         migrations.AddField(
-            model_name='payment',
-            name='delay_duration',
-            field=models.DurationField(blank=True, null=True, verbose_name='utsettelse'),
-        ),
+            model_name="payment",
+            name="delay_duration",
+            field=models.DurationField(
+                blank=True, null=True, verbose_name="utsettelse"
+            ),
+        )
     ]

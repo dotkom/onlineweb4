@@ -5,21 +5,36 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('posters', '0006_auto_20160309_2133'),
-    ]
+    dependencies = [("posters", "0006_auto_20160309_2133")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='customtext',
-            options={'default_permissions': ('add', 'change', 'delete')},
+            name="customtext",
+            options={"default_permissions": ("add", "change", "delete")},
         ),
         migrations.AlterModelOptions(
-            name='ordermixin',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('add_poster_order', 'Add poster orders'), ('overview_poster_order', 'View poster order overview'), ('view_poster_order', 'View poster orders'))},
+            name="ordermixin",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (
+                    ("add_poster_order", "Add poster orders"),
+                    ("overview_poster_order", "View poster order overview"),
+                    ("view_poster_order", "View poster orders"),
+                ),
+            },
         ),
         migrations.AlterModelOptions(
-            name='poster',
-            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['-id'], 'permissions': (('add_poster_order', 'Add poster orders'), ('overview_poster_order', 'View poster order overview'), ('view_poster_order', 'View poster orders')), 'verbose_name': 'bestilling', 'verbose_name_plural': 'bestillinger'},
+            name="poster",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "ordering": ["-id"],
+                "permissions": (
+                    ("add_poster_order", "Add poster orders"),
+                    ("overview_poster_order", "View poster order overview"),
+                    ("view_poster_order", "View poster orders"),
+                ),
+                "verbose_name": "bestilling",
+                "verbose_name_plural": "bestillinger",
+            },
         ),
     ]

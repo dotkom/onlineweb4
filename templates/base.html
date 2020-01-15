@@ -116,7 +116,7 @@
             </ul>
 
             <div id="main-sponsor">
-		        <a href="http://www.knowit.no/" id="ms-ref">
+		        <a href="#" id="ms-ref">
                     <img class="ms-img" src="{{ STATIC_URL }}img/knowit.svg" alt="Hovedsamarbeidspartner - Knowit">
                 </a>
                 <span class="ms-span">Hovedsamarbeidspartner</span>
@@ -224,37 +224,35 @@
     </section>
 
     {% block js %}
-    <script>
-        const toTime = new Date(2019, 10, 22, 12, 0, 0)
-        const fromTime = new Date(2019, 10, 22 - 3, 12, 0, 0)
-        
-        if (toTime - Date.now()>0 && Date.now() - fromTime > 0){
-        
-            const parents = [];
-            const imgs = document.querySelectorAll("img[src$='online_logo.svg'").forEach(e => parents.push(e.parentElement))
-            let intervalID = null;
-
-            const dd = (x) => x.toLocaleString(undefined, {minimumIntegerDigits: 2})
-            
-
-            const coundown = () => {
-                const time = new Date(toTime - new Date());
-                if (time > 0){
-                const days = dd(time.getUTCDate() - 1)
-                const hours = dd((time.getHours() - 1 + 24) % 24 )
-                const minutes = dd(time.getMinutes())
-                const seconds = dd(time.getSeconds())
-
-                parents.forEach(e => e.innerHTML = `<div style="color: white;"> ${days} : ${hours} : ${minutes} : ${seconds} </div>`)
-                } else {
-                    clearInterval(intervalID)
-                    window.location.reload()
+        <script>
+            const toTime = new Date(2020, 0, 8, 12, 0, 0);
+            const fromTime = new Date(2020, 0, 8 - 5, 12, 0, 0);
+            if (toTime - Date.now() > 0 && Date.now() - fromTime > 0) {
+                const parents = [];
+                const imgs = document.querySelectorAll("img[src$='knowit.svg'").forEach(e => parents.push(e.parentElement))
+                let intervalID = null;
+                const dd = x => x.toLocaleString(undefined, {minimumIntegerDigits: 2})
+                const countdown = () => {
+                    const time = new Date(toTime - new Date());
+                    if (time > 0) {
+                        const days = dd(time.getUTCDate() - 1);
+                        const hours = dd(time.getUTCHours());
+                        const minutes = dd(time.getMinutes());
+                        const seconds = dd(time.getSeconds());
+                        parents.forEach(e => e.innerHTML = `<div style="color: white;padding:6px 0 2px 20px;text-align:center;">${days}:${hours}:${minutes}:${seconds}</div>`);
+                    } else {
+                        clearInterval(intervalID);
+                        window.location.reload();
+                    }
                 }
-         }
-            intervalID = setInterval(coundown, 1000)
-        }
-
-    </script>
+                countdown()
+                intervalID = setInterval(countdown, 1000);
+            } else if (Date.now() >= toTime) {
+              const msRef = document.querySelector("#ms-ref");
+              const hour = new Date().getHours();
+              msRef.innerHTML = `<img class="ms-img" src="{{ STATIC_URL }}img/hsp-832576.svg?c=${hour}" alt="Hovedsamarbeidspartner">`;
+            }
+        </script>
         <script src="https://cdn.ravenjs.com/3.17.0/raven.min.js" crossorigin="anonymous"></script>
         <script>Raven.config('{% sentry_public_dsn "https" %}').install()</script>
 

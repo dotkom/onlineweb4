@@ -12,72 +12,238 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('gallery', '0013_auto_20190506_1719'),
+        ("gallery", "0013_auto_20190506_1719"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('taggit', '0003_taggeditem_add_unique_index'),
+        ("taggit", "0003_taggeditem_add_unique_index"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Album',
+            name="Album",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=128, unique=True, verbose_name='Tittel')),
-                ('description', models.TextField(blank=True, default='', max_length=2048, verbose_name='Beskrivelse')),
-                ('created_date', models.DateTimeField(auto_now_add=True, verbose_name='Opprettelsesdato')),
-                ('published_date', models.DateTimeField(default=django.utils.timezone.now, help_text='Når skal albumet bli synlig?', verbose_name='Publiseringsdato')),
-                ('public', models.BooleanField(default=False, help_text='Skal albumet være synlig for alle, selv uten innlogging?', verbose_name='Synlig offentlig')),
-                ('photo_counter', models.IntegerField(default=0, editable=False)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='created_albums', to=settings.AUTH_USER_MODEL, verbose_name='Oppretted av')),
-                ('tags', taggit.managers.TaggableManager(blank=True, help_text='En komma eller mellomrom-separert liste med tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "title",
+                    models.CharField(
+                        max_length=128, unique=True, verbose_name="Tittel"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True,
+                        default="",
+                        max_length=2048,
+                        verbose_name="Beskrivelse",
+                    ),
+                ),
+                (
+                    "created_date",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Opprettelsesdato"
+                    ),
+                ),
+                (
+                    "published_date",
+                    models.DateTimeField(
+                        default=django.utils.timezone.now,
+                        help_text="Når skal albumet bli synlig?",
+                        verbose_name="Publiseringsdato",
+                    ),
+                ),
+                (
+                    "public",
+                    models.BooleanField(
+                        default=False,
+                        help_text="Skal albumet være synlig for alle, selv uten innlogging?",
+                        verbose_name="Synlig offentlig",
+                    ),
+                ),
+                ("photo_counter", models.IntegerField(default=0, editable=False)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="created_albums",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Oppretted av",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        blank=True,
+                        help_text="En komma eller mellomrom-separert liste med tags.",
+                        through="taggit.TaggedItem",
+                        to="taggit.Tag",
+                        verbose_name="Tags",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Album',
-                'verbose_name_plural': 'Albumer',
-                'ordering': ('published_date', 'title'),
+                "verbose_name": "Album",
+                "verbose_name_plural": "Albumer",
+                "ordering": ("published_date", "title"),
             },
         ),
         migrations.CreateModel(
-            name='Photo',
+            name="Photo",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('relative_id', models.IntegerField(blank=True, editable=False, verbose_name='Relativ id for album')),
-                ('created_date', models.DateTimeField(auto_now_add=True, verbose_name='Opprettelsesdato')),
-                ('title', models.CharField(blank=True, max_length=200, verbose_name='Tittel')),
-                ('description', models.TextField(blank=True, default='', max_length=2048, verbose_name='Beskrivelse')),
-                ('photographer_name', models.CharField(blank=True, max_length=100, verbose_name='Fotografnavn')),
-                ('album', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='photos', to='photoalbum.Album')),
-                ('image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='album_photos', to='gallery.ResponsiveImage', verbose_name='Bildefil')),
-                ('photographer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='uploaded_photos', to=settings.AUTH_USER_MODEL, verbose_name='Fotograf')),
-                ('raw_image', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='photo_uploads', to='gallery.UnhandledImage', verbose_name='Bildeopplastning')),
-                ('tags', taggit.managers.TaggableManager(blank=True, help_text='En komma eller mellomrom-separert liste med tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "relative_id",
+                    models.IntegerField(
+                        blank=True, editable=False, verbose_name="Relativ id for album"
+                    ),
+                ),
+                (
+                    "created_date",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Opprettelsesdato"
+                    ),
+                ),
+                (
+                    "title",
+                    models.CharField(blank=True, max_length=200, verbose_name="Tittel"),
+                ),
+                (
+                    "description",
+                    models.TextField(
+                        blank=True,
+                        default="",
+                        max_length=2048,
+                        verbose_name="Beskrivelse",
+                    ),
+                ),
+                (
+                    "photographer_name",
+                    models.CharField(
+                        blank=True, max_length=100, verbose_name="Fotografnavn"
+                    ),
+                ),
+                (
+                    "album",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="photos",
+                        to="photoalbum.Album",
+                    ),
+                ),
+                (
+                    "image",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="album_photos",
+                        to="gallery.ResponsiveImage",
+                        verbose_name="Bildefil",
+                    ),
+                ),
+                (
+                    "photographer",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="uploaded_photos",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Fotograf",
+                    ),
+                ),
+                (
+                    "raw_image",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="photo_uploads",
+                        to="gallery.UnhandledImage",
+                        verbose_name="Bildeopplastning",
+                    ),
+                ),
+                (
+                    "tags",
+                    taggit.managers.TaggableManager(
+                        blank=True,
+                        help_text="En komma eller mellomrom-separert liste med tags.",
+                        through="taggit.TaggedItem",
+                        to="taggit.Tag",
+                        verbose_name="Tags",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Bilde',
-                'verbose_name_plural': 'Bilder',
-                'ordering': ('album', 'created_date'),
+                "verbose_name": "Bilde",
+                "verbose_name_plural": "Bilder",
+                "ordering": ("album", "created_date"),
             },
         ),
         migrations.CreateModel(
-            name='UserTag',
+            name="UserTag",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_date', models.DateTimeField(auto_now_add=True, verbose_name='Opprettelsesdato')),
-                ('photo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_tags', to='photoalbum.Photo', verbose_name='Bilde')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='photo_tags', to=settings.AUTH_USER_MODEL, verbose_name='Bruker')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_date",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Opprettelsesdato"
+                    ),
+                ),
+                (
+                    "photo",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_tags",
+                        to="photoalbum.Photo",
+                        verbose_name="Bilde",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="photo_tags",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Bruker",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Tag',
-                'verbose_name_plural': 'Tagger',
-                'ordering': ('photo', 'created_date', 'user'),
+                "verbose_name": "Tag",
+                "verbose_name_plural": "Tagger",
+                "ordering": ("photo", "created_date", "user"),
             },
         ),
         migrations.AlterUniqueTogether(
-            name='usertag',
-            unique_together={('user', 'photo')},
+            name="usertag", unique_together={("user", "photo")}
         ),
         migrations.AlterUniqueTogether(
-            name='photo',
-            unique_together={('album', 'title'), ('album', 'relative_id')},
+            name="photo", unique_together={("album", "title"), ("album", "relative_id")}
         ),
     ]

@@ -7,24 +7,24 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('careeropportunity', '0007_auto_20170324_1901'),
-    ]
+    dependencies = [("careeropportunity", "0007_auto_20170324_1901")]
 
     operations = [
         migrations.AlterField(
-            model_name='careeropportunity',
-            name='deadline',
-            field=models.DateField(blank=True, default=None, null=True, verbose_name='frist'),
+            model_name="careeropportunity",
+            name="deadline",
+            field=models.DateField(
+                blank=True, default=None, null=True, verbose_name="frist"
+            ),
         ),
         migrations.AlterField(
-            model_name='careeropportunity',
-            name='end',
-            field=models.DateField(verbose_name='aktiv til'),
+            model_name="careeropportunity",
+            name="end",
+            field=models.DateField(verbose_name="aktiv til"),
         ),
         migrations.AlterField(
-            model_name='careeropportunity',
-            name='start',
-            field=models.DateField(verbose_name='aktiv fra'),
+            model_name="careeropportunity",
+            name="start",
+            field=models.DateField(verbose_name="aktiv fra"),
         ),
     ]

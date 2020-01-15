@@ -5,13 +5,18 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('feedback', '0012_merge_20190506_2241'),
-    ]
+    dependencies = [("feedback", "0012_merge_20190506_2241")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='multiplechoicequestion',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_multiplechoicequestion', 'View MultipleChoiceQuestion'),), 'verbose_name': 'Flervalgspørsmål', 'verbose_name_plural': 'Flervalgspørsmål'},
-        ),
+            name="multiplechoicequestion",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (
+                    ("view_multiplechoicequestion", "View MultipleChoiceQuestion"),
+                ),
+                "verbose_name": "Flervalgspørsmål",
+                "verbose_name_plural": "Flervalgspørsmål",
+            },
+        )
     ]
