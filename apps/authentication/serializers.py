@@ -1,10 +1,10 @@
 import hashlib
 import random
 import string
-from datetime import date
 
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
+from django.utils.timezone import datetime
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
@@ -97,9 +97,6 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
 
         return username
 
-    def validate(self, attrs):
-        return attrs
-
     def update(self, instance: User, validated_data: dict):
         username = hashlib.sha256(str(instance.username).encode("utf-8")).hexdigest()
         password = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
@@ -116,12 +113,12 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
         instance.is_staff = False
         instance.is_active = False
         instance.is_superuser = False
-        instance.last_login = date(2000, 1, 1)
-        instance.date_joined = date(2000, 1, 1)
+        instance.last_login = datetime(2000, 1, 1)
+        instance.date_joined = datetime(2000, 1, 1)
 
         # Online related fields
         instance.field_of_study = 0
-        instance.started_date = date(2000, 1, 1)
+        instance.started_date = datetime(2000, 1, 1)
         instance.compiled = False
 
         # Mail
@@ -143,10 +140,15 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
         instance.linkedin = None
         instance.gender = "male"
         instance.bio = ""
-        # saldo = serializers.PositiveSmallIntegerField()
 
         # NTNU credentials
         instance.ntnu_username = None
+
+        # Related fields
+        instance.email_user.all().delete()
+        instance.positions.all().delete()
+        instance.special_positions.all().delete()
+        instance.group_memberships.all().delete()
 
         instance.save()
         return instance
