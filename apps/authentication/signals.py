@@ -5,7 +5,13 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models.signals import m2m_changed, post_save, pre_delete, pre_save
+from django.db.models.signals import (
+    m2m_changed,
+    post_delete,
+    post_save,
+    pre_delete,
+    pre_save,
+)
 from django.dispatch import receiver
 
 from apps.authentication.models import Email, GroupMember, OnlineGroup
@@ -106,6 +112,21 @@ def remove_online_group_members_from_django_group(
     user: User = instance.user
     if user in group.user_set.all():
         group.user_set.remove(user)
+
+
+@receiver(post_delete, sender=GroupMember)
+@receiver(post_save, sender=GroupMember)
+def set_staff_status(sender, instance: GroupMember, created=False, **kwargs):
+    """
+    Set the staff status of the user whenever one of their group member relations are updated.
+    This will resolve all the all the current member relations for the user to check if they are in
+    a committee.
+    TODO: Define staff status as a separate field on the OnlineGroup, as non-committee members may be staff.
+    """
+    user = instance.user
+    should_user_be_staff = user.is_committee
+    user.is_staff = should_user_be_staff
+    user.save()
 
 
 @receiver(pre_save, sender=Email)

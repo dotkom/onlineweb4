@@ -3,30 +3,31 @@ from django.contrib.contenttypes.models import ContentType
 from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm, get_perms_for_model
 
-from apps.authentication.models import Email, OnlineUser
+from apps.authentication.constants import GroupType
+from apps.authentication.models import Email, GroupMember, OnlineGroup, OnlineUser
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 
-from ..models import TYPE_CHOICES, AttendanceEvent, Attendee, Event
-from ..utils import get_organizer_by_event_type
+from ..constants import EventType
+from ..models import AttendanceEvent, Attendee, Event
 
 
 def generate_event(
-    event_type=TYPE_CHOICES[1][0], organizer=None, attendance=True
+    event_type=EventType.BEDPRES, organizer: Group = None, attendance=True
 ) -> Event:
     if organizer is None:
-        organizer = get_organizer_by_event_type(event_type)
+        organizer = create_committee_group()
     event = G(Event, event_type=event_type, organizer=organizer)
     if attendance:
         G(AttendanceEvent, event=event)
     return event
 
 
-def generate_attendance_event(*args, **kwargs):
+def generate_attendance_event(*args, **kwargs) -> AttendanceEvent:
     event = G(Event)
     return G(AttendanceEvent, event=event, *args, **kwargs)
 
 
-def generate_payment(event, *args, **kwargs) -> Payment:
+def generate_payment(event: Event, *args, **kwargs) -> Payment:
     payment = G(
         Payment,
         object_id=event.id,
@@ -56,55 +57,44 @@ def add_payment_delay(payment: Payment, user: OnlineUser) -> PaymentDelay:
     return G(PaymentDelay, payment=payment, user=user)
 
 
-def generate_user(username) -> OnlineUser:
+def generate_user(username: str) -> OnlineUser:
     user = G(OnlineUser, username=username, ntnu_username=username)
     G(Email, user=user)
     return user
 
 
-def generate_attendee(event, username) -> Attendee:
+def generate_attendee(event: Event, username: str) -> Attendee:
     return attend_user_to_event(event, generate_user(username))
 
 
-def add_to_committee(user, group=None) -> OnlineUser:
-    komiteer = Group.objects.get(name__iexact="Komiteer")
-
-    if komiteer not in user.groups.all():
-        user.groups.add(komiteer)
+def add_to_committee(user: OnlineUser, group: Group = None) -> OnlineUser:
+    committee_group = create_committee_group()
+    add_to_group(committee_group, user)
 
     if group:
-        user.groups.add(group)
+        add_to_group(group, user)
 
-    user.is_staff = True
-    user.save()
     return user
 
 
-def add_event_permissions(group):
+def create_committee_group(group: Group = None):
+    if not group:
+        group: Group = G(Group)
+    G(OnlineGroup, group=group, group_type=GroupType.COMMITTEE)
+
+    return group
+
+
+def add_to_group(group: Group, user: OnlineUser) -> GroupMember:
+    try:
+        online_group = OnlineGroup.objects.get(group=group)
+    except OnlineGroup.DoesNotExist:
+        online_group: OnlineGroup = G(OnlineGroup)
+    member: GroupMember = G(GroupMember, group=online_group, user=user)
+    return member
+
+
+def add_event_permissions(group: Group):
     perms = get_perms_for_model(Event)
     for perm in perms:
         assign_perm(perm, group)
-
-
-def add_to_arrkom(user):
-    arrkom = Group.objects.get(name__iexact="arrkom")
-    add_event_permissions(arrkom)
-    return add_to_committee(user, group=arrkom)
-
-
-def add_to_bedkom(user):
-    bedkom = Group.objects.get(name__iexact="bedkom")
-    add_event_permissions(bedkom)
-    return add_to_committee(user, group=bedkom)
-
-
-def add_to_fagkom(user):
-    fagkom = Group.objects.get(name__iexact="fagkom")
-    add_event_permissions(fagkom)
-    return add_to_committee(user, group=fagkom)
-
-
-def add_to_trikom(user):
-    trikom = Group.objects.get(name__iexact="trikom")
-    add_event_permissions(trikom)
-    return add_to_committee(user, group=trikom)

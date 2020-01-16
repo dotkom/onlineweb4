@@ -19,6 +19,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.BrowsableAPIRenderer",
         "rest_framework.renderers.AdminRenderer",
     ],
+    "DEFAULT_METADATA_CLASS": "utils.metadata.ActionMeta",
     "DEFAULT_PAGINATION_CLASS": "utils.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }

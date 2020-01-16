@@ -3,7 +3,6 @@
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import (
     HttpResponse,
@@ -28,17 +27,12 @@ from apps.posters.forms import (
 from apps.posters.models import Poster
 from apps.posters.permissions import has_edit_perms, has_view_all_perms, has_view_perms
 
-from .utils import _handle_poster_add
+from .utils import _handle_poster_add, get_poster_admins
 
 
 @login_required
 @permission_required("posters.overview_poster_order", return_403=True)
 def index(request):
-
-    # The group with members who should populate the dropdownlist
-    group = Group.objects.get(name="proKom")
-    users_to_populate = group.user_set.all()
-
     context = get_base_context(request)
 
     # View to show if user not in committee, but wanting to see own orders
@@ -57,7 +51,7 @@ def index(request):
     context["active_orders"] = orders.filter(finished=False).exclude(assigned_to=None)
     context["old_orders"] = orders.filter(finished=True)
 
-    context["workers"] = users_to_populate
+    context["workers"] = get_poster_admins()
 
     return render(request, "posters/dashboard/index.html", context)
 

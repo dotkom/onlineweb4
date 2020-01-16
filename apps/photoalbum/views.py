@@ -4,31 +4,32 @@ from django.utils import timezone
 from rest_framework import mixins, permissions, viewsets
 
 from apps.authentication.models import OnlineUser as User
+from apps.common.rest_framework.mixins import MultiSerializerMixin
 
 from .filters import AlbumFilter, PhotoFilter, UserTagFilter
 from .models import Album, Photo, UserTag
 from .serializers import (
     AlbumCreateOrUpdateSerializer,
-    AlbumReadOnlySerializer,
+    AlbumListSerializer,
+    AlbumRetrieveSerializer,
     PhotoCreateOrUpdateSerializer,
-    PhotoReadOnlySerializer,
+    PhotoListSerializer,
+    PhotoRetrieveSerializer,
     UserTagCreateSerializer,
-    UserTagReadOnlySerializer,
+    UserTagListSerializer,
+    UserTagRetrieveSerializer,
 )
 
 
-class AlbumViewSet(viewsets.ModelViewSet):
+class AlbumViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     queryset = Album.objects.all()
     filterset_class = AlbumFilter
-
-    def get_serializer_class(self):
-        if self.action in ["create", "update", "partial_update"]:
-            return AlbumCreateOrUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return AlbumReadOnlySerializer
-
-        return super().get_serializer_class()
+    serializer_classes = {
+        "write": AlbumCreateOrUpdateSerializer,
+        "retrieve": AlbumRetrieveSerializer,
+        "list": AlbumListSerializer,
+    }
 
     def get_queryset(self):
         user: User = self.request.user
@@ -45,18 +46,15 @@ class AlbumViewSet(viewsets.ModelViewSet):
         return queryset.filter(published_query)
 
 
-class PhotoViewSet(viewsets.ModelViewSet):
+class PhotoViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     queryset = Photo.objects.all()
     filterset_class = PhotoFilter
-
-    def get_serializer_class(self):
-        if self.action in ["create", "update", "partial_update"]:
-            return PhotoCreateOrUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return PhotoReadOnlySerializer
-
-        return super().get_serializer_class()
+    serializer_classes = {
+        "write": PhotoCreateOrUpdateSerializer,
+        "retrieve": PhotoRetrieveSerializer,
+        "list": PhotoListSerializer,
+    }
 
     def get_queryset(self):
         user: User = self.request.user
@@ -74,6 +72,7 @@ class PhotoViewSet(viewsets.ModelViewSet):
 
 
 class UserTagViewSet(
+    MultiSerializerMixin,
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
@@ -83,14 +82,11 @@ class UserTagViewSet(
     queryset = UserTag.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
     filterset_class = UserTagFilter
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return UserTagCreateSerializer
-        if self.action in ["list", "retrieve"]:
-            return UserTagReadOnlySerializer
-
-        return super().get_serializer_class()
+    serializer_classes = {
+        "create": UserTagCreateSerializer,
+        "retrieve": UserTagRetrieveSerializer,
+        "list": UserTagListSerializer,
+    }
 
     def get_queryset(self):
         user: User = self.request.user

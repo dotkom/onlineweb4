@@ -1,6 +1,4 @@
-import datetime
-
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -12,17 +10,17 @@ from apps.events.models import AttendanceEvent, Event
 
 
 def create_generic_attendance_event():
-    future = timezone.now() + datetime.timedelta(days=1)
+    future = timezone.now() + timezone.timedelta(days=1)
     event_start = future
-    event_end = future + datetime.timedelta(days=1)
+    event_end = future + timezone.timedelta(days=1)
     event = G(Event, event_start=event_start, event_end=event_end)
     G(AttendanceEvent, event=event, max_capacity=2)
-    # print(event.attendance_event.get_feedback().id)
     return event
 
 
 def add_permissions(user):
-    user.groups.add(G(Group, name="Komiteer"))
+    user.is_staff = True
+    user.save()
     user.user_permissions.add(
         Permission.objects.filter(codename="view_event").first(),
         Permission.objects.filter(codename="add_event").first(),

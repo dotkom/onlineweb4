@@ -12,6 +12,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -25,8 +26,9 @@ from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
+from apps.authentication.constants import GroupType
 from apps.authentication.forms import NewEmailForm
-from apps.authentication.models import Email
+from apps.authentication.models import Email, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, RegisterToken
 from apps.authentication.serializers import EmailReadOnlySerializer
@@ -568,7 +570,10 @@ def toggle_jobmail(request):
 
 @login_required
 def user_search(request):
-    groups_to_include = settings.USER_SEARCH_GROUPS
+    committee_groups = OnlineGroup.objects.filter(
+        Q(group_type=GroupType.COMMITTEE) | Q(group_type=GroupType.NODE_COMMITTEE)
+    )
+    groups_to_include = [online_group.group.pk for online_group in committee_groups]
     groups = Group.objects.filter(pk__in=groups_to_include).order_by("name")
     users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
 

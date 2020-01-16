@@ -44,7 +44,7 @@ def mock_payment_intent_confirm():
 
 class PaymentRelationTestCase(OIDCTestCase):
     def setUp(self):
-        self.committee = G(Group, name="arrKom")
+        self.committee = G(Group, name="Arrkom")
         self.user = generate_user(username="test_user")
         self.token = self.generate_access_token(self.user)
         self.headers = {**self.generate_headers(), **self.bare_headers}
@@ -214,7 +214,7 @@ class PaymentRelationTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
-            f"No such payment_method: {fake_payment_method_id}", response.json()[0]
+            f"No such PaymentMethod: {fake_payment_method_id}", response.json()[0]
         )
 
     def test_user_cannot_pay_for_event_with_wrong_payment_price(self):
@@ -668,7 +668,7 @@ class PaymentTransactionTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn(
-            f"No such payment_method: {fake_payment_method_id}", response.json()[0]
+            f"No such PaymentMethod: {fake_payment_method_id}", response.json()[0]
         )
 
     def test_user_cannot_delete_transactions(self):
