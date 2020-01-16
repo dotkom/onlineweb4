@@ -52,6 +52,7 @@ class FeedbackTestCaseMixin:
         feedback=None,
         deadline=False,
         organizer=None,
+        user=None,
     ):
         if not end_date:
             end_date = self.yesterday()
@@ -76,9 +77,10 @@ class FeedbackTestCaseMixin:
             max_capacity=30,
         )
 
-        feedback = Feedback.objects.create(author=self.user1)
-        TextQuestion.objects.create(feedback=feedback)
-        RatingQuestion.objects.create(feedback=feedback)
+        if not feedback:
+            feedback = Feedback.objects.create(author=self.user1)
+            TextQuestion.objects.create(feedback=feedback)
+            RatingQuestion.objects.create(feedback=feedback)
 
         Attendee.objects.create(
             event=self.attendance_event, user=self.user1, attended=True
@@ -86,6 +88,10 @@ class FeedbackTestCaseMixin:
         Attendee.objects.create(
             event=self.attendance_event, user=self.user2, attended=True
         )
+        if user:
+            Attendee.objects.create(
+                event=self.attendance_event, user=user, attended=True
+            )
         return FeedbackRelation.objects.create(
             feedback=feedback, content_object=self.event, deadline=deadline, active=True
         )
