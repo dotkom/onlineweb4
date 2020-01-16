@@ -1,4 +1,4 @@
-Django==2.1.11
+Django==2.1.15
 Pillow==6.2.0                   # PIL fork (Python Imaging Library)
 djangorestframework==3.9.4      # API v1
 django-filter==2.2.0            # Filtering for DRF
