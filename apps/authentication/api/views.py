@@ -27,11 +27,13 @@ from apps.authentication.serializers import (
     UserReadOnlySerializer,
     UserUpdateSerializer,
 )
+from apps.common.rest_framework.mixins import MultiSerializerMixin
 
 from .filters import UserFilter
 
 
 class UserViewSet(
+    MultiSerializerMixin,
     viewsets.GenericViewSet,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
@@ -44,6 +46,12 @@ class UserViewSet(
 
     permission_classes = (AllowAny,)
     filterset_class = UserFilter
+    serializer_classes = {
+        "create": UserCreateSerializer,
+        "update": UserUpdateSerializer,
+        "read": UserReadOnlySerializer,
+        "change_password": PasswordUpdateSerializer,
+    }
 
     def get_queryset(self):
         """
@@ -64,18 +72,6 @@ class UserViewSet(
 
         return super().get_queryset()
 
-    def get_serializer_class(self):
-        if self.action == "create":
-            return UserCreateSerializer
-        if self.action in ["update", "partial_update"]:
-            return UserUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return UserReadOnlySerializer
-        if self.action == "change_password":
-            return PasswordUpdateSerializer
-
-        return super().get_serializer_class()
-
     @action(detail=True, methods=["put"], permission_classes=[IsAuthenticated])
     def change_password(self, request, pk=None):
         user: User = self.get_object()
@@ -86,21 +82,16 @@ class UserViewSet(
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
 
-class EmailViewSet(viewsets.ModelViewSet):
+class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
+    serializer_classes = {
+        "create": EmailCreateSerializer,
+        "update": EmailUpdateSerializer,
+        "read": EmailReadOnlySerializer,
+    }
 
     def get_queryset(self):
         return Email.objects.filter(user=self.request.user)
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return EmailCreateSerializer
-        if self.action in ["update", "partial_update"]:
-            return EmailUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return EmailReadOnlySerializer
-
-        return super().get_serializer_class()
 
     def destroy(self, request, *args, **kwargs):
         instance: Email = self.get_object()
@@ -114,16 +105,12 @@ class EmailViewSet(viewsets.ModelViewSet):
             )
 
 
-class PositionViewSet(viewsets.ModelViewSet):
+class PositionViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
-
-    def get_serializer_class(self):
-        if self.action in ["create", "update", "partial_update"]:
-            return PositionCreateAndUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return PositionReadOnlySerializer
-
-        return super().get_serializer_class()
+    serializer_classes = {
+        "read": PositionReadOnlySerializer,
+        "write": PositionCreateAndUpdateSerializer,
+    }
 
     def get_queryset(self):
         user = self.request.user
@@ -145,8 +132,12 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GroupReadOnlySerializer
 
 
-class OnlineGroupViewSet(viewsets.ModelViewSet):
+class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
+    serializer_classes = {
+        "write": OnlineGroupCreateOrUpdateSerializer,
+        "read": OnlineGroupReadOnlySerializer,
+    }
 
     @staticmethod
     def get_editable_groups_for_user(user: User, action: str):
@@ -174,16 +165,6 @@ class OnlineGroupViewSet(viewsets.ModelViewSet):
         user = self.request.user
         return self.get_editable_groups_for_user(user, self.action)
 
-    def get_serializer_class(self):
-        if self.action == "create":
-            return OnlineGroupCreateOrUpdateSerializer
-        if self.action in ["update", "partial_update"]:
-            return OnlineGroupCreateOrUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return OnlineGroupReadOnlySerializer
-
-        return super().get_serializer_class()
-
     def create(self, request, *args, **kwargs):
 
         if request.user.is_superuser or request.user.has_perm(
@@ -197,8 +178,13 @@ class OnlineGroupViewSet(viewsets.ModelViewSet):
         )
 
 
-class GroupMemberViewSet(viewsets.ModelViewSet):
+class GroupMemberViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
+    serializer_classes = {
+        "create": GroupMemberCreateSerializer,
+        "update": GroupMemberUpdateSerializer,
+        "read": GroupMemberReadOnlySerializer,
+    }
 
     @staticmethod
     def get_allowed_memberships_for_user(user: User, action: str):
@@ -216,16 +202,6 @@ class GroupMemberViewSet(viewsets.ModelViewSet):
 
         user = self.request.user
         return self.get_allowed_memberships_for_user(user, self.action)
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return GroupMemberCreateSerializer
-        if self.action in ["update", "partial_update"]:
-            return GroupMemberUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return GroupMemberReadOnlySerializer
-
-        return super().get_serializer_class()
 
     def create(self, request, *args, **kwargs):
 

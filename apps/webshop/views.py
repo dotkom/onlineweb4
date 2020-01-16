@@ -10,6 +10,7 @@ from django.views.generic import DetailView, RedirectView, TemplateView
 from rest_framework import permissions, viewsets
 
 from apps.authentication.models import OnlineUser as User
+from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.webshop.forms import OrderForm
 from apps.webshop.models import Category, Order, OrderLine, Product, ProductSize
 from apps.webshop.serializers import (
@@ -201,34 +202,25 @@ class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProductReadOnlySerializer
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return OrderCreateSerializer
-        if self.action in ["list", "retrieve"]:
-            return OrderReadOnlySerializer
-        if self.action in ["update", "partial_update"]:
-            return OrderUpdateSerializer
-
-        return super().get_serializer_class()
+    serializer_classes = {
+        "create": OrderCreateSerializer,
+        "read": OrderReadOnlySerializer,
+        "update": OrderUpdateSerializer,
+    }
 
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(order_line__user=user)
 
 
-class OrderLineViewSet(viewsets.ModelViewSet):
+class OrderLineViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return OrderLineCreateSerializer
-        if self.action in ["list", "retrieve"]:
-            return OrderLineReadOnlySerializer
-
-        return super().get_serializer_class()
+    serializer_classes = {
+        "read": OrderLineReadOnlySerializer,
+        "write": OrderLineCreateSerializer,
+    }
 
     def get_queryset(self):
         user = self.request.user
