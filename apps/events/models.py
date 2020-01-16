@@ -28,24 +28,13 @@ from unidecode import unidecode
 from apps.authentication.constants import FieldOfStudyType
 from apps.authentication.models import OnlineGroup
 from apps.companyprofile.models import Company
+from apps.events.constants import EventType
 from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
 from apps.payment import status as payment_status
 
 User = settings.AUTH_USER_MODEL
-
-TYPE_CHOICES = (
-    (1, "Sosialt"),
-    (2, "Bedriftspresentasjon"),
-    (3, "Kurs"),
-    (4, "Utflukt"),
-    (5, "Ekskursjon"),
-    (6, "Internt"),
-    (7, "Annet"),
-    (8, "Realfagskjelleren"),
-)
-
 
 # Managers
 
@@ -142,7 +131,9 @@ class Event(models.Model):
         on_delete=SET_NULL,
     )
     """Event image"""
-    event_type = models.SmallIntegerField(_("type"), choices=TYPE_CHOICES, null=False)
+    event_type = models.SmallIntegerField(
+        _("type"), choices=EventType.ALL_CHOICES, null=False
+    )
     """Event type. Used mainly for filtering"""
     organizer = models.ForeignKey(
         Group, verbose_name=_("arrangør"), blank=True, null=True, on_delete=SET_NULL

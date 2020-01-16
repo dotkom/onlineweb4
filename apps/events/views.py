@@ -3,7 +3,7 @@
 import json
 
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.signing import Signer
 from django.db.models import Q
@@ -269,7 +269,6 @@ def _search_indexed(request, query, filters):
 
 
 @login_required()
-@user_passes_test(lambda u: u.groups.filter(name="Komiteer").count() == 1)
 def generate_pdf(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     # If this is not an attendance event, redirect to event with error
@@ -287,7 +286,6 @@ def generate_pdf(request, event_id):
 
 
 @login_required()
-@user_passes_test(lambda u: u.groups.filter(name="Komiteer").count() == 1)
 def generate_json(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
     # If this is not an attendance event, redirect to event with error

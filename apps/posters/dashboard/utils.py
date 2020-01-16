@@ -2,13 +2,18 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import EmailMessage
+from django.db.models import Q
 from django.template.loader import render_to_string
 from guardian.models import GroupObjectPermission, UserObjectPermission
 
+from apps.authentication.models import OnlineUser as User
 from apps.companyprofile.models import Company
+
+from ..models import Poster
 
 
 def _handle_poster_add(request, form, order_type):
@@ -25,9 +30,6 @@ def _handle_poster_add(request, form, order_type):
 
     # Let this user have permissions to show this order
     UserObjectPermission.objects.assign_perm("view_poster_order", request.user, poster)
-    GroupObjectPermission.objects.assign_perm(
-        "view_poster_order", Group.objects.get(name="proKom"), poster
-    )
     GroupObjectPermission.objects.assign_perm(
         "view_poster_order", ordered_committee, poster
     )
@@ -75,3 +77,16 @@ def _handle_poster_celebration(poster, context):
         logger.exception(
             "Failed to send email Congratulating ProKom with number of poster orders divisible by 100"
         )
+
+
+def get_poster_admins():
+    """
+    Return a queryset of all users with the global permission to change posters.
+    """
+    content_type = ContentType.objects.get_for_model(Poster)
+    all_permissions = Permission.objects.filter(content_type=content_type)
+    change_order_perm = all_permissions.filter(codename="change_poster").first()
+    users = User.objects.filter(
+        Q(groups__permissions=change_order_perm) | Q(user_permissions=change_order_perm)
+    ).distinct()
+    return users
