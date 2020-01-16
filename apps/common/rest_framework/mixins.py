@@ -29,11 +29,11 @@ class MultiSerializerMixin(viewsets.GenericViewSet):
         default_class = self.serializer_classes.get("default", self.serializer_class)
 
         # Use specialized default shorthands for read or write actions.
-        if self.request.method in ["GET"]:
+        if action in ["list", "retrieve"]:
             default_class = self.serializer_classes.get("read", default_class)
-        if self.request.method in ["POST", "PUT", "PATCH"]:
+        if action in ["create", "update", "partial_update"]:
             default_class = self.serializer_classes.get("write", default_class)
-            if self.request.method == "PATCH":
+            if action == "partial_update":
                 default_class = self.serializer_classes.get("update", default_class)
 
         # Get the specific serializer matching the used action with the fallback specified above.
