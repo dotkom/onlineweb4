@@ -6,18 +6,36 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Prefetch
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext_lazy as _
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
 
+from apps.authentication.models import OnlineUser as User
+from apps.feedback import serializers
 from apps.feedback.forms import create_forms
 from apps.feedback.models import (
     RATING_CHOICES,
+    Feedback,
     FeedbackRelation,
     FieldOfStudyAnswer,
+    GenericSurvey,
+    MultipleChoiceAnswer,
+    MultipleChoiceQuestion,
+    MultipleChoiceRelation,
+    RatingAnswer,
+    RatingQuestion,
     RegisterToken,
     TextAnswer,
     TextQuestion,
+)
+from apps.feedback.permissions import (
+    RestrictedModelPermission,
+    RestrictedObjectPermission,
 )
 from apps.feedback.utils import (
     can_delete,
@@ -221,3 +239,168 @@ def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):
         raise Http404
 
     return fbr
+
+
+class FeedbackTokenResultsViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+    """
+    ViewSet for accessing results with an authentication token for stakeholders.
+    """
+
+    def get_serializer_context(self):
+        """
+        Make information about what content to show available to the serializer.
+        Certain information should only be visible when not using the token to view results.
+        """
+        context = super().get_serializer_context()
+        context["token"] = True
+        return context
+
+    serializer_class = serializers.FeedbackAnswersSerializer
+    permission_classes = (permissions.DjangoObjectPermissions,)
+    # Lookups should be made by the token, not the ID of the FeedbackRelation.
+    lookup_field = "token_objects__token"
+    throttle_classes = (AnonRateThrottle,)
+    # Related querysets for answers and questions are filtered based on if the question is viewable for stakeholders.
+    queryset = FeedbackRelation.objects.prefetch_related(
+        Prefetch(
+            "field_of_study_answers",
+            queryset=FieldOfStudyAnswer.objects.filter(
+                feedback_relation__feedback__display_field_of_study=True
+            ),
+        ),
+        Prefetch(
+            "text_answers", queryset=TextAnswer.objects.filter(question__display=True)
+        ),
+        Prefetch(
+            "rating_answers",
+            queryset=RatingAnswer.objects.filter(question__display=True),
+        ),
+        Prefetch(
+            "multiple_choice_answers",
+            queryset=MultipleChoiceAnswer.objects.filter(question__display=True),
+        ),
+        Prefetch(
+            "feedback__text_questions",
+            queryset=TextQuestion.objects.filter(display=True),
+        ),
+        Prefetch(
+            "feedback__rating_questions",
+            queryset=RatingQuestion.objects.filter(display=True),
+        ),
+        Prefetch(
+            "feedback__multiple_choice_questions",
+            queryset=MultipleChoiceRelation.objects.filter(display=True),
+        ),
+    )
+
+
+class FeedbackResultsViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for accessing results of a survey as an authorized user.
+    """
+
+    def get_serializer_context(self):
+        """
+        Make information about what content to show available to the serializer.
+        Certain information should only be visible when not using the token to view results.
+        """
+        context = super().get_serializer_context()
+        context["token"] = False
+        return context
+
+    serializer_class = serializers.FeedbackAnswersSerializer
+    permission_classes = (permissions.DjangoObjectPermissions,)
+    queryset = FeedbackRelation.objects.all()
+
+
+class FeedbackRelationViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Viewset for managing surveys a user should answer or has answered.
+    """
+
+    serializer_class = serializers.FeedbackRelationReadSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    queryset = FeedbackRelation.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "submit":
+            return serializers.FeedbackRelationSubmitSerializer
+        if self.action == "list":
+            return serializers.FeedbackRelationListSerializer
+        if self.action == "retrieve":
+            return serializers.FeedbackRelationReadSerializer
+
+        return super().get_serializer_class()
+
+    def get_queryset(self):
+        user: User = self.request.user
+        queryset = super().get_queryset().filter(answered=user)
+        queryset |= FeedbackRelation.objects.can_answer(user)
+        return queryset
+
+    @action(methods=["POST"], detail=True)
+    def submit(self, request, pk=None):
+        feedback_relation: FeedbackRelation = self.get_object()
+        serializer = self.get_serializer(feedback_relation, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+
+class GenericSurveyViewSet(viewsets.ModelViewSet):
+    permission_classes = (RestrictedObjectPermission,)
+    queryset = GenericSurvey.objects.all()
+    serializer_class = serializers.GenericSurveySerializer
+
+
+"""
+API viewsets for admin users to manage feedback templates
+"""
+
+
+class FeedbackTemplateViewSet(viewsets.ModelViewSet):
+    permission_classes = (
+        permissions.DjangoModelPermissions,
+        permissions.IsAuthenticated,
+    )
+    queryset = Feedback.objects.all()
+    serializer_class = serializers.FeedbackAdminSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        feedback_template: Feedback = self.get_object()
+
+        if feedback_template.feedbackrelation_set.exists():
+            return Response(
+                {
+                    "message": "Du kan ikke slette en mal som har blitt tatt i bruk. "
+                    "Vurder heller å sette malen som inaktiv."
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        super().destroy(request, *args, **kwargs)
+
+
+class TextQuestionViewSet(viewsets.ModelViewSet):
+    permission_classes = (RestrictedModelPermission,)
+    queryset = TextQuestion.objects.all()
+    serializer_class = serializers.TextQuestionSerializer
+
+
+class RatingQuestionViewSet(viewsets.ModelViewSet):
+    permission_classes = (RestrictedModelPermission,)
+    queryset = RatingQuestion.objects.all()
+    serializer_class = serializers.RatingQuestionSerializer
+
+
+class MultipleChoiceQuestionViewSet(viewsets.ModelViewSet):
+    permission_classes = (RestrictedModelPermission,)
+    queryset = MultipleChoiceQuestion.objects.all()
+    serializer_class = serializers.MultipleChoiceQuestionSerializer
+
+
+class MultipleChoiceRelationViewSet(viewsets.ModelViewSet):
+    permission_classes = (RestrictedModelPermission,)
+    queryset = MultipleChoiceRelation.objects.all()
+    serializer_class = serializers.MultipleChoiceRelationManageSerializer
