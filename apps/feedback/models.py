@@ -9,38 +9,25 @@ An Answer is related to an Object and a Question.
 This implementation is not very database friendly however, as it does
 very many database lookups.
 """
+import logging
 import uuid
-from collections import OrderedDict
 
 from django.conf import settings
-from django.contrib.auth.models import Group
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
+from django.db import IntegrityError, models
 from django.urls import reverse
 from django.utils.translation import ugettext as _
 
 from apps.authentication.constants import FieldOfStudyType
-from apps.authentication.models import OnlineUser
 
 User = settings.AUTH_USER_MODEL
-
-
-class FeedbackRelationManager(models.Manager):
-    def can_answer(self, user: User):
-        queryset = (
-            self.get_queryset().filter(active=True).prefetch_related("content_object")
-        )
-        can_answer_ids = [fbr.can_answer(user) for fbr in queryset.all()]
-        return queryset.filter(pk__in=can_answer_ids)
 
 
 class FeedbackRelation(models.Model):
     """
     A many to many relation between a Generic Object and a Feedback schema.
     """
-
-    objects = FeedbackRelationManager()
 
     feedback = models.ForeignKey(
         "Feedback", verbose_name=_("Tilbakemeldingskjema"), on_delete=models.CASCADE
@@ -184,6 +171,24 @@ class FeedbackRelation(models.Model):
         else:
             return dict()
 
+    def save(self, *args, **kwargs):
+        log = logging.getLogger(__name__)
+        new_fbr = not self.pk
+        super(FeedbackRelation, self).save(*args, **kwargs)
+        if new_fbr:
+            token = uuid.uuid4().hex
+            try:
+                rt = RegisterToken(fbr=self, token=token)
+                rt.save()
+                log.info(
+                    "Successfully registered token for fbr %s with token %s"
+                    % (self, token)
+                )
+            except IntegrityError:
+                log.error(
+                    "Failed to register token for fbr %s with token %s" % (self, token)
+                )
+
 
 class Feedback(models.Model):
     """
@@ -210,10 +215,6 @@ class Feedback(models.Model):
             "Dette brukes til å skjule ubrukte skjemaer, lager du et nytt, så ignorer denne."
         ),
     )
-
-    @property
-    def id(self):
-        return self.feedback_id
 
     @property
     def ratingquestions(self):
@@ -253,82 +254,6 @@ class Feedback(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class GenericSurvey(models.Model):
-    """
-    A Generic survey that may be answered by a specific set of users.
-    """
-
-    title = models.CharField(max_length=128, verbose_name=_("Tittel"))
-    feedback = models.ForeignKey(
-        to=Feedback,
-        related_name="generic_survey",
-        verbose_name=_("Undersøkelsesmal"),
-        on_delete=models.CASCADE,
-    )
-    deadline = models.DateField(_("Tidsfrist"))
-    created_date = models.DateTimeField(
-        auto_now_add=True, verbose_name=_("Opprettet dato")
-    )
-    allowed_users = models.ManyToManyField(
-        to=User,
-        related_name="allowed_generic_surveys",
-        verbose_name=_("Brukere som kan svare"),
-        blank=True,
-    )
-    owner = models.ForeignKey(
-        to=User,
-        related_name="owned_generic_surveys",
-        verbose_name=_("Eier"),
-        on_delete=models.DO_NOTHING,
-    )
-    owner_group = models.ForeignKey(
-        to=Group,
-        related_name="owned_generic_surveys",
-        verbose_name=_("Eiergruppe"),
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-    feedback_relation = GenericRelation(FeedbackRelation)
-
-    def get_feedback_relation(self):
-        return FeedbackRelation.objects.get(
-            content_type=ContentType.objects.get_for_model(self), object_id=self.id
-        )
-
-    def feedback_users(self):
-        if self.allowed_users.exists():
-            return self.allowed_users.all()
-        else:
-            return OnlineUser.objects.all()
-
-    def feedback_email(self):
-        if (
-            self.owner_group
-            and self.owner_group.online_group
-            and self.owner_group.online_group.email
-        ):
-            return self.owner_group.online_group.email
-        else:
-            return self.owner.primary_email
-
-    def feedback_title(self):
-        return self.title
-
-    def feedback_date(self):
-        return self.created_date
-
-    def feedback_info(self):
-        info = OrderedDict()
-        info[_("Antall mulig svar")] = len(self.feedback_users())
-        return info
-
-    class Meta:
-        verbose_name = _("Generisk undersøkelse")
-        verbose_name_plural = _("Generiske undersøkelser")
-        ordering = ("created_date", "title")
-
-
 class FieldOfStudyAnswer(models.Model):
     feedback_relation = models.ForeignKey(
         FeedbackRelation,
@@ -343,8 +268,6 @@ class FieldOfStudyAnswer(models.Model):
         return self.get_answer_display()
 
     class Meta:
-        verbose_name = _("Studieretningssvar")
-        verbose_name_plural = _("Studieretningssvar")
         permissions = (("view_fieldofstudyanswer", "View FieldOfStudyAnswer"),)
         default_permissions = ("add", "change", "delete")
 
@@ -361,8 +284,6 @@ class TextQuestion(models.Model):
         return self.label
 
     class Meta:
-        verbose_name = _("Tekstspørsmål")
-        verbose_name_plural = _("Tekstspørsmål")
         permissions = (("view_textquestion", "View TextQuestion"),)
         default_permissions = ("add", "change", "delete")
 
@@ -371,6 +292,7 @@ class TextAnswer(models.Model):
     question = models.ForeignKey(
         TextQuestion, related_name="answer", on_delete=models.CASCADE
     )
+
     feedback_relation = models.ForeignKey(
         FeedbackRelation, related_name="text_answers", on_delete=models.CASCADE
     )
@@ -385,8 +307,6 @@ class TextAnswer(models.Model):
         return self.question.order
 
     class Meta:
-        verbose_name = _("Tekstsvar")
-        verbose_name_plural = _("Tekstsvar")
         permissions = (("view_textanswer", "View TextAnswer"),)
         default_permissions = ("add", "change", "delete")
 
@@ -410,8 +330,6 @@ class RatingQuestion(models.Model):
         return self.label
 
     class Meta:
-        verbose_name = _("Vurderingsspørsmål")
-        verbose_name_plural = _("Vurderingsspørsmål")
         permissions = (("view_ratingquestion", "View RatingQuestion"),)
         default_permissions = ("add", "change", "delete")
 
@@ -434,8 +352,6 @@ class RatingAnswer(models.Model):
         return self.question.order
 
     class Meta:
-        verbose_name = _("Vurderingssvar")
-        verbose_name_plural = _("Vurderingssvar")
         permissions = (("view_ratinganswer", "View RatingAnswer"),)
         default_permissions = ("add", "change", "delete")
 
@@ -454,7 +370,9 @@ class MultipleChoiceQuestion(models.Model):
 
 
 class MultipleChoiceRelation(models.Model):
-    question = models.ForeignKey(MultipleChoiceQuestion, on_delete=models.CASCADE)
+    multiple_choice_relation = models.ForeignKey(
+        MultipleChoiceQuestion, on_delete=models.CASCADE
+    )
     order = models.SmallIntegerField(_("Rekkefølge"), default=30)
     display = models.BooleanField(_("Vis til bedrift"), default=True)
     feedback = models.ForeignKey(
@@ -462,11 +380,9 @@ class MultipleChoiceRelation(models.Model):
     )
 
     def __str__(self):
-        return self.question.label
+        return self.multiple_choice_relation.label
 
     class Meta:
-        verbose_name = _("Flervalgsrelasjon")
-        verbose_name_plural = _("Flervalgsrelasjoner")
         permissions = (("view_multiplechoicerelation", "View MultipleChoiceRelation"),)
         default_permissions = ("add", "change", "delete")
 
@@ -481,8 +397,6 @@ class Choice(models.Model):
         return self.choice
 
     class Meta:
-        verbose_name = _("Valg")
-        verbose_name_plural = _("Valg")
         permissions = (("view_choice", "View Choice"),)
         default_permissions = ("add", "change", "delete")
 
@@ -506,8 +420,6 @@ class MultipleChoiceAnswer(models.Model):
         return self.question.order
 
     class Meta:
-        verbose_name = _("Flervalgssvar")
-        verbose_name_plural = _("Flervalgssvar")
         permissions = (("view_multiplechoiceanswer", "View MultipleChoiceAnswer"),)
         default_permissions = ("add", "change", "delete")
 
@@ -515,11 +427,9 @@ class MultipleChoiceAnswer(models.Model):
 # For creating a link for others(companies) to see the results page
 class RegisterToken(models.Model):
     fbr = models.ForeignKey(
-        FeedbackRelation, related_name="token_objects", on_delete=models.CASCADE
+        FeedbackRelation, related_name="Feedback_relation", on_delete=models.CASCADE
     )
-    token = models.UUIDField(
-        _("Token"), default=uuid.uuid4, editable=False, unique=True
-    )
+    token = models.CharField(_("token"), max_length=32)
     created = models.DateTimeField(
         _("opprettet dato"), editable=False, auto_now_add=True
     )
