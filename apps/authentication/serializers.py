@@ -9,7 +9,13 @@ from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
 from apps.authentication.fields import OnlineUserEmailField
-from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
+from apps.authentication.models import (
+    AllowedUsername,
+    Email,
+    GroupMember,
+    GroupRole,
+    OnlineGroup,
+)
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.utils import send_register_verification_email
@@ -98,9 +104,19 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
         return username
 
     def update(self, instance: User, validated_data: dict):
-        username = hashlib.sha256(str(instance.username).encode("utf-8")).hexdigest()
-        password = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
-        password = hashlib.sha256(str(password).encode("utf-8")).hexdigest()
+        salt = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        username = hashlib.sha256(
+            str(instance.username + salt).encode("utf-8")
+        ).hexdigest()
+        password = hashlib.sha256(str(salt).encode("utf-8")).hexdigest()
+
+        # Related fields
+        if instance.member() is not None:
+            AllowedUsername.objects.get(username=instance.member().username).delete()
+        instance.email_user.all().delete()
+        instance.positions.all().delete()
+        instance.special_positions.all().delete()
+        instance.group_memberships.all().delete()
 
         # Django related fields
         instance.first_name = ""
@@ -143,12 +159,6 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
 
         # NTNU credentials
         instance.ntnu_username = None
-
-        # Related fields
-        instance.email_user.all().delete()
-        instance.positions.all().delete()
-        instance.special_positions.all().delete()
-        instance.group_memberships.all().delete()
 
         instance.save()
         return instance
