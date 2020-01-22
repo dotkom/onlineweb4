@@ -21,7 +21,7 @@ from apps.shop.models import Order
 @permission_required("inventory.view_item", return_403=True)
 def index(request):
 
-    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    # Generic check to see if user has access to dashboard. (Is staff or superuser)
     if not has_access(request):
         raise PermissionDenied
 
@@ -78,7 +78,7 @@ def new(request):
 @login_required
 @permission_required("inventory.view_item", return_403=True)
 def details(request, item_pk):
-    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    # Generic check to see if user has access to dashboard. (Is staff or superuser)
     if not has_access(request):
         raise PermissionDenied
 
@@ -232,7 +232,7 @@ def batch_delete(request, item_pk, batch_pk):
 @permission_required("inventory.view_itemcategory", return_403=True)
 def category_index(request):
 
-    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    # Generic check to see if user has access to dashboard. (Is staff or superuser)
     if not has_access(request):
         raise PermissionDenied
 
@@ -247,7 +247,7 @@ def category_index(request):
 @login_required
 @permission_required("inventory.view_itemcategory", return_403=True)
 def category_details(request, category_pk):
-    # Generic check to see if user has access to dashboard. (In Komiteer or superuser)
+    # Generic check to see if user has access to dashboard. (Is staff or superuser)
     if not has_access(request):
         raise PermissionDenied
 

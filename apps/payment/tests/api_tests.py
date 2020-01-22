@@ -42,7 +42,7 @@ def mock_payment_intent_confirm():
 
 class PaymentRelationTestCase(OIDCTestCase):
     def setUp(self):
-        self.committee = G(Group, name="arrKom")
+        self.committee = G(Group, name="Arrkom")
         self.user = generate_user(username="test_user")
         self.token = self.generate_access_token(self.user)
         self.headers = {**self.generate_headers(), **self.bare_headers}

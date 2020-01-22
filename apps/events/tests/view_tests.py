@@ -15,13 +15,13 @@ from apps.authentication.models import AllowedUsername, OnlineGroup
 from apps.marks.models import MarkRuleSet
 from apps.payment.models import PaymentDelay, PaymentPrice
 
-from ..models import TYPE_CHOICES, AttendanceEvent, Event, Extras, GroupRestriction
+from ..constants import EventType
+from ..models import AttendanceEvent, Event, Extras, GroupRestriction
 from .utils import (
     add_payment_delay,
-    add_to_arrkom,
-    add_to_bedkom,
-    add_to_trikom,
+    add_to_group,
     attend_user_to_event,
+    create_committee_group,
     generate_attendee,
     generate_event,
     generate_payment,
@@ -32,17 +32,15 @@ from .utils import (
 
 class EventsTestMixin:
     def setUp(self):
-        G(Group, pk=1, name="arrKom")
-        G(Group, pk=3, name="bedKom")
-        G(Group, pk=8, name="triKom")
-        G(Group, pk=12, name="Komiteer")
+        self.admin_group = create_committee_group(G(Group, name="Arrkom"))
+        self.other_group = G(Group, name="Buddy")
 
         self.user = generate_user("test")
         self.client.force_login(self.user)
 
         self.mark_rule_set = G(MarkRuleSet)
 
-        self.event = generate_event()
+        self.event = generate_event(organizer=self.admin_group)
         self.event_url = reverse(
             "events_details", args=(self.event.id, self.event.slug)
         )
@@ -67,9 +65,8 @@ class EventsDetailRestricted(EventsTestMixin, TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_group_restricted_access(self):
-        add_to_trikom(self.user)
-        trikom = Group.objects.get(name__iexact="trikom")
-        G(GroupRestriction, event=self.event, groups=[trikom])
+        add_to_group(self.admin_group, self.user)
+        G(GroupRestriction, event=self.event, groups=[self.admin_group])
 
         response = self.client.get(self.event_url)
         messages = list(response.context["messages"])
@@ -78,9 +75,8 @@ class EventsDetailRestricted(EventsTestMixin, TestCase):
         self.assertEqual(len(messages), 0)
 
     def test_group_restricted_no_access(self):
-        add_to_trikom(self.user)
-        arrkom = Group.objects.get(name__iexact="arrkom")
-        G(GroupRestriction, event=self.event, groups=[arrkom])
+        access_group = create_committee_group()
+        G(GroupRestriction, event=self.event, groups=[access_group])
 
         response = self.client.get(self.event_url)
 
@@ -607,7 +603,7 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         self.mail_url = reverse("event_mail_participants", args=(self.event.id,))
 
     def test_not_attendance_event(self):
-        event = G(Event)
+        event = G(Event, organizer=self.admin_group)
         url = reverse("event_mail_participants", args=(event.id,))
 
         response = self.client.get(url, follow=True)
@@ -622,9 +618,8 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_get_own_social_event_as_bedkom(self):
-        add_to_bedkom(self.user)
-        bedkom = Group.objects.get(name__iexact="bedkom")
-        event = generate_event(TYPE_CHOICES[0][0], organizer=bedkom)
+        add_to_group(self.admin_group, self.user)
+        event = generate_event(EventType.SOSIALT, organizer=self.admin_group)
         url = reverse("event_mail_participants", args=(event.id,))
 
         response = self.client.get(url)
@@ -633,8 +628,8 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_get_as_arrkom(self):
-        add_to_arrkom(self.user)
-        event = generate_event(TYPE_CHOICES[0][0])
+        add_to_group(self.admin_group, self.user)
+        event = generate_event(EventType.SOSIALT, organizer=self.admin_group)
         url = reverse("event_mail_participants", args=(event.id,))
 
         response = self.client.get(url)
@@ -643,8 +638,8 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_post_as_arrkom_missing_data(self):
-        add_to_arrkom(self.user)
-        event = generate_event(TYPE_CHOICES[0][0])
+        add_to_group(self.admin_group, self.user)
+        event = generate_event(EventType.SOSIALT, organizer=self.admin_group)
         url = reverse("event_mail_participants", args=(event.id,))
 
         response = self.client.post(url)
@@ -657,8 +652,8 @@ class EventMailParticipates(EventsTestMixin, TestCase):
 
     def test_post_as_arrkom_successfully(self):
         organizer_email = "arrkom@online.ntnu.no"
-        add_to_arrkom(self.user)
-        event = generate_event(TYPE_CHOICES[0][0])
+        add_to_group(self.admin_group, self.user)
+        event = generate_event(EventType.SOSIALT, organizer=self.admin_group)
         G(OnlineGroup, email=organizer_email, group=event.organizer)
         url = reverse("event_mail_participants", args=(event.id,))
 
@@ -673,8 +668,8 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         self.assertIn("Test message", mail.outbox[0].body)
 
     def test_post_as_arrkom_invalid_from_email_defaults_to_kontakt(self):
-        add_to_arrkom(self.user)
-        event = generate_event(TYPE_CHOICES[0][0])
+        add_to_group(self.admin_group, self.user)
+        event = generate_event(EventType.SOSIALT, organizer=self.admin_group)
         G(OnlineGroup, email="", group=event.organizer)
         url = reverse("event_mail_participants", args=(event.id,))
 
@@ -690,8 +685,8 @@ class EventMailParticipates(EventsTestMixin, TestCase):
         self.assertIn("Test message", mail.outbox[0].body)
 
     def test_post_as_arrkom_invalid_to_email(self):
-        add_to_arrkom(self.user)
-        event = generate_event(TYPE_CHOICES[0][0])
+        add_to_group(self.admin_group, self.user)
+        event = generate_event(EventType.SOSIALT, organizer=self.admin_group)
         url = reverse("event_mail_participants", args=(event.id,))
 
         response = self.client.post(
