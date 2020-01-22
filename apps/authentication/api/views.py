@@ -52,6 +52,7 @@ class UserViewSet(
         "update": UserUpdateSerializer,
         "read": UserReadOnlySerializer,
         "change_password": PasswordUpdateSerializer,
+        "anonymize_user": AnonymizeUserSerializer,
     }
 
     def get_queryset(self):
