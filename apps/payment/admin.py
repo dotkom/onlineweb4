@@ -52,7 +52,12 @@ class PaymentAdmin(VersionAdmin):
 class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
     list_display = ("payment", "user", "datetime", "refunded")
-    list_filter = ["refunded"]
+    list_filter = [
+        "refunded",
+        "payment__active",
+        "payment__stripe_key",
+        "payment__payment_type",
+    ]
     search_fields = [
         "user__first_name",
         "user__last_name",
