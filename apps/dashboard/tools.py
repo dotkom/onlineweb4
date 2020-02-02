@@ -52,7 +52,7 @@ def get_base_context(request):
 
     # Check if there exists a batch in inventory that has expired
     if request.user.has_perm("inventory.view_item"):
-        if Batch.objects.filter(expiration_date__lt=datetime.date.today()):
+        if Batch.objects.filter(expiration_date__lt=datetime.now().date().today()):
             context["inventory_expired"] = True
 
     if request.user.has_perm("posters.view_poster"):
