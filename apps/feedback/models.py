@@ -427,9 +427,11 @@ class MultipleChoiceAnswer(models.Model):
 # For creating a link for others(companies) to see the results page
 class RegisterToken(models.Model):
     fbr = models.ForeignKey(
-        FeedbackRelation, related_name="Feedback_relation", on_delete=models.CASCADE
+        FeedbackRelation, related_name="token_objects", on_delete=models.CASCADE
     )
-    token = models.CharField(_("token"), max_length=32)
+    token = models.UUIDField(
+        _("Token"), editable=False, unique=True, default=uuid.uuid4
+    )
     created = models.DateTimeField(
         _("opprettet dato"), editable=False, auto_now_add=True
     )
