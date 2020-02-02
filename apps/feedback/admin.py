@@ -9,6 +9,7 @@ from apps.feedback.models import (
     Choice,
     Feedback,
     FeedbackRelation,
+    GenericSurvey,
     MultipleChoiceQuestion,
     MultipleChoiceRelation,
     RatingQuestion,
@@ -34,6 +35,7 @@ class FeedbackRelationInline(GenericStackedInline):
     exclude = ("answered", "active", "first_mail_sent")
 
 
+@admin.register(FeedbackRelation)
 class FeedbackRelationAdmin(VersionAdmin):
     model = FeedbackRelation
     related_lookup_fields = {"generic": [["content_type", "object_id"]]}
@@ -60,6 +62,7 @@ class ChoiceInline(admin.StackedInline):
     extra = 0
 
 
+@admin.register(MultipleChoiceQuestion)
 class MultipleChoiceAdmin(VersionAdmin):
     model = MultipleChoiceRelation
     inlines = (ChoiceInline,)
@@ -75,6 +78,7 @@ class MultipleChoiceInline(admin.StackedInline):
     extra = 0
 
 
+@admin.register(Feedback)
 class FeedbackAdmin(VersionAdmin):
     list_display = ("description", "author", "display_field_of_study", "display_info")
     list_filter = ["display_field_of_study", "display_info"]
@@ -88,6 +92,20 @@ class FeedbackAdmin(VersionAdmin):
         obj.save()
 
 
-admin.site.register(Feedback, FeedbackAdmin)
-admin.site.register(MultipleChoiceQuestion, MultipleChoiceAdmin)
-admin.site.register(FeedbackRelation, FeedbackRelationAdmin)
+@admin.register(GenericSurvey)
+class GenericSurveyAdmin(VersionAdmin):
+    list_display = (
+        "title",
+        "feedback",
+        "owner",
+        "owner_group",
+        "created_date",
+        "deadline",
+    )
+    list_filter = (
+        "title",
+        "owner__first_name",
+        "owner__last_name",
+        "owner_group__name",
+    )
+    model = GenericSurvey
