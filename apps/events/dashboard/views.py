@@ -148,7 +148,6 @@ class AddCompanyEventView(DashboardCreatePermissionMixin, CreateView):
 class RemoveCompanyEventView(DashboardObjectPermissionMixin, DeleteView):
     model = CompanyEvent
     permission_required = "events.add_attendanceevent"
-    pk_url_kwarg = "event_id"
 
     def get_success_url(self):
         return reverse(
@@ -177,7 +176,6 @@ class AddFeedbackRelationView(DashboardCreatePermissionMixin, CreateView):
 class RemoveFeedbackRelationView(DashboardObjectPermissionMixin, DeleteView):
     model = FeedbackRelation
     permission_required = "events.add_attendanceevent"
-    pk_url_kwarg = "event_id"
 
     def get_success_url(self):
         return reverse(
