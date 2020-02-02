@@ -1,10 +1,21 @@
+import hashlib
+import random
+import string
+
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
+from django.utils.timezone import datetime
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
 from apps.authentication.fields import OnlineUserEmailField
-from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
+from apps.authentication.models import (
+    AllowedUsername,
+    Email,
+    GroupMember,
+    GroupRole,
+    OnlineGroup,
+)
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.utils import send_register_verification_email
@@ -64,6 +75,97 @@ class PasswordUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("current_password", "new_password", "new_password_confirm")
+
+
+class AnonymizeUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(max_length=150)
+    password = serializers.CharField()
+
+    def validate_password(self, password):
+        request = self.context.get("request")
+        if not request:
+            raise serializers.ValidationError("Serializer missing request")
+
+        user: User = request.user
+        if user.has_usable_password() and not user.check_password(password):
+            raise serializers.ValidationError("Nåværende passord stemmer ikke")
+
+        return password
+
+    def validate_username(self, username):
+        request = self.context.get("request")
+        if not request:
+            raise serializers.ValidationError("Serializer missing request")
+
+        user: User = request.user
+        if user.get_username() != username:
+            raise serializers.ValidationError("Dette er ikke riktig bruker")
+
+        return username
+
+    def update(self, instance: User, validated_data: dict):
+        salt = "".join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        username = hashlib.sha256(
+            str(instance.username + salt).encode("utf-8")
+        ).hexdigest()
+        password = hashlib.sha256(str(salt).encode("utf-8")).hexdigest()
+
+        # Related fields
+        if instance.member() is not None:
+            AllowedUsername.objects.get(username=instance.member().username).delete()
+        instance.email_user.all().delete()
+        instance.positions.all().delete()
+        instance.special_positions.all().delete()
+        instance.group_memberships.all().delete()
+
+        # Django related fields
+        instance.first_name = ""
+        instance.last_name = ""
+        instance.email = ""
+        instance.passord = instance.set_password(password)
+        instance.username = username
+        instance.groups.clear()
+        instance.user_permissions.clear()
+        instance.is_staff = False
+        instance.is_active = False
+        instance.is_superuser = False
+        instance.last_login = datetime(2000, 1, 1)
+        instance.date_joined = datetime(2000, 1, 1)
+
+        # Online related fields
+        instance.field_of_study = 0
+        instance.started_date = datetime(2000, 1, 1)
+        instance.compiled = False
+
+        # Mail
+        instance.infomail = False
+        instance.jobmail = False
+        instance.online_mail = None
+
+        # Address
+        instance.phone_number = None
+        instance.address = None
+        instance.zip_code = None
+
+        # Other
+        instance.allergies = None
+        instance.rfid = None
+        instance.nickname = None
+        instance.website = None
+        instance.github = None
+        instance.linkedin = None
+        instance.gender = "male"
+        instance.bio = ""
+
+        # NTNU credentials
+        instance.ntnu_username = None
+
+        instance.save()
+        return instance
+
+    class Meta:
+        model = User
+        fields = ("username", "password")
 
 
 class UserCreateSerializer(serializers.ModelSerializer):

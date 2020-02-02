@@ -518,7 +518,7 @@ class RegisterToken(models.Model):
         FeedbackRelation, related_name="token_objects", on_delete=models.CASCADE
     )
     token = models.UUIDField(
-        _("Token"), default=uuid.uuid4, editable=False, unique=True
+        _("Token"), editable=False, unique=True, default=uuid.uuid4
     )
     created = models.DateTimeField(
         _("opprettet dato"), editable=False, auto_now_add=True
