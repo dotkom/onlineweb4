@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
+from datetime import date
+
 from django.core.exceptions import PermissionDenied
-from django.utils.timezone import datetime
 from guardian.mixins import PermissionRequiredMixin
 
 from apps.approval.models import MembershipApproval
@@ -52,7 +53,7 @@ def get_base_context(request):
 
     # Check if there exists a batch in inventory that has expired
     if request.user.has_perm("inventory.view_item"):
-        if Batch.objects.filter(expiration_date__lt=datetime.date.today()):
+        if Batch.objects.filter(expiration_date__lt=date.today()):
             context["inventory_expired"] = True
 
     if request.user.has_perm("posters.view_poster"):
