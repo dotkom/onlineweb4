@@ -101,3 +101,4 @@ def get_poster_admin_group():
     change_order_perm = all_permissions.filter(codename="change_poster").first()
     admin_group = Group.objects.filter(permissions=change_order_perm).distinct()
     return admin_group
+
