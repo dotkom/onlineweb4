@@ -37,6 +37,7 @@ class CartMixin:
 
 class BreadCrumb:
     """Dynamically generated breadcrumbs using name and url"""
+
     def get_breadcrumbs(self):
         """Create breadcrumb for the main webshop page
 

@@ -908,6 +908,7 @@ class Attendee(models.Model):
     extras = models.ForeignKey(Extras, blank=True, null=True, on_delete=models.CASCADE)
 
     show_as_attending_event = models.BooleanField(_('vis som påmeldt arrangementet'), default=False)
+    allow_pictures = models.BooleanField(_('greit å ta bilde'), default=False)
 
     def __str__(self):
         return self.user.get_full_name()
