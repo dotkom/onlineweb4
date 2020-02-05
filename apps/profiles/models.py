@@ -18,6 +18,9 @@ class Privacy(models.Model):
     visible_as_attending_events = models.BooleanField(
         _("vis på påmeldingsarrangement"), default=False
     )
+    allow_pictures = models.BooleanField(
+        _("greit å ta bilder på arrangement"), default=False
+    )
 
     user = models.OneToOneField(User, related_name="privacy", on_delete=models.CASCADE)
 

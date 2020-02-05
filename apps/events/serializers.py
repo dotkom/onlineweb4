@@ -45,6 +45,7 @@ class AttendeeRegistrationReadOnlySerializer(serializers.ModelSerializer):
             "attended",
             "timestamp",
             "show_as_attending_event",
+            "allow_pictures",
             "has_paid",
             "extras",
         )
@@ -123,6 +124,7 @@ class AttendeeRegistrationCreateSerializer(serializers.ModelSerializer):
             "event",
             "user",
             "show_as_attending_event",
+            "allow_pictures",
             "recaptcha",
             "extras",
         )
@@ -148,7 +150,13 @@ class AttendeeRegistrationUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendee
-        fields = ("id", "user", "show_as_attending_event", "extras")
+        fields = (
+            "id",
+            "user",
+            "show_as_attending_event",
+            "allow_pictures",
+            "extras",
+        )
 
 
 class AttendeeSerializer(serializers.ModelSerializer):
@@ -156,7 +164,13 @@ class AttendeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendee
-        fields = ("id", "event", "user", "attended", "timestamp")
+        fields = (
+            "id",
+            "event",
+            "user",
+            "attended",
+            "timestamp",
+        )
 
 
 class RuleBundleSerializer(serializers.ModelSerializer):

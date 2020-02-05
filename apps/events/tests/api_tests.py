@@ -196,6 +196,91 @@ class CreateAttendeeTestCase(OIDCTestCase):
         self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
         self.assertEqual(attendee.show_as_attending_event, True)
 
+    @mock_validate_recaptcha()
+    def test_allow_pictures_is_set_false_by_default(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(response.json().get('allow_pictures'))
+
+    @mock_validate_recaptcha()
+    def test_user_can_set_allow_pictures_on_registration(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        self.privacy.visible_as_attending_events = True
+        self.privacy.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            'allow_pictures': True,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(response.json().get('allow_pictures'))
+
+    @mock_validate_recaptcha()
+    def test_user_can_change_allow_pictures_after_registering(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        self.privacy.visible_as_attending_events = False
+        self.privacy.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        attendee_id = response.json().get('id')
+        attendance.registration_end = timezone.now() + timezone.timedelta(hours=1)
+        attendance.unattend_deadline = timezone.now() + timezone.timedelta(hours=1)
+        attendance.save()
+
+        patch_response = self.client.patch(self.id_url(attendee_id), {
+            'allow_pictures': True,
+        }, **self.headers)
+
+        self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(patch_response.json().get('allow_pictures'), True)
+
+    @mock_validate_recaptcha()
+    def test_user_can_change_allow_pictures_if_registration_has_ended(self, _):
+        attendance = self.event.attendance_event
+        attendance.guest_attendance = True
+        attendance.save()
+
+        self.privacy.visible_as_attending_events = False
+        self.privacy.save()
+
+        response = self.client.post(self.url, {
+            'event': self.event.id,
+            **self.recaptcha_arg,
+        }, **self.headers)
+
+        attendee_id = response.json().get('id')
+        attendance.registration_end = timezone.now() - timezone.timedelta(hours=1)
+        attendance.save()
+
+        patch_response = self.client.patch(self.id_url(attendee_id), {
+            'allow_pictures': True,
+        }, **self.headers)
+
+        attendee = Attendee.objects.get(pk=attendee_id)
+
+        self.assertEqual(patch_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(attendee.allow_pictures, True)
+
     def test_guest_user_cannot_attend_event_with_guest_attendance_without_captcha(self):
         attendance = self.event.attendance_event
         attendance.guest_attendance = True
