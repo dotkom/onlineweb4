@@ -60,13 +60,13 @@ class FeedbackAPITestCase(FeedbackTestCaseMixin, OIDCTestCase):
 
         return survey
 
-    def create_text_question(self) -> TextQuestion:
-        return G(TextQuestion, feedback=self.feedback)
+    def create_text_question(self, **kwargs) -> TextQuestion:
+        return G(TextQuestion, feedback=self.feedback, **kwargs)
 
-    def create_rating_question(self) -> RatingQuestion:
-        return G(RatingQuestion, feedback=self.feedback)
+    def create_rating_question(self, **kwargs) -> RatingQuestion:
+        return G(RatingQuestion, feedback=self.feedback, **kwargs)
 
-    def create_multiple_choice_question(self) -> MultipleChoiceQuestion:
+    def create_multiple_choice_question(self, **kwargs) -> MultipleChoiceQuestion:
         multiple_choice_question: MultipleChoiceQuestion = G(MultipleChoiceQuestion)
         G(Choice, question=multiple_choice_question)
         G(Choice, question=multiple_choice_question)
@@ -74,6 +74,7 @@ class FeedbackAPITestCase(FeedbackTestCaseMixin, OIDCTestCase):
             MultipleChoiceRelation,
             question=multiple_choice_question,
             feedback=self.feedback,
+            **kwargs,
         )
         return multiple_choice_question
 
@@ -219,6 +220,33 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(relation),
             {"rating_answers": [{"question": rating_question.id, "answer": 1}]},
+            **self.headers,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_answer_only_filling_required_fields(self):
+        rating_question = self.create_rating_question(required=True)
+        self.create_text_question(required=False)
+        relation = self.create_feedback_relation(user=self.user)
+        response = self.client.post(
+            self.get_submit_url(relation),
+            {"rating_answers": [{"question": rating_question.id, "answer": 1}]},
+            **self.headers,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_non_required_field_with_blank_answer(self):
+        rating_question = self.create_rating_question(required=True)
+        text_question = self.create_text_question(required=False)
+        relation = self.create_feedback_relation(user=self.user)
+        response = self.client.post(
+            self.get_submit_url(relation),
+            {
+                "rating_answers": [{"question": rating_question.id, "answer": 1}],
+                "text_answers": [{"question": text_question.id, "answer": ""}],
+            },
             **self.headers,
         )
 
