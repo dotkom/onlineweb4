@@ -5,39 +5,43 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('feedback', '0018_auto_20200202_1021'),
-    ]
+    dependencies = [("feedback", "0018_auto_20200202_1021")]
 
     operations = [
         migrations.AddField(
-            model_name='multiplechoicerelation',
-            name='help_text',
-            field=models.CharField(blank=True, max_length=256, verbose_name='Utdypning'),
+            model_name="multiplechoicerelation",
+            name="help_text",
+            field=models.CharField(
+                blank=True, max_length=256, verbose_name="Utdypning"
+            ),
         ),
         migrations.AddField(
-            model_name='multiplechoicerelation',
-            name='required',
-            field=models.BooleanField(default=True, verbose_name='Pålagt'),
+            model_name="multiplechoicerelation",
+            name="required",
+            field=models.BooleanField(default=True, verbose_name="Pålagt"),
         ),
         migrations.AddField(
-            model_name='ratingquestion',
-            name='help_text',
-            field=models.CharField(blank=True, max_length=256, verbose_name='Utdypning'),
+            model_name="ratingquestion",
+            name="help_text",
+            field=models.CharField(
+                blank=True, max_length=256, verbose_name="Utdypning"
+            ),
         ),
         migrations.AddField(
-            model_name='ratingquestion',
-            name='required',
-            field=models.BooleanField(default=True, verbose_name='Pålagt'),
+            model_name="ratingquestion",
+            name="required",
+            field=models.BooleanField(default=True, verbose_name="Pålagt"),
         ),
         migrations.AddField(
-            model_name='textquestion',
-            name='help_text',
-            field=models.CharField(blank=True, max_length=256, verbose_name='Utdypning'),
+            model_name="textquestion",
+            name="help_text",
+            field=models.CharField(
+                blank=True, max_length=256, verbose_name="Utdypning"
+            ),
         ),
         migrations.AddField(
-            model_name='textquestion',
-            name='required',
-            field=models.BooleanField(default=True, verbose_name='Pålagt'),
+            model_name="textquestion",
+            name="required",
+            field=models.BooleanField(default=True, verbose_name="Pålagt"),
         ),
     ]
