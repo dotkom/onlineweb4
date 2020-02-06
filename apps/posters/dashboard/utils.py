@@ -95,10 +95,10 @@ def get_poster_admins():
     ).distinct()
     return users
 
+
 def get_poster_admin_group():
     content_type = ContentType.objects.get_for_model(Poster)
     all_permissions = Permission.objects.filter(content_type=content_type)
     change_order_perm = all_permissions.filter(codename="change_poster").first()
     admin_group = Group.objects.filter(permissions=change_order_perm).distinct()
     return admin_group
-
