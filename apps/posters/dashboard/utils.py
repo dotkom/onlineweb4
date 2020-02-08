@@ -27,13 +27,14 @@ def _handle_poster_add(request, form, order_type):
 
     poster.save()
     ordered_committee = form.cleaned_data["ordered_committee"]
-    poster_admin_group = get_poster_admin_group()
+    poster_admin_groups = get_poster_admin_groups()
 
     # Let this user have permissions to show this order
     UserObjectPermission.objects.assign_perm("view_poster_order", request.user, poster)
-    GroupObjectPermission.objects.assign_perm(
-        "view_poster_order", poster_admin_group, poster
-    )
+    for admin_group in poster_admin_groups:
+        GroupObjectPermission.objects.assign_perm(
+            "view_poster_order", admin_group, poster
+        )
     GroupObjectPermission.objects.assign_perm(
         "view_poster_order", ordered_committee, poster
     )
@@ -96,9 +97,9 @@ def get_poster_admins():
     return users
 
 
-def get_poster_admin_group():
+def get_poster_admin_groups():
     content_type = ContentType.objects.get_for_model(Poster)
     all_permissions = Permission.objects.filter(content_type=content_type)
     change_order_perm = all_permissions.filter(codename="change_poster").first()
-    admin_group = Group.objects.filter(permissions=change_order_perm).distinct()
-    return admin_group
+    admin_groups = Group.objects.filter(permissions=change_order_perm).distinct()
+    return admin_groups
