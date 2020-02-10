@@ -5,9 +5,10 @@ on: [push]
 
 jobs:
   setup:
-    name: Setup
+    name: Test and lint
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Copy settings file
         run: |
           cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
@@ -17,4 +18,6 @@ jobs:
       - name: Install tox
         run: |
           pip install tox
-
+      - name: npm build
+        run: |
+          npm run build:prod
