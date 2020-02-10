@@ -1,0 +1,20 @@
+Name: Test and build
+
+on: [push]
+
+
+jobs:
+  setup:
+    name: Setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy settings file
+        run: |
+          cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+      - name: Install node dependencies
+        run: |
+          yarn install --pure-lockfile
+      - name: Install tox
+        run: |
+          pip install tox
+
