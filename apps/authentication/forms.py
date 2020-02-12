@@ -4,7 +4,7 @@ import re
 
 from django import forms
 from django.contrib import auth
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User

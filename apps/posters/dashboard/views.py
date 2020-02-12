@@ -11,7 +11,7 @@ from django.shortcuts import (
     redirect,
     render,
 )
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
 from guardian.decorators import permission_required
 

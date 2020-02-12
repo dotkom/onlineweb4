@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from oidc_provider.lib.claims import ScopeClaims
 
 from apps.sso.userinfo import Onlineweb4Userinfo

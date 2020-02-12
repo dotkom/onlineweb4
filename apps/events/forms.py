@@ -2,7 +2,7 @@
 from captcha.fields import ReCaptchaField
 from django import forms
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import MarkRuleSet

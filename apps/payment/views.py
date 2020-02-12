@@ -3,7 +3,7 @@
 import logging
 
 import stripe
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 from stripe.error import InvalidRequestError, StripeError
