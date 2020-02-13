@@ -7,15 +7,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 from guardian.decorators import permission_required
+from guardian.shortcuts import get_objects_for_user
 from watson.views import SearchView
 
+from apps.authentication.constants import RoleType
 from apps.authentication.forms import UserUpdateForm
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import AllowedUsername, GroupMember, GroupRole
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
@@ -46,9 +49,10 @@ def groups_index(request):
         raise PermissionDenied
 
     context = get_base_context(request)
-
-    context["groups"] = list(Group.objects.all())
-    context["groups"].sort(key=lambda x: str(x).lower())
+    online_groups = get_objects_for_user(
+        request.user, "authentication.change_onlinegroup"
+    )
+    context["groups"] = online_groups
 
     return render(request, "auth/dashboard/groups_index.html", context)
 
@@ -64,8 +68,11 @@ def groups_detail(request, pk):
         raise PermissionDenied
 
     context = get_base_context(request)
-
-    context["group"] = get_object_or_404(Group, pk=pk)
+    online_groups = get_objects_for_user(
+        request.user, "authentication.change_onlinegroup"
+    )
+    group = get_object_or_404(online_groups, pk=pk)
+    context["group"] = group
 
     # AJAX
     if request.method == "POST":
@@ -73,33 +80,41 @@ def groups_detail(request, pk):
             resp = {"status": 200}
             if request.POST["action"] == "remove_user":
                 user = get_object_or_404(User, pk=int(request.POST["user_id"]))
-                context["group"].user_set.remove(user)
-                resp["message"] = "%s ble fjernet fra %s" % (
-                    user.get_full_name(),
-                    context["group"].name,
-                )
-                resp["users"] = [
-                    {"user": u.get_full_name(), "id": u.id}
-                    for u in context["group"].user_set.all()
-                ]
+                member = get_object_or_404(GroupMember, user=user, group=group)
+                member.delete()
+                user_ids = group.members.values_list("user_id")
+                users = User.objects.filter(pk__in=user_ids)
+                message = f"{user.get_full_name()} ble fjernet fra {group.name_long}"
+
+                resp["message"] = message
+                resp["users"] = [{"user": u.get_full_name(), "id": u.id} for u in users]
                 resp["users"].sort(key=lambda x: x["user"])
 
                 return HttpResponse(json.dumps(resp), status=200)
+
             elif request.POST["action"] == "add_user":
                 user = get_object_or_404(User, pk=int(request.POST["user_id"]))
-                context["group"].user_set.add(user)
-                resp["full_name"] = user.get_full_name()
-                resp["users"] = [
-                    {"user": u.get_full_name(), "id": u.id}
-                    for u in context["group"].user_set.all()
-                ]
-                resp["users"].sort(key=lambda x: x["user"])
-                resp["message"] = "%s ble lagt til i %s" % (
-                    resp["full_name"],
-                    context["group"].name,
-                )
+                full_name = user.get_full_name()
+                try:
+                    member = GroupMember.objects.create(group=group, user=user)
+                    member_role = GroupRole.get_for_type(RoleType.MEMBER)
+                    member.roles.add(member_role)
+                    user_ids = group.members.values_list("user_id")
+                    users = User.objects.filter(pk__in=user_ids)
 
-                return HttpResponse(json.dumps(resp), status=200)
+                    resp["full_name"] = full_name
+                    resp["users"] = [
+                        {"user": u.get_full_name(), "id": u.id} for u in users
+                    ]
+                    resp["users"].sort(key=lambda x: x["user"])
+                    resp["message"] = f"{full_name} ble lagt til i {group.name_long}"
+
+                    return HttpResponse(json.dumps(resp), status=200)
+                except IntegrityError:
+                    return HttpResponse(
+                        f"{full_name} er allerede i gruppen {group.name_long}",
+                        status=400,
+                    )
 
         return HttpResponse("Ugyldig handling.", status=400)
 
@@ -123,9 +138,9 @@ def groups_detail(request, pk):
                     [groups[g_id] for g_id in job["source"]]
                 )
 
-    context["group_users"] = list(context["group"].user_set.all())
+    context["group_users"] = list(group.group.user_set.all())
 
-    context["group_permissions"] = list(context["group"].permissions.all())
+    context["group_permissions"] = list(group.group.permissions.all())
 
     context["group_users"].sort(key=lambda x: str(x).lower())
     context["group_permissions"].sort(key=lambda x: str(x))

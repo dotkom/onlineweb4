@@ -620,6 +620,13 @@ class GroupRole(models.Model):
         unique=True,
     )
 
+    @classmethod
+    def get_for_type(cls, role_type: str):
+        if role_type not in RoleType.ALL_TYPES:
+            raise ValueError(f"'{role_type}' is not a legal role_type")
+        role, created = cls.objects.get_or_create(role_type=role_type)
+        return role
+
     @property
     def verbose_name(self):
         return self.get_role_type_display()
