@@ -113,7 +113,10 @@ def index(request):
                 },
                 {"name": "Hybrida, Berg, Timini", "email": "kjellerkom@hybrida.no"},
                 {"name": "Nabla, Janus, HC", "email": "kjellern.hk18@nabla.ntnu.no"},
-                {"name": "Dykkergruppa, NTNUI", "email": "leder@dypet.dykkergruppa.no"},
+                {
+                    "name": "Dykkergruppa, NTNUI",
+                    "email": "styret@dypet.dykkergruppa.no",
+                },
                 {"name": "Labamba", "email": "labamba@abakus.no"},
                 {
                     "name": "Omega, Psykolosjen",
