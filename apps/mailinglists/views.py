@@ -85,6 +85,10 @@ def index(request):
                 {"name": "STØH", "email": "leder.stoh@gmail.com"},
                 {"name": "TIHLDE", "email": "hs@tihlde.org"},
                 {"name": "Timini", "email": "styret@timini.no"},
+                {
+                    "name": "Tim & Shænko (ligger også på Kalvskinnet)",
+                    "email": "post@bygging.no",
+                },
                 {"name": "Vivas", "email": "leder@vivas.teknikersamfunn.no"},
                 {"name": "Volvox & Alkymisten", "email": "styret@volvox.no"},
             ],
@@ -100,7 +104,10 @@ def index(request):
                 },
                 {"name": "Nutrix", "email": "nutrixlinjeforening@gmail.com"},
                 {"name": "SALT", "email": "postmottak@studentalt.no"},
-                {"name": "Tim & Shænko", "email": "styret@bygging.no"},
+                {
+                    "name": "Tim & Shænko (ligger også på Gløshaugen)",
+                    "email": "styret@bygging.no",
+                },
             ],
         },
         {
