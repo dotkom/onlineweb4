@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
+from django.contrib.auth.models import Group
+from guardian.shortcuts import get_perms_for_model
 
 from apps.dashboard.forms import HTML5RequiredMixin
 from apps.dashboard.widgets import (
@@ -15,6 +17,17 @@ from apps.payment.models import Payment, PaymentPrice
 
 
 class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not user.is_superuser:
+            # Only allow groups with permission to change events be put as organizer.
+            # Filter selectable groups by the group memberships of the current user.
+            event_perms = get_perms_for_model(Event)
+            event_organizer_groups = Group.objects.filter(
+                permissions__in=event_perms
+            ).distinct()
+            self.fields["organizer"].queryset = event_organizer_groups.filter(user=user)
+
     class Meta:
         model = Event
         fields = (
