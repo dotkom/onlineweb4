@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
@@ -18,7 +19,12 @@ from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
 from .forms import OnlineGroupForm
-from .utils import handle_group_member_add, handle_group_member_remove
+from .utils import (
+    handle_group_member_add,
+    handle_group_member_remove,
+    handle_group_role_add,
+    handle_group_role_remove,
+)
 
 
 @login_required
@@ -56,11 +62,21 @@ def groups_index(request):
 
 def groups_detail_post_handler(request, group):
     if request.is_ajax and "action" in request.POST:
-        if request.POST["action"] == "remove_user":
+        action = request.POST.get("action")
+        if action == "remove_user":
             return handle_group_member_remove(request, group)
 
-        elif request.POST["action"] == "add_user":
+        elif action == "add_user":
             return handle_group_member_add(request, group)
+
+        elif action == "add_role":
+            return handle_group_role_add(request, group)
+
+        elif action == "remove_role":
+            return handle_group_role_remove(request, group)
+
+        else:
+            return HttpResponse("Ugyldig handling.", status=400)
     else:
         form = OnlineGroupForm(request.POST, instance=group)
         if form.is_valid():

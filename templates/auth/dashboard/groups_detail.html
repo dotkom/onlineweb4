@@ -52,7 +52,7 @@
             </div>
             <br />
             <div class="panel-body">
-                <p>Gruppa {{ group.name_long }} har {{ group_users|length }} medlemmer.</p>
+                <p>Gruppen "{{ group.name_long }}" har {{ group.members.all|length }} medlemmer.</p>
                 <a href="#" class="btn btn-primary" id="group_users_button"><i class="fa fa-users"></i> Legg til</a>
                 <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
                 <a href="/admin/auth/group/{{ group.id }}/delete/" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
