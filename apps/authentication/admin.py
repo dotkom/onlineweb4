@@ -139,6 +139,7 @@ admin.site.register(SpecialPosition, SpecialPositionAdmin)
 class GroupMemberInlineAdmin(admin.StackedInline):
     model = GroupMember
     extra = 0
+    fk_name = "group"
 
 
 @admin.register(OnlineGroup)

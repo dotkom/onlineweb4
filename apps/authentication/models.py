@@ -2,6 +2,7 @@
 
 import datetime
 import hashlib
+import logging
 import urllib
 from functools import reduce
 
@@ -17,6 +18,9 @@ from rest_framework.exceptions import NotAcceptable
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
+from apps.permissions.models import ObjectPermissionModel
+
+logger = logging.getLogger(__name__)
 
 GENDER_CHOICES = [("male", _("mann")), ("female", _("kvinne"))]
 
@@ -472,7 +476,7 @@ class SpecialPosition(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class OnlineGroup(models.Model):
+class OnlineGroup(ObjectPermissionModel, models.Model):
     """
     A group relating a Django group to a group in Online
     """
@@ -530,6 +534,11 @@ class OnlineGroup(models.Model):
         ]
         return self.members.filter(pk__in=member_ids)
 
+    def get_users_with_role(self, role: RoleType):
+        return OnlineUser.objects.filter(
+            group_memberships__in=self.get_members_with_role(role)
+        )
+
     @property
     def leader(self) -> OnlineUser:
         leader_members = self.get_members_with_role(RoleType.LEADER)
@@ -561,6 +570,11 @@ class OnlineGroup(models.Model):
     def __str__(self):
         return self.name_short
 
+    def get_permission_users(self):
+        leaders = self.get_users_with_role(RoleType.LEADER)
+        deputy_leaders = self.get_users_with_role(RoleType.DEPUTY_LEADER)
+        return leaders | deputy_leaders
+
     class Meta:
         verbose_name = _("Onlinegruppe")
         verbose_name_plural = _("Onlinegrupper")
@@ -569,7 +583,7 @@ class OnlineGroup(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class GroupMember(models.Model):
+class GroupMember(ObjectPermissionModel, models.Model):
     """
     Model relating a user to an Online group
     """
@@ -592,6 +606,9 @@ class GroupMember(models.Model):
 
     def has_role(self, role: RoleType):
         return self.roles.filter(role_type=role).exists()
+
+    def get_permission_users(self):
+        return self.group.get_permission_users()
 
     def __str__(self):
         return f"{self.user} - {self.group}"

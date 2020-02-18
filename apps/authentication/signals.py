@@ -14,7 +14,7 @@ from django.db.models.signals import (
 )
 from django.dispatch import receiver
 
-from apps.authentication.models import Email, GroupMember, OnlineGroup
+from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
 from apps.authentication.tasks import SynchronizeGroups
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
 from apps.gsuite.mail_syncer.tasks import update_mailing_list
@@ -149,3 +149,14 @@ def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
                 update_mailing_list.delay(jobmail, email=instance.email, added=False)
             if user.infomail:
                 update_mailing_list.delay(infomail, email=instance.email, added=False)
+
+
+def assign_group_perms(sender, instance, created=False, **kwargs):
+    if isinstance(instance, GroupMember):
+        member: GroupMember = instance
+        member.group.assign_permissions()
+        for m in member.group.members.all():
+            m.assign_permissions()
+
+
+m2m_changed.connect(assign_group_perms, sender=GroupRole.memberships.through)
