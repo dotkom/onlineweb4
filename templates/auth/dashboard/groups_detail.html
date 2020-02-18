@@ -1,5 +1,6 @@
 {% extends 'dashboard_base.html' %}
 {% load render_bundle from webpack_loader %}
+{% load crispy_forms_tags %}
 
 {% block title %}Grupper - {{ group }}{% endblock %}
 
@@ -25,19 +26,23 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <a href="#" class="btn btn-primary" id="group_users_button"><i class="fa fa-users"></i> Legg til</a>
-        <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
-        <a href="/admin/auth/group/{{ group.id }}/delete/" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
-        <div id="group_edit_users" style="display: none;">
-            <hr />
-            <h4>Legg til brukere</h4>
-            <p>Klikk på den aktuelle brukeren for å legge han/hun til i &laquo;{{ group }}&raquo;</p>
-            <input type="text" class="form-control" maxlength="50" autocomplete=off name="usersearch" id="usersearch" placeholder="Søk..." />
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Gruppedetaljer</h3>
+            </div>
+            <div class="panel-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button class="btn btn-success" type="submit">
+                        <i class="fa fa-save fa-lg"></i> Lagre
+                    </button>
+                </form>
+                <br />
+                {% include 'gallery/formwidget.html' %}
+            </div>
         </div>
     </div>
-</div>
-<br />
-<div class="row">
     <div class="col-md-5 col-sm-12">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -45,93 +50,105 @@
                     Medlemmer
                 </h3>
             </div>
+            <br />
             <div class="panel-body">
-            <p>Gruppa {{ group.name_long }} har {{ group_users|length }} medlemmer.</p>
-            <table class="table table-striped table-condensed" id="users">
-                <thead>
-                    <tr>
-                        <th>Navn</th>
-                    </tr>
-                </thead>
-                <tbody id="userlist">
-                {% for user in group_users %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'profiles_view' user.username %}">{{ user.get_full_name }}</a>
-                            <a href="#" id="{{ user.id }}" class="remove-user">
-                                <i class="fa fa-times fa-lg pull-right red"></i>
-                            </a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            </div>
-        </div>
-    </div>
-    {% if sync_group_to or sync_group_from %}
-    <div class="col-md-3 col-sm-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Synkronisering</h3>
-            </div>
-            <div class="panel-body">
-            {% if sync_group_from %}
-                <div class="row">
-                    <div class="col-md-12">
-                        <p>Medlemmer av denne gruppa kan ikke redigeres her. Synkronisering gjør at alle endringer som gjøres direkte i denne gruppa blir overskrevet hver gang synkroniseringsjobben for grupper kjøres.</p>
-                        <p>Dersom en bruker skulle vært medlem av denne gruppa må den legges inn i en av gruppene listet opp under.</p>
-                    </div>
+                <p>Gruppa {{ group.name_long }} har {{ group_users|length }} medlemmer.</p>
+                <a href="#" class="btn btn-primary" id="group_users_button"><i class="fa fa-users"></i> Legg til</a>
+                <a href="/admin/auth/group/{{ group.id }}/" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+                <a href="/admin/auth/group/{{ group.id }}/delete/" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
+                <div id="group_edit_users" style="display: none;">
+                    <hr />
+                    <h4>Legg til brukere</h4>
+                    <p>Klikk på den aktuelle brukeren for å legge han/hun til i &laquo;{{ group }}&raquo;</p>
+                    <input type="text" class="form-control" maxlength="50" autocomplete=off name="usersearch" id="usersearch" placeholder="Søk..." />
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <b>Denne gruppa synkroniseres fra:</b>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul>
-                        {% for name in sync_group_from %}
-                            <li>{{ name }}</li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-           {% endif %}
-           {% if sync_group_to %}
-                <div class="row">
-                    <div class="col-md-12">
-                        <b>Denne gruppa synkroniseres til:</b>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <ul>
-                        {% for name in sync_group_to %}
-                            <li>{{ name }}</li>
-                        {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            {% endif %}
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 col-sm-12">
-    {% else %}
-    <div class="col-md-7 col-sm-12">
-    {% endif %}
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Tilganger</h3>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    {% for perm in group_permissions %}
-                        <div class="col-md-12">
-                            {{ perm }}
-                        </div>
+                <br />
+                <table class="table table-striped table-condensed" id="users">
+                    <thead>
+                        <tr>
+                            <th>Navn</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userlist">
+                    {% for user in group_users %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'profiles_view' user.username %}">{{ user.get_full_name }}</a>
+                                <a href="#" id="{{ user.id }}" class="remove-user">
+                                    <i class="fa fa-times fa-lg pull-right red"></i>
+                                </a>
+                            </td>
+                        </tr>
                     {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+        {% if sync_group_to or sync_group_from %}
+        <div class="col-md-3 col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Synkronisering</h3>
+                </div>
+                <div class="panel-body">
+                {% if sync_group_from %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>Medlemmer av denne gruppa kan ikke redigeres her. Synkronisering gjør at alle endringer som gjøres direkte i denne gruppa blir overskrevet hver gang synkroniseringsjobben for grupper kjøres.</p>
+                            <p>Dersom en bruker skulle vært medlem av denne gruppa må den legges inn i en av gruppene listet opp under.</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b>Denne gruppa synkroniseres fra:</b>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul>
+                            {% for name in sync_group_from %}
+                                <li>{{ name }}</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+               {% endif %}
+               {% if sync_group_to %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b>Denne gruppa synkroniseres til:</b>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul>
+                            {% for name in sync_group_to %}
+                                <li>{{ name }}</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12">
+        {% else %}
+        <div class="col-md-7 col-sm-12">
+        {% endif %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Tilganger</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        {% for perm in group_permissions %}
+                            <div class="col-md-12">
+                                {{ perm }}
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

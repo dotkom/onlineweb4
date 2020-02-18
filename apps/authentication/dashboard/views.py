@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 from guardian.decorators import permission_required
@@ -17,6 +17,7 @@ from apps.authentication.models import AllowedUsername
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
+from .forms import OnlineGroupForm
 from .utils import handle_group_member_add, handle_group_member_remove
 
 
@@ -36,7 +37,6 @@ def index(request):
 
 # GROUP MODULE VIEWS
 @login_required
-@permission_required("authentication.change_onlineuser", return_403=True)
 def groups_index(request):
     """
     Group module in dashboard that lists groups.
@@ -54,8 +54,24 @@ def groups_index(request):
     return render(request, "auth/dashboard/groups_index.html", context)
 
 
+def groups_detail_post_handler(request, group):
+    if request.is_ajax and "action" in request.POST:
+        if request.POST["action"] == "remove_user":
+            return handle_group_member_remove(request, group)
+
+        elif request.POST["action"] == "add_user":
+            return handle_group_member_add(request, group)
+    else:
+        form = OnlineGroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Gruppen ble oppdatert")
+        else:
+            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
+        return redirect(groups_detail, pk=group.id)
+
+
 @login_required
-@permission_required("authentication.change_onlineuser", return_403=True)
 def groups_detail(request, pk):
     """
     Group module in dashboard that lists groups.
@@ -70,17 +86,10 @@ def groups_detail(request, pk):
     )
     group = get_object_or_404(online_groups, pk=pk)
     context["group"] = group
+    context["form"] = OnlineGroupForm(instance=group)
 
-    # AJAX
     if request.method == "POST":
-        if request.is_ajax and "action" in request.POST:
-            if request.POST["action"] == "remove_user":
-                return handle_group_member_remove(request, group)
-
-            elif request.POST["action"] == "add_user":
-                return handle_group_member_add(request, group)
-
-        return HttpResponse("Ugyldig handling.", status=400)
+        return groups_detail_post_handler(request, group)
 
     if hasattr(settings, "GROUP_SYNCER") and settings.GROUP_SYNCER:
         group_id = int(pk)
