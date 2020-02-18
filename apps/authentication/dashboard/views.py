@@ -8,13 +8,19 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 from guardian.decorators import permission_required
 from guardian.shortcuts import get_objects_for_user
 from watson.views import SearchView
 
 from apps.authentication.forms import UserUpdateForm
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import AllowedUsername, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
@@ -135,6 +141,23 @@ def groups_detail(request, pk):
     context["group_permissions"].sort(key=lambda x: str(x))
 
     return render(request, "auth/dashboard/groups_detail.html", context)
+
+
+class GroupCreateView(DashboardPermissionMixin, CreateView):
+    model = OnlineGroup
+    form_class = OnlineGroupForm
+    template_name = "auth/dashboard/groups_create.html"
+    permission_required = "authentication.add_onlinegroup"
+
+    def get_success_url(self):
+        return reverse("groups_index")
+
+    def form_valid(self, form):
+        online_group: OnlineGroup = form.save(commit=False)
+        django_group = Group.objects.create(name=online_group.name_short)
+        online_group.group = django_group
+        online_group.save()
+        return super().form_valid(form)
 
 
 @login_required
