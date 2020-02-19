@@ -82,6 +82,12 @@ class CreateEventView(DashboardCreatePermissionMixin, CreateView):
     template_name = "events/dashboard/create.html"
     permission_required = "events.add_event"
 
+    def get_form_kwargs(self):
+        """Make the requesting user available to the form"""
+        kwargs = super().get_form_kwargs()
+        kwargs.update({"user": self.request.user})
+        return kwargs
+
     def get_success_url(self):
         return reverse("dashboard_event_details", kwargs={"event_id": self.object.id})
 
@@ -92,6 +98,12 @@ class UpdateEventView(DashboardObjectPermissionMixin, UpdateView):
     template_name = "events/dashboard/event_form.html"
     permission_required = "events.change_event"
     pk_url_kwarg = "event_id"
+
+    def get_form_kwargs(self):
+        """Make the requesting user available to the form"""
+        kwargs = super().get_form_kwargs()
+        kwargs.update({"user": self.request.user})
+        return kwargs
 
     def get_success_url(self):
         return reverse(
