@@ -61,7 +61,15 @@ class FieldOfStudyAnswerSerializer(serializers.ModelSerializer):
 class TextQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TextQuestion
-        fields = ("id", "feedback", "order", "label", "display")
+        fields = (
+            "id",
+            "feedback",
+            "order",
+            "label",
+            "display",
+            "help_text",
+            "required",
+        )
 
 
 class TextAnswerSerializer(serializers.ModelSerializer):
@@ -73,7 +81,15 @@ class TextAnswerSerializer(serializers.ModelSerializer):
 class RatingQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = RatingQuestion
-        fields = ("id", "feedback", "order", "label", "display")
+        fields = (
+            "id",
+            "feedback",
+            "order",
+            "label",
+            "display",
+            "help_text",
+            "required",
+        )
 
 
 class RatingAnswerSerializer(serializers.ModelSerializer):
@@ -99,7 +115,15 @@ class MultipleChoiceQuestionSerializer(serializers.ModelSerializer):
 class MultipleChoiceRelationManageSerializer(serializers.ModelSerializer):
     class Meta:
         model = MultipleChoiceRelation
-        fields = ("id", "order", "display", "question", "feedback")
+        fields = (
+            "id",
+            "order",
+            "display",
+            "question",
+            "feedback",
+            "help_text",
+            "required",
+        )
 
 
 class MultipleChoiceRelationSerializer(serializers.ModelSerializer):
@@ -107,7 +131,7 @@ class MultipleChoiceRelationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MultipleChoiceRelation
-        fields = ("id", "order", "display", "question")
+        fields = ("id", "order", "display", "question", "help_text", "required")
 
 
 class MultipleChoiceAnswerSerializer(serializers.ModelSerializer):
@@ -279,39 +303,47 @@ class FeedbackRelationSubmitSerializer(serializers.ModelSerializer):
         :param answers: list containing the data for all submitted answers of a type.
         :param question_queryset: the questions of a type which should be answered for this feedback.
         """
-        question_ids = sorted([question.id for question in question_queryset])
-        answer_question_ids = sorted([answer.get("question").id for answer in answers])
-        return answer_question_ids == question_ids
+
+        question_ids = [question.id for question in question_queryset]
+        answer_ids = [answer.get("question").id for answer in answers]
+        required_answer_map = {}
+
+        if not answer_ids == list(set(answer_ids)):
+            raise serializers.ValidationError(
+                "Enkelte spørsmål er besvart flere ganger"
+            )
+
+        for answer in answers:
+            question_id = answer.get("question").id
+            # If the answer is for a question that is not in the survey
+            if question_id not in question_ids:
+                raise serializers.ValidationError(
+                    "Det er besvart spørsmål som ikke er det av undersøkelsen"
+                )
+            required_answer_map[question_id] = True
+
+        for question in question_queryset:
+            is_answered = required_answer_map.pop(question.id, False)
+            if question.required and not is_answered:
+                raise serializers.ValidationError(
+                    "Ikke alle påkrevde spørsmål har blitt besvart"
+                )
 
     def validate_text_answers(self, answers: [dict]):
         relation: FeedbackRelation = self.instance
-        if not self._check_answer_ids(answers, relation.feedback.text_questions.all()):
-            raise serializers.ValidationError(
-                "Du har svart på enten for mange eller for få tekstspørsmål"
-            )
-
+        self._check_answer_ids(answers, relation.feedback.text_questions.all())
         return answers
 
     def validate_rating_answers(self, answers: [dict]):
         relation: FeedbackRelation = self.instance
-        if not self._check_answer_ids(
-            answers, relation.feedback.rating_questions.all()
-        ):
-            raise serializers.ValidationError(
-                "Du har svart på enten for mange eller for få vurderingssørsmål"
-            )
-
+        self._check_answer_ids(answers, relation.feedback.rating_questions.all())
         return answers
 
     def validate_multiple_choice_answers(self, answers: [dict]):
         relation: FeedbackRelation = self.instance
-        if not self._check_answer_ids(
+        self._check_answer_ids(
             answers, relation.feedback.multiple_choice_questions.all()
-        ):
-            raise serializers.ValidationError(
-                "Du har svart på enten for mange eller for få flervalgsspørsmål"
-            )
-
+        )
         return answers
 
     def validate(self, data):

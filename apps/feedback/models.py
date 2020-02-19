@@ -329,6 +329,16 @@ class GenericSurvey(models.Model):
         ordering = ("created_date", "title")
 
 
+class Question(models.Model):
+    order = models.SmallIntegerField(_("Rekkefølge"), default=0)
+    display = models.BooleanField(_("Vis til bedrift"), default=True)
+    required = models.BooleanField(_("Pålagt"), default=True)
+    help_text = models.CharField(_("Utdypning"), blank=True, max_length=256)
+
+    class Meta:
+        abstract = True
+
+
 class FieldOfStudyAnswer(models.Model):
     feedback_relation = models.ForeignKey(
         FeedbackRelation,
@@ -349,13 +359,12 @@ class FieldOfStudyAnswer(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class TextQuestion(models.Model):
+class TextQuestion(Question, models.Model):
     feedback = models.ForeignKey(
         Feedback, related_name="text_questions", on_delete=models.CASCADE
     )
     order = models.SmallIntegerField(_("Rekkefølge"), default=10)
     label = models.CharField(_("Spørsmål"), blank=False, max_length=256)
-    display = models.BooleanField(_("Vis til bedrift"), default=True)
 
     def __str__(self):
         return self.label
@@ -397,14 +406,12 @@ RATING_CHOICES.insert(
 )  # Adds a blank field to prevent 1 from beeing selected by default
 
 
-class RatingQuestion(models.Model):
+class RatingQuestion(Question, models.Model):
     feedback = models.ForeignKey(
         Feedback, related_name="rating_questions", on_delete=models.CASCADE
     )
-
     order = models.SmallIntegerField(_("Rekkefølge"), default=20)
     label = models.CharField(_("Spørsmål"), blank=False, max_length=256)
-    display = models.BooleanField(_("Vis til bedrift"), default=True)
 
     def __str__(self):
         return self.label
@@ -449,14 +456,10 @@ class MultipleChoiceQuestion(models.Model):
         permissions = (("view_multiplechoicequestion", "View MultipleChoiceQuestion"),)
         default_permissions = ("add", "change", "delete")
 
-    def __str__(self):
-        return self.label
 
-
-class MultipleChoiceRelation(models.Model):
+class MultipleChoiceRelation(Question, models.Model):
     question = models.ForeignKey(MultipleChoiceQuestion, on_delete=models.CASCADE)
     order = models.SmallIntegerField(_("Rekkefølge"), default=30)
-    display = models.BooleanField(_("Vis til bedrift"), default=True)
     feedback = models.ForeignKey(
         Feedback, related_name="multiple_choice_questions", on_delete=models.CASCADE
     )
