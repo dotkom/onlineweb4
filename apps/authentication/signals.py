@@ -152,11 +152,15 @@ def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
 
 
 def assign_group_perms(sender, instance, created=False, **kwargs):
+    def assign_perms(group: OnlineGroup):
+        group.assign_permissions()
+        for member in group.members.all():
+            member.assign_permissions()
+        for sub_group in group.sub_groups.all():
+            assign_perms(sub_group)
+
     if isinstance(instance, GroupMember):
-        member: GroupMember = instance
-        member.group.assign_permissions()
-        for m in member.group.members.all():
-            m.assign_permissions()
+        assign_perms(group=instance.group)
 
 
 m2m_changed.connect(assign_group_perms, sender=GroupRole.memberships.through)

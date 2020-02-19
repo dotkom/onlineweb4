@@ -9,6 +9,7 @@ class OnlineGroupForm(forms.ModelForm):
     class Meta:
         model = OnlineGroup
         fields = [
+            "parent_group",
             "name_short",
             "name_long",
             "description_short",

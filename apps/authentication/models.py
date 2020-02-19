@@ -523,6 +523,15 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         blank=False,
     )
 
+    parent_group = models.ForeignKey(
+        to="self",
+        on_delete=models.SET_NULL,
+        related_name="sub_groups",
+        verbose_name=_("Administrerende gruppe"),
+        blank=True,
+        null=True,
+    )
+
     @property
     def id(self):
         """ Proxy primary key/id from group object """
@@ -538,6 +547,12 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         return OnlineUser.objects.filter(
             group_memberships__in=self.get_members_with_role(role)
         )
+
+    def add_user(self, user: OnlineUser):
+        return GroupMember.objects.create(group=self, user=user)
+
+    def remove_user(self, user: OnlineUser):
+        self.members.filter(user=user).delete()
 
     @property
     def leader(self) -> OnlineUser:
@@ -571,9 +586,11 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         return self.name_short
 
     def get_permission_users(self):
-        leaders = self.get_users_with_role(RoleType.LEADER)
-        deputy_leaders = self.get_users_with_role(RoleType.DEPUTY_LEADER)
-        return leaders | deputy_leaders
+        permitted_queryset = self.get_users_with_role(RoleType.LEADER)
+        permitted_queryset |= self.get_users_with_role(RoleType.DEPUTY_LEADER)
+        if self.parent_group:
+            permitted_queryset |= self.parent_group.get_permission_users()
+        return permitted_queryset
 
     class Meta:
         verbose_name = _("Onlinegruppe")

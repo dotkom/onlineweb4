@@ -14,7 +14,6 @@ from rest_framework import status
 from apps.authentication.constants import GroupType, RoleType
 from apps.authentication.models import (
     Email,
-    GroupMember,
     GroupRole,
     OnlineGroup,
     OnlineUser,
@@ -201,10 +200,13 @@ class GroupPermissionTestCase(TestCase):
             group_type=GroupType.COMMITTEE,
         )
         self.user1: OnlineUser = G(OnlineUser)
-        self.member1: GroupMember = G(GroupMember, user=self.user1, group=self.group)
+        self.member1 = self.group.add_user(self.user1)
 
         self.user2: OnlineUser = G(OnlineUser)
-        self.member2: GroupMember = G(GroupMember, user=self.user2, group=self.group)
+        self.member2 = self.group.add_user(self.user2)
+
+        self.user3: OnlineUser = G(OnlineUser)
+        self.member3 = self.group.add_user(self.user3)
 
         self.test_perm = "authentication.change_onlinegroup"
 
@@ -225,3 +227,27 @@ class GroupPermissionTestCase(TestCase):
         # user 1 permissions should be revoked, while user 2 get permission for being deputy leader
         self.assertFalse(self.user1.has_perm(self.test_perm, self.group))
         self.assertTrue(self.user2.has_perm(self.test_perm, self.group))
+
+    def test_permissions_propagate_from_parent_groups(self):
+        parent_group: OnlineGroup = G(OnlineGroup, group=G(Group))
+        user: OnlineUser = G(OnlineUser)
+        member = parent_group.add_user(user)
+        member.roles.add(self.get_role(RoleType.LEADER))
+
+        self.group.parent_group = parent_group
+        self.group.save()
+
+        self.assertTrue(user.has_perm(self.test_perm, self.group))
+
+        # Test when the role is added after the group is set as the parent
+        user: OnlineUser = G(OnlineUser)
+        member = parent_group.add_user(user)
+        member.roles.add(self.get_role(RoleType.LEADER))
+
+        self.assertTrue(user.has_perm(self.test_perm, self.group))
+
+        sub_group: OnlineGroup = G(OnlineGroup, group=G(Group))
+        sub_group.parent_group = self.group
+        sub_group.save()
+
+        self.assertTrue(user.has_perm(self.test_perm, sub_group))
