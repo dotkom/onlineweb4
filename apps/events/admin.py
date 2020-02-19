@@ -62,34 +62,6 @@ class GroupRestrictionInline(admin.TabularInline):
     filter_horizontal = ("groups",)
 
 
-def mark_paid(modeladmin, request, queryset):
-    queryset.update(paid=True)
-
-
-mark_paid.short_description = "Merk som betalt"
-
-
-def mark_not_paid(modeladmin, request, queryset):
-    queryset.update(paid=False)
-
-
-mark_not_paid.short_description = "Merk som ikke betalt"
-
-
-def mark_attended(modeladmin, request, queryset):
-    queryset.update(attended=True)
-
-
-mark_attended.short_description = "Merk som møtt"
-
-
-def mark_not_attended(modeladmin, request, queryset):
-    queryset.update(attended=False)
-
-
-mark_not_attended.short_description = "Merk som ikke møtt"
-
-
 class AttendeeAdmin(GuardedModelAdmin, VersionAdmin):
     model = Attendee
     ordering = ["-timestamp"]
@@ -102,16 +74,8 @@ class AttendeeAdmin(GuardedModelAdmin, VersionAdmin):
         "user__last_name",
         "user__username",
     )
-    actions = [mark_paid, mark_attended, mark_not_paid, mark_not_attended]
     group_owned_objects_field = "event__event__organizer"
     user_can_access_owned_by_group_objects_only = True
-
-    # Disable delete_selected http://bit.ly/1o4nleN
-    def get_actions(self, request):
-        actions = super(AttendeeAdmin, self).get_actions(request)
-        if "delete_selected" in actions:
-            del actions["delete_selected"]
-        return actions
 
 
 class CompanyEventAdmin(VersionAdmin):
