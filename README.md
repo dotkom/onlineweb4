@@ -1,5 +1,5 @@
 # Onlineweb 4
-[![Build Status](https://ci.online.ntnu.no/api/badges/dotkom/onlineweb4/status.svg?branch=develop)](https://ci.online.ntnu.no/dotkom/onlineweb4) [![codecov](https://codecov.io/gh/dotKom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotKom/onlineweb4) [![Requirements Status](https://requires.io/github/dotkom/onlineweb4/requirements.svg?branch=develop)](https://requires.io/github/dotkom/onlineweb4/requirements/?branch=develop)[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Build Status](https://ci.online.ntnu.no/api/badges/dotkom/onlineweb4/status.svg?branch=develop)](https://ci.online.ntnu.no/dotkom/onlineweb4) [![codecov](https://codecov.io/gh/dotKom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotKom/onlineweb4) [![Requirements Status](https://requires.io/github/dotkom/onlineweb4/requirements.svg?branch=develop)](https://requires.io/github/dotkom/onlineweb4/requirements/?branch=develop) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
 ## Frameworks
