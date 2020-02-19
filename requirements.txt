@@ -1,5 +1,5 @@
 Django==2.2.10
-Pillow==6.2.0                   # PIL fork (Python Imaging Library)
+Pillow==7.0.0                   # PIL fork (Python Imaging Library)
 djangorestframework==3.9.4      # API v1
 django-filter==2.2.0            # Filtering for DRF
 # python-memcached==1.57        # Memcache. Used by Mailinglists to fetch from Sympa.
