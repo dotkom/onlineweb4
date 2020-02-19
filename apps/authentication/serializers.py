@@ -428,6 +428,9 @@ class OnlineGroupCreateOrUpdateSerializer(serializers.ModelSerializer):
     image = serializers.PrimaryKeyRelatedField(
         required=False, queryset=ResponsiveImage.objects.all()
     )
+    parent_group = serializers.PrimaryKeyRelatedField(
+        required=False, queryset=OnlineGroup.objects.all()
+    )
 
     def validate_group(self, group: Group):
         if OnlineGroup.objects.filter(group__pk=group.id).exists():
@@ -448,4 +451,7 @@ class OnlineGroupCreateOrUpdateSerializer(serializers.ModelSerializer):
             "description_long",
             "email",
             "group_type",
+            "parent_group",
+            "sub_groups",
         )
+        read_only_fields = ("sub_groups",)

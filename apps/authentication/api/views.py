@@ -29,6 +29,7 @@ from apps.authentication.serializers import (
     UserUpdateSerializer,
 )
 from apps.common.rest_framework.mixins import MultiSerializerMixin
+from apps.permissions.drf_permissions import DjangoObjectPermissionOrAnonReadOnly
 
 from .filters import UserFilter
 
@@ -150,88 +151,22 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
-    permission_classes = (AllowAny,)
+    permission_classes = (DjangoObjectPermissionOrAnonReadOnly,)
+    queryset = OnlineGroup.objects.all()
     serializer_classes = {
         "write": OnlineGroupCreateOrUpdateSerializer,
         "read": OnlineGroupReadOnlySerializer,
     }
 
-    @staticmethod
-    def get_editable_groups_for_user(user: User, action: str):
-        if not user.is_authenticated:
-            return OnlineGroup.objects.none()
-
-        all_groups = OnlineGroup.objects.all()
-        """ Updating or deleting requires admin rights or a leader role """
-        if action in ["create", "update", "partial_update", "destroy"]:
-            if user.is_superuser:
-                return all_groups
-
-            """ Group leaders or deputy leaders should be allowed to edit groups """
-            allowed_group_ids = [
-                group.id
-                for group in all_groups
-                if group.leader == user or group.deputy_leader == user
-            ]
-            return OnlineGroup.objects.filter(pk__in=allowed_group_ids)
-
-    def get_queryset(self):
-        if self.action in ["list", "retrieve"]:
-            return OnlineGroup.objects.all()
-
-        user = self.request.user
-        return self.get_editable_groups_for_user(user, self.action)
-
-    def create(self, request, *args, **kwargs):
-
-        if request.user.is_superuser or request.user.has_perm(
-            "authentication.add_onlinegroup"
-        ):
-            return super().create(request, *args, **kwargs)
-
-        return Response(
-            {"message": "Du har ikke tillatelse til å opprette grupper"},
-            status=status.HTTP_403_FORBIDDEN,
-        )
-
 
 class GroupMemberViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
-    permission_classes = (AllowAny,)
+    permission_classes = (DjangoObjectPermissionOrAnonReadOnly,)
+    queryset = GroupMember.objects.all()
     serializer_classes = {
         "create": GroupMemberCreateSerializer,
         "update": GroupMemberUpdateSerializer,
         "read": GroupMemberReadOnlySerializer,
     }
-
-    @staticmethod
-    def get_allowed_memberships_for_user(user: User, action: str):
-        allowed_groups = OnlineGroupViewSet.get_editable_groups_for_user(user, action)
-        allowed_membership_ids = []
-        for group in allowed_groups:
-            for membership in group.members.all():
-                allowed_membership_ids.append(membership.id)
-
-        return GroupMember.objects.filter(pk__in=allowed_membership_ids)
-
-    def get_queryset(self):
-        if self.action in ["list", "retrieve"]:
-            return GroupMember.objects.all()
-
-        user = self.request.user
-        return self.get_allowed_memberships_for_user(user, self.action)
-
-    def create(self, request, *args, **kwargs):
-
-        if request.user.is_superuser or request.user.has_perm(
-            "authentication.add_groupmember"
-        ):
-
-            return super().create(request, *args, **kwargs)
-
-        return Response(
-            {"message": "Du har ikke tillatelse til å opprette gruppemedlemskap"},
-            status=status.HTTP_403_FORBIDDEN,
-        )
 
 
 class GroupRoleViewSet(viewsets.ReadOnlyModelViewSet):

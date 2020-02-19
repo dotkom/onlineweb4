@@ -11,7 +11,14 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
 
-from apps.authentication.models import Email, OnlineUser, RegisterToken
+from apps.authentication.constants import GroupType, RoleType
+from apps.authentication.models import (
+    Email,
+    GroupRole,
+    OnlineGroup,
+    OnlineUser,
+    RegisterToken,
+)
 from apps.authentication.validators import validate_rfid
 
 
@@ -181,3 +188,66 @@ class RfidValidatorTestCase(TestCase):
         self.assertRaises(ValidationError, lambda: validate_rfid("abcdefghij"))
         self.assertRaises(ValidationError, lambda: validate_rfid("        "))
         self.assertRaises(ValidationError, lambda: validate_rfid("          "))
+
+
+class GroupPermissionTestCase(TestCase):
+    def setUp(self):
+        django_group = G(Group)
+        self.group = OnlineGroup.objects.create(
+            group=django_group,
+            name_short="Testkom",
+            name_long="Testkomiteen",
+            group_type=GroupType.COMMITTEE,
+        )
+        self.user1: OnlineUser = G(OnlineUser)
+        self.member1 = self.group.add_user(self.user1)
+
+        self.user2: OnlineUser = G(OnlineUser)
+        self.member2 = self.group.add_user(self.user2)
+
+        self.user3: OnlineUser = G(OnlineUser)
+        self.member3 = self.group.add_user(self.user3)
+
+        self.test_perm = "authentication.change_onlinegroup"
+
+    def get_role(self, role: str):
+        return GroupRole.get_for_type(role)
+
+    def test_leader_gets_permission(self):
+        self.member1.roles.add(self.get_role(RoleType.LEADER))
+
+        # User 1 is a leader, user 2 is regular member
+        self.assertTrue(self.user1.has_perm(self.test_perm, self.group))
+        self.assertFalse(self.user2.has_perm(self.test_perm, self.group))
+
+        # Switch up the roles, to see if permissions are added and removed as they should
+        self.member1.roles.remove(self.get_role(RoleType.LEADER))
+        self.member2.roles.add(self.get_role(RoleType.DEPUTY_LEADER))
+
+        # user 1 permissions should be revoked, while user 2 get permission for being deputy leader
+        self.assertFalse(self.user1.has_perm(self.test_perm, self.group))
+        self.assertTrue(self.user2.has_perm(self.test_perm, self.group))
+
+    def test_permissions_propagate_from_parent_groups(self):
+        parent_group: OnlineGroup = G(OnlineGroup, group=G(Group))
+        user: OnlineUser = G(OnlineUser)
+        member = parent_group.add_user(user)
+        member.roles.add(self.get_role(RoleType.LEADER))
+
+        self.group.parent_group = parent_group
+        self.group.save()
+
+        self.assertTrue(user.has_perm(self.test_perm, self.group))
+
+        # Test when the role is added after the group is set as the parent
+        user: OnlineUser = G(OnlineUser)
+        member = parent_group.add_user(user)
+        member.roles.add(self.get_role(RoleType.LEADER))
+
+        self.assertTrue(user.has_perm(self.test_perm, self.group))
+
+        sub_group: OnlineGroup = G(OnlineGroup, group=G(Group))
+        sub_group.parent_group = self.group
+        sub_group.save()
+
+        self.assertTrue(user.has_perm(self.test_perm, sub_group))

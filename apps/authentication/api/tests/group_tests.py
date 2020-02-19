@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.models import Group, Permission
 from django.urls import reverse
 from django_dynamic_fixture import G
@@ -8,6 +10,8 @@ from apps.authentication.models import GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.events.tests.utils import generate_user
 from apps.online_oidc_provider.test import OIDCTestCase
+
+logger = logging.getLogger(__name__)
 
 
 class GroupRoleTestCase(OIDCTestCase):
@@ -121,10 +125,6 @@ class OnlineGroupTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, self.group_data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(
-            response.json().get("message"),
-            "Du har ikke tillatelse til å opprette grupper",
-        )
 
     def test_users_with_permission_can_create_groups(self):
         self.user.is_superuser = False
@@ -149,7 +149,7 @@ class OnlineGroupTestCase(OIDCTestCase):
 
         response = self.client.delete(self.id_url(online_group.id), **self.headers)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_group_leader_can_delete_group(self):
         online_group = self.create_group()
@@ -247,10 +247,6 @@ class GroupMemberTestCase(OIDCTestCase):
 
         response = self.client.post(self.url, self.membership_data, **self.headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(
-            response.json().get("message"),
-            "Du har ikke tillatelse til å opprette gruppemedlemskap",
-        )
 
     def test_users_with_permission_can_create_memberships(self):
         self.user.is_superuser = False
@@ -276,7 +272,7 @@ class GroupMemberTestCase(OIDCTestCase):
 
         response = self.client.delete(self.id_url(membership.id), **self.headers)
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_group_leader_can_delete_memberships(self):
         membership = self.create_membership()
@@ -338,4 +334,4 @@ class GroupMemberTestCase(OIDCTestCase):
             self.id_url(membership.id), {"roles": role_ids}, **self.headers
         )
 
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

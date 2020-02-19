@@ -2,6 +2,7 @@
 
 import datetime
 import hashlib
+import logging
 import urllib
 from functools import reduce
 
@@ -17,6 +18,9 @@ from rest_framework.exceptions import NotAcceptable
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
+from apps.permissions.models import ObjectPermissionModel
+
+logger = logging.getLogger(__name__)
 
 GENDER_CHOICES = [("male", _("mann")), ("female", _("kvinne"))]
 
@@ -472,7 +476,7 @@ class SpecialPosition(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class OnlineGroup(models.Model):
+class OnlineGroup(ObjectPermissionModel, models.Model):
     """
     A group relating a Django group to a group in Online
     """
@@ -519,6 +523,15 @@ class OnlineGroup(models.Model):
         blank=False,
     )
 
+    parent_group = models.ForeignKey(
+        to="self",
+        on_delete=models.SET_NULL,
+        related_name="sub_groups",
+        verbose_name=_("Administrerende gruppe"),
+        blank=True,
+        null=True,
+    )
+
     @property
     def id(self):
         """ Proxy primary key/id from group object """
@@ -529,6 +542,17 @@ class OnlineGroup(models.Model):
             member.id for member in self.members.all() if member.has_role(role)
         ]
         return self.members.filter(pk__in=member_ids)
+
+    def get_users_with_role(self, role: RoleType):
+        return OnlineUser.objects.filter(
+            group_memberships__in=self.get_members_with_role(role)
+        )
+
+    def add_user(self, user: OnlineUser):
+        return GroupMember.objects.create(group=self, user=user)
+
+    def remove_user(self, user: OnlineUser):
+        self.members.filter(user=user).delete()
 
     @property
     def leader(self) -> OnlineUser:
@@ -561,6 +585,13 @@ class OnlineGroup(models.Model):
     def __str__(self):
         return self.name_short
 
+    def get_permission_users(self):
+        permitted_queryset = self.get_users_with_role(RoleType.LEADER)
+        permitted_queryset |= self.get_users_with_role(RoleType.DEPUTY_LEADER)
+        if self.parent_group:
+            permitted_queryset |= self.parent_group.get_permission_users()
+        return permitted_queryset
+
     class Meta:
         verbose_name = _("Onlinegruppe")
         verbose_name_plural = _("Onlinegrupper")
@@ -569,7 +600,7 @@ class OnlineGroup(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class GroupMember(models.Model):
+class GroupMember(ObjectPermissionModel, models.Model):
     """
     Model relating a user to an Online group
     """
@@ -592,6 +623,9 @@ class GroupMember(models.Model):
 
     def has_role(self, role: RoleType):
         return self.roles.filter(role_type=role).exists()
+
+    def get_permission_users(self):
+        return self.group.get_permission_users()
 
     def __str__(self):
         return f"{self.user} - {self.group}"
@@ -619,6 +653,13 @@ class GroupRole(models.Model):
         blank=False,
         unique=True,
     )
+
+    @classmethod
+    def get_for_type(cls, role_type: str):
+        if role_type not in RoleType.ALL_TYPES:
+            raise ValueError(f"'{role_type}' is not a legal role_type")
+        role, created = cls.objects.get_or_create(role_type=role_type)
+        return role
 
     @property
     def verbose_name(self):

@@ -156,20 +156,18 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'authentication.change_onlineuser' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-group blue"></i> <span>Grupper</span>
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            {% if 'authentication.add_onlineuser' in user_permissions %}
-                                <li><a href="{% url 'admin:auth_group_add' %}"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
+                            {% if 'authentication.add_onlinegroup' in user_permissions %}
+                                <li><a href="{% url 'groups_create' %}"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
                             {% endif %}
                             <li><a href="{% url 'groups_index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
-                    {% endif %}
                     {% if 'hobbygroups.change_hobby' in user_permissions %}
                     <li>
                         <a href="/dashboard/hobbies">

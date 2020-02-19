@@ -53,7 +53,8 @@ const Group = (function PrivateGroup($) {
       }
     };
     const error = (xhr, txt, errorMessage) => {
-      showStatusMessage(errorMessage, 'alert-danger');
+      const message = xhr.responseText || errorMessage;
+      showStatusMessage(message, 'alert-danger');
     };
 
     ajax('POST', url, data, success, error, null);
