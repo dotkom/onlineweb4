@@ -325,7 +325,7 @@ def event_details(request, event_id, active_tab="details"):
     context = _create_details_context(request, event_id)
     event = context["event"]
     context["active_tab"] = active_tab
-    context["form"] = dashboard_forms.CreateEventForm(instance=event)
+    context["form"] = dashboard_forms.CreateEventForm(instance=event, user=request.user)
 
     extras = {}
     if event.is_attendance_event() and event.attendance_event.extras:
