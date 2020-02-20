@@ -154,13 +154,19 @@ class OnlineGroupAdmin(VersionAdmin):
         return f"{group.members.count()} ({group.group.user_set.count()})"
 
     member_count.admin_order_field = "members__count"
-    member_count.short_description = "Antall medlemmder (synkronisert)"
+    member_count.short_description = "Antall medlemmer (synkronisert)"
+
+
+class MemberRoleInline(admin.TabularInline):
+    model = GroupMember.roles.through
+    extra = 0
 
 
 @admin.register(GroupMember)
 class GroupMemberAdmin(VersionAdmin):
     model = GroupMember
     list_display = ("user", "group", "all_roles")
+    list_filter = ("group", "roles")
     search_fields = (
         "user__username",
         "user__first_name",
@@ -169,6 +175,7 @@ class GroupMemberAdmin(VersionAdmin):
         "group__name_long",
         "roles__role_type",
     )
+    inlines = (MemberRoleInline,)
 
     def all_roles(self, member: GroupMember):
         return ", ".join([role.verbose_name for role in member.roles.all()])
