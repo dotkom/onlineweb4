@@ -621,6 +621,13 @@ class GroupMember(ObjectPermissionModel, models.Model):
     )
     added = models.DateTimeField(default=timezone.now)
 
+    is_on_leave = models.BooleanField(_("Permittert"), default=False)
+    is_retired = models.BooleanField(_("Pensjonert"), default=False)
+
+    @property
+    def is_active(self):
+        return not (self.is_on_leave or self.is_retired)
+
     def has_role(self, role: RoleType):
         return self.roles.filter(role_type=role).exists()
 
@@ -647,7 +654,6 @@ class GroupRole(models.Model):
     role_type = models.CharField(
         verbose_name="Rolle",
         choices=RoleType.ALL_CHOICES,
-        default=RoleType.MEMBER,
         max_length=256,
         null=False,
         blank=False,

@@ -4,7 +4,6 @@ from django.db import IntegrityError
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 
-from apps.authentication.constants import RoleType
 from apps.authentication.models import GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 
@@ -35,10 +34,7 @@ def handle_group_member_add(request: HttpRequest, group: OnlineGroup) -> HttpRes
     user = get_object_or_404(User, pk=int(request.POST["user_id"]))
     full_name = user.get_full_name()
     try:
-        member = GroupMember.objects.create(group=group, user=user)
-        member_role = GroupRole.get_for_type(RoleType.MEMBER)
-        member.roles.add(member_role)
-
+        group.add_user(user)
         context = get_base_action_context(group)
         context["full_name"] = full_name
         context["message"] = f"{full_name} ble lagt til i {group.name_long}"

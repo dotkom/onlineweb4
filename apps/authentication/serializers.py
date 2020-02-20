@@ -367,7 +367,7 @@ class GroupMemberReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMember
-        fields = ("id", "user", "added", "roles")
+        fields = ("id", "user", "added", "roles", "is_on_leave", "is_retired")
         read_only = True
 
 
@@ -384,7 +384,7 @@ class GroupMemberCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMember
-        fields = ("user", "group", "added", "roles")
+        fields = ("user", "group", "added", "roles", "is_on_leave", "is_retired")
         read_only_fields = ("added",)
 
 
@@ -395,7 +395,7 @@ class GroupMemberUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMember
-        fields = ("user", "group", "added", "roles")
+        fields = ("user", "group", "added", "roles", "is_on_leave", "is_retired")
         read_only_fields = ("added", "user", "group")
 
 

@@ -298,7 +298,7 @@ class GroupMemberTestCase(OIDCTestCase):
         self.user.is_superuser = True
         self.user.save()
 
-        role_ids = [self.get_group_role(RoleType.MEMBER).id]
+        role_ids = [self.get_group_role(RoleType.TREASURER).id]
         membership = self.create_membership()
 
         response = self.client.patch(
@@ -327,11 +327,8 @@ class GroupMemberTestCase(OIDCTestCase):
         self.user.is_superuser = False
         self.user.save()
 
-        role_ids = [self.get_group_role(RoleType.MEMBER).id]
         membership = self.create_membership()
 
-        response = self.client.patch(
-            self.id_url(membership.id), {"roles": role_ids}, **self.headers
-        )
+        response = self.client.patch(self.id_url(membership.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
