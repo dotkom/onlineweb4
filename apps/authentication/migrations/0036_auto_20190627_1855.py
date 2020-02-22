@@ -9,7 +9,6 @@ def load_data(apps, schema_editor):
     Group = apps.get_model("auth", "Group")
     OnlineGroup = apps.get_model("authentication", "OnlineGroup")
     GroupMember = apps.get_model("authentication", "GroupMember")
-    GroupRole = apps.get_model("authentication", "GroupRole")
 
     for group in Group.objects.all():
         online_group = OnlineGroup()
@@ -24,11 +23,6 @@ def load_data(apps, schema_editor):
             group_member.group = online_group
             group_member.user = user
             group_member.save()
-
-            role = GroupRole()
-            role.membership = group_member
-            role.role_type = RoleType.MEMBER
-            role.save()
 
 
 def revert_data(*args):

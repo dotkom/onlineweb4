@@ -5,6 +5,7 @@ import string
 from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
 from django.utils.timezone import datetime
+from guardian.shortcuts import get_objects_for_user
 from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
@@ -367,7 +368,7 @@ class GroupMemberReadOnlySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMember
-        fields = ("id", "user", "added", "roles")
+        fields = ("id", "user", "added", "roles", "is_on_leave", "is_retired")
         read_only = True
 
 
@@ -384,7 +385,7 @@ class GroupMemberCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMember
-        fields = ("user", "group", "added", "roles")
+        fields = ("id", "user", "group", "added", "roles", "is_on_leave", "is_retired")
         read_only_fields = ("added",)
 
 
@@ -395,7 +396,7 @@ class GroupMemberUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupMember
-        fields = ("user", "group", "added", "roles")
+        fields = ("id", "user", "group", "added", "roles", "is_on_leave", "is_retired")
         read_only_fields = ("added", "user", "group")
 
 
@@ -405,6 +406,7 @@ class OnlineGroupReadOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = OnlineGroup
         fields = (
+            "id",
             "image",
             "name_short",
             "name_long",
@@ -440,9 +442,23 @@ class OnlineGroupCreateOrUpdateSerializer(serializers.ModelSerializer):
 
         return group
 
+    def validate_parent_group(self, parent_group: OnlineGroup):
+        user = self.context.get("user")
+        permitted_groups = get_objects_for_user(
+            user=user, perms="authentication.change_onlinegroup", klass=OnlineGroup
+        )
+        can_edit_group = permitted_groups.filter(pk=parent_group.id).exists()
+        if not can_edit_group:
+            raise serializers.ValidationError(
+                f"Du har ikke rettigheter til å administrere gruppen '{parent_group}'"
+            )
+
+        return parent_group
+
     class Meta:
         model = OnlineGroup
         fields = (
+            "id",
             "group",
             "image",
             "name_short",

@@ -20,7 +20,7 @@ from guardian.shortcuts import get_objects_for_user
 from watson.views import SearchView
 
 from apps.authentication.forms import UserUpdateForm
-from apps.authentication.models import AllowedUsername, OnlineGroup
+from apps.authentication.models import AllowedUsername, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
@@ -84,7 +84,7 @@ def groups_detail_post_handler(request, group):
         else:
             return HttpResponse("Ugyldig handling.", status=400)
     else:
-        form = OnlineGroupForm(request.POST, instance=group)
+        form = OnlineGroupForm(data=request.POST, instance=group, user=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, "Gruppen ble oppdatert")
@@ -108,7 +108,7 @@ def groups_detail(request, pk):
     )
     group = get_object_or_404(online_groups, pk=pk)
     context["group"] = group
-    context["form"] = OnlineGroupForm(instance=group)
+    context["form"] = OnlineGroupForm(instance=group, user=request.user)
 
     if request.method == "POST":
         return groups_detail_post_handler(request, group)
@@ -133,12 +133,9 @@ def groups_detail(request, pk):
                     [groups[g_id] for g_id in job["source"]]
                 )
 
-    context["group_users"] = list(group.group.user_set.all())
-
     context["group_permissions"] = list(group.group.permissions.all())
-
-    context["group_users"].sort(key=lambda x: str(x).lower())
     context["group_permissions"].sort(key=lambda x: str(x))
+    context["roles"] = GroupRole.objects.all()
 
     return render(request, "auth/dashboard/groups_detail.html", context)
 
@@ -151,6 +148,12 @@ class GroupCreateView(DashboardPermissionMixin, CreateView):
 
     def get_success_url(self):
         return reverse("groups_index")
+
+    def get_form_kwargs(self):
+        """Make the requesting user available to the form"""
+        kwargs = super().get_form_kwargs()
+        kwargs.update({"user": self.request.user})
+        return kwargs
 
     def form_valid(self, form):
         online_group: OnlineGroup = form.save(commit=False)
