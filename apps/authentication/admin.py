@@ -145,7 +145,7 @@ class GroupMemberInlineAdmin(admin.StackedInline):
 @admin.register(OnlineGroup)
 class OnlineGroupAdmin(VersionAdmin):
     model = OnlineGroup
-    list_display = ("name_short", "name_long", "member_count", "verbose_type", "leader")
+    list_display = ("name_short", "name_long", "member_count", "verbose_type")
     list_display_links = ("name_short", "name_long")
     search_fields = ("name_short", "name_long", "group_type", "email")
     inlines = (GroupMemberInlineAdmin,)

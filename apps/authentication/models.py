@@ -476,6 +476,13 @@ class SpecialPosition(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
+def get_default_group_roles():
+    roles = [RoleType.LEADER, RoleType.DEPUTY_LEADER]
+    for role in roles:
+        GroupRole.get_for_type(role)
+    return GroupRole.objects.filter(role_type__in=roles)
+
+
 class OnlineGroup(ObjectPermissionModel, models.Model):
     """
     A group relating a Django group to a group in Online
@@ -513,7 +520,6 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         blank=True,
     )
     created = models.DateTimeField(_("Oprettelsesdato"), default=timezone.now)
-
     group_type = models.CharField(
         verbose_name=_("Gruppetype"),
         choices=GroupType.ALL_CHOICES,
@@ -522,7 +528,6 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         null=False,
         blank=False,
     )
-
     parent_group = models.ForeignKey(
         to="self",
         on_delete=models.SET_NULL,
@@ -531,19 +536,31 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         blank=True,
         null=True,
     )
+    roles = models.ManyToManyField(
+        to="GroupRole",
+        related_name="groups",
+        verbose_name=_("Tilgjengelige roller"),
+        default=get_default_group_roles,
+    )
+    admin_roles = models.ManyToManyField(
+        to="GroupRole",
+        related_name="admin_for_groups",
+        verbose_name=_("Administrerende roller"),
+        help_text=_("Roller som kan administrere denne gruppen og undergrupper"),
+        default=get_default_group_roles,
+    )
 
     @property
     def id(self):
         """ Proxy primary key/id from group object """
         return self.group.id
 
-    def get_members_with_role(self, role: RoleType):
-        member_ids = [
-            member.id for member in self.members.all() if member.has_role(role)
-        ]
-        return self.members.filter(pk__in=member_ids)
+    def get_members_with_role(self, role: str):
+        # Get role first instead of querying directly because the role may not exist yet
+        role = GroupRole.get_for_type(role)
+        return self.members.filter(roles=role)
 
-    def get_users_with_role(self, role: RoleType):
+    def get_users_with_role(self, role: str):
         return OnlineUser.objects.filter(
             group_memberships__in=self.get_members_with_role(role)
         )
@@ -555,42 +572,24 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         self.members.filter(user=user).delete()
 
     @property
-    def leader(self) -> OnlineUser:
-        leader_members = self.get_members_with_role(RoleType.LEADER)
-        if leader_members.count() == 1:
-            return leader_members.first().user
-        elif leader_members.count() == 0:
-            return None
-
-    @property
-    def deputy_leader(self) -> OnlineUser:
-        deputy_leader_members = self.get_members_with_role(RoleType.DEPUTY_LEADER)
-        if deputy_leader_members.count() == 1:
-            return deputy_leader_members.first().user
-        elif deputy_leader_members.count() == 0:
-            return None
-
-    @property
-    def treasurer(self) -> OnlineUser:
-        treasurer_members = self.get_members_with_role(RoleType.TREASURER)
-        if treasurer_members.count() == 1:
-            return treasurer_members.first().user
-        elif treasurer_members.count() == 0:
-            return None
-
-    @property
     def verbose_type(self):
         return self.get_group_type_display()
 
     def __str__(self):
         return self.name_short
 
-    def get_permission_users(self):
-        permitted_queryset = self.get_users_with_role(RoleType.LEADER)
-        permitted_queryset |= self.get_users_with_role(RoleType.DEPUTY_LEADER)
+    def _get_admin_members_query(self):
+        """ Gather a single query for getting permitted member users from this group and parent groups. """
+        query = models.Q(group=self, roles__in=self.admin_roles.all())
         if self.parent_group:
-            permitted_queryset |= self.parent_group.get_permission_users()
-        return permitted_queryset
+            query |= self.parent_group._get_admin_members_query()
+        return query
+
+    def get_permission_users(self):
+        query = self._get_admin_members_query()
+        members = GroupMember.objects.filter(query)
+        users = OnlineUser.objects.filter(group_memberships__in=members)
+        return users
 
     class Meta:
         verbose_name = _("Onlinegruppe")

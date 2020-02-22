@@ -191,14 +191,24 @@ class RfidValidatorTestCase(TestCase):
 
 
 class GroupPermissionTestCase(TestCase):
+    def get_role(self, role: str):
+        return GroupRole.get_for_type(role)
+
+    def create_group(self, **kwargs) -> OnlineGroup:
+        leader_role = self.get_role(RoleType.LEADER)
+        deputy_leader_role = self.get_role(RoleType.DEPUTY_LEADER)
+        group: OnlineGroup = G(OnlineGroup, group=G(Group), **kwargs)
+        group.admin_roles.add(leader_role)
+        group.admin_roles.add(deputy_leader_role)
+        return group
+
     def setUp(self):
-        django_group = G(Group)
-        self.group = OnlineGroup.objects.create(
-            group=django_group,
+        self.group = self.create_group(
             name_short="Testkom",
             name_long="Testkomiteen",
             group_type=GroupType.COMMITTEE,
         )
+
         self.user1: OnlineUser = G(OnlineUser)
         self.member1 = self.group.add_user(self.user1)
 
@@ -209,9 +219,6 @@ class GroupPermissionTestCase(TestCase):
         self.member3 = self.group.add_user(self.user3)
 
         self.test_perm = "authentication.change_onlinegroup"
-
-    def get_role(self, role: str):
-        return GroupRole.get_for_type(role)
 
     def test_leader_gets_permission(self):
         self.member1.roles.add(self.get_role(RoleType.LEADER))
@@ -229,7 +236,8 @@ class GroupPermissionTestCase(TestCase):
         self.assertTrue(self.user2.has_perm(self.test_perm, self.group))
 
     def test_permissions_propagate_from_parent_groups(self):
-        parent_group: OnlineGroup = G(OnlineGroup, group=G(Group))
+        parent_group = self.create_group()
+
         user: OnlineUser = G(OnlineUser)
         member = parent_group.add_user(user)
         member.roles.add(self.get_role(RoleType.LEADER))
@@ -246,7 +254,7 @@ class GroupPermissionTestCase(TestCase):
 
         self.assertTrue(user.has_perm(self.test_perm, self.group))
 
-        sub_group: OnlineGroup = G(OnlineGroup, group=G(Group))
+        sub_group = self.create_group()
         sub_group.parent_group = self.group
         sub_group.save()
 
