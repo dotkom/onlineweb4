@@ -10,10 +10,25 @@ from apps.authentication.models import OnlineUser as User
 
 def get_base_action_context(group: OnlineGroup):
     context = {"status": 200}
-    user_ids = group.members.values_list("user_id")
-    users = User.objects.filter(pk__in=user_ids)
-    context["users"] = [{"user": u.get_full_name(), "id": u.id} for u in users]
-    context["users"].sort(key=lambda x: x["user"])
+    members = []
+    for member in group.members.all().order_by("user__first_name", "user__last_name"):
+        members.append(
+            {
+                "id": member.id,
+                "user_id": member.user.id,
+                "full_name": member.user.get_full_name(),
+                "is_retired": member.is_retired,
+                "is_on_leave": member.is_on_leave,
+                "roles": [
+                    {"id": role.id, "verbose_name": role.verbose_name}
+                    for role in member.roles.all()
+                ],
+            }
+        )
+    context["members"] = members
+    context["group_roles"] = [
+        {"id": role.id, "verbose_name": role.verbose_name} for role in group.roles.all()
+    ]
     return context
 
 
@@ -49,7 +64,7 @@ def handle_group_member_add(request: HttpRequest, group: OnlineGroup) -> HttpRes
 def handle_group_role_add(request: HttpRequest, group: OnlineGroup) -> HttpResponse:
     user_id = int(request.POST["user_id"])
     role_id = int(request.POST["role_id"])
-    user = get_object_or_404(GroupMember, pk=user_id)
+    user = get_object_or_404(User, pk=user_id)
     member = get_object_or_404(GroupMember, user=user, group=group)
     role = get_object_or_404(GroupRole, pk=role_id)
     if member.roles.filter(pk=role.id).exists():
@@ -68,7 +83,7 @@ def handle_group_role_add(request: HttpRequest, group: OnlineGroup) -> HttpRespo
 def handle_group_role_remove(request: HttpRequest, group: OnlineGroup) -> HttpResponse:
     user_id = int(request.POST["user_id"])
     role_id = int(request.POST["role_id"])
-    user = get_object_or_404(GroupMember, pk=user_id)
+    user = get_object_or_404(User, pk=user_id)
     member = get_object_or_404(GroupMember, user=user, group=group)
     role = get_object_or_404(GroupRole, pk=role_id)
     if not member.roles.filter(pk=role.id).exists():

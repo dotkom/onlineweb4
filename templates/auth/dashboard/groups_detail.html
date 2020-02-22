@@ -43,7 +43,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-5 col-sm-12">
+    <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">
@@ -59,22 +59,56 @@
                 <div id="group_edit_users" style="display: none;">
                     <hr />
                     <h4>Legg til brukere</h4>
-                    <p>Klikk på den aktuelle brukeren for å legge han/hun til i &laquo;{{ group }}&raquo;</p>
+                    <p>Klikk på den aktuelle brukeren for å legge dem til i &laquo;{{ group }}&raquo;</p>
                     <input type="text" class="form-control" maxlength="50" autocomplete=off name="usersearch" id="usersearch" placeholder="Søk..." />
                 </div>
                 <br />
-                <table class="table table-striped table-condensed" id="users">
+                <table class="table table-striped" id="users">
                     <thead>
                         <tr>
                             <th>Navn</th>
+                            <th>Roller</th>
+                            <th>Permittert</th>
+                            <th>Pensjonert</th>
+                            <th>Fjern</th>
                         </tr>
                     </thead>
                     <tbody id="userlist">
-                    {% for user in group_users %}
+                    {% for member in group.members.all %}
                         <tr>
                             <td>
-                                <a href="{% url 'profiles_view' user.username %}">{{ user.get_full_name }}</a>
-                                <a href="#" id="{{ user.id }}" class="remove-user">
+                                <a href="{% url 'profiles_view' member.user.username %}">{{ member.user.get_full_name }}</a>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    {% for role in member.roles.all %}
+                                        <button type="button" class="btn btn-labeled btn-primary remove-role" data-role-id="{{ role.id }}" data-user-id="{{ member.user.id }}">
+                                            <span class="btn-label"><i class="glyphicon glyphicon-remove"></i></span>{{ role.verbose_name }}
+                                        </button>
+                                    {% endfor %}
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Legg til rolle</span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        {% for group_role in group.roles.all %}
+                                            <li><a href="#" class="add-role" data-user-id="{{ member.user.id }}" data-role-id="{{ group_role.id }}">{{ group_role.verbose_name }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="#" data-id="{{ member.id }}" data-value="{{ member.is_on_leave|lower }}" class="toggle-on-leave">
+                                    <i class="fa fa-lg {% if member.is_on_leave %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="#" data-id="{{ member.id }}" data-value="{{ member.is_retired|lower }}" class="toggle-retired">
+                                    <i class="fa fa-lg {% if member.is_retired %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="#" id="{{ member.user.id }}" class="remove-user">
                                     <i class="fa fa-times fa-lg pull-right red"></i>
                                 </a>
                             </td>
