@@ -22,36 +22,12 @@ The API uses [Django REST framework](http://www.django-rest-framework.org/)
 ## Installation - Git and repository setup
 ### Setting up your Git user and cloning the repo
 ```bash
-$ git config --global core.autocrlf false
-$ git config --global user.name "<your github username>"
-$ git config --global user.email your.github@email.com
-$ git clone git@github.com:dotkom/onlineweb4.git
-$ cd onlineweb4
+git config core.autocrlf false
+git config user.name "<your github username>"
+git config user.email your.github@email.com
+git clone git@github.com:dotkom/onlineweb4.git
+cd onlineweb4
 ```
-### Setting up onlineweb4
-Download dependencies by running
-```bash
-make
-```
-
-Let's apply all the django changes to the database by running
-```bash
-# creates migrations by packaging model changes into individual migration files
-make makemigrations
-
-# applies the migrations/changes to your database
-make migrate
-```
-
-Last but not least, let's create a superuser, a user with all types of permissions.
-```bash
-# bash into the docker container
-make bash-backend
-
-# create a super user from inside the container
-python manage.py createsuperuser
-```
-Now follow the instructions by typing a name, password and an email.
 
 ## Development environment
 
@@ -64,15 +40,11 @@ To fire up the dev environment, you should use [Docker](https://docs.docker.com/
 
 There is a `Makefile` located in the root directory. This can be used to manage the application without direct interaction with `docker`, `docker-compose`, et al.
 
-Simply run `make` to build and start onlineweb4, and run `make stop` to stop it.
-
 To view output from onlineweb4, run `make logs`. To view output from a specific service (e.g. django), prepend the `make` command with `OW4_MAKE_TARGET=django`.
 
 If you can't use `make`, you can fire up the dev environment by issuing `docker-compose up -d`.
 
 If the site doesn't load properly the first time you are running the project, you might need to restart Docker once by running `docker-compose restart`.
-
-Remember to run `make migrate` your first time, and after migrations have been made.
 
 #### Alternative to Docker: Local installation
 
@@ -89,6 +61,42 @@ run `pip install -r requirements.txt`, then `python manage.py migrate`, before s
 Next, you need to fire up the front-end stuff, by running `npm install` followed by `npm start`.
 
 The project should now be available at [http://localhost:8000](http://localhost:8000)
+
+### Setting up Onlineweb4 with Docker and Docker-compose
+
+After installing Docker and docker-compose, Download dependencies by running
+```bash
+make build
+```
+
+You also need to set up the database, by running 
+```bash
+# Enter the bash-terminal in the Docker container
+make bash-backend
+
+# Run the migrations
+python manage.py migrate
+```
+For your convenience, you can also just run `make migrate`
+
+And to be able to log in, you should create a superuser, a user with all types of permissions by default.
+```bash
+# If you aren't already in the bash-terminal in Docker
+make bash-backend
+
+# Create a super user from inside the container
+python manage.py createsuperuser
+```
+Now follow the instructions by supplying a name, password and an email.
+
+You can then start Onlineweb4 by running
+
+```bash
+make start
+```
+
+And your local version of Onlineweb4 should be available on [http://localhost:8000](http://localhost:8000)!  
+You can stop it with `make stop`
 
 ## CD/CI
 
