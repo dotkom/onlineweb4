@@ -150,13 +150,7 @@ class AttendeeRegistrationUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendee
-        fields = (
-            "id",
-            "user",
-            "show_as_attending_event",
-            "allow_pictures",
-            "extras",
-        )
+        fields = ("id", "user", "show_as_attending_event", "allow_pictures", "extras")
 
 
 class AttendeeSerializer(serializers.ModelSerializer):
@@ -164,13 +158,7 @@ class AttendeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendee
-        fields = (
-            "id",
-            "event",
-            "user",
-            "attended",
-            "timestamp",
-        )
+        fields = ("id", "event", "user", "attended", "timestamp")
 
 
 class RuleBundleSerializer(serializers.ModelSerializer):

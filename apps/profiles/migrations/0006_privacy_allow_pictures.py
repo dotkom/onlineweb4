@@ -5,14 +5,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('profiles', '0005_auto_20190506_1719'),
-    ]
+    dependencies = [("profiles", "0005_auto_20190506_1719")]
 
     operations = [
         migrations.AddField(
-            model_name='privacy',
-            name='allow_pictures',
-            field=models.BooleanField(default=False, verbose_name='greit å ta bilder på arrangement'),
-        ),
+            model_name="privacy",
+            name="allow_pictures",
+            field=models.BooleanField(
+                default=False, verbose_name="greit å ta bilder på arrangement"
+            ),
+        )
     ]
