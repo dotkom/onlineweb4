@@ -79,6 +79,8 @@ python manage.py migrate
 ```
 For your convenience, you can also just run `make migrate`
 
+To exit the Docker bash-terminal, use `^D` (`ctrl + D`) or `exit`
+
 And to be able to log in, you should create a superuser, a user with all types of permissions by default.
 ```bash
 # If you aren't already in the bash-terminal in Docker
