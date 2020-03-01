@@ -111,7 +111,7 @@ class CreateAttendeeTestCase(OIDCTestCase):
         )
 
     @mock_validate_recaptcha()
-    def test_show_as_attending_evAttendeeent_is_set_false_by_default(self, _):
+    def test_show_as_attending_event_is_set_false_by_default(self, _):
         attendance = self.event.attendance_event
         attendance.guest_attendance = True
         attendance.save()
