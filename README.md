@@ -40,8 +40,6 @@ To fire up the dev environment, you should use [Docker](https://docs.docker.com/
 
 There is a `Makefile` located in the root directory. This can be used to manage the application without direct interaction with `docker`, `docker-compose`, et al.
 
-To view output from onlineweb4, run `make logs`. To view output from a specific service (e.g. django), prepend the `make` command with `OW4_MAKE_TARGET=django`.
-
 If you can't use `make`, you can fire up the dev environment by issuing `docker-compose up -d`.
 
 If the site doesn't load properly the first time you are running the project, you might need to restart Docker once by running `docker-compose restart`.
@@ -100,7 +98,13 @@ make start
 And your local version of Onlineweb4 should be available on [http://localhost:8000](http://localhost:8000)!  
 You can stop it with `make stop`
 
-## CD/CI
+To view output from onlineweb4, run `make logs`. To view output from a specific service (e.g. django), use one of the following:
+```bash
+OW4_MAKE_TARGET=django make logs # for django
+OW4_MAKE_TARGET=webpack make logs # for the frontend
+```
+
+## CI/CD
 
 Pushes made to the develop branch will trigger a redeployment of the application on [dev.online.ntnu.no](https://dev.online.ntnu.no).
 
