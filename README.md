@@ -28,7 +28,7 @@ $ git config --global user.email your.github@email.com
 $ git clone git@github.com:dotkom/onlineweb4.git
 $ cd onlineweb4
 ```
-### Setting up the onlineweb4
+### Setting up onlineweb4
 Download dependencies by running
 ```bash
 make
