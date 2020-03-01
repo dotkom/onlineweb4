@@ -48,7 +48,7 @@ class Article(models.Model):
         User,
         null=False,
         verbose_name=_("opprettet av"),
-        related_name="created_by",
+        related_name="created_articles",
         editable=False,
         on_delete=models.CASCADE,
     )

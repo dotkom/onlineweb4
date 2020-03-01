@@ -96,7 +96,12 @@ class Event(models.Model):
     by_registration = EventOrderedByRegistration()
 
     author = models.ForeignKey(
-        User, related_name="oppretter", null=True, blank=True, on_delete=models.CASCADE
+        User,
+        related_name="created_events",
+        verbose_name=_("Oppretter"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     title = models.CharField(_("tittel"), max_length=60)
     """Event title"""

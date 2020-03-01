@@ -26,19 +26,19 @@ class OrderMixin(models.Model):
     ordered_by = models.ForeignKey(
         User,
         verbose_name=_("bestilt av"),
-        related_name="ordered_by",
+        related_name="ordered_posters",
         on_delete=models.CASCADE,
     )
     ordered_committee = models.ForeignKey(
         Group,
-        verbose_name=_("bestilt av komite"),
-        related_name="ordered_committee",
+        verbose_name=_("bestilt av komité"),
+        related_name="ordered_posters",
         on_delete=models.CASCADE,
     )
     assigned_to = models.ForeignKey(
         User,
         verbose_name=_("tilordnet til"),
-        related_name="assigned_to",
+        related_name="assigned_posters",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
@@ -79,7 +79,8 @@ class Poster(OrderMixin):
     )
     event = models.ForeignKey(
         Event,
-        related_name="Arrangement",
+        verbose_name=_("Arrangement"),
+        related_name="poster_orders",
         blank=True,
         null=True,
         on_delete=models.CASCADE,
