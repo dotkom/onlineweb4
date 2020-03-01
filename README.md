@@ -48,7 +48,7 @@ Last but not least, let's create a superuser, a user with all types of permissio
 # bash into the docker container
 make bash-backend
 
-# createa a super user from inside the container
+# create a super user from inside the container
 python manage.py createsuperuser
 ```
 Now follow the instructions by typing a name, password and an email.
