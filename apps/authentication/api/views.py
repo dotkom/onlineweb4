@@ -47,7 +47,7 @@ class UserViewSet(
     Viewset for User serializer. Supports filtering on 'first_name', 'last_name', 'email'
     """
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsSelfOrSuperUser,)
     filterset_class = UserFilter
     queryset = User.objects.all()
     serializer_classes = {
@@ -59,7 +59,7 @@ class UserViewSet(
         "dump_data": UserDataSerializer,
     }
 
-    @action(detail=True, methods=["put"], permission_classes=[IsSelfOrSuperUser])
+    @action(detail=True, methods=["put"])
     def change_password(self, request, pk=None):
         user: User = self.get_object()
         serializer = self.get_serializer(user, data=request.data)
@@ -68,7 +68,7 @@ class UserViewSet(
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=["put"], permission_classes=[IsSelfOrSuperUser])
+    @action(detail=True, methods=["put"])
     def anonymize_user(self, request, pk=None):
         user: User = self.get_object()
         serializer = self.get_serializer(user, data=request.data)
@@ -77,12 +77,7 @@ class UserViewSet(
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        detail=True,
-        methods=["get"],
-        permission_classes=[IsSelfOrSuperUser],
-        url_path="dump-data",
-    )
+    @action(detail=True, methods=["get"], url_path="dump-data")
     def dump_data(self, request, pk: int):
         user: User = self.get_object()
         serializer = self.get_serializer(user)
