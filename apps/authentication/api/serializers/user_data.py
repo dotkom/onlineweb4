@@ -1,13 +1,16 @@
 from redwine.models import Penalty
 from rest_framework import serializers
 from reversion.models import Revision
+from wiki.models.article import Article as WikiArticle
 from wiki.models.article import ArticleRevision
+from wiki.plugins.attachments.models import AttachmentRevision
 
 from apps.approval.models import (
     CommitteeApplication,
     CommitteePriority,
     MembershipApproval,
 )
+from apps.article.serializers import ArticleSerializer
 from apps.authentication.models import GroupMember
 from apps.authentication.serializers import (
     EmailReadOnlySerializer,
@@ -118,6 +121,38 @@ class WikiArticleRevisionSerializer(serializers.ModelSerializer):
             "modified",
             "created",
             "title",
+        )
+
+
+class WikiAttachmentRevisionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttachmentRevision
+        fields = (
+            "user_message",
+            "automatic_log",
+            "ip_address",
+            "modified",
+            "created",
+            "description",
+            "file",
+        )
+
+
+class WikiArticleSerializer(serializers.ModelSerializer):
+    current_revision = WikiArticleRevisionSerializer()
+    group = serializers.CharField(source="group.name")
+
+    class Meta:
+        model = WikiArticle
+        fields = (
+            "current_revision",
+            "created",
+            "modified",
+            "group",
+            "group_read",
+            "group_write",
+            "other_read",
+            "other_write",
         )
 
 
@@ -320,6 +355,8 @@ class UserDataSerializer(serializers.ModelSerializer):
     privacy = PrivacySerializer()
     member = AllowedUsernameSerializer()
     email_objects = EmailReadOnlySerializer(many=True, source="get_emails")
+    # Articles
+    created_articles = ArticleSerializer(many=True)
     # Feedback
     owned_generic_surveys = GenericSurveySerializer(many=True)
     feedbacks = FeedbackRelationListSerializer(many=True)
@@ -353,9 +390,13 @@ class UserDataSerializer(serializers.ModelSerializer):
     approved_applications = MembershipApprovalSerializer(many=True)
     committeeapplication_set = CommitteeApplicationSerializer(many=True)
     # Wiki
+    wiki_attachment_revisions = WikiAttachmentRevisionSerializer(
+        many=True, source="attachmentrevision_set"
+    )
     wiki_article_revisions = WikiArticleRevisionSerializer(
         many=True, source="articlerevision_set"
     )
+    owned_articles = WikiArticleSerializer(many=True)
     # Other
     object_revisions = RevisionSerializer(many=True, source="revision_set")
 
@@ -414,6 +455,8 @@ class UserDataSerializer(serializers.ModelSerializer):
             # Sync
             "infomail",
             "jobmail",
+            # Articles
+            "created_articles",
             # Feedback
             "owned_generic_surveys",
             "feedbacks",
@@ -431,10 +474,7 @@ class UserDataSerializer(serializers.ModelSerializer):
             "sso_client",
             "user_consents",
             # Wiki
-            "nyt_notifications",
-            "nyt_settings",
-            "revisionpluginrevision_set",
-            "attachmentrevision_set",
+            "wiki_attachment_revisions",
             "wiki_article_revisions",
             "owned_articles",
             # Groups
@@ -464,6 +504,5 @@ class UserDataSerializer(serializers.ModelSerializer):
             "assigned_posters",
             # Other
             "magictoken_set",
-            "created_articles",
             "object_revisions",
         )
