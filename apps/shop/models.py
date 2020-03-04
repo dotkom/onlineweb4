@@ -37,7 +37,9 @@ class Order(models.Model):
 
 
 class OrderLine(models.Model):
-    user = models.ForeignKey(User, related_name="u", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="shop_order_lines", on_delete=models.CASCADE
+    )
     datetime = models.DateTimeField(auto_now_add=True)
     paid = models.BooleanField(default=False)
 

@@ -17,14 +17,14 @@ class Approval(models.Model):
     applicant = models.ForeignKey(
         User,
         verbose_name=_("søker"),
-        related_name="applicant",
+        related_name="applications",
         editable=True,
         on_delete=models.CASCADE,
     )
     approver = models.ForeignKey(
         User,
         verbose_name=_("godkjenner"),
-        related_name="approver",
+        related_name="approved_applications",
         blank=True,
         null=True,
         editable=False,

@@ -1,5 +1,4 @@
 from django.contrib.auth.models import Group
-from guardian.shortcuts import get_objects_for_user
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -32,6 +31,8 @@ from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.permissions.drf_permissions import DjangoObjectPermissionOrAnonReadOnly
 
 from .filters import UserFilter
+from .permissions import IsSelfOrSuperUser
+from .serializers.user_data import UserDataSerializer
 
 
 class UserViewSet(
@@ -46,42 +47,19 @@ class UserViewSet(
     Viewset for User serializer. Supports filtering on 'first_name', 'last_name', 'email'
     """
 
-    permission_classes = (AllowAny,)
+    permission_classes = (IsSelfOrSuperUser,)
     filterset_class = UserFilter
+    queryset = User.objects.all()
     serializer_classes = {
         "create": UserCreateSerializer,
         "update": UserUpdateSerializer,
         "read": UserReadOnlySerializer,
         "change_password": PasswordUpdateSerializer,
         "anonymize_user": AnonymizeUserSerializer,
+        "dump_data": UserDataSerializer,
     }
 
-    def get_queryset(self):
-        """
-        Permitted users can view users they have permission for to view.
-        Users can only update/delete their own users.
-        """
-        user = self.request.user
-
-        if self.action in ["list", "retrieve"]:
-            if not user.is_authenticated:
-                return User.objects.none()
-            if user.is_superuser:
-                return User.objects.all()
-            return get_objects_for_user(user, "authentication.view_onlineuser")
-
-        if self.action in [
-            "destroy",
-            "update",
-            "partial_update",
-            "change_password",
-            "anonymize_user",
-        ]:
-            return User.objects.filter(pk=user.id)
-
-        return super().get_queryset()
-
-    @action(detail=True, methods=["put"], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["put"])
     def change_password(self, request, pk=None):
         user: User = self.get_object()
         serializer = self.get_serializer(user, data=request.data)
@@ -90,7 +68,7 @@ class UserViewSet(
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=["put"], permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["put"])
     def anonymize_user(self, request, pk=None):
         user: User = self.get_object()
         serializer = self.get_serializer(user, data=request.data)
@@ -98,6 +76,12 @@ class UserViewSet(
         serializer.save()
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=["get"], url_path="dump-data")
+    def dump_data(self, request, pk: int):
+        user: User = self.get_object()
+        serializer = self.get_serializer(user)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
