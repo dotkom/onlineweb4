@@ -19,4 +19,6 @@ class OidcOauth2Auth(authentication.BaseAuthentication):
         if oauth2_token.has_expired():
             raise exceptions.AuthenticationFailed("The oauth2 token has expired")
 
+        print("")
+        print(oauth2_token)
         return oauth2_token.user, None

@@ -8,6 +8,8 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
+from apps.online_oidc_provider.authentication import OidcOauth2Auth
+from apps.shop import drf
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
 from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -33,11 +35,12 @@ from apps.shop.utils import create_magic_token
 class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = OrderLine.objects.all()
     serializer_class = OrderLineSerializer
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ["shop.readwrite"]
+    authentication_classes = [OidcOauth2Auth]
+    permission_classes = [drf.TokenHasScope]
+    required_scopes = ["nibble"]
 
     def create(self, request):
+        print(request)
         serializer = OrderLineSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)

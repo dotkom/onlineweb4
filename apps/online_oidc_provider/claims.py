@@ -42,3 +42,13 @@ class Onlineweb4ScopeClaims(ScopeClaims):
 
     def scope_onlineweb4(self):
         return Onlineweb4Userinfo(self.user).oidc()
+
+    info_nibble = (
+        _("Nibble"),
+        _(
+            "Informasjon om dine kjøp og saldo på Nibble",
+        ),
+    )
+
+    def scope_nibble(self):
+        return {'test':'this data was returned'}
