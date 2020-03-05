@@ -1,0 +1,38 @@
+FROM node:latest as webpack
+
+WORKDIR /srv/app/webpack
+
+COPY . .
+
+RUN yarn --non-interactive --no-progress --pure-lockfile && \
+    npm run build:prod
+
+FROM python:3.7-slim-buster
+
+LABEL maintainer="dotkom@online.ntnu.no"
+
+ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
+
+WORKDIR /srv/app
+
+COPY requirements.txt requirements.txt
+COPY requirements-prod.txt requirements-prod.txt
+COPY requirements-docs.txt requirements-docs.txt
+
+RUN apt-get update && apt-get install -y \
+  git \
+  gcc \
+  && \
+  pip install -r requirements.txt \
+                -r requirements-prod.txt \
+                -r requirements-docs.txt
+COPY . .
+COPY --from=webpack /srv/app/webpack/bundles bundles/
+COPY --from=webpack /srv/app/webpack/webpack-stats.json ./webpack-stats.json
+
+
+RUN python manage.py collectstatic --noinput && chmod +x entrypoint.sh
+
+EXPOSE 8000
+
+ENTRYPOINT ["./entrypoint.sh" ]
