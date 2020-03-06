@@ -10,3 +10,10 @@ class Mailinglist(models.Model):
     contained_emails = models.ManyToManyField(
         "self", blank=True, related_name="mailinglists_mail_is_in"
     )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = _("E-postliste-e-post")
+        verbose_name_plural = _("E-postliste-e-post")
