@@ -43,6 +43,7 @@ jobs:
         
       - name: Python tests
         env:
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
           OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM: ${{ secrets.STRIPE_PUBLIC_KEY_ARRKOM }}
           OW4_DJANGO_STRIPE_PUBLIC_KEY_PROKOM: ${{ secrets.STRIPE_PUBLIC_KEY_PROKOM }}
           OW4_DJANGO_STRIPE_PUBLIC_KEY_TRIKOM: ${{ secrets.STRIPE_PUBLIC_KEY_TRIKOM }}
