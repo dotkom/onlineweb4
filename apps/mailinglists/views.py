@@ -1,6 +1,17 @@
-# -*- coding: utf-8 -*-
-
 from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework.permissions import AllowAny
+
+from .models import Mailinglist
+from .serializers import MailinglistSerializer
+
+
+class MailinglistViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (AllowAny,)
+    serializer_class = MailinglistSerializer
+
+    def get_queryset(self):
+        return Mailinglist.objects.filter(public=True)
 
 
 def index(request):
