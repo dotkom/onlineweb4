@@ -9,8 +9,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
 from apps.online_oidc_provider.authentication import OidcOauth2Auth
-from apps.shop import drf
-from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
+from apps.shop.drf import TokenHasScope
 from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -36,7 +35,7 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = OrderLine.objects.all()
     serializer_class = OrderLineSerializer
     authentication_classes = [OidcOauth2Auth]
-    permission_classes = [drf.TokenHasScope]
+    permission_classes = [TokenHasScope]
     required_scopes = ["nibble"]
 
     def create(self, request):
@@ -54,9 +53,9 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = PaymentTransaction.objects.all()
     serializer_class = TransactionSerializer
-    authentication_classes = [OAuth2Authentication]
+    authentication_classes = [OidcOauth2Auth]
     permission_classes = [TokenHasScope]
-    required_scopes = ["shop.readwrite"]
+    required_scopes = ["nibble"]
 
     def create(self, request):
         serializer = TransactionSerializer(data=request.data)
@@ -83,9 +82,9 @@ class UserViewSet(
 ):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = [OAuth2Authentication]
+    authentication_classes = [OidcOauth2Auth]
     permission_classes = [TokenHasScope]
-    required_scopes = ["shop.readwrite"]
+    required_scopes = ["nibble"]
     filterset_fields = ("rfid",)
 
 
@@ -99,9 +98,9 @@ class InventoryViewSet(
 
 
 class SetRFIDView(APIView):
-    authentication_classes = [OAuth2Authentication]
+    authentication_classes = [OidcOauth2Auth]
     permission_classes = [TokenHasScope]
-    required_scopes = ["shop.readwrite"]
+    required_scopes = ["nibble"]
 
     def post(self, request):
         username = request.data.get("username", "").lower()
