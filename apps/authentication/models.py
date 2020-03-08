@@ -8,12 +8,11 @@ from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group
-from django.db import models, transaction
+from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
-from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
