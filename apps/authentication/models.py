@@ -241,13 +241,13 @@ class OnlineUser(AbstractUser):
         return AllowedUsername.objects.get(username=self.ntnu_username.lower())
 
     @property
-    def saldo(self):
+    def saldo(self) -> int:
         value = (
             self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
             .aggregate(coins=models.Sum("amount"))
             .get("coins", 0)
         )
-        return 0 if value is None else value
+        return value if value is not None else 0
 
     @property
     def year(self):

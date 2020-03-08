@@ -432,9 +432,12 @@ class TransactionManager(models.Manager):
         """
         :return: The aggregated amount of coins in a users wallet.
         """
-        return self.filter(user=user, status="done").aggregate(
-            coins=models.Sum("amount")
-        )["coins"]
+        value = (
+            self.filter(user=user, status=status.DONE)
+            .aggregate(coins=models.Sum("amount"))
+            .get("coins", 0)
+        )
+        return value if value is not None else 0
 
 
 class PaymentTransaction(StripeMixin, models.Model):

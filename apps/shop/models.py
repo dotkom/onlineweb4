@@ -78,9 +78,8 @@ class OrderLine(models.Model):
             return
 
         subtotal = self.subtotal()
-        user_wallet = PaymentTransaction.objects.aggregate_coins(self.user)
 
-        if subtotal > user_wallet:
+        if subtotal > self.user.saldo:
             self.delete()
             raise NotAcceptable("Insufficient funds")
 
