@@ -9,10 +9,9 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.models import OnlineUser as User
+from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
 from apps.payment.transaction_constants import TransactionSource
-
-from apps.inventory.models import Item
 
 
 class Order(models.Model):
