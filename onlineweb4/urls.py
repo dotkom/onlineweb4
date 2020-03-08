@@ -117,7 +117,10 @@ if "apps.contribution" in settings.INSTALLED_APPS:
 
 if "apps.dashboard" in settings.INSTALLED_APPS:
     urlpatterns += [
-        url(r"^dashboard/", include("apps.dashboard.urls")),
+        url(r"^dashboard/",
+            include("apps.dashboard.urls", namespace="dashboard"
+                ),
+            ),
         url(
             r"^dashboard/chunks/",
             include(
