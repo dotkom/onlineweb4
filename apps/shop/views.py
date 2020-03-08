@@ -49,7 +49,6 @@ class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     def perform_create(self, serializer):
         """
         Transactions created by this view are strictly allowed to handle cash additions.
-        Cash additions are only allowed for Beer Coin (TM).
         """
         serializer.save(source=TransactionSource.CASH)
 
