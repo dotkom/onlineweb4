@@ -14,6 +14,8 @@ from apps.payment.models import (
     PaymentTransaction,
 )
 
+from .transaction_constants import TransactionSource
+
 logger = logging.getLogger(__name__)
 
 
@@ -278,6 +280,7 @@ class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
             "payment_intent_secret",
             "description",
             "items",
+            "source",
         )
         read_only = True
 
@@ -285,7 +288,7 @@ class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
 class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     payment_method_id = serializers.CharField(write_only=True)
-    used_stripe = serializers.HiddenField(default=True)
+    source = serializers.HiddenField(default=TransactionSource.STRIPE)
     amount = serializers.IntegerField(required=True)
 
     def validate_amount(self, amount):
@@ -370,6 +373,7 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
             "user",
             "status",
             "datetime",
+            "source",
         )
         read_only_fields = ("id", "payment_intent_secret", "status", "datetime")
 
@@ -437,6 +441,7 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
             "status",
             "used_stripe",
             "datetime",
+            "source",
         )
         read_only_fields = (
             "id",
@@ -445,4 +450,5 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
             "status",
             "used_stripe",
             "datetime",
+            "source",
         )

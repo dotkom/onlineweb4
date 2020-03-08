@@ -3,11 +3,16 @@ import uuid
 
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, ValidationError
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.models import OnlineUser as User
+from apps.payment.models import PaymentTransaction
+from apps.payment.transaction_constants import TransactionSource
+
+from apps.inventory.models import Item
 
 
 class Order(models.Model):
@@ -38,10 +43,21 @@ class Order(models.Model):
 
 class OrderLine(models.Model):
     user = models.ForeignKey(
-        User, related_name="shop_order_lines", on_delete=models.CASCADE
+        to=User,
+        related_name="shop_order_lines",
+        on_delete=models.CASCADE,
+        verbose_name=_("Bruker"),
     )
-    datetime = models.DateTimeField(auto_now_add=True)
-    paid = models.BooleanField(default=False)
+    datetime = models.DateTimeField(auto_now_add=True, verbose_name=_("Tidspunkt"))
+    paid = models.BooleanField(default=False, verbose_name=_("Betalt"))
+    transaction = models.OneToOneField(
+        to=PaymentTransaction,
+        verbose_name=_("Transaksjon"),
+        related_name="shop_order_line",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     def count_orders(self):
         return sum((order.quantity for order in self.orders.all()))
@@ -49,11 +65,23 @@ class OrderLine(models.Model):
     def subtotal(self):
         return sum((order.total_price() for order in self.orders.all()))
 
+    def get_order_descriptions(self):
+        descriptions = []
+        for order in self.orders.all():
+            item: Item = order.content_object
+            descriptions.append(
+                {"name": item.name, "price": item.price, "quantity": order.quantity}
+            )
+        return descriptions
+
     def pay(self):
         if self.paid:
             return
 
-        if self.subtotal() > self.user.saldo:
+        subtotal = self.subtotal()
+        user_wallet = PaymentTransaction.objects.aggregate_coins(self.user)
+
+        if subtotal > user_wallet:
             self.delete()
             raise NotAcceptable("Insufficient funds")
 
@@ -63,11 +91,19 @@ class OrderLine(models.Model):
             order.save()
             order.reduce_stock()
 
-        self.user.saldo = self.user.saldo - self.subtotal()
-        self.user.save()
+        # Create the transaction for the user, which will track the actual balance of their wallet
+        transaction = PaymentTransaction.objects.create(
+            source=TransactionSource.SHOP, amount=-subtotal, user=self.user
+        )
 
+        self.transaction = transaction
         self.paid = True
         self.save()
+
+    def clean(self):
+        super().clean()
+        if not self.orders.exists():
+            raise ValidationError("An orderline must contain at least one order")
 
     def __str__(self):
         return str(self.pk)

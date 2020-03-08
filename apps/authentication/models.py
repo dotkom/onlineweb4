@@ -18,6 +18,7 @@ from rest_framework.exceptions import NotAcceptable
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
+from apps.payment import status as PaymentStatus
 from apps.permissions.models import ObjectPermissionModel
 
 logger = logging.getLogger(__name__)
@@ -151,8 +152,6 @@ class OnlineUser(AbstractUser):
         _("kjønn"), max_length=10, choices=GENDER_CHOICES, default="male"
     )
     bio = models.TextField(_("bio"), max_length=2048, blank=True)
-    saldo = models.PositiveSmallIntegerField(_("saldo"), default=0, null=True)
-
     # NTNU credentials
     ntnu_username = models.CharField(
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
@@ -242,18 +241,14 @@ class OnlineUser(AbstractUser):
             return None
         return AllowedUsername.objects.get(username=self.ntnu_username.lower())
 
-    def change_saldo(self, amount):
-        """
-        Update the saldo of a user with an atomic transaction.
-        """
-        with transaction.atomic():
-            self.refresh_from_db()
-            self.saldo += amount
-
-            if self.saldo < 0:
-                raise NotAcceptable("Insufficient funds")
-
-            self.save()
+    @property
+    def saldo(self):
+        value = (
+            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
+            .aggregate(coins=models.Sum("amount"))
+            .get("coins", 0)
+        )
+        return 0 if value is None else value
 
     @property
     def year(self):
