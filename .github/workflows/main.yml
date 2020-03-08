@@ -1,0 +1,100 @@
+name: Lint and test
+
+on: [push]
+
+jobs:
+  test-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Copy settings file
+        run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+
+      - name: Install python dependencies
+        run: pip install tox codecov
+  
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install node dependencies
+        run: yarn install --pure-lockfile
+
+      - name: npm build
+        run: npm run build:prod
+        
+      - name: Python tests
+        env:
+          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+          OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM: ${{ secrets.STRIPE_PUBLIC_KEY_ARRKOM }}
+          OW4_DJANGO_STRIPE_PUBLIC_KEY_PROKOM: ${{ secrets.STRIPE_PUBLIC_KEY_PROKOM }}
+          OW4_DJANGO_STRIPE_PUBLIC_KEY_TRIKOM: ${{ secrets.STRIPE_PUBLIC_KEY_TRIKOM }}
+          OW4_DJANGO_STRIPE_PRIVATE_KEY_ARRKOM: ${{ secrets.STRIPE_PRIVATE_KEY_ARRKOM }}
+          OW4_DJANGO_STRIPE_PRIVATE_KEY_PROKOM: ${{ secrets.STRIPE_PRIVATE_KEY_PROKOM }}
+          OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM: ${{ secrets.STRIPE_PRIVATE_KEY_TRIKOM }}
+        run: |
+          tox -e tests --recreate
+          pip install codecov --quiet
+          codecov
+  
+  lint-python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Copy settings file
+        run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+
+      - name: Install python dependencies
+        run: pip install tox
+  
+      - name: Python linting
+        run: tox -e flake8 -e isort -e black --recreate
+
+  lint-js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: node_modules/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install node dependencies
+        run: yarn install --pure-lockfile
+
+      - name: JS linting
+        run: npm run lint-js
+
+      - name: less linting
+        run: npm run lint-less
+
