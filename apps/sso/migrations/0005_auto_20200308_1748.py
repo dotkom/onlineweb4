@@ -5,16 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('sso', '0004_auto_20190521_0154'),
-    ]
+    dependencies = [("sso", "0004_auto_20190521_0154")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='client',
-            name='user',
-        ),
-        migrations.DeleteModel(
-            name='Client',
-        ),
+        migrations.RemoveField(model_name="client", name="user"),
+        migrations.DeleteModel(name="Client"),
     ]

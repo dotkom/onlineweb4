@@ -8,7 +8,6 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
-from apps.online_oidc_provider.authentication import OidcOauth2Auth, TokenHasScope
 from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -17,6 +16,7 @@ from rest_framework.views import APIView
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.inventory.models import Item
+from apps.online_oidc_provider.authentication import OidcOauth2Auth, TokenHasScope
 from apps.payment.models import PaymentTransaction
 from apps.shop.forms import SetRFIDForm
 from apps.shop.models import MagicToken, OrderLine

@@ -1,9 +1,10 @@
+from django.core.exceptions import ImproperlyConfigured
 from oidc_provider.lib.utils.oauth2 import extract_access_token
 from oidc_provider.models import Token
 from rest_framework import authentication, exceptions
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import BasePermission
-from rest_framework.exceptions import PermissionDenied, AuthenticationFailed
-from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
+
 
 class OidcOauth2Auth(authentication.BaseAuthentication):
     def authenticate(self, request):
@@ -23,6 +24,7 @@ class OidcOauth2Auth(authentication.BaseAuthentication):
 
         return oauth2_token.user, None
 
+
 class TokenHasScope(BasePermission):
     """
     The request is authenticated and the token used has the right scope
@@ -31,12 +33,14 @@ class TokenHasScope(BasePermission):
     def has_permission(self, request, view):
 
         try:
-            token = Token.objects.get(access_token=extract_access_token(request))  # The Token object retrieved from access_token
+            token = Token.objects.get(
+                access_token=extract_access_token(request)
+            )  # The Token object retrieved from access_token
 
             if token.has_expired():
                 self.message = {
                     "detail": PermissionDenied.default_detail,
-                    "error": 'Token has expired',
+                    "error": "Token has expired",
                 }
                 return False
 
@@ -52,12 +56,13 @@ class TokenHasScope(BasePermission):
             required_scopes = self.get_scopes(request, view)
 
             if set(required_scopes).issubset(set(token.scope)):
-                return True                
+                return True
 
             # Provide information about required scope
             self.message = {
                 "detail": PermissionDenied.default_detail,
-                "error": "Permission denied, required_scopes: " + str(list(required_scopes)),
+                "error": "Permission denied, required_scopes: "
+                + str(list(required_scopes)),
             }
 
             return False

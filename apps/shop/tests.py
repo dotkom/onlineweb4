@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase
 
 from apps.authentication.models import Email, OnlineUser
 from apps.inventory.models import Item
-from apps.oauth2_provider.test import OAuth2TestCase
 from apps.shop.models import MagicToken
 
 
@@ -34,8 +33,8 @@ class ShopAPIURLTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class ShopSetRFIDTestCase(OAuth2TestCase):
-    scopes = ["shop.readwrite", "read", "write"]
+class ShopSetRFIDTestCase:
+    scopes = ["nibble"]
 
     def setUp(self):
         super().setUp()
