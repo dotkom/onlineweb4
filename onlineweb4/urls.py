@@ -215,15 +215,6 @@ if "apps.splash" in settings.INSTALLED_APPS:
         url(r"^splash/", include("apps.splash.api.urls")),
     ]
 
-if "apps.sso" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        url(r"^sso/", include("apps.sso.urls")),
-        url(
-            r"^dashboard/auth/sso/",
-            include("apps.sso.dashboard.urls", namespace="dashboard"),
-        ),
-    ]
-
 if "apps.webshop" in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r"^webshop/", include("apps.webshop.urls")),

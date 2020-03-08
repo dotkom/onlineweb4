@@ -220,7 +220,6 @@ INSTALLED_APPS = (
     "apps.photoalbum",
     "apps.posters",
     "apps.slack",
-    "apps.sso",
     "apps.splash",
     "apps.shop",
     "apps.webshop",

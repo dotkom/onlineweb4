@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext as _
 from oidc_provider.lib.claims import ScopeClaims
 
-from apps.sso.userinfo import Onlineweb4Userinfo
+from apps.online_oidc_provider.userinfo import Onlineweb4Userinfo
 
 
 def userinfo(claims, user):

@@ -3,8 +3,6 @@ import sys
 
 from decouple import config
 
-from apps.sso.settings import OAUTH2_SCOPES
-
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()["__file__"])
 # Root directory. Contains manage.py
@@ -61,14 +59,6 @@ SLACK_INVITER = {
     # Scopes needed: client+admin
     "token": config("OW4_DJANGO_SLACK_INVITER_TOKEN", default="xoxp-1234_fake"),
 }
-
-# SSO / OAuth2 settings
-OAUTH2_PROVIDER = {
-    "SCOPES": OAUTH2_SCOPES,
-    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
-    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
-}
-OAUTH2_PROVIDER_APPLICATION_MODEL = "sso.Client"
 
 WEBPACK_LOADER = {
     "DEFAULT": {
