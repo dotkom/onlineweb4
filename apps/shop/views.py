@@ -8,8 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
-from apps.online_oidc_provider.authentication import OidcOauth2Auth
-from apps.shop.drf import TokenHasScope
+from apps.online_oidc_provider.authentication import OidcOauth2Auth, TokenHasScope
 from rest_framework import mixins, status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -39,7 +38,6 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     required_scopes = ["nibble"]
 
     def create(self, request):
-        print(request)
         serializer = OrderLineSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
