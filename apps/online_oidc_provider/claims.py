@@ -33,7 +33,7 @@ def userinfo(claims, user):
 class Onlineweb4ScopeClaims(ScopeClaims):
 
     info_onlineweb4 = (
-        _("Onlineweb4"),
+        "Onlineweb4",
         _(
             "Informasjon om brukerprofilen din på online.ntnu.no, "
             "medlemskapet ditt i Online og din studieretning."
@@ -43,7 +43,7 @@ class Onlineweb4ScopeClaims(ScopeClaims):
     def scope_onlineweb4(self):
         return Onlineweb4Userinfo(self.user).oidc()
 
-    info_nibble = (_("Nibble"), _("Informasjon om dine kjøp og saldo på Nibble"))
+    info_nibble = ("Nibble", _("Informasjon om dine kjøp og saldo på Nibble"))
 
     def scope_nibble(self):
         return {"test": "this data was returned"}
