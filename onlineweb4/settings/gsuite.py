@@ -57,6 +57,7 @@ OW4_GSUITE_SYNC = {
         "interessegrupper": "interessegrupper",
         "online-il": "online-il",
         "techtalks": "techtalks",
+        "komiteledere": "komiteledere",
     },
 }
 
