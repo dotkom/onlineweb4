@@ -1,17 +1,29 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
 from .models import Mailinglist
 from .serializers import MailinglistSerializer
 
 
-class MailinglistViewSet(viewsets.ReadOnlyModelViewSet):
-    permission_classes = (AllowAny,)
+class MailinglistViewSet(viewsets.ModelViewSet):
+    """
+    E-postlister som brukes av mange forskjellige organisasjoner rundt om i Trondheim.
+    """
+
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     serializer_class = MailinglistSerializer
 
+    # So that DjangoModelPermissions can find the right permissions
+    queryset = Mailinglist.objects.none()
+
     def get_queryset(self):
-        return Mailinglist.objects.filter(public=True)
+        return (
+            Mailinglist.objects.all()
+            if self.request.user is not None
+            and self.request.user.has_module_perms("mailinglists")
+            else Mailinglist.objects.filter(public=True)
+        )
 
 
 def index(request):

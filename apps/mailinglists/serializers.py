@@ -6,4 +6,4 @@ from .models import Mailinglist
 class MailinglistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mailinglist
-        fields = "__all__"
+        fields = ("id", "email", "name", "description", "public", "members")
