@@ -4,7 +4,6 @@ import uuid
 from smtplib import SMTPException
 
 from django.conf import settings
-from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.db.models import Q
@@ -43,10 +42,9 @@ def create_online_mail_alias(user):
 
 
 def create_online_mail_aliases():
-    # We only sync in members of the Komiteer group
-    group = Group.objects.get(name="Komiteer")
+    group = OnlineUser.objects.filter(is_staff=True)
     # Fetch all users that do not currently have an alias
-    nomail = group.user_set.filter(
+    nomail = group.filter(
         Q(online_mail__isnull=True) | Q(online_mail__exact="")
     ).order_by("id")
     # Find a list of all taken email aliases in the system already
@@ -82,7 +80,7 @@ def create_online_mail_aliases():
                 i = i + 1 if i else 2
 
     # Then produce a list of "alias: email" for all users in Komiteer
-    for user in group.user_set.all():
+    for user in group:
         if user.online_mail and user.email:
             print("%s: %s" % (user.online_mail, user.email))
 

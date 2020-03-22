@@ -2,7 +2,6 @@
 
 import re
 
-from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from unidecode import unidecode
@@ -13,9 +12,9 @@ from apps.authentication.models import OnlineUser
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # We only sync in members of the Komiteer group
-        group = Group.objects.get(name="Komiteer")
+        group = OnlineUser.objects.filter(is_staff=True)
         # Fetch all users that do not currently have an alias
-        nomail = group.user_set.filter(
+        nomail = group.filter(
             Q(online_mail__isnull=True) | Q(online_mail__exact="")
         ).order_by("id")
         # Find a list of all taken email aliases in the system already

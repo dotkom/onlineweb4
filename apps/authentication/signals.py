@@ -29,12 +29,10 @@ sync_uuid = uuid.uuid1()
 MAILING_LIST_USER_FIELDS_TO_LIST_NAME = settings.MAILING_LIST_USER_FIELDS_TO_LIST_NAME
 
 
-def run_group_syncer(user):
+def run_group_syncer(user: User) -> None:
     """
     Tasks to run after User is changed.
     :param user: The user instance to sync groups for.
-    :type user: OnlineUser
-    :return: None
     """
     SynchronizeGroups.run()
     if settings.OW4_GSUITE_SYNC.get("ENABLED", False):
@@ -51,7 +49,7 @@ def run_group_syncer(user):
 
 
 @receiver(post_save, sender=Group)
-def trigger_group_syncer(sender, instance, created=False, **kwargs):
+def trigger_group_syncer(sender, instance: Group, created=False, **kwargs):
     """
     :param sender: The model that triggered this hook
     :param instance: The model instance triggering this hook
