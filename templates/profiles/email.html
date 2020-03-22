@@ -1,5 +1,4 @@
 {% load crispy_forms_tags %}
-{% load group_membership %}
 
 <div class="row">
     <div class="col-xs-12 col-md-8">
@@ -56,8 +55,7 @@
         <button type="button" class="btn btn-success btn-sm add-new-email">Legg til ny epostadresse</button>
     </div>
 </div>
-{% in_group "Komiteer" as in_komiteer %}
-{% if in_komiteer and user.online_mail %}
+{% if user.is_staff and user.online_mail %}
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-10">
         <h3>Online e-postkonto</h3>
@@ -109,23 +107,3 @@
         </form>
     </div>
 </div>
-
-{% comment %}
-This block is redundant as long as mailinglists aren't being synced with onlinwweb4.
-If we want to use this, the form has to be added to the dictionary again in the view.
-This is related to issue #595
-<div class="row-space"></div>
-<div class="row">
-    <div class="col-xs-12 col-sm-12 col-md-8">
-        <h3>Listealternativer</h3>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xs-12">
-        <form method="post" action="{% url 'profile' %}">
-            {{ mail_settings|crispy }}
-            <button type="submit" class="btn btn-success">Lagre</button>
-        </form>
-    </div>
-</div>
-{% endcomment %}
