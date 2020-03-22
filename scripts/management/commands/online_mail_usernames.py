@@ -50,6 +50,6 @@ class Command(BaseCommand):
                     i = i + 1 if i else 2
 
         # Then produce a list of "alias: email" for all users in Komiteer
-        for user in staff_users.user_set.all():
+        for user in staff_users:
             if user.online_mail and user.email:
                 print("%s: %s" % (user.online_mail, user.email))
