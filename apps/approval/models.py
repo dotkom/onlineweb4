@@ -204,12 +204,6 @@ class CommitteeApplication(models.Model):
     def get_absolute_url(self):
         return reverse("admin:approval_committeeapplication_change", args=(self.pk,))
 
-    def clean(self):
-        if not (self.applicant or (self.email and self.name)):
-            raise ValidationError(
-                "Enten en brukerkonto (søker) eller navn og e-postadresse er påkrevd."
-            )
-
     def __str__(self):
         return "{created}: {applicant}".format(
             applicant=self.get_name(), created=self.created.strftime("%Y-%m-%d")
