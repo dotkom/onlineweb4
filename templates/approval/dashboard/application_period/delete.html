@@ -1,0 +1,32 @@
+{% extends 'dashboard_base.html' %}
+{% load render_bundle from webpack_loader %}
+{% load crispy_forms_tags %}
+
+{% block title %}Opptakerperiode - Legg til{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+{% endblock %}
+
+{% block page-header %}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="/dashboard/approval/application-periods/">Opptaksperioder</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <form method="POST" action="">
+        <p>Er du helt sikker på at du ønsker å slette "{{ object }}"?</p>
+        <div class="col-md-12">
+            <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i>Slett</button>
+        </div>
+        {% csrf_token %}
+    </form>
+</div>
+{% endblock %}

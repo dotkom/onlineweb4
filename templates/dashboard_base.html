@@ -246,9 +246,21 @@
                     {% if 'approval.view_membershipapproval' in user_permissions %}
                     <li>
                         <a href="{% url 'approvals' %}">
-                            <i class="fa fa-envelope-o blue"></i> <span>Søknader</span>
+                            <i class="fa fa-envelope-o blue"></i> <span>Medlemsskapsøknader</span>
                             {% if approval_pending %}<small class="badge pull-right">{{ approval_pending }}</small>{% endif %}
                         </a>
+                    </li>
+                    {% endif %}
+                    {% if 'approval.view_committeeapplicationperiod' in user_permissions and 'approval.view_committeeapplication' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-inbox blue"></i> <span>Komitésøknader</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'application-periods-create' %}"><i class="fa fa-angle-double-right orange"></i>Ny opptaksperiode</a></li>
+                            <li><a href="{% url 'application-periods-list' %}"><i class="fa fa-angle-double-right orange"></i>Se opptaksperioder</a></li>
+                        </ul>
                     </li>
                     {% endif %}
                     {% if 'feedback.view_feedback' in user_permissions %}

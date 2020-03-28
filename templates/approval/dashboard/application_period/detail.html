@@ -1,0 +1,76 @@
+{% extends 'dashboard_base.html' %}
+{% load render_bundle from webpack_loader %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ application_period }}{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+{% endblock %}
+
+{% block page-header %}
+    {{ application_period }}
+{% endblock %}
+
+{% block breadcrumbs %}
+<li><a href="/dashboard/approval/application-periods/">Opptaksperioder</a></li>
+<li>{{ application_period }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Søkere
+                </h3>
+            </div>
+            <br />
+            <div class="panel-body">
+                <p>Dette opptaket har mottat {{ application_period.applications.all | length }} søknader</p>
+                <a href="{% url 'application-periods-update' pk=application_period.id %}" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+                <a href="{% url 'application-periods-delete' pk=application_period.id %}" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
+                <br />
+                <table class="table table-striped" id="applications">
+                    <thead>
+                        <tr>
+                            <th>Navn</th>
+                            <th>Søkte grupper</th>
+                            <th>Prioritert rekkefølge</th>
+                            <th>Tidspunkt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applications-list">
+                    {% for application in application_period.applications.all %}
+                        <tr>
+                            <td>
+                                {% if application.applicant %}
+                                <a href="{% url 'profiles_view' application.applicant.username %}">{{ application.applicant.get_full_name }}</a>
+                                {% else %}
+                                <p>{{ application.name }} ({{ application.email }})</p>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <p>{{ application.committees.all | join:"; " }}
+                            </td>
+                            <td>
+                                <i class="fa fa-lg {% if application.prioritized %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
+                            </td>
+                            <td>
+                                {{ application.created | date:"Y-m-j H:i"}}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
