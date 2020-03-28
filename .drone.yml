@@ -25,6 +25,8 @@ steps:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
       - pip install tox
+    depends_on:
+      - restore-cache
 
   - name: npm-build
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
@@ -34,6 +36,8 @@ steps:
     group: testing
     commands:
       - npm run build:prod
+    depends_on:
+     - setup
 
   - name: js-lint
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
@@ -43,6 +47,8 @@ steps:
     group: testing
     commands:
       - npm run lint-js
+    depends_on:
+      - setup
 
   - name: less-lint
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
@@ -52,6 +58,8 @@ steps:
     group: testing
     commands:
       - npm run lint-less
+    depends_on:
+     - setup
 
   - name: python-lint
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
@@ -61,6 +69,9 @@ steps:
     group: testing
     commands:
       - tox -e flake8 -e isort -e black --recreate
+    depends_on:
+     - setup
+     - restore-cache
 
   - name: python-tests
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
@@ -89,6 +100,9 @@ steps:
       - tox -e tests --recreate
       - pip install codecov --quiet
       - codecov
+    depends_on:
+      - setup
+      - restore-cache
 
   - name: rebuild-cache
     image: drillster/drone-volume-cache
@@ -102,7 +116,11 @@ steps:
         - ./node_modules
       volumes:
         - /tmp/cache:/cache
-
+    depends_on:
+      - setup
+      - python-lint
+      - python-tests
+      
   - name: deploy
     image: appleboy/drone-ssh
     pull: true
@@ -122,3 +140,12 @@ steps:
       command_timeout: 600s
       script:
         - /srv/www/ow4dev/deploy.sh
+    depends_on:
+      - npm-build
+      - js-lint
+      - less-lint
+      - python-lint
+      - python-tests
+
+image_pull_secrets:
+  - dockerconfigjson
