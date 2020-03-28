@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from django.conf import settings
-from django.contrib.auth.models import Group
-from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Case, ExpressionWrapper, F, Q, When
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 
 from apps.approval import settings as approval_settings
 from apps.authentication.constants import FieldOfStudyType
+from apps.authentication.models import OnlineGroup
 
 User = settings.AUTH_USER_MODEL
 
@@ -90,6 +91,80 @@ class MembershipApproval(Approval):
         default_permissions = ("add", "change", "delete")
 
 
+class CommitteeApplicationPeriodManager(models.Manager):
+    def get_queryset(self):
+        now = timezone.now()
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                actual_deadline=ExpressionWrapper(
+                    F("deadline") + F("deadline_delta"),
+                    output_field=models.DateTimeField(),
+                )
+            )
+            .annotate(
+                accepting_applications=Case(
+                    When(Q(start__lte=now, actual_deadline__gte=now), then=True),
+                    default=False,
+                    output_field=models.BooleanField(),
+                )
+            )
+        )
+
+    def filter_overlapping(self, start: timezone.datetime, deadline: timezone.datetime):
+        return (
+            self.get_queryset()
+            .filter(
+                Q(start__range=[start, deadline])
+                | Q(deadline__range=[start, deadline])
+                | (
+                    Q(start__lte=start, deadline__gte=start)
+                    & Q(start__lte=deadline, deadline__gte=deadline)
+                )
+            )
+            .distinct()
+        )
+
+
+class CommitteeApplicationPeriod(models.Model):
+    objects = CommitteeApplicationPeriodManager()
+
+    title = models.CharField(_("Tittel"), max_length=128)
+    start = models.DateTimeField(_("Starttid"))
+    deadline = models.DateTimeField(_("First"))
+    # We have a deadline delta because we often accept applications after the actual deadline.
+    deadline_delta = models.DurationField(
+        _("Slingringsmonn"),
+        help_text="Hvor lenge etter fristen skal det være mulig å søke?",
+        default=timezone.timedelta(days=1),
+    )
+    committees = models.ManyToManyField(
+        to=OnlineGroup, verbose_name=_("Komiteer"), related_name="application_periods"
+    )
+
+    def accepting_applications_at_time(self, time: timezone.datetime) -> bool:
+        is_after_start = time >= self.start
+        is_before_deadline = time <= self.actual_deadline
+        return is_after_start and is_before_deadline
+
+    @property
+    def year(self) -> str:
+        start_year = self.start.year
+        end_year = self.deadline.year
+        if start_year == end_year:
+            return str(start_year)
+        return f"{start_year} - {end_year}"
+
+    def __str__(self):
+        return f"{self.title} ({self.year})"
+
+    class Meta:
+        verbose_name = _("Opptaksperiode")
+        verbose_name_plural = _("Opptaksperioder")
+        ordering = ("-start", "-deadline")
+
+
 class CommitteeApplication(models.Model):
     created = models.DateTimeField("opprettet", auto_now_add=True)
     modified = models.DateTimeField("endret", auto_now=True)
@@ -107,7 +182,15 @@ class CommitteeApplication(models.Model):
     application_text = models.TextField("søknadstekst")
     prioritized = models.BooleanField("prioriter komitevalg", default=False)
     committees = models.ManyToManyField(
-        Group, verbose_name="komiteer", through="CommitteePriority"
+        OnlineGroup, verbose_name="komiteer", through="CommitteePriority"
+    )
+    application_period = models.ForeignKey(
+        to=CommitteeApplicationPeriod,
+        verbose_name=_("Opptaksperiode"),
+        related_name="applications",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
     )
 
     def get_name(self):
@@ -120,12 +203,6 @@ class CommitteeApplication(models.Model):
 
     def get_absolute_url(self):
         return reverse("admin:approval_committeeapplication_change", args=(self.pk,))
-
-    def clean(self):
-        if not (self.applicant or (self.email and self.name)):
-            raise ValidationError(
-                "Enten en brukerkonto (søker) eller navn og e-postadresse er påkrevd."
-            )
 
     def __str__(self):
         return "{created}: {applicant}".format(
@@ -145,7 +222,7 @@ class CommitteePriority(models.Model):
         CommitteeApplication, verbose_name="søknad", on_delete=models.deletion.CASCADE
     )
     group = models.ForeignKey(
-        Group, verbose_name="komite", on_delete=models.deletion.CASCADE
+        OnlineGroup, verbose_name="komite", on_delete=models.deletion.CASCADE
     )
     priority = models.SmallIntegerField("prioritet", choices=valid_priorities)
 
