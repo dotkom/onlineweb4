@@ -28,9 +28,6 @@ def load_data(apps, schema_editor):
         order_line.transaction = transaction
         order_line.save()
         transaction.save()
-        transaction.refresh_from_db()
-        if transaction.shop_order_line != order_line:
-            raise ValueError("Fuck this")
 
 
 def remove_data(apps, schema_editor):
