@@ -487,7 +487,7 @@ class EventsAPITestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         restricted_to_group: Group = G(Group)
-        G(GroupRestriction, event=self.event, group=restricted_to_group)
+        G(GroupRestriction, event=self.event, groups=[restricted_to_group])
 
         response = self.client.get(self.id_url(self.event.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -502,7 +502,9 @@ class EventsAPITestCase(OIDCTestCase):
 class AttendAPITestCase(OIDCTestCase):
     def setUp(self):
         self.committee = G(Group, name="Arrkom")
-        self.user = G(OnlineUser, name="test_user", groups=[self.committee])
+        self.user = G(
+            OnlineUser, first_name="Test", last_name="Testesen", groups=[self.committee]
+        )
         self.token = self.generate_access_token(self.user)
         self.headers = {
             **self.generate_headers(),

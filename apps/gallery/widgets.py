@@ -6,7 +6,7 @@ from django.conf import settings
 from django.forms import HiddenInput, TextInput
 from django.forms.utils import flatatt, format_html
 from django.urls import reverse_lazy
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from apps.gallery.models import ResponsiveImage
 
@@ -62,7 +62,7 @@ class SingleImageInput(HiddenInput):
         final_attrs = self.build_attrs(attrs, {"type": self.input_type, "name": name})
         if value != "":
             # Only add the value attribute if the value is non-empty
-            final_attrs["value"] = force_text(self.format_value(value))
+            final_attrs["value"] = force_str(self.format_value(value))
             img = ResponsiveImage.objects.get(pk=value)
             img_thumb = format_html(
                 '<img src="{}" alt title="{}"/>',

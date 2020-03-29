@@ -11,7 +11,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action

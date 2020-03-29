@@ -11,7 +11,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from apps.authentication.models import OnlineGroup
 from apps.events.models import AttendanceEvent, Attendee

@@ -282,7 +282,12 @@ class GSuiteAPIUtilsTestCase(TestCase):
 
     @patch("apps.gsuite.mail_syncer.utils.setup_g_suite_client", autospec=True)
     def test_get_g_suite_groups_for_user(self, mocked_g_suite_client):
-        user = G(OnlineUser)
+        user = G(
+            OnlineUser,
+            first_name="Test",
+            last_name="Testesen",
+            online_mail="test.testesen",
+        )
 
         ow4_gsuite_sync = settings.OW4_GSUITE_SYNC
         ow4_gsuite_sync["ENABLED"] = True
@@ -306,7 +311,12 @@ class GSuiteAPIUtilsTestCase(TestCase):
 
     @patch("apps.gsuite.mail_syncer.utils.setup_g_suite_client", autospec=True)
     def test_get_g_suite_groups_for_user_no_members(self, mocked_g_suite_client):
-        user = G(OnlineUser)
+        user = G(
+            OnlineUser,
+            first_name="Test",
+            last_name="Testesen",
+            online_mail="test.testesen",
+        )
 
         ow4_gsuite_sync = settings.OW4_GSUITE_SYNC
         ow4_gsuite_sync["ENABLED"] = True

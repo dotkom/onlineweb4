@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Case, ExpressionWrapper, F, Q, When
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from apps.approval import settings as approval_settings
 from apps.authentication.constants import FieldOfStudyType
