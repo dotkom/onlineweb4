@@ -26,13 +26,12 @@ RUN apt-get update && apt-get install -y \
   curl \
   mime-support
 
-COPY requirements.txt .
-COPY requirements-prod.txt .
-COPY requirements-docs.txt .
+COPY pyproject.toml poetry.lock ./
 
-RUN pip install -r requirements.txt \
-                -r requirements-prod.txt \
-                -r requirements-docs.txt
+RUN pip install poetry
+
+RUN poetry config virtualenvs.create false \
+  && poetry install --no-interaction --no-ansi -E prod -E docs
 
 COPY --from=webpack /srv/app/webpack/bundles bundles
 COPY --from=webpack /srv/app/webpack/webpack-stats.json webpack-stats.json

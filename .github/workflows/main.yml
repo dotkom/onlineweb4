@@ -18,7 +18,11 @@ jobs:
         run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
 
       - name: Install python dependencies
-        run: pip install tox codecov
+        env:
+          POETRY_VIRTUALENVS_CREATE: false
+        run: |
+          pip install tox codecov poetry
+          poetry install --no-interaction --no-ansi -E prod
   
       - name: Cache node modules
         uses: actions/cache@v1
@@ -67,7 +71,11 @@ jobs:
         run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
 
       - name: Install python dependencies
-        run: pip install tox
+        env:
+            POETRY_VIRTUALENVS_CREATE: false
+        run: |
+          pip install tox poetry
+          poetry install --no-interaction --no-ansi
   
       - name: Python linting
         run: tox -e flake8 -e isort -e black --recreate

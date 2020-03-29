@@ -101,23 +101,24 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = tests, flake8, isort
+envlist = tests, flake8, isort, black
 skipsdist = True
 
 [testenv]
 basepython = python3
-deps =
-    -r{toxinidir}/requirements-linting.txt
-whitelist_externals = npm
+whitelist_externals =
+    npm
+    py.test
+    isort
+    flake8
+    black
 commands =
     isort: isort -rc -c apps middleware scripts utils
     flake8: flake8 apps middleware scripts utils
     black: black --check apps middleware scripts utils onlineweb4
 
 [testenv:tests]
-deps =
-    -r{toxinidir}/requirements.txt
-    -r{toxinidir}/requirements-testing.txt
+basepython = python3
 passenv =
     DATABASE_URL
     OAUTH2_*

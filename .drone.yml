@@ -24,9 +24,7 @@ steps:
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
-      - pip install poetry
-      - poetry config settings.virtualenvs.create false
-      - poetry install --no-interaction --no-ansi
+      - pip install tox poetry
     depends_on:
       - restore-cache
 
