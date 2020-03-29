@@ -1,6 +1,8 @@
 FROM python:3.7
 LABEL MAINTAINER=dotkom@online.ntnu.no
 
+ENV POETRY_VIRTUALENVS_CREATE=false
+
 # Install deps
 COPY poetry.lock pyproject.toml /
 
@@ -10,8 +12,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     npm install -g less && \
     npm install -g yarn
 
-RUN poetry install --no-interaction --no-ansi -E prod && \
-    poetry install tox
+RUN poetry install --no-interaction --no-ansi -E prod
 
 # Clean up
 RUN rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*

@@ -16,7 +16,7 @@ RUN yarn --non-interactive --no-progress --pure-lockfile && \
 
 FROM python:3.7-slim-buster
 LABEL maintainer="dotkom@online.ntnu.no"
-ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
+ENV DJANGO_SETTINGS_MODULE=onlineweb4.settings POETRY_VIRTUALENVS_CREATE=false
 
 WORKDIR /srv/app
 
@@ -30,8 +30,7 @@ COPY pyproject.toml poetry.lock ./
 
 RUN pip install poetry
 
-RUN poetry config virtualenvs.create false \
-  && poetry install --no-interaction --no-ansi -E prod -E docs
+RUN poetry install --no-interaction --no-ansi -E prod -E docs
 
 COPY --from=webpack /srv/app/webpack/bundles bundles
 COPY --from=webpack /srv/app/webpack/webpack-stats.json webpack-stats.json
