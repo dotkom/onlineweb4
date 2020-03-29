@@ -18,6 +18,8 @@ steps:
   - name: setup
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     pull: true
+    environment:
+      POETRY_VIRTUALENVS_CREATE: false
     when:
       event:
         - push
@@ -25,6 +27,7 @@ steps:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
       - pip install tox poetry
+      - poetry install --no-interaction --no-ansi -E prod
     depends_on:
       - restore-cache
 
