@@ -13,7 +13,12 @@ from apps.offline.tasks import create_thumbnail
 
 def create_generic_offline_issue():
     release_date = datetime(2000, 1, 1)
-    return G(Issue, release_date=release_date)
+    return G(
+        Issue,
+        release_date=release_date,
+        issue=IMAGE_FOLDER + "/offline-test-pdf.pdf",
+        image=None,
+    )
 
 
 class OfflineTest(TestCase):

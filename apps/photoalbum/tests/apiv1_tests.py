@@ -9,8 +9,12 @@ from django_dynamic_fixture import G
 from rest_framework import status
 
 from apps.authentication.models import OnlineUser as User
+from apps.gallery.util import create_responsive_image_from_file
 from apps.online_oidc_provider.test import OIDCTestCase
 from apps.photoalbum.models import Album, Photo, UserTag
+
+
+SAMPLE_IMAGE_PATH = f"{settings.PROJECT_ROOT_DIRECTORY}/files/static/img/splash_bg.jpg"
 
 
 def add_content_type_permission_to_group(group: Group, model):
@@ -113,6 +117,17 @@ class AlbumTestCase(OIDCTestCase):
 
 
 class PhotoTestCase(OIDCTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.image_file = create_responsive_image_from_file(
+            file=open(SAMPLE_IMAGE_PATH, "rb"),
+            name="TEST",
+            description="Description of file",
+            photographer="Test Testesem",
+            preset="photoalbum",
+        )
+
     def setUp(self):
         self.now = timezone.now()
         self.past = self.now - timezone.timedelta(days=1)
@@ -124,8 +139,10 @@ class PhotoTestCase(OIDCTestCase):
         self.album: Album = G(Album, published_date=self.past)
         self.public_album: Album = G(Album, published_date=self.past, public=True)
 
-        self.photo: Photo = G(Photo, album=self.album)
-        self.public_photo: Photo = G(Photo, album=self.public_album)
+        self.photo: Photo = G(Photo, album=self.album, image=self.image_file)
+        self.public_photo: Photo = G(
+            Photo, album=self.public_album, image=self.image_file
+        )
 
     @staticmethod
     def get_list_url():
@@ -178,7 +195,7 @@ class PhotoTestCase(OIDCTestCase):
 
     def test_only_permitted_user_can_see_unpublished_photos(self):
         unpublished_album = G(Album, published_date=self.future)
-        unpublished_photo = G(Photo, album=unpublished_album)
+        unpublished_photo = G(Photo, album=unpublished_album, image=self.image_file)
 
         response = self.client.get(
             self.get_detail_url(unpublished_photo), **self.headers
@@ -237,7 +254,7 @@ class PhotoTestCase(OIDCTestCase):
         )
 
         self.assertIn(
-            "Filendelsen 'gif' er ikke tillatt.", response.json().get("raw_image")[0]
+            'Filendelsen "gif" er ikke tillatt.', response.json().get("raw_image")[0]
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -261,6 +278,17 @@ class PhotoTestCase(OIDCTestCase):
 
 
 class UserTagsTestCase(OIDCTestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.image_file = create_responsive_image_from_file(
+            file=open(SAMPLE_IMAGE_PATH, "rb"),
+            name="TEST",
+            description="Description of file",
+            photographer="Test Testesem",
+            preset="photoalbum",
+        )
+
     def setUp(self):
         self.now = timezone.now()
         self.past = self.now - timezone.timedelta(days=1)
@@ -272,8 +300,10 @@ class UserTagsTestCase(OIDCTestCase):
         self.album: Album = G(Album, published_date=self.past)
         self.public_album: Album = G(Album, published_date=self.past, public=True)
 
-        self.photo: Photo = G(Photo, album=self.album)
-        self.public_photo: Photo = G(Photo, album=self.public_album)
+        self.photo: Photo = G(Photo, album=self.album, image=self.image_file)
+        self.public_photo: Photo = G(
+            Photo, album=self.public_album, image=self.image_file
+        )
 
         self.tag: UserTag = G(UserTag, photo=self.photo)
         self.public_tag: UserTag = G(UserTag, photo=self.public_photo)
@@ -311,7 +341,7 @@ class UserTagsTestCase(OIDCTestCase):
 
     def test_only_permitted_user_can_see_unpublished_tags(self):
         unpublished_album = G(Album, published_date=self.future)
-        unpublished_photo = G(Photo, album=unpublished_album)
+        unpublished_photo = G(Photo, album=unpublished_album, image=self.image_file)
         unpublished_tag = G(UserTag, photo=unpublished_photo)
 
         response = self.client.get(self.get_detail_url(unpublished_tag), **self.headers)
