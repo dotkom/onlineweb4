@@ -40,7 +40,7 @@ class StudyRequestsTestCase(TestCase):
 
 class StudyUpdatingTestCase(TestCase):
     def test_find_user_study_and_update_1st_grader(self):
-        user = G(OnlineUser)
+        user = G(OnlineUser, ntnu_username="testesen")
         groups = [
             INFORMATICS_BACHELOR_STUDY_PROGRAMME,
             load_course(ITGK_ACTIVE, years_ago=0),
@@ -57,7 +57,7 @@ class StudyUpdatingTestCase(TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_find_user_study_and_update_5th_grader(self):
-        user = G(OnlineUser)
+        user = G(OnlineUser, ntnu_username="testesen")
         groups = [
             INFORMATICS_MASTER_STUDY_PROGRAMME,
             load_course(PVS_ACTIVE, active=True),

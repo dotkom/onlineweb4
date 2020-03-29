@@ -44,7 +44,12 @@ class GSuiteUtilsTestCase(TestCase):
         self.assertRaises(ValueError, lambda: get_user(object))
 
     def test_get_user(self):
-        user = G(OnlineUser)
+        user = G(
+            OnlineUser,
+            first_name="Test",
+            last_name="Testesen",
+            online_mail="test.testesen",
+        )
         self.assertEqual(user, get_user(user, ow4=True))
         self.assertEqual(user.online_mail, get_user(user, gsuite=True))
 

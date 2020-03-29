@@ -18,13 +18,13 @@ PyMuPDF==1.16.5
 # django-filebrowser==3.12.1      # File uploading
 git+https://github.com/sehmaschine/django-filebrowser.git@4c1a86d67cd7424df57b0e6880152b309823f009#egg=django-filebrowser==3.12.2
 git+https://github.com/dotKom/django-chunks.git@e6bf109d4fd286964024c140ac1b8f3d86713540#egg=django-chunks==0.4
-django-crispy-forms==1.8.1      # nice forms
+django-crispy-forms==1.9.0      # nice forms
 django-extensions==2.2.8        # nice extra commands for debugging, etc
-django-dynamic-fixture==3.0.2   # Dynamic fixtures for models
+django-dynamic-fixture==3.1.0   # Dynamic fixtures for models
 django-recaptcha==2.0.6         # Google ReCaptcha
 django-oauth-toolkit==1.2.0     # OAuth2 authentication support
 django-watson==1.5.4            # Indexed model search lib
-django-reversion==3.0.5         # Model version history with middleware hooks to all post_save signals
+django-reversion==3.0.7         # Model version history with middleware hooks to all post_save signals
 django-guardian==2.2.0          # Per Object permissions framework
 django-taggit==1.2.0            # Generic multi-model tagging library
 django-taggit-serializer==0.1.7 # REST Framework serializers for Django-taggit
@@ -50,8 +50,7 @@ coreapi==2.3.3                  # API documentation
 requests[security]==2.22.0
 
 # Wiki
-# wiki==0.6
-git+https://github.com/django-wiki/django-wiki.git@f19f3e5d729e887054513229c727015f1eaed712#egg=wiki==0.5.1
+wiki==0.6b1
 
 # Django 1.9 support
 sorl-thumbnail==12.6.2
