@@ -21,7 +21,7 @@ jobs:
         env:
           POETRY_VIRTUALENVS_CREATE: false
         run: |
-          pip install tox codecov poetry
+          pip install poetry
           poetry install --no-interaction --no-ansi -E prod
   
       - name: Cache node modules
@@ -74,7 +74,7 @@ jobs:
         env:
             POETRY_VIRTUALENVS_CREATE: false
         run: |
-          pip install tox poetry
+          pip install poetry
           poetry install --no-interaction --no-ansi
   
       - name: Python linting

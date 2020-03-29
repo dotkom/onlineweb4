@@ -26,7 +26,7 @@ steps:
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
-      - pip install tox poetry
+      - pip install poetry
       - poetry install --no-interaction --no-ansi -E prod
     depends_on:
       - restore-cache
