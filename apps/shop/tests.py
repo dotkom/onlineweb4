@@ -1,3 +1,6 @@
+from typing import List
+
+from django.core import mail
 from django.urls import reverse
 from django_dynamic_fixture import G
 from rest_framework import status

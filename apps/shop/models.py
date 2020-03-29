@@ -91,12 +91,18 @@ class OrderLine(models.Model):
 
         # Create the transaction for the user, which will track the actual balance of their wallet
         transaction = PaymentTransaction.objects.create(
-            source=TransactionSource.SHOP, amount=-subtotal, user=self.user
+            source=TransactionSource.SHOP,
+            amount=-subtotal,
+            user=self.user,
+            # Do not create receipt immediately, create after relation to order_line has been saved
+            create_receipt=False,
         )
-
         self.transaction = transaction
         self.paid = True
         self.save()
+
+        transaction.create_receipt = True
+        transaction.save()
 
     def clean(self):
         super().clean()

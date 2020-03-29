@@ -483,7 +483,9 @@ class PaymentTransaction(StripeMixin, models.Model):
                 {"name": "Overføring av saldo", "price": self.amount, "quantity": 1}
             ]
         elif self.source == TransactionSource.CASH:
-            return [{"name": "Påfyllav kontanter", "price": self.amount, "quantity": 1}]
+            return [
+                {"name": "Påfyll av kontanter", "price": self.amount, "quantity": 1}
+            ]
         elif self.source == TransactionSource.SHOP:
             if hasattr(self, "shop_order_line"):
                 return self.shop_order_line.get_order_descriptions()
