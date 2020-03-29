@@ -10,7 +10,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
     npm install -g less && \
     npm install -g yarn
 
-RUN poetry install --no-interaction --no-ansi tox -E prod && \
+RUN poetry install --no-interaction --no-ansi -E prod && \
     poetry install tox
 
 # Clean up
