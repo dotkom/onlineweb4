@@ -13,7 +13,6 @@ from apps.gallery.util import create_responsive_image_from_file
 from apps.online_oidc_provider.test import OIDCTestCase
 from apps.photoalbum.models import Album, Photo, UserTag
 
-
 SAMPLE_IMAGE_PATH = f"{settings.PROJECT_ROOT_DIRECTORY}/files/static/img/splash_bg.jpg"
 
 
