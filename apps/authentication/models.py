@@ -511,6 +511,12 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
     description_long = models.TextField(
         _("Beskrivelse (helhetlig)"), max_length=2048, blank=True
     )
+    application_description = models.TextField(
+        _("Opptaksbeskrivelse"),
+        max_length=2048,
+        blank=True,
+        help_text="Beskriv gruppen for de som ønsker å søke under et opptak",
+    )
     email = models.EmailField(_("E-post"), max_length=128, blank=True)
     image = models.ForeignKey(
         ResponsiveImage,

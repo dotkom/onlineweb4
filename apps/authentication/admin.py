@@ -189,5 +189,6 @@ class GroupMemberAdmin(VersionAdmin):
 @admin.register(GroupRole)
 class GroupRoleAdmin(VersionAdmin):
     model = GroupRole
+    fields = ("role_type",)
     list_display = ("role_type", "verbose_name")
     search_fields = ("role_type",)

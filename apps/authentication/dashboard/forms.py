@@ -9,9 +9,14 @@ from apps.gallery.widgets import SingleImageInput
 class OnlineGroupForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["parent_group"].queryset = get_objects_for_user(
+        queryset = get_objects_for_user(
             user=user, perms="authentication.change_onlinegroup", klass=OnlineGroup
         )
+        instance: OnlineGroup = self.instance
+        if instance.parent_group:
+            queryset |= OnlineGroup.objects.filter(pk=instance.parent_group.id)
+
+        self.fields["parent_group"].queryset = queryset
 
     class Meta:
         model = OnlineGroup
@@ -21,6 +26,7 @@ class OnlineGroupForm(forms.ModelForm):
             "name_long",
             "description_short",
             "description_long",
+            "application_description",
             "email",
             "group_type",
             "roles",
