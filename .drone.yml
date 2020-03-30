@@ -36,7 +36,6 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
       - npm run build:prod
     depends_on:
@@ -47,7 +46,6 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
       - npm run lint-js
     depends_on:
@@ -58,7 +56,6 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
       - npm run lint-less
     depends_on:
@@ -69,7 +66,6 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
       - poetry run tox -e flake8 -e isort -e black --recreate
     depends_on:
@@ -98,7 +94,6 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
       - poetry run tox -e tests --recreate
       - pip install codecov --quiet
