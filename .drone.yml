@@ -71,7 +71,7 @@ steps:
         - push
     group: testing
     commands:
-      - tox -e flake8 -e isort -e black --recreate
+      - poetry run tox -e flake8 -e isort -e black --recreate
     depends_on:
      - setup
      - restore-cache
@@ -100,7 +100,7 @@ steps:
         - push
     group: testing
     commands:
-      - tox -e tests --recreate
+      - poetry run tox -e tests --recreate
       - pip install codecov --quiet
       - codecov
     depends_on:
