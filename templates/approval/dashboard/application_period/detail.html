@@ -56,7 +56,9 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <p>{{ application.committees.all | join:"; " }}
+                                {% for priority in application.committee_priorities.all %}
+                                    <div>{{ priority }}</div>
+                                {% endfor %}
                             </td>
                             <td>
                                 <i class="fa fa-lg {% if application.prioritized %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>

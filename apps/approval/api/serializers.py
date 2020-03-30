@@ -68,7 +68,7 @@ class CommitteeApplicationPeriodSerializer(serializers.ModelSerializer):
 
 
 class CommitteeApplicationSerializer(serializers.ModelSerializer):
-    committees = CommitteeSerializer(many=True, source="committeepriority_set")
+    committees = CommitteeSerializer(many=True, source="committee_priorities")
     applicant = UserReadOnlySerializer(read_only=True)
     application_period = serializers.PrimaryKeyRelatedField(
         required=True, queryset=CommitteeApplicationPeriod.objects.all()
@@ -122,7 +122,7 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
                 "Enten en brukerkonto (søker) eller navn og e-postadresse er påkrevd."
             )
 
-        committees_priorities = attrs.get("committeepriority_set")
+        committees_priorities = attrs.get("committee_priorities")
         application_period = attrs.get("application_period")
 
         committees = [c.get("group") for c in committees_priorities]
@@ -137,7 +137,7 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
     def create(self, validated_data):
-        committees = validated_data.pop("committeepriority_set")
+        committees = validated_data.pop("committee_priorities")
         application = super().create(validated_data)
 
         for committee in committees:

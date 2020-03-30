@@ -329,9 +329,7 @@ class CommitteePrioritiySerializer(serializers.ModelSerializer):
 
 
 class CommitteeApplicationSerializer(serializers.ModelSerializer):
-    committee_priorities = CommitteePrioritiySerializer(
-        many=True, source="committeepriority_set"
-    )
+    committee_priorities = CommitteePrioritiySerializer(many=True)
 
     class Meta:
         model = CommitteeApplication
