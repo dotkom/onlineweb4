@@ -634,12 +634,8 @@ description = "Full-text multi-table search application for Django. Easy to inst
 name = "django-watson"
 optional = false
 python-versions = "*"
-version = "1.5.4"
+version = "1.5.5"
 
-[package.source]
-reference = "24c69ff57cc4b840f129f579761b0ac41044e26a"
-type = "git"
-url = "https://github.com/henrikhorluck/django-watson.git"
 [[package]]
 category = "main"
 description = "Transparently use webpack with django"
@@ -1803,7 +1799,7 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 prod = ["psycopg2-binary", "uwsgi", "redis"]
 
 [metadata]
-content-hash = "43fd28c60229531b7181a76fdd0d799ab06e7d4c9d56adb83480094330c0827d"
+content-hash = "36cbc4cb1a601224bf5b45a3c16146c3fed8771fec38285f400d96508e518343"
 python-versions = "~3.7"
 
 [metadata.files]
@@ -2065,7 +2061,9 @@ django-taggit = [
 django-taggit-serializer = [
     {file = "django-taggit-serializer-0.1.7.tar.gz", hash = "sha256:f712eb2482079be452bcd1e82b18a820e26427c3ee1cef2b4fcd4d6b8b9f14d0"},
 ]
-django-watson = []
+django-watson = [
+    {file = "django-watson-1.5.5.tar.gz", hash = "sha256:456123d1601f275ef222d9ccbb3b73e7dcb70f1370e4d45651aa2d359ee6e0e3"},
+]
 django-webpack-loader = [
     {file = "django-webpack-loader-0.6.0.tar.gz", hash = "sha256:60bab6b9a037a5346fad12d2a70a6bc046afb33154cf75ed640b93d3ebd5f520"},
     {file = "django_webpack_loader-0.6.0-py2.py3-none-any.whl", hash = "sha256:970b968c2a8975fb7eff56a3bab5d0d90d396740852d1e0c50c5cfe2b824199a"},

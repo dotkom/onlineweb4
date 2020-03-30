@@ -27,9 +27,7 @@ django-extensions = "^2.2"
 django-dynamic-fixture = "^3.1"
 django-recaptcha = "~2.0"           # Google ReCaptcha
 django-oauth-toolkit = "~1.2"       # OAuth2 authentication support
-# django-watson = "~1.5"
-django-watson = { git = "https://github.com/henrikhorluck/django-watson.git", rev = "24c69ff57cc4b840f129f579761b0ac41044e26a" }
-# ^ Indexed model search lib, Git depencdency due to Django 3 support
+django-watson = "~1.5.5"            # Indexed model search lib
 django-reversion = "~3.0"           # Model version history with middleware hooks to all post_save signals
 django-guardian = "~2.2"            # Per Object permissions framework
 django-taggit = "~1.2"              # Generic multi-model tagging library
