@@ -55,6 +55,13 @@ jobs:
           tox -e tests --recreate
           pip install codecov --quiet
           codecov
+      - name: Cache python packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
   
   lint-python:
     runs-on: ubuntu-latest

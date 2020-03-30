@@ -1,4 +1,5 @@
 kind: pipeline
+type: docker
 name: default
 
 steps:
@@ -12,22 +13,19 @@ steps:
       mount:
         - ./.tox
         - ./node_modules
+        - ./.pip-cache
       volumes:
         - /tmp/cache:/cache
 
   - name: setup
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     pull: true
-    environment:
-      POETRY_VIRTUALENVS_CREATE: false
     when:
       event:
         - push
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
-      - pip install poetry
-      - poetry install --no-interaction --no-ansi -E prod
     depends_on:
       - restore-cache
 
@@ -63,20 +61,26 @@ steps:
 
   - name: python-lint
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    environment:
+      POETRY_VIRTUALENVS_CREATE: false
+      PIP_CACHE_DIR: ./.pip-cache
     when:
       event:
         - push
     commands:
-      - poetry run tox -e flake8 -e isort -e black --recreate
+      - pip install poetry
+      - poetry install --no-interaction --no-ansi -E prod
+      - tox -e flake8 -e isort -e black --recreate
     depends_on:
-     - setup
-     - restore-cache
+      - setup
 
   - name: python-tests
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     secrets:
       - codecov_token
     environment:
+      POETRY_VIRTUALENVS_CREATE: false
+      PIP_CACHE_DIR: ./.pip-cache
       CODECOV_TOKEN:
         from_secret: codecov_token
       OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM:
@@ -95,12 +99,12 @@ steps:
       event:
         - push
     commands:
-      - poetry run tox -e tests --recreate
-      - pip install codecov --quiet
+      - pip install poetry codecov
+      - poetry install --no-interaction --no-ansi -E prod
+      - tox -e tests --recreate
       - codecov
     depends_on:
       - setup
-      - restore-cache
 
   - name: rebuild-cache
     image: drillster/drone-volume-cache
@@ -112,13 +116,31 @@ steps:
       mount:
         - ./.tox
         - ./node_modules
+        - ./.pip-cache
       volumes:
         - /tmp/cache:/cache
     depends_on:
-      - setup
       - python-lint
       - python-tests
-      
+
+  - name: update-requires.io
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    environment:
+      POETRY_VIRTUALENVS_CREATE: false
+      PIP_CACHE_DIR: ./.pip-cache
+      REQUIRES_IO_API_KEY:
+        from_secret: REQUIRES_IO_API_KEY
+    when:
+      event:
+        - push
+    script:
+      - pip install poetry requires.io
+      - touch requirements.txt
+      - poetry export -f requirements.txt > requirements.txt --dev -E prod -E docs --without-hashes
+      - requires.io update-branch -t $REQUIRES_IO_API_KEY -r onlineweb4 -n ${DRONE_BRANCH} ./requirements.txt
+    depends_on:
+      - python-tests
+
   - name: deploy
     image: appleboy/drone-ssh
     pull: true
@@ -128,7 +150,6 @@ steps:
       event:
         - push
       branch: develop
-      status: success
     settings:
       host: nansen.online.ntnu.no
       port: 22
@@ -138,12 +159,12 @@ steps:
       command_timeout: 600s
       script:
         - /srv/www/ow4dev/deploy.sh
-    depends_on:
-      - npm-build
-      - js-lint
-      - less-lint
-      - python-lint
-      - python-tests
+      depends_on:
+        - npm-build
+        - js-lint
+        - less-lint
+        - python-lint
+        - python-tests
 
 image_pull_secrets:
   - dockerconfigjson

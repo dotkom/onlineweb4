@@ -101,6 +101,7 @@ legacy_tox_ini = """
 [tox]
 envlist = tests, flake8, isort, black
 skipsdist = True
+basepython = python3
 
 [testenv]
 basepython = python3
@@ -116,7 +117,6 @@ commands =
     black: black --check apps middleware scripts utils onlineweb4
 
 [testenv:tests]
-basepython = python3
 passenv =
     DATABASE_URL
     OAUTH2_*
