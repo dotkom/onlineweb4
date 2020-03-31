@@ -71,8 +71,7 @@ steps:
       event:
         - push
     commands:
-      - sleep 30 # ensure python checks can run in parallell (they share pip-cache)
-      - pip install -rrequirements.txt
+      - pip install -r requirements.txt
       - tox -e flake8 -e isort -e black --recreate
     depends_on:
       - setup
@@ -85,10 +84,10 @@ steps:
       event:
         - push
     commands:
-      - pip install -rrequirements.txt
+      - pip install -r requirements.txt
       - python manage.py makemigrations --check
     depends_on:
-      - python-lint # Due to parallellism issues
+      - python-lint
 
   - name: python-tests
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
@@ -114,12 +113,12 @@ steps:
       event:
         - push
     commands:
-      - pip install -rrequirements.txt
+      - pip install -r requirements.txt
       - pip install codecov
       - tox -e tests --recreate
       - codecov
     depends_on:
-      - setup
+      - check-migrations
 
   - name: rebuild-cache
     image: drillster/drone-volume-cache
@@ -178,6 +177,7 @@ steps:
         - less-lint
         - python-lint
         - python-tests
+        - check-migrations
 
 image_pull_secrets:
   - dockerconfigjson
