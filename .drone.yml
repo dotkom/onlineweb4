@@ -18,7 +18,7 @@ steps:
         - /tmp/cache:/cache
 
   - name: setup
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     pull: true
     when:
       event:
@@ -30,7 +30,7 @@ steps:
       - restore-cache
 
   - name: npm-build
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     when:
       event:
         - push
@@ -40,7 +40,7 @@ steps:
      - setup
 
   - name: js-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     when:
       event:
         - push
@@ -50,7 +50,7 @@ steps:
       - setup
 
   - name: less-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     when:
       event:
         - push
@@ -60,7 +60,7 @@ steps:
      - setup
 
   - name: python-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     environment:
       POETRY_VIRTUALENVS_CREATE: false
       PIP_CACHE_DIR: ./.pip-cache
@@ -68,14 +68,13 @@ steps:
       event:
         - push
     commands:
-      - pip install poetry
       - poetry install --no-interaction --no-ansi -E prod
       - tox -e flake8 -e isort -e black --recreate
     depends_on:
       - setup
 
   - name: python-tests
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     secrets:
       - codecov_token
     environment:
@@ -99,7 +98,7 @@ steps:
       event:
         - push
     commands:
-      - pip install poetry codecov
+      - pip install codecov
       - poetry install --no-interaction --no-ansi -E prod
       - tox -e tests --recreate
       - codecov
@@ -124,7 +123,7 @@ steps:
       - python-tests
 
   - name: update-requires.io
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     environment:
       POETRY_VIRTUALENVS_CREATE: false
       PIP_CACHE_DIR: ./.pip-cache
@@ -134,7 +133,7 @@ steps:
       event:
         - push
     script:
-      - pip install poetry requires.io
+      - pip install requires.io
       - touch requirements.txt
       - poetry export -f requirements.txt > requirements.txt --dev -E prod -E docs --without-hashes
       - requires.io update-branch -t $REQUIRES_IO_API_KEY -r onlineweb4 -n ${DRONE_BRANCH} ./requirements.txt
