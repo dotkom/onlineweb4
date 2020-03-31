@@ -136,7 +136,7 @@ steps:
     script:
       - pip install requires.io
       - poetry export -f requirements.txt > requirements.txt --dev -E prod -E docs --without-hashes
-      - requires.io update-branch -t $REQUIRES_IO_API_KEY -r onlineweb4 -n ${DRONE_BRANCH} ./requirements.txt
+      - requires.io update-branch -t $REQUIRES_IO_API_KEY -r onlineweb4 -n ${DRONE_BRANCH} ./
     depends_on:
       - python-tests
 
