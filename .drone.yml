@@ -19,6 +19,8 @@ steps:
 
   - name: setup
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    environment:
+      PIP_CACHE_DIR: ./.pip-cache
     pull: true
     when:
       event:
@@ -26,6 +28,8 @@ steps:
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
+      - poetry export -f requirements.txt > requirements.txt --dev -E prod --without-hashes
+      - pip install -r requirements.txt # Set up cache so that lint and test can run in parallell
     depends_on:
       - restore-cache
 
@@ -62,13 +66,12 @@ steps:
   - name: python-lint
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     environment:
-      POETRY_VIRTUALENVS_CREATE: false
       PIP_CACHE_DIR: ./.pip-cache
     when:
       event:
         - push
     commands:
-      - poetry install --no-interaction --no-ansi -E prod
+      - pip install -rrequirements.txt
       - tox -e flake8 -e isort -e black --recreate
     depends_on:
       - setup
@@ -78,7 +81,6 @@ steps:
     secrets:
       - codecov_token
     environment:
-      POETRY_VIRTUALENVS_CREATE: false
       PIP_CACHE_DIR: ./.pip-cache
       CODECOV_TOKEN:
         from_secret: codecov_token
@@ -99,7 +101,7 @@ steps:
         - push
     commands:
       - pip install codecov
-      - poetry install --no-interaction --no-ansi -E prod
+      - pip install -rrequirements.txt
       - tox -e tests --recreate
       - codecov
     depends_on:
@@ -125,7 +127,6 @@ steps:
   - name: update-requires.io
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     environment:
-      POETRY_VIRTUALENVS_CREATE: false
       PIP_CACHE_DIR: ./.pip-cache
       REQUIRES_IO_API_KEY:
         from_secret: REQUIRES_IO_API_KEY
@@ -134,7 +135,6 @@ steps:
         - push
     script:
       - pip install requires.io
-      - touch requirements.txt
       - poetry export -f requirements.txt > requirements.txt --dev -E prod -E docs --without-hashes
       - requires.io update-branch -t $REQUIRES_IO_API_KEY -r onlineweb4 -n ${DRONE_BRANCH} ./requirements.txt
     depends_on:
