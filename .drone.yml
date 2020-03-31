@@ -29,7 +29,7 @@ steps:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
       - poetry export -f requirements.txt > requirements.txt --dev -E prod --without-hashes
-      - pip install -r requirements.txt # Set up cache so that lint and test can run in parallell
+      - pip download -r requirements.txt # Set up cache so that lint and test can run in parallell
     depends_on:
       - restore-cache
 
@@ -77,17 +77,17 @@ steps:
       - setup
 
   - name: check-migrations
-      image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
-      environment:
-        PIP_CACHE_DIR: ./.pip-cache
-      when:
-        event:
-          - push
-      commands:
-        - pip install -rrequirements.txt
-        - python manage.py makemigrations --check
-      depends_on:
-        - setup
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    environment:
+      PIP_CACHE_DIR: ./.pip-cache
+    when:
+      event:
+        - push
+    commands:
+      - pip install -rrequirements.txt
+      - python manage.py makemigrations --check
+    depends_on:
+      - setup
 
   - name: python-tests
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
