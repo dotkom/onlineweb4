@@ -76,6 +76,19 @@ steps:
     depends_on:
       - setup
 
+  - name: check-migrations
+      image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+      environment:
+        PIP_CACHE_DIR: ./.pip-cache
+      when:
+        event:
+          - push
+      commands:
+        - pip install -rrequirements.txt
+        - python manage.py makemigrations --check
+      depends_on:
+        - setup
+
   - name: python-tests
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
     secrets:
@@ -105,7 +118,7 @@ steps:
       - tox -e tests --recreate
       - codecov
     depends_on:
-      - setup
+      - check-migrations
 
   - name: rebuild-cache
     image: drillster/drone-volume-cache
