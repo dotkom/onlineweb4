@@ -211,6 +211,7 @@ class CommitteeApplication(models.Model):
 
     class Meta:
         default_permissions = ("add", "change", "delete", "view")
+        ordering = ("created",)
         verbose_name = "komitesøknad"
         verbose_name_plural = "komitesøknader"
 
@@ -219,7 +220,10 @@ class CommitteePriority(models.Model):
     valid_priorities = [(1, "1. prioritet"), (2, "2. prioritet"), (3, "3. prioritet")]
 
     committee_application = models.ForeignKey(
-        CommitteeApplication, verbose_name="søknad", on_delete=models.deletion.CASCADE
+        CommitteeApplication,
+        verbose_name="søknad",
+        related_name="committee_priorities",
+        on_delete=models.deletion.CASCADE,
     )
     group = models.ForeignKey(
         OnlineGroup, verbose_name="komite", on_delete=models.deletion.CASCADE
@@ -235,5 +239,6 @@ class CommitteePriority(models.Model):
 
     class Meta:
         default_permissions = ("add", "change", "delete", "view")
+        ordering = ("committee_application__created", "priority")
         verbose_name = "komiteprioritering"
         verbose_name_plural = "komiteprioriteringer"

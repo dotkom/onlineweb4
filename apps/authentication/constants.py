@@ -18,13 +18,15 @@ class GroupType:
 
 class RoleType:
     LEADER = "leader"
+    BOARD_MEMBER = "board_member"
     DEPUTY_LEADER = "deputy_leader"
     TREASURER = "treasurer"
     CHIEF_EDITOR = "chief_editor"
 
-    ALL_TYPES = (LEADER, DEPUTY_LEADER, TREASURER, CHIEF_EDITOR)
+    ALL_TYPES = (LEADER, BOARD_MEMBER, DEPUTY_LEADER, TREASURER, CHIEF_EDITOR)
     ALL_CHOICES = (
         (LEADER, "Leder"),
+        (BOARD_MEMBER, "Styremedlem"),
         (DEPUTY_LEADER, "Nestleder"),
         (TREASURER, "Økonomiansvarlig"),
         (CHIEF_EDITOR, "Redaktør"),
