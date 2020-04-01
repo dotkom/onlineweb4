@@ -1,4 +1,5 @@
 kind: pipeline
+type: docker
 name: default
 
 steps:
@@ -12,11 +13,14 @@ steps:
       mount:
         - ./.tox
         - ./node_modules
+        - ./.pip-cache
       volumes:
         - /tmp/cache:/cache
 
   - name: setup
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    environment:
+      PIP_CACHE_DIR: ./.pip-cache
     pull: true
     when:
       event:
@@ -24,7 +28,7 @@ steps:
     commands:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
-      - pip install tox
+      - poetry export -f requirements.txt > requirements.txt --dev -E prod --without-hashes
     depends_on:
       - restore-cache
 
@@ -33,7 +37,6 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
       - npm run build:prod
     depends_on:
@@ -44,7 +47,6 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
       - npm run lint-js
     depends_on:
@@ -55,7 +57,6 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
       - npm run lint-less
     depends_on:
@@ -63,21 +64,36 @@ steps:
 
   - name: python-lint
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    environment:
+      PIP_CACHE_DIR: ./.pip-cache
     when:
       event:
         - push
-    group: testing
     commands:
+      - pip install -r requirements.txt
       - tox -e flake8 -e isort -e black --recreate
     depends_on:
-     - setup
-     - restore-cache
+      - setup
+
+  - name: check-migrations
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    environment:
+      PIP_CACHE_DIR: ./.pip-cache
+    when:
+      event:
+        - push
+    commands:
+      - pip install -r requirements.txt
+      - python manage.py makemigrations --check
+    depends_on:
+      - python-lint
 
   - name: python-tests
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     secrets:
       - codecov_token
     environment:
+      PIP_CACHE_DIR: ./.pip-cache
       CODECOV_TOKEN:
         from_secret: codecov_token
       OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM:
@@ -95,14 +111,13 @@ steps:
     when:
       event:
         - push
-    group: testing
     commands:
+      - pip install -r requirements.txt
+      - pip install codecov
       - tox -e tests --recreate
-      - pip install codecov --quiet
       - codecov
     depends_on:
-      - setup
-      - restore-cache
+      - check-migrations
 
   - name: rebuild-cache
     image: drillster/drone-volume-cache
@@ -114,13 +129,29 @@ steps:
       mount:
         - ./.tox
         - ./node_modules
+        - ./.pip-cache
       volumes:
         - /tmp/cache:/cache
     depends_on:
-      - setup
       - python-lint
       - python-tests
-      
+
+  - name: update-requires.io
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
+    environment:
+      PIP_CACHE_DIR: ./.pip-cache
+      REQUIRES_IO_API_KEY:
+        from_secret: REQUIRES_IO_API_KEY
+    when:
+      event:
+        - push
+    script:
+      - pip install requires.io
+      - poetry export -f requirements.txt > requirements.txt --dev -E prod -E docs --without-hashes
+      - requires.io update-branch -t $REQUIRES_IO_API_KEY -r onlineweb4 -n ${DRONE_BRANCH} ./
+    depends_on:
+      - python-tests
+
   - name: deploy
     image: appleboy/drone-ssh
     pull: true
@@ -130,7 +161,6 @@ steps:
       event:
         - push
       branch: develop
-      status: success
     settings:
       host: nansen.online.ntnu.no
       port: 22
@@ -146,6 +176,7 @@ steps:
       - less-lint
       - python-lint
       - python-tests
+      - check-migrations
 
 image_pull_secrets:
   - dockerconfigjson

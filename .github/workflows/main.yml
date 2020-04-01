@@ -18,7 +18,11 @@ jobs:
         run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
 
       - name: Install python dependencies
-        run: pip install tox codecov
+        env:
+          POETRY_VIRTUALENVS_CREATE: false
+        run: |
+          pip install poetry
+          poetry install --no-interaction --no-ansi -E prod
   
       - name: Cache node modules
         uses: actions/cache@v1
@@ -51,6 +55,13 @@ jobs:
           tox -e tests --recreate
           pip install codecov --quiet
           codecov
+      - name: Cache python packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
   
   lint-python:
     runs-on: ubuntu-latest
@@ -67,10 +78,38 @@ jobs:
         run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
 
       - name: Install python dependencies
-        run: pip install tox
+        env:
+            POETRY_VIRTUALENVS_CREATE: false
+        run: |
+          pip install poetry
+          poetry install --no-interaction --no-ansi
   
       - name: Python linting
         run: tox -e flake8 -e isort -e black --recreate
+
+  check-migrations:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: Copy settings file
+        run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+
+      - name: Install python dependencies
+        env:
+          POETRY_VIRTUALENVS_CREATE: false
+        run: |
+          pip install poetry
+          poetry install --no-interaction --no-ansi
+
+      - name: Check migrations
+        run: python manage.py makemigrations --check
 
   lint-js:
     runs-on: ubuntu-latest

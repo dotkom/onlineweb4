@@ -1,0 +1,138 @@
+[tool.poetry]
+name = "onlineweb4"
+version = "1.0.0"
+description = "Web pages for Online, Linjeforeningen for Informatikk at NTNU"
+authors = ["Dotkom <dotkom@online.ntnu.no>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "~3.7"
+Django = "~3.0"
+djangorestframework = "~3.11"
+django-filter = "~2.2"
+pillow = "~7.0"
+markdown2 = "~2.3"
+pytz = "^2019.3"
+python-memcached = "~1.59"
+stripe = "~2.37"
+icalendar = "~4.0"
+google-api-python-client = "~1.8"
+celery = "~4.4"
+PyMuPDF = "~1.16"
+django-filebrowser = { git = "https://github.com/sehmaschine/django-filebrowser.git", rev = "4c1a86d67cd7424df57b0e6880152b309823f009" }
+# ^ For Django 3 support
+django-chunks = { git = "https://github.com/dotKom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
+django-crispy-forms = "^1.9"
+django-extensions = "^2.2"
+django-dynamic-fixture = "^3.1"
+django-recaptcha = "~2.0"           # Google ReCaptcha
+django-oauth-toolkit = "~1.2"       # OAuth2 authentication support
+django-watson = "~1.5.5"            # Indexed model search lib
+django-reversion = "~3.0"           # Model version history with middleware hooks to all post_save signals
+# django-guardian = "~2.2"            # Per Object permissions framework
+django-guardian = { git = "https://github.com/django-guardian/django-guardian.git", rev = "dba092f5db86808713433388717dcfbaaa928a0b" }
+# ^ TODO: Update when django-guardian > 2.2 is released with fix for `get_objects_for_user` ref. dotkom/onlineweb4#2459
+django-taggit = "~1.2"              # Generic multi-model tagging library
+django-taggit-serializer = "~0.1"   # REST Framework serializers for Django-taggit
+APScheduler = "~3.6"                # Scheduler
+redwine = { git = "https://github.com/dotkom/redwine.git", tag = "v1.3.1" }
+reportlab = "~3.5"
+pdfdocument = "~3.3"
+Unidecode = "~1.1"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
+django-markdown-deux = "~1.0"
+django-cors-headers = "~3.2"        # Enable CORS for Nibble
+django-datetime-widget = { git = "https://github.com/oleast/django-datetime-widget.git", rev = "95a5ba4738853d1ed4081e1e33e1600cba984aad" }
+django-webpack-loader = "~0.6"      # Integration with webpack
+dj-database-url = "~0.5"            # Allows to configure databases using URLs
+python-decouple = "~3.1"            # Configuration and settings management
+django-oidc-provider = "~0.7"       # OpenID Connect Provider
+docutils = "~0.15"                  # Allows django-admindocs to generate documentation
+requests-oauthlib = "~1.2"          # Simplify OAuth2 connections to external apps
+oic = "~1.0"			            # OpenID Connect Client
+python-dateutil = "~2.8"            # Simplify date parsing
+coreapi = "~2.3"                    # API Documentation
+requests = { version = "~2.22", extras = [ "security" ] }
+# Wiki
+wiki = "0.6b1"
+
+# Django 1.9 support
+django-appconf = "~1.0"
+
+# non-pip
+# imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
+# libjpeg-dev					# From package repository.
+# libpq-dev						# From package repository.
+
+# Monitoring
+raven = "~6.10"
+
+django-js-reverse = "~0.9"
+
+psycopg2-binary = { version = "~2.8", optional = true }
+uwsgi = { version = "~2.0", optional = true }
+redis = { version = "~3.3", optional = true }
+
+# Docs
+sphinx = { version = "*", optional = true }
+sphinx-rtd-theme = { version = "*", optional = true }
+
+
+[tool.poetry.dev-dependencies]
+# Testing
+pytest = "~5.2"
+pytest-cov = "~2.8"
+pytest-django = "~3.6"
+factory-boy = "~2.11"
+freezegun = "~0.3"
+mock = "~3.0"
+tox = "~3.14"
+
+# Linting
+flake8 = "~3.7"
+isort = "~4.3"
+pycodestyle = "~2.5"
+black = "19.10b0"
+
+[tool.poetry.extras]
+prod = ["psycopg2-binary", "uwsgi", "redis"]
+docs = ["sphinx", "sphinx-rtd-theme"]
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = tests, flake8, isort, black
+skipsdist = True
+basepython = python3
+
+[testenv]
+basepython = python3
+whitelist_externals =
+    npm
+    py.test
+    isort
+    flake8
+    black
+commands =
+    isort: isort -rc -c apps middleware scripts utils
+    flake8: flake8 apps middleware scripts utils
+    black: black --check apps middleware scripts utils onlineweb4
+
+[testenv:tests]
+passenv =
+    DATABASE_URL
+    OAUTH2_*
+    OW4_*
+setenv =
+    DATABASE_URL = sqlite:///db.db
+    DJANGO_SETTINGS_MODULE = onlineweb4.settings
+    PYTHONPATH = {toxinidir}:{toxinidir}
+    OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats-test.json
+commands =
+    npm run build:test
+    py.test --cov=apps --cov-report xml --ignore=src/
+"""
+
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"
+
