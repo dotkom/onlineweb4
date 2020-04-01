@@ -26,7 +26,9 @@ django-oauth-toolkit==1.2.0     # OAuth2 authentication support
 # django-watson==1.5.4            # Indexed model search lib
 git+https://github.com/henrikhorluck/django-watson.git@24c69ff57cc4b840f129f579761b0ac41044e26a#egg=django-watson==1.5.5
 django-reversion==3.0.7         # Model version history with middleware hooks to all post_save signals
-django-guardian==2.2.0          # Per Object permissions framework
+# django-guardian==2.2.0          # Per Object permissions framework
+# Bugfix which has not been released yet: https://github.com/django-guardian/django-guardian/pull/677
+git+https://github.com/django-guardian/django-guardian.git@dba092f5db86808713433388717dcfbaaa928a0b#egg=django-guardian==2.2.1
 django-taggit==1.2.0            # Generic multi-model tagging library
 django-taggit-serializer==0.1.7 # REST Framework serializers for Django-taggit
 APScheduler==3.6.1              # Scheduler
