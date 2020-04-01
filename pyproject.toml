@@ -29,7 +29,9 @@ django-recaptcha = "~2.0"           # Google ReCaptcha
 django-oauth-toolkit = "~1.2"       # OAuth2 authentication support
 django-watson = "~1.5.5"            # Indexed model search lib
 django-reversion = "~3.0"           # Model version history with middleware hooks to all post_save signals
-django-guardian = "~2.2"            # Per Object permissions framework
+# django-guardian = "~2.2"            # Per Object permissions framework
+django-guardian = { git = "https://github.com/django-guardian/django-guardian.git", rev = "dba092f5db86808713433388717dcfbaaa928a0b" }
+# ^ TODO: Update when django-guardian > 2.2 is released with fix for `get_objects_for_user` ref. dotkom/onlineweb4#2459
 django-taggit = "~1.2"              # Generic multi-model tagging library
 django-taggit-serializer = "~0.1"   # REST Framework serializers for Django-taggit
 APScheduler = "~3.6"                # Scheduler
@@ -54,7 +56,6 @@ requests = { version = "~2.22", extras = [ "security" ] }
 wiki = "0.6b1"
 
 # Django 1.9 support
-sorl-thumbnail = "~12.6"
 django-appconf = "~1.0"
 
 # non-pip
@@ -130,7 +131,8 @@ commands =
     npm run build:test
     py.test --cov=apps --cov-report xml
 """
+
 [build-system]
-requires = ["poetry==0.12.16"]
+requires = ["poetry>=1.0.0"]
 build-backend = "poetry.masonry.api"
 

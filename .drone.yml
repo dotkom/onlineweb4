@@ -18,7 +18,7 @@ steps:
         - /tmp/cache:/cache
 
   - name: setup
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     environment:
       PIP_CACHE_DIR: ./.pip-cache
     pull: true
@@ -33,7 +33,7 @@ steps:
       - restore-cache
 
   - name: npm-build
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     when:
       event:
         - push
@@ -43,7 +43,7 @@ steps:
      - setup
 
   - name: js-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     when:
       event:
         - push
@@ -53,7 +53,7 @@ steps:
       - setup
 
   - name: less-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     when:
       event:
         - push
@@ -63,7 +63,7 @@ steps:
      - setup
 
   - name: python-lint
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     environment:
       PIP_CACHE_DIR: ./.pip-cache
     when:
@@ -76,7 +76,7 @@ steps:
       - setup
 
   - name: check-migrations
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     environment:
       PIP_CACHE_DIR: ./.pip-cache
     when:
@@ -89,7 +89,7 @@ steps:
       - python-lint
 
   - name: python-tests
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     secrets:
       - codecov_token
     environment:
@@ -137,7 +137,7 @@ steps:
       - python-tests
 
   - name: update-requires.io
-    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7-poetry
+    image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     environment:
       PIP_CACHE_DIR: ./.pip-cache
       REQUIRES_IO_API_KEY:

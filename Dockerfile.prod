@@ -30,7 +30,7 @@ COPY pyproject.toml poetry.lock ./
 
 RUN pip install poetry
 
-RUN poetry install --no-interaction --no-ansi -E prod -E docs
+RUN poetry install --no-interaction --no-ansi --no-dev -E prod -E docs
 
 COPY --from=webpack /srv/app/webpack/bundles bundles
 COPY --from=webpack /srv/app/webpack/webpack-stats.json webpack-stats.json
