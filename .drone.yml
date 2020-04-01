@@ -29,7 +29,6 @@ steps:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
       - poetry export -f requirements.txt > requirements.txt --dev -E prod --without-hashes
-      - pip download -r requirements.txt # Set up cache so that lint and test can run in parallell
     depends_on:
       - restore-cache
 
