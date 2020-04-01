@@ -170,13 +170,13 @@ steps:
       command_timeout: 600s
       script:
         - /srv/www/ow4dev/deploy.sh
-      depends_on:
-        - npm-build
-        - js-lint
-        - less-lint
-        - python-lint
-        - python-tests
-        - check-migrations
+    depends_on:
+      - npm-build
+      - js-lint
+      - less-lint
+      - python-lint
+      - python-tests
+      - check-migrations
 
 image_pull_secrets:
   - dockerconfigjson
