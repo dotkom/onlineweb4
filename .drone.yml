@@ -4,24 +4,27 @@ name: default
 
 steps:
   - name: restore-cache
-    image: drillster/drone-volume-cache
-    when:
-      event:
-        - push
+    image: plugins/s3-cache
     settings:
+      pull: true
+      root: 
+        from_secret: s3_bucket_name
+      access_key:
+        from_secret: s3_access_key
+      secret_key:
+        from_secret: s3_secret_key
       restore: true
-      mount:
-        - ./.tox
-        - ./node_modules
-        - ./.pip-cache
-      volumes:
-        - /tmp/cache:/cache
 
   - name: setup
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     environment:
       PIP_CACHE_DIR: ./.pip-cache
     pull: true
+    volumes:
+      - name: python-dependencies
+        path: /usr/local/lib/python3.7/site-packages
+      - name: binaries
+        path: /usr/local/bin
     when:
       event:
         - push
@@ -29,6 +32,7 @@ steps:
       - cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
       - yarn install --pure-lockfile
       - poetry export -f requirements.txt > requirements.txt --dev -E prod --without-hashes
+      - pip install -r requirements.txt
     depends_on:
       - restore-cache
 
@@ -64,34 +68,41 @@ steps:
 
   - name: python-lint
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
-    environment:
-      PIP_CACHE_DIR: ./.pip-cache
+    volumes:
+      - name: python-dependencies
+        path: /usr/local/lib/python3.7/site-packages
+      - name: binaries
+        path: /usr/local/bin
     when:
       event:
         - push
     commands:
-      - pip install -r requirements.txt
       - tox -e flake8 -e isort -e black --recreate
     depends_on:
       - setup
 
   - name: check-migrations
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
-    environment:
-      PIP_CACHE_DIR: ./.pip-cache
     when:
       event:
         - push
+    volumes:
+      - name: python-dependencies
+        path: /usr/local/lib/python3.7/site-packages
     commands:
-      - pip install -r requirements.txt
       - python manage.py makemigrations --check
     depends_on:
-      - python-lint
+      - setup
 
   - name: python-tests
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
     secrets:
       - codecov_token
+    volumes:
+      - name: python-dependencies
+        path: /usr/local/lib/python3.7/site-packages
+      - name: binaries
+        path: /usr/local/bin
     environment:
       PIP_CACHE_DIR: ./.pip-cache
       CODECOV_TOKEN:
@@ -112,29 +123,11 @@ steps:
       event:
         - push
     commands:
-      - pip install -r requirements.txt
       - pip install codecov
       - tox -e tests --recreate
       - codecov
     depends_on:
-      - check-migrations
-
-  - name: rebuild-cache
-    image: drillster/drone-volume-cache
-    when:
-      event:
-        - push
-    settings:
-      rebuild: true
-      mount:
-        - ./.tox
-        - ./node_modules
-        - ./.pip-cache
-      volumes:
-        - /tmp/cache:/cache
-    depends_on:
-      - python-lint
-      - python-tests
+      - setup
 
   - name: update-requires.io
     image: registry.online.ntnu.no/dotkom/onlineweb4-testbase:3.7
@@ -150,7 +143,45 @@ steps:
       - poetry export -f requirements.txt > requirements.txt --dev -E prod -E docs --without-hashes
       - requires.io update-branch -t $REQUIRES_IO_API_KEY -r onlineweb4 -n ${DRONE_BRANCH} ./
     depends_on:
+      - setup
+
+
+  - name: rebuild-cache
+    image: plugins/s3-cache
+    settings:
+      pull: true
+      root: 
+        from_secret: s3_bucket_name
+      access_key:
+        from_secret: s3_access_key
+      secret_key:
+        from_secret: s3_secret_key
+      rebuild: true
+      mount:
+        - .tox
+        - node_modules
+        - .pip-cache
+
+    when:
+      event: push
+    depends_on:
+      - python-lint
       - python-tests
+
+  - name: flush-cache
+    image: plugins/s3-cache:1
+    settings:
+      pull: true
+      root: 
+        from_secret: s3_bucket_name
+      access_key:
+        from_secret: s3_access_key
+      secret_key:
+        from_secret: s3_secret_key
+      flush: true
+      flush_age: 14
+    depends_on:
+      - rebuild-cache
 
   - name: deploy
     image: appleboy/drone-ssh
@@ -178,5 +209,10 @@ steps:
       - python-tests
       - check-migrations
 
+volumes:
+  - name: python-dependencies
+    temp: {}
+  - name: binaries
+    temp: {}
 image_pull_secrets:
   - dockerconfigjson
