@@ -1,7 +1,7 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
-from .models import Organization, MailGroup
+from .models import MailGroup, Organization
 
 
 @admin.register(MailGroup)

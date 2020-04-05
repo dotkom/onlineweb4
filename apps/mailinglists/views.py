@@ -3,16 +3,16 @@ from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
 from .models import MailGroup
-from .serializers import MailinglistSerializer
+from .serializers import MailGroupSerializer
 
 
-class MailinglistViewSet(viewsets.ModelViewSet):
+class MailGroupViewSet(viewsets.ModelViewSet):
     """
     Mailingslists used by many Student-related organizations.
     """
 
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    serializer_class = MailinglistSerializer
+    serializer_class = MailGroupSerializer
 
     queryset = MailGroup.objects.all()
 

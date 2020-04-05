@@ -1,9 +1,9 @@
 from django.test import TestCase
 
-from apps.mailinglists.models import Organization, MailGroup
+from apps.mailinglists.models import MailGroup, Organization
 
 
-class MailinglistTests(TestCase):
+class MailGroupTests(TestCase):
     def test_create_mailinglist_adds_mail_signal(self):
         mailinglist = MailGroup.objects.create(
             name="Linjeforeninger på Gløshaugen",
