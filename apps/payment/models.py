@@ -19,6 +19,8 @@ from apps.marks.models import Suspension
 from apps.payment import status
 from apps.webshop.models import OrderLine
 
+from .transaction_constants import TransactionSource
+
 User = settings.AUTH_USER_MODEL
 
 logger = logging.getLogger(__name__)
@@ -310,7 +312,27 @@ class PaymentPrice(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class PaymentRelation(models.Model):
+class StripeMixin(models.Model):
+    status = models.CharField(
+        max_length=30,
+        null=False,
+        choices=status.PAYMENT_STATUS_CHOICES,
+        default=status.SUCCEEDED,
+    )
+    create_receipt = models.BooleanField(
+        _("Lag kvittering"),
+        default=True,
+        help_text="Skal det sendes en kvittering for kjøpet?",
+    )
+    stripe_id = models.CharField(max_length=128, null=True, blank=True)
+    payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
+    """ Stripe payment intent secret key for verifying pending transactions/intents """
+
+    class Meta:
+        abstract = True
+
+
+class PaymentRelation(StripeMixin, models.Model):
     """Payment metadata for user"""
 
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
@@ -326,18 +348,6 @@ class PaymentRelation(models.Model):
 
     unique_id = models.CharField(max_length=128, null=True, blank=True)
     """Unique ID for payment"""
-    stripe_id = models.CharField(max_length=128, null=True, blank=True)
-    """ID from Stripe payment"""
-
-    status = models.CharField(
-        max_length=30,
-        null=False,
-        choices=status.PAYMENT_STATUS_CHOICES,
-        default=status.SUCCEEDED,
-    )
-    """ Status of a Stripe payment """
-    payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
-    """ Stripe payment intent secret key for verifying pending transactions/intents """
 
     def get_timestamp(self):
         return self.datetime
@@ -417,52 +427,81 @@ class PaymentDelay(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class PaymentTransaction(models.Model):
-    """Transaction for a user"""
+class TransactionManager(models.Manager):
+    def aggregate_coins(self, user: User) -> int:
+        """
+        :return: The aggregated amount of coins in a users wallet.
+        """
+        value = (
+            self.filter(user=user, status=status.DONE)
+            .aggregate(coins=models.Sum("amount"))
+            .get("coins")
+        )
+        return value if value is not None else 0
+
+
+class PaymentTransaction(StripeMixin, models.Model):
+    """
+    A transaction for a User
+    The set of all transactions for a user defines the amount of 'coins' a user has.
+    """
+
+    objects = TransactionManager()
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    """User object"""
     amount = models.IntegerField(null=True, blank=True)
     """Amount in NOK"""
-    used_stripe = models.BooleanField(default=False)
-    """Was transaction paid for using Stripe"""
-    datetime = models.DateTimeField(auto_now=True)
-    """Transaction creation datetime. Automatically generated."""
-    status = models.CharField(
-        max_length=30,
-        null=False,
-        choices=status.PAYMENT_STATUS_CHOICES,
-        default=status.SUCCEEDED,
-    )
-    """ Status of a Stripe payment """
-    stripe_id = models.CharField(max_length=128, null=True, blank=True)
-    """ID from Stripe payment"""
-    payment_intent_secret = models.CharField(max_length=200, null=True, blank=True)
-    """ Stripe payment intent secret key for verifying pending transactions/intents """
+    source = models.CharField(max_length=64, choices=TransactionSource.ALL_CHOICES)
+    """ Origin of the transaction, such as purchases in Nibble or additions from Stripe """
+    datetime = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def used_stripe(self):
+        return self.source == TransactionSource.STRIPE
 
     def get_timestamp(self):
         return self.datetime
 
     def get_subject(self):
-        return "[Kvittering] Saldoinnskudd på online.ntnu.no"
+        return f"[Kvittering] {self.get_description()}"
 
     def get_description(self):
-        return "saldoinnskudd på online.ntnu.no"
+        if self.source == TransactionSource.STRIPE:
+            return "Saldoinnskudd på online.ntnu.no"
+        elif self.source == TransactionSource.TRANSFER:
+            return "Overføring av saldo til annen bruker på online.ntnu.no"
+        elif self.source == TransactionSource.CASH:
+            return "Innskudd av kontanter på online.ntnu.no"
+        elif self.source == TransactionSource.SHOP:
+            return "Kjøp i Onlinekiosken"
 
     def get_items(self):
-        items = [{"name": "Påfyll av saldo", "price": self.amount, "quantity": 1}]
-        return items
+        if self.source == TransactionSource.STRIPE:
+            return [{"name": "Påfyll av saldo", "price": self.amount, "quantity": 1}]
+        elif self.source == TransactionSource.TRANSFER:
+            return [
+                {"name": "Overføring av saldo", "price": self.amount, "quantity": 1}
+            ]
+        elif self.source == TransactionSource.CASH:
+            return [
+                {"name": "Påfyll av kontanter", "price": self.amount, "quantity": 1}
+            ]
+        elif self.source == TransactionSource.SHOP:
+            if hasattr(self, "shop_order_line"):
+                return self.shop_order_line.get_order_descriptions()
+            else:
+                raise ValueError(
+                    f"Transaction for a shop purchase is not connected to an OrderLine"
+                )
 
     def get_from_mail(self):
         return settings.EMAIL_TRIKOM
 
     def get_to_mail(self):
-        return self.user.email
+        return self.user.primary_email
 
     def __str__(self):
-        return (
-            str(self.user) + " - " + str(self.amount) + "(" + str(self.datetime) + ")"
-        )
+        return f"{self.user} - {self.amount} ({self.datetime})"
 
     class Meta:
         ordering = ["-datetime"]

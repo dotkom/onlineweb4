@@ -18,6 +18,16 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderLineSerializer(serializers.ModelSerializer):
     orders = OrderSerializer(many=True)
 
+    def validate_orders(self, orders: dict):
+        for order in orders:
+            item = Item.objects.get(pk=order.get("object_id"))
+            if not item.available:
+                raise serializers.ValidationError(
+                    "Enklte av de gitte produktene er ikke tilgjengelig"
+                )
+
+        return orders
+
     def create(self, validated_data):
         order_list = validated_data.pop("orders")
         order_line = OrderLine.objects.create(**validated_data)

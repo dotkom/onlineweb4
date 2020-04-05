@@ -8,16 +8,16 @@ from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group
-from django.db import models, transaction
+from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.utils.translation import gettext as _
-from rest_framework.exceptions import NotAcceptable
 
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
+from apps.payment import status as PaymentStatus
 from apps.permissions.models import ObjectPermissionModel
 
 logger = logging.getLogger(__name__)
@@ -151,8 +151,6 @@ class OnlineUser(AbstractUser):
         _("kjønn"), max_length=10, choices=GENDER_CHOICES, default="male"
     )
     bio = models.TextField(_("bio"), max_length=2048, blank=True)
-    saldo = models.PositiveSmallIntegerField(_("saldo"), default=0, null=True)
-
     # NTNU credentials
     ntnu_username = models.CharField(
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
@@ -242,18 +240,14 @@ class OnlineUser(AbstractUser):
             return None
         return AllowedUsername.objects.get(username=self.ntnu_username.lower())
 
-    def change_saldo(self, amount):
-        """
-        Update the saldo of a user with an atomic transaction.
-        """
-        with transaction.atomic():
-            self.refresh_from_db()
-            self.saldo += amount
-
-            if self.saldo < 0:
-                raise NotAcceptable("Insufficient funds")
-
-            self.save()
+    @property
+    def saldo(self) -> int:
+        value = (
+            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
+            .aggregate(coins=models.Sum("amount"))
+            .get("coins")
+        )
+        return value if value is not None else 0
 
     @property
     def year(self):

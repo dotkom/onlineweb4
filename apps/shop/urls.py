@@ -16,7 +16,7 @@ urlpatterns = [
 
 
 router = SharedAPIRootRouter()
-router.register("orderline", views.OrderLineViewSet)
-router.register("transactions", views.TransactionViewSet)
-router.register("usersaldo", views.UserViewSet)
-router.register("inventory", views.InventoryViewSet)
+router.register("orderline", views.OrderLineViewSet, basename="shop_order_lines")
+router.register("transactions", views.TransactionViewSet, basename="shop_transactions")
+router.register("usersaldo", views.UserViewSet, basename="shop_saldo")
+router.register("inventory", views.InventoryViewSet, basename="shop_inventory")
