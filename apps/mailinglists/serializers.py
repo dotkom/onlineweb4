@@ -1,9 +1,9 @@
 from rest_framework import serializers
 
-from .models import Mailinglist
+from .models import MailGroup
 
 
 class MailinglistSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Mailinglist
+        model = MailGroup
         fields = ("id", "email", "name", "description", "public", "members")

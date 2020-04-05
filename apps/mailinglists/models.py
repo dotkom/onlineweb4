@@ -2,59 +2,96 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 
-class Mail(models.Model):
+class Organization(models.Model):
     """
-    The email of an organization, or person whose email is on one of Online's mailinglists
+    This model can represent one of the following:
+    1. An organization
+    2. Individual person
+    3. Linked to an mailinglist
+    All who we are interested in having on one our our mailinglist
     """
 
-    email = models.EmailField(_("e-postadresse"), unique=True)
+    email = models.EmailField(verbose_name=_("E-postadresse"), unique=True)
     name = models.CharField(
-        help_text=_("Fullt navn på organisasjonen eller e-postlisten"), max_length=100
+        help_text=_("Fullt navn på organisasjonen eller e-postlisten"),
+        verbose_name=_("Navnet på organisasjonen"),
+        max_length=100,
     )
     description = models.TextField(
         help_text=_(
             "En kort beskrivelse av hva organisasjonen er, eller e-postlisten inneholder."
         ),
+        verbose_name=_("Beskrivelse"),
         blank=True,
         null=True,
     )
     public = models.BooleanField(
-        help_text=_("Hvorvidt e-posten skal være offentlig synlig"), default=False
+        help_text=_("Hvorvidt e-posten skal være offentlig synlig"),
+        verbose_name=_("Offentlig synlighet"),
+        default=False,
     )
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = _("Organisasjons-e-post")
-        verbose_name_plural = _("Organisasjons-e-poster")
+        verbose_name = _("Organisasjon")
+        verbose_name_plural = _("Organisasjoner")
+        ordering = ["name"]
 
 
-class Mailinglist(models.Model):
+class MailGroup(models.Model):
     """
     Mailinglists used for contacting groups of related emails all at once
     """
 
-    email_name = models.CharField(
-        _("e-postadresse"),
+    class Domains(models.TextChoices):
+        ONLINE_NTNU_NO = "online.ntnu.no"
+        LINJEFORENINGER_NO = "linjeforeninger.no"
+        ITFORENINGER_NO = "itforeninger.no"
+        TECHTALKS_NO = "techtalks.no"
+
+    # The part before `@` is called local_part. Source: https://tools.ietf.org/html/rfc3696#section-3
+    email_local_part = models.CharField(
         help_text=_("Navnet på e-postadresse, uten @online.ntnu.no"),
+        verbose_name=_("E-postnavn"),
         max_length=50,
         unique=True,
     )
-    name = models.CharField(help_text="Fullt navn på e-postlisten", max_length=100)
+    domain = models.CharField(
+        help_text=_("Domenet denne gruppen ligger under, f.eks. oline.ntnu.no"),
+        verbose_name=_("E-postdomenet"),
+        choices=Domains.choices,
+        max_length=50,
+    )
+
+    name = models.CharField(
+        help_text=_(
+            "Fullt navn på gruppen denne e-postlisten representerer, altså ikke e-postadressen"
+        ),
+        verbose_name=_("Navnet på gruppen"),
+        max_length=100,
+    )
     description = models.TextField(
         help_text=_("En forklaring på hva e-postlisten skal inneholde"),
         blank=True,
         null=True,
     )
     public = models.BooleanField(
-        help_text=_("Hvorvidt e-postlisten skal være offentlig synlig"), default=True
+        help_text=_("Hvorvidt e-postlisten skal være offentlig synlig"),
+        verbose_name=_("Offentlig synlighet"),
+        default=True,
     )
-    members = models.ManyToManyField(Mail, blank=True, related_name="mailinglists")
+    members = models.ManyToManyField(
+        Organization,
+        verbose_name=_("Organisasjoner i denne gruppen"),
+        related_name="mailinglists",
+        blank=True,
+    )
 
     @property
     def email(self):
-        return f"{self.email_name}@online.ntnu.no"
+        return f"{self.email_local_part}@{self.domain}"
 
     def __str__(self):
         return self.name
@@ -62,3 +99,4 @@ class Mailinglist(models.Model):
     class Meta:
         verbose_name = _("E-postliste")
         verbose_name_plural = _("E-postlister")
+        ordering = ["domain", "email_local_part"]

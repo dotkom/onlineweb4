@@ -2,19 +2,19 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
-from .models import Mailinglist
+from .models import MailGroup
 from .serializers import MailinglistSerializer
 
 
 class MailinglistViewSet(viewsets.ModelViewSet):
     """
-    E-postlister som brukes av mange forskjellige organisasjoner rundt om i Trondheim.
+    Mailingslists used by many Student-related organizations.
     """
 
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     serializer_class = MailinglistSerializer
 
-    queryset = Mailinglist.objects.all()
+    queryset = MailGroup.objects.all()
 
     def get_queryset(self):
         queryset = super().get_queryset()

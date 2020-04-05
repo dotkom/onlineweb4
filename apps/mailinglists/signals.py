@@ -1,15 +1,15 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models import Mail, Mailinglist
+from .models import Organization, MailGroup
 
 
-@receiver(signal=post_save, sender=Mailinglist)
+@receiver(signal=post_save, sender=MailGroup)
 def create_organization_email_for_list(
-    sender, instance: Mailinglist, created: bool, **kwargs
+    sender, instance: MailGroup, created: bool, **kwargs
 ):
     if created:
-        Mail.objects.create(
+        Organization.objects.create(
             email=instance.email,
             name=instance.name,
             description=instance.description,
