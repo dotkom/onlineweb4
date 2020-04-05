@@ -245,7 +245,7 @@ class OnlineUser(AbstractUser):
         value = (
             self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
             .aggregate(coins=models.Sum("amount"))
-            .get("coins", 0)
+            .get("coins")
         )
         return value if value is not None else 0
 

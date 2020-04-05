@@ -428,14 +428,14 @@ class PaymentDelay(models.Model):
 
 
 class TransactionManager(models.Manager):
-    def aggregate_coins(self, user: User) -> dict:
+    def aggregate_coins(self, user: User) -> int:
         """
         :return: The aggregated amount of coins in a users wallet.
         """
         value = (
             self.filter(user=user, status=status.DONE)
             .aggregate(coins=models.Sum("amount"))
-            .get("coins", 0)
+            .get("coins")
         )
         return value if value is not None else 0
 
