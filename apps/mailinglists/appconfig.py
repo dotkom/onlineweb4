@@ -6,6 +6,6 @@ class MailinglistsConfig(AppConfig):
     verbose_name = "Mailinglists"
 
     def ready(self):
-        super(MailinglistsConfig, self).ready()
+        super().ready()
         # noinspection PyUnresolvedReferences
         import apps.mailinglists.signals  # noqa: F401
