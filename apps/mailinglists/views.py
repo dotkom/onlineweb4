@@ -14,7 +14,6 @@ class MailinglistViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     serializer_class = MailinglistSerializer
 
-    # So that DjangoModelPermissions can find the right permissions
     queryset = Mailinglist.objects.all()
 
     def get_queryset(self):
