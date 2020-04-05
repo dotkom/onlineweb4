@@ -5,11 +5,11 @@ from .models import Organization, MailGroup
 
 
 @admin.register(MailGroup)
-class MailinglistAdmin(VersionAdmin):
+class MailGroupAdmin(VersionAdmin):
     filter_horizontal = ("members",)
     fields = ("email_name", "name", "description", "public", "members")
 
 
 @admin.register(Organization)
-class OrganizaitonMailAdmin(VersionAdmin):
+class OrganizationMailAdmin(VersionAdmin):
     fields = ("email", "name", "description", "public")
