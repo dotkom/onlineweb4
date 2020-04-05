@@ -15,15 +15,13 @@ class MailinglistViewSet(viewsets.ModelViewSet):
     serializer_class = MailinglistSerializer
 
     # So that DjangoModelPermissions can find the right permissions
-    queryset = Mailinglist.objects.none()
+    queryset = Mailinglist.objects.all()
 
     def get_queryset(self):
-        return (
-            Mailinglist.objects.all()
-            if self.request.user is not None
-            and self.request.user.has_module_perms("mailinglists")
-            else Mailinglist.objects.filter(public=True)
-        )
+        queryset = super().get_queryset()
+        if not self.request.user.has_module_perms("mailinglists"):
+            queryset = queryset.filter(public=True)
+        return queryset
 
 
 def index(request):
