@@ -1,2 +1,6 @@
 node_modules
 .tox
+venv/
+log/debug.log
+webpack-stats.json
+bundles/

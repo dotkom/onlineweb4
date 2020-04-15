@@ -11,7 +11,7 @@ COPY .babelrc .
 COPY postcss.config.js .
 
 RUN yarn --non-interactive --no-progress --pure-lockfile && \
-    yarn build:prod
+  yarn build:prod
 
 
 FROM python:3.7-slim-buster
@@ -24,11 +24,10 @@ RUN apt-get update && apt-get install -y \
   git \
   gcc \
   curl \
-  mime-support
+  mime-support && \
+  pip install poetry
 
 COPY pyproject.toml poetry.lock ./
-
-RUN pip install poetry
 
 RUN poetry install --no-interaction --no-ansi --no-dev -E prod -E docs
 
@@ -36,9 +35,6 @@ COPY --from=webpack /srv/app/webpack/bundles bundles
 COPY --from=webpack /srv/app/webpack/webpack-stats.json webpack-stats.json
 COPY . .
 
-RUN python manage.py collectstatic --noinput && \
-    chmod +x entrypoint.sh
-
 EXPOSE 8000
 
-ENTRYPOINT ["./entrypoint.sh" ]
+ENTRYPOINT [ "./entrypoint.sh" ]

@@ -2,23 +2,31 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from apps.gsuite.models import ServiceAccount
+from django.core import serializers
+import json
 
 
-def generate_g_suite_credentials(
-    json_keyfile_name=settings.OW4_GSUITE_SYNC.get("CREDENTIALS"), scopes=list()
-):
+def generate_g_suite_credentials(scopes=list()):
     """
     Creates the credentials required for building a Google API Client Resource.
-    :param json_keyfile_name: Path to the JSON keyfile. Get this at
-        https://console.developers.google.com/apis/credentials?project=ow4-gsuitesync
-    :type json_keyfile_name: str
+    https://console.developers.google.com/apis/credentials?project=ow4-gsuitesync
     :param scopes: A list of scopes that the Service Account should be able to access.
     :type scopes: list
     :return: Credentials
     :rtype: ServiceAccountCredentials
     """
-    credentials = service_account.Credentials.from_service_account_file(
-        json_keyfile_name, scopes=scopes
+    
+    try:
+        account = ServiceAccount.objects.all()[:1]
+        info = serializers.serialize("json", account)
+        info = json.loads(info)
+        info = info[0]["fields"]
+    except:
+        info = ""
+
+    credentials = service_account.Credentials.from_service_account_info(
+        info, scopes=scopes
     )
     credentials = credentials.with_subject(
         settings.OW4_GSUITE_SETTINGS.get("DELEGATED_ACCOUNT")
@@ -53,9 +61,7 @@ def build_g_suite_service(service, version, credentials):
 def build_and_authenticate_g_suite_service(
     service,
     version,
-    scopes,
-    json_keyfile_name=settings.OW4_GSUITE_SETTINGS.get("CREDENTIALS"),
-):
+    scopes):
     """
     Method which combines building and authenticating a Client towards the Google API.
     :param service: The service to get a client for.
@@ -69,7 +75,5 @@ def build_and_authenticate_g_suite_service(
     :type json_keyfile_name: str
     :return: A Google API Resource Client
     """
-    credentials = generate_g_suite_credentials(
-        json_keyfile_name=json_keyfile_name, scopes=scopes
-    )
+    credentials = generate_g_suite_credentials(scopes=scopes)
     return build_g_suite_service(service, version, credentials)

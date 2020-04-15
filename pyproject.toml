@@ -75,6 +75,9 @@ redis = { version = "~3.3", optional = true }
 # Docs
 sphinx = { version = "*", optional = true }
 sphinx-rtd-theme = { version = "*", optional = true }
+django-storages = "^1.9.1"
+boto3 = "^1.12.39"
+django-redis = "^4.11.0"
 
 
 [tool.poetry.dev-dependencies]

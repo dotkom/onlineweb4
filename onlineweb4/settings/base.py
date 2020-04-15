@@ -89,7 +89,7 @@ ANONYMOUS_USER_NAME = "anonymoususer"
 GUARDIAN_RENDER_403 = True
 
 
-# Django-Taggit settings
+# Django-Taggit settingspip
 TAGGIT_CASE_INSENSITIVE = True
 
 # crispy forms settings

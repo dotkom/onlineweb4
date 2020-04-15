@@ -3,29 +3,26 @@ import os
 import sys
 
 import dj_database_url
-from decouple import config
+from decouple import config, Csv
 from django.contrib.messages import constants as messages
+import requests
 
 from .base import PROJECT_ROOT_DIRECTORY, PROJECT_SETTINGS_DIRECTORY
 
-TEST_RUNNER = config(
-    "OW4_DJANGO_TEST_RUNNER", default="onlineweb4.runner.PytestTestRunner"
-)
+TEST_RUNNER = config("OW4_DJANGO_TEST_RUNNER", default="onlineweb4.runner.PytestTestRunner")
 
 DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=True)
 
 INTERNAL_IPS = ("127.0.0.1",)
 
-ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*")
+ALLOWED_HOSTS = config("OW4_ALLOWED_HOSTS", default="*", cast=Csv())
 
 ADMINS = (("dotKom", "dotkom@online.ntnu.no"),)
 MANAGERS = ADMINS
 
 DATABASES = {
     # Set this using the environment variable "DATABASE_URL"
-    "default": dj_database_url.config(
-        default="sqlite:///%s/db.db" % PROJECT_ROOT_DIRECTORY
-    )
+    "default": dj_database_url.config(default="sqlite:///%s/db.db" % PROJECT_ROOT_DIRECTORY)
 }
 
 # Email settings
@@ -61,7 +58,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 DATETIME_FORMAT = "N j, Y, H:i"
-SECRET_KEY = config("OW4_DJANGO_SECRET_KEY", default="override-this-in-local.py")
+SECRET_KEY = config("OW4_DJANGO_SECRET_KEY", default="override-this!!!")
 
 # Session cookie expires after one year
 SESSION_COOKIE_AGE = 31540000
@@ -74,8 +71,7 @@ LOGIN_URL = "/auth/login/"
 
 # Define where media (uploaded) files are stored
 MEDIA_ROOT = config(
-    "OW4_DJANGO_MEDIA_ROOT",
-    default=os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media"),
+    "OW4_DJANGO_MEDIA_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media")
 )
 MEDIA_URL = "/media/"
 
@@ -83,6 +79,7 @@ MEDIA_URL = "/media/"
 STATIC_ROOT = config(
     "OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, "static")
 )
+
 STATIC_URL = "/static/"
 
 # Additional locations of static files
@@ -128,6 +125,8 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE = (
+    "middleware.healthcheck.HealthCheckMiddleware",
+    "django.middleware.cache.UpdateCacheMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -138,8 +137,7 @@ MIDDLEWARE = (
     "reversion.middleware.RevisionMiddleware",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "oidc_provider.middleware.SessionManagementMiddleware",
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.cache.FetchFromCacheMiddleware",
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -237,6 +235,7 @@ INSTALLED_APPS = (
     "wiki.plugins.help",
     "wiki.plugins.links",
     "wiki.plugins.globalhistory",
+    "storages",
 )
 
 # Make Django messages use bootstrap alert classes

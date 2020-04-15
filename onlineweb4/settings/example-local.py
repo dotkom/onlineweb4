@@ -107,7 +107,7 @@ LOGGING = {
             "class": "django.utils.log.AdminEmailHandler",
         },
         "console": {
-            "level": "DEBUG",
+            "level": "INFO",
             "class": "logging.StreamHandler",
             "formatter": "standard",
         },
@@ -118,7 +118,7 @@ LOGGING = {
             "level": "ERROR",
             "propagate": True,
         },
-        "syncer": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
+        "syncer": {"handlers": ["console"], "level": "INFO", "propagate": True},
     },
 }
 

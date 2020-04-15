@@ -15,6 +15,7 @@ from onlineweb4.settings.stripe import *
 try:
     from onlineweb4.settings.local import *
 except ImportError as e:
-    # No local settings file found.
-    # You can still override using environment variables.
     pass
+
+if config("OW4_ENVIRONMENT", default="") == "AWS_PROD" or config("OW4_ENVIRONMENT", default="") == "AWS_DEV" :
+    from onlineweb4.settings.aws import *

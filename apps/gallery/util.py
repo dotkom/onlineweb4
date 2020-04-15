@@ -8,10 +8,14 @@ import uuid
 
 from django.conf import settings as django_settings
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from django.core.files.storage import default_storage
+
 from PIL import Image, ImageOps
 
 from apps.gallery import settings as gallery_settings
 from apps.gallery.models import ResponsiveImage, UnhandledImage
+from django.core.files.base import ContentFile
+from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
@@ -30,9 +34,11 @@ def create_responsive_image_from_file(
     base_image_handler = UploadImageHandler(uploaded_file)
     base_image = base_image_handler.image
 
-    pillow_image = Image.open(base_image.image.path)
+    image_file = default_storage.open(base_image.image.name, "rb")
+    pillow_image = Image.open(image_file)
     image_width, image_height = pillow_image.size
-
+    image_file.close()
+    
     config = {
         "name": name,
         "description": description,
@@ -113,22 +119,17 @@ class BaseImageHandler(object):
         # If this object is an UploadImageHandler instance, create thumbnail for non-edited view
         if isinstance(self, UploadImageHandler):
             filename = os.path.basename(self.image)
-
             # Generate the full thumbnail path
             thumbnail_path = os.path.join(
-                django_settings.MEDIA_ROOT,
                 gallery_settings.UNHANDLED_THUMBNAIL_PATH,
                 filename,
             )
-            thumbnail_path = os.path.abspath(thumbnail_path)
 
             # Generate the full path to the origin image
             original_path = os.path.join(
-                django_settings.MEDIA_ROOT,
                 gallery_settings.UNHANDLED_IMAGES_PATH,
                 filename,
             )
-            original_path = os.path.abspath(original_path)
 
             # Generate the thumbnail and return the result
             result = self._generate_thumbnail_from_source(
@@ -140,23 +141,19 @@ class BaseImageHandler(object):
         # If this object is a ResponsiveImageHandler instance, create thumbnails for the responsive image
         elif isinstance(self, ResponsiveImageHandler):
 
-            filename = os.path.basename(get_absolute_path_to_original(self.image))
+            filename = os.path.basename(get_path_to_original(self.image))
 
             # Generate the full thumbnail path for the unhandled image
             thumbnail_source = os.path.join(
-                django_settings.MEDIA_ROOT,
                 gallery_settings.UNHANDLED_THUMBNAIL_PATH,
                 filename,
             )
-            thumbnail_source = os.path.abspath(thumbnail_source)
 
             # Generate the full thumbnail path for the unhandled image
             thumbnail_dest = os.path.join(
-                django_settings.MEDIA_ROOT,
                 gallery_settings.RESPONSIVE_THUMBNAIL_PATH,
                 filename,
             )
-            thumbnail_dest = os.path.abspath(thumbnail_dest)
 
             return self._copy_file(thumbnail_source, thumbnail_dest)
         else:
@@ -172,14 +169,17 @@ class BaseImageHandler(object):
     def _copy_file(from_path, to_path):
         """
         Copies an image from A to B
-        :param from_path: The absolute path to the source file
-        :param to_path: The absolute path to the destination file
+        :param from_path: The path to the source file
+        :param to_path: The path to the destination file
         """
 
         _log = logging.getLogger(__name__)
         _log.debug("Copying image %s to %s" % (from_path, to_path))
         try:
-            shutil.copy2(from_path, to_path)
+            original = default_storage.open(from_path)
+            default_storage.save(to_path, original)
+            original.close()
+   
             return GalleryStatus(True, "sucess", to_path)
         except OSError as os_error:
             _log("An OSError occurred: %s" % os_error)
@@ -195,7 +195,7 @@ class BaseImageHandler(object):
         """
         Helper method that attempts to load an image from disk using PIL.
 
-        :param source: The absolute path to an image stored on disk.
+        :param source: The path to an image stored on disk.
         :return: A GalleryStatus object with results and attached Image object as data
         """
 
@@ -204,7 +204,7 @@ class BaseImageHandler(object):
             return GalleryStatus(False, "File must have an extension", source)
 
         try:
-            img = Image.open(source)
+            img = Image.open(default_storage.open(source, "rb"))
         except IOError as e:
             return GalleryStatus(
                 False, "IOError: File was not an image file, or could not be found.", e
@@ -220,8 +220,8 @@ class BaseImageHandler(object):
     def _generate_thumbnail_from_source(source, dest, thumb_size):
         """
         Helper method that creates thumbnail to 'dest' of size 'thumb-size' given a 'source' image
-        :param source: An absolute path to a source image file.
-        :param dest: An absolute path to where the thumbnail should be generated.
+        :param source: A path to a source image file.
+        :param dest: A path to where the thumbnail should be generated.
         :param thumb_size: A tuple of the form (width, height) in pixels.
         :return: A GalleryStatus object
         """
@@ -244,12 +244,15 @@ class BaseImageHandler(object):
             return GalleryStatus(False, "Image is truncated.", e)
 
         # Save the image to file
+        dest_memory = BytesIO()
         img.save(
-            dest,
+            dest_memory,
             file_extension.replace(".", ""),
             quality=gallery_settings.THUMBNAIL_QUALITY,
             optimize=True,
         )
+        default_storage.save(dest, dest_memory)
+        dest_memory.close()
 
         return GalleryStatus(True, "success", source)
 
@@ -305,20 +308,20 @@ class UploadImageHandler(BaseImageHandler):
                 "ImageUploadHandler can only be instanced with UnhandledImage or InMemoryUploadedFile"
             )
 
-    def _handle_upload(self, memory_object):
+    def _handle_upload(self, image):
         """
         Helper method that handles the high level operations of processing the uploaded image.
-        :param memory_object: A django InMemoryUploadedFile object
+        :param image: A django InMemoryUploadedFile object
         """
 
         # Save image to disk or break early on failure
-        original = self._save_temp_uploaded_file_data(memory_object)
+        original = self._save_temp_uploaded_file_data(image)
         if not original:
             self.status = original
             return
 
         # Save the path to where the image was stored
-        self.image = os.path.abspath(original.data)
+        self.image = original.data
         self._log.debug('Unhandled file was saved at: "%s"' % self.image)
 
         # Generate a thumbnail image or break early on failure
@@ -330,9 +333,9 @@ class UploadImageHandler(BaseImageHandler):
 
         self._log.debug('Creating an UnhandledImage for "%s"' % self.image)
 
-        # Translate the relative paths to Django Media paths
-        full_path = get_unhandled_media_path(os.path.abspath(original.data))
-        thumb_path = get_unhandled_thumbnail_media_path(os.path.abspath(thumbnail.data))
+        # Translate the relative paths to Django Media pathss
+        full_path = get_unhandled_media_path(original.data)
+        thumb_path = get_unhandled_thumbnail_media_path(thumbnail.data)
 
         # Create an UnhandledImage object and save it
         self.image = UnhandledImage(image=full_path, thumbnail=thumb_path)
@@ -342,37 +345,33 @@ class UploadImageHandler(BaseImageHandler):
         self._log.debug("Successfully created UnhandledImage %s" % self.image)
         self.status = GalleryStatus(True, "success", self.image)
 
-    def _save_temp_uploaded_file_data(self, memory_object):
+    def _save_temp_uploaded_file_data(self, image):
         """
         Helper method that stores data from an uploaded image from memory onto disk
-        :param memory_object: A Django InMemoryUploadedFile or TemporaryUploadedFile object
+        :param image: A Django InMemoryUploadedFile or TemporaryUploadedFile object
         """
 
         # Fetch the name and extension to generate the final file path using uuid's
-        filename, extension = os.path.splitext(memory_object.name)
+        filename, extension = os.path.splitext(image.name)
         filepath = os.path.join(
-            django_settings.MEDIA_ROOT,
             gallery_settings.UNHANDLED_IMAGES_PATH,
             "%s%s" % (uuid.uuid4(), extension.lower()),
         )
-        filepath = os.path.abspath(filepath)
-
         self._log.debug(
             "_save_temp_uploaded_file_data: Attempting to store uploaded image at %s"
             % filepath
         )
-        # Open a file pointer in binary mode and write the image data chunks from memory
+        # Try to save the in-memory image to an actual location
         try:
-            with open(filepath, "wb+") as destination:
-                for chunk in memory_object.chunks():
-                    destination.write(chunk)
+            default_storage.save(filepath, ContentFile(image.read()))
+            
         except IOError as e:
             self._log.error(
                 '_save_temp_uploaded_file_data: Failed to save uploaded image! "%s"'
                 % repr(e)
             )
 
-            return GalleryStatus(False, str(e), memory_object)
+            return GalleryStatus(False, str(e), image)
 
         self._log.debug("_save_temp_uploaded_data: Stored uploaded image successfully")
 
@@ -460,16 +459,13 @@ class ResponsiveImageHandler(BaseImageHandler):
 
         # Define the paths we're going to need
         relative_source_path = self.image.image.name
-        source_path = os.path.join(django_settings.MEDIA_ROOT, relative_source_path)
-        file_name, file_extension = os.path.splitext(source_path)
+        file_name, file_extension = os.path.splitext(relative_source_path)
         destination_path = os.path.join(
-            django_settings.MEDIA_ROOT,
             gallery_settings.RESPONSIVE_IMAGES_PATH,
             os.path.basename(relative_source_path),
         )
-
         # Attempt to open the image with PIL
-        self.status = self._open_image(source_path)
+        self.status = self._open_image(relative_source_path)
         if not self.status:
             return self.status
 
@@ -485,12 +481,17 @@ class ResponsiveImageHandler(BaseImageHandler):
         # All is OK, let PIL crop the image
         quality = gallery_settings.RESPONSIVE_IMAGE_QUALITY
         image = image.crop((crop_x, crop_y, crop_x + crop_width, crop_y + crop_height))
+
+        # Need to first save to memory becasue of incompatabiliteis with PIL and s3 storage
+        dest_memory = BytesIO()
         image.save(
-            destination_path,
+            dest_memory,
             file_extension.replace(".", ""),
             quality=quality,
             optimize=True,
         )
+        default_storage.save(destination_path, dest_memory)
+
 
         self._log.debug(
             "_crop_image: successfully cropped %s"
@@ -502,8 +503,8 @@ class ResponsiveImageHandler(BaseImageHandler):
     def _resize_image(self, image, destination_path, size):
         """
         Resize an image, given a source image path, a destination path and a size tuple (x, y)
-        :param image: An absolute path to the original source image
-        :param destination_path: An absolute path to where the image should be saved
+        :param image: An path to the original source image
+        :param destination_path: An path to where the image should be saved
         :param size: An (x, y) tuple of the final size of the image in pixels
         :return: A GalleryStatus object containing the path to the resized image, or error information
         """
@@ -540,12 +541,14 @@ class ResponsiveImageHandler(BaseImageHandler):
 
         quality = gallery_settings.RESPONSIVE_IMAGE_QUALITY
         try:
+            dest_memory = BytesIO()
             image.save(
-                destination_path,
+                dest_memory,
                 file_extension.replace(".", ""),
                 quality=quality,
                 optimize=True,
             )
+            default_storage.save(destination_path, dest_memory)
             self._log.debug(
                 "Successsfully resized %s to %s"
                 % (filename, (target_width, target_height))
@@ -567,30 +570,25 @@ class ResponsiveImageHandler(BaseImageHandler):
         """
 
         # Start by declaring all the paths the image versions will be saved to
-        source_path = get_absolute_path_to_original(self.image)
+        source_path = get_path_to_original(self.image)
 
         wide_destination_path = os.path.join(
-            django_settings.MEDIA_ROOT,
             gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH,
             os.path.basename(source_path),
         )
         lg_destination_path = os.path.join(
-            django_settings.MEDIA_ROOT,
             gallery_settings.RESPONSIVE_IMAGES_LG_PATH,
             os.path.basename(source_path),
         )
         md_destination_path = os.path.join(
-            django_settings.MEDIA_ROOT,
             gallery_settings.RESPONSIVE_IMAGES_MD_PATH,
             os.path.basename(source_path),
         )
         sm_destination_path = os.path.join(
-            django_settings.MEDIA_ROOT,
             gallery_settings.RESPONSIVE_IMAGES_SM_PATH,
             os.path.basename(source_path),
         )
         xs_destination_path = os.path.join(
-            django_settings.MEDIA_ROOT,
             gallery_settings.RESPONSIVE_IMAGES_XS_PATH,
             os.path.basename(source_path),
         )
@@ -789,22 +787,18 @@ def check_aspect_ratio(size, aspect_ratio):
 # Path translation functions
 
 
-def get_absolute_path_to_original(image):
+def get_path_to_original(image):
     """
-    Returns the absolute path to the original version of an UnhandledImage or ResponsiveImage object
+    Returns the  path to the original version of an UnhandledImage or ResponsiveImage object
     :param image: An UnhandledImage or Responsive image instance
-    :return: An absolute path to an image file on disk
+    :return: Apath to an image file on disk
     """
 
-    path = django_settings.MEDIA_ROOT
+    path = ""
     if isinstance(image, UnhandledImage):
-        path = os.path.abspath(
-            os.path.join(django_settings.MEDIA_ROOT, image.image.name)
-        )
+        path = image.image.name
     elif isinstance(image, ResponsiveImage):
-        path = os.path.abspath(
-            os.path.join(django_settings.MEDIA_ROOT, image.image_original.name)
-        )
+        path = image.image_original.name
 
     return path
 
@@ -971,101 +965,46 @@ def verify_directory_structure():
     """
 
     # Verify that the directories exist on current platform, create if not
-    if not os.path.exists(
-        os.path.join(
-            django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH
-        )
-    ):
+    if not os.path.exists(gallery_settings.UNHANDLED_THUMBNAIL_PATH):
         logging.getLogger(__name__).info(
             "%s directory did not exist, creating it..."
-            % gallery_settings.UNHANDLED_THUMBNAIL_PATH
+            %  gallery_settings.UNHANDLED_THUMBNAIL_PATH
         )
-        os.makedirs(
-            os.path.join(
-                django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH
-            )
-        )
-    if not os.path.exists(
-        os.path.join(
-            django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH
-        )
-    ):
+        os.makedirs(gallery_settings.UNHANDLED_THUMBNAIL_PATH)
+    if not os.path.exists(gallery_settings.RESPONSIVE_THUMBNAIL_PATH):
         logging.getLogger(__name__).info(
             "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_THUMBNAIL_PATH
+             % gallery_settings.RESPONSIVE_THUMBNAIL_PATH
         )
-        os.makedirs(
-            os.path.join(
-                django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_THUMBNAIL_PATH
-            )
-        )
-    if not os.path.exists(
-        os.path.join(
-            django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_XS_PATH
-        )
-    ):
+        os.makedirs(gallery_settings.RESPONSIVE_THUMBNAIL_PATH)
+        
+    if not os.path.exists(gallery_settings.RESPONSIVE_IMAGES_XS_PATH):
         logging.getLogger(__name__).info(
             "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_XS_PATH
+             % gallery_settings.RESPONSIVE_IMAGES_XS_PATH
         )
-        os.makedirs(
-            os.path.join(
-                django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_XS_PATH
-            )
-        )
-    if not os.path.exists(
-        os.path.join(
-            django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_SM_PATH
-        )
-    ):
+        os.makedirs(gallery_settings.RESPONSIVE_IMAGES_XS_PATH)
+    if not os.path.exists(gallery_settings.RESPONSIVE_IMAGES_SM_PATH):
         logging.getLogger(__name__).info(
             "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_SM_PATH
+             % gallery_settings.RESPONSIVE_IMAGES_SM_PATH
         )
-        os.makedirs(
-            os.path.join(
-                django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_SM_PATH
-            )
-        )
-    if not os.path.exists(
-        os.path.join(
-            django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_MD_PATH
-        )
-    ):
+        os.makedirs(gallery_settings.RESPONSIVE_IMAGES_SM_PATH)
+    if not os.path.exists(gallery_settings.RESPONSIVE_IMAGES_MD_PATH):
         logging.getLogger(__name__).info(
             "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_MD_PATH
+             % gallery_settings.RESPONSIVE_IMAGES_MD_PATH
         )
-        os.makedirs(
-            os.path.join(
-                django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_MD_PATH
-            )
-        )
-    if not os.path.exists(
-        os.path.join(
-            django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_LG_PATH
-        )
-    ):
+        os.makedirs(gallery_settings.RESPONSIVE_IMAGES_MD_PATH)
+    if not os.path.exists(gallery_settings.RESPONSIVE_IMAGES_LG_PATH):
         logging.getLogger(__name__).info(
             "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_LG_PATH
+             % gallery_settings.RESPONSIVE_IMAGES_LG_PATH
         )
-        os.makedirs(
-            os.path.join(
-                django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_LG_PATH
-            )
-        )
-    if not os.path.exists(
-        os.path.join(
-            django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
-        )
-    ):
+        os.makedirs(gallery_settings.RESPONSIVE_IMAGES_LG_PATH)
+    if not os.path.exists(gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH):
         logging.getLogger(__name__).info(
             "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
+             %  gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
         )
-        os.makedirs(
-            os.path.join(
-                django_settings.MEDIA_ROOT, gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
-            )
-        )
+        os.makedirs( gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH)

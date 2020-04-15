@@ -1,5 +1,6 @@
 import logging
 
+from django.core.files.storage import default_storage
 from onlineweb4.celery import app
 from PIL import Image
 
@@ -15,7 +16,7 @@ def create_responsive_photo_task(self, photo_id: int):
     photo = Photo.objects.get(pk=photo_id)
     raw_image = photo.raw_image
 
-    pillow_image = Image.open(raw_image.image.path)
+    pillow_image = Image.open(default_storage.open(raw_image.image.name, "rb"))
     image_width, image_height = pillow_image.size
 
     config = {
