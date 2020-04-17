@@ -1,5 +1,4 @@
 {% load render_bundle from webpack_loader %}
-{% load raven %}
  {% load sekizai_tags %}
 
 <!DOCTYPE html>
@@ -224,8 +223,6 @@
     </section>
 
     {% block js %}
-        <script src="https://cdn.ravenjs.com/3.17.0/raven.min.js" crossorigin="anonymous"></script>
-        <script>Raven.config('{% sentry_public_dsn "https" %}').install()</script>
 
         <script
             src="https://code.jquery.com/jquery-2.2.4.min.js"

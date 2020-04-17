@@ -36,10 +36,6 @@ LOGGING = {
             "formatter": "standard",
             "filename": config("OW4_LOG_PATH", default="{}/debug.log".format(LOG_DIR)),
         },
-        "sentry": {
-            "level": "ERROR",  # Decides what is sent to Sentry. Error is only error and above.
-            "class": "raven.contrib.django.raven_compat.handlers.SentryHandler",
-        },
     },
     "loggers": {
         "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
@@ -57,11 +53,6 @@ LOGGING = {
             "handlers": ["console", "file"],
             "level": "DEBUG",
             "propagate": True,
-        },
-        "raven": {
-            "level": "DEBUG",
-            "handlers": ["console", "file"],
-            "propagate": False,
         },
         "": {"handlers": ["console", "file"], "level": "DEBUG", "propagate": True},
     },
