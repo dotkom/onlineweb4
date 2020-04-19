@@ -54,6 +54,8 @@ class ClientReadOnlySerializer(serializers.ModelSerializer):
             "reuse_consent",
             "scope",
             "response_types",
+            "client_id",
+            "client_type",
         )
 
 
