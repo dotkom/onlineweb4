@@ -542,6 +542,11 @@ class AttendanceEvent(models.Model):
     payments = GenericRelation("payment.Payment")
 
     @property
+    def id(self):
+        """ Proxy Event id """
+        return self.event_id
+
+    @property
     def feedback(self):
         """Proxy for generic feedback relation on event"""
         return self.event.feedback

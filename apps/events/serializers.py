@@ -214,6 +214,7 @@ class UserAttendanceEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttendanceEvent
         fields = (
+            "id",
             "max_capacity",
             "waitlist",
             "guest_attendance",
@@ -246,6 +247,7 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttendanceEvent
         fields = (
+            "id",
             "max_capacity",
             "waitlist",
             "guest_attendance",
