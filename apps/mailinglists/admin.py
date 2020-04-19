@@ -1,13 +1,22 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
-from .models import MailGroup, MailEntity
+from .models import MailEntity, MailGroup
 
 
 @admin.register(MailGroup)
 class MailGroupAdmin(VersionAdmin):
+    readonly_fields = ("email",)
     filter_horizontal = ("members",)
-    fields = ("email_name", "name", "description", "public", "members")
+    fields = (
+        "email_local_part",
+        "domain",
+        "name",
+        "email",
+        "description",
+        "public",
+        "members",
+    )
 
 
 @admin.register(MailEntity)

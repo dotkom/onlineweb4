@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 
 class MailEntity(models.Model):
@@ -35,8 +35,8 @@ class MailEntity(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = _("Organisasjon")
-        verbose_name_plural = _("Organisasjoner")
+        verbose_name = _("E-postentitet")
+        verbose_name_plural = _("E-postentiteter")
         ordering = ["name"]
 
 
@@ -51,7 +51,8 @@ class MailGroup(models.Model):
         ITFORENINGER_NO = "itforeninger.no"
         TECHTALKS_NO = "techtalks.no"
 
-    # The part before `@` is called local_part. Source: https://tools.ietf.org/html/rfc3696#section-3
+    # The part before `@` is called local_part
+    # Source: https://tools.ietf.org/html/rfc3696#section-3
     email_local_part = models.CharField(
         help_text=_("Navnet på e-postadresse, uten @online.ntnu.no"),
         verbose_name=_("E-postnavn"),

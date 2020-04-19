@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from .models import MailGroup, MailEntity
+from .models import MailEntity, MailGroup
 
 
 @receiver(signal=post_save, sender=MailGroup)
