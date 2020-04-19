@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext as _
 
 
-class Organization(models.Model):
+class MailEntity(models.Model):
     """
     This model can represent one of the following:
     1. An organization
@@ -62,6 +62,7 @@ class MailGroup(models.Model):
         help_text=_("Domenet denne gruppen ligger under, f.eks. oline.ntnu.no"),
         verbose_name=_("E-postdomenet"),
         choices=Domains.choices,
+        default=Domains.ONLINE_NTNU_NO,
         max_length=50,
     )
 
@@ -73,7 +74,10 @@ class MailGroup(models.Model):
         max_length=100,
     )
     description = models.TextField(
-        help_text=_("En forklaring på hva e-postlisten skal inneholde"),
+        help_text=_(
+            "En forklaring på hva slags entiteter gruppen skal inneholde, og hva den kan brukes til"
+        ),
+        verbose_name=_("Beskrivelse"),
         blank=True,
         null=True,
     )
@@ -83,7 +87,7 @@ class MailGroup(models.Model):
         default=True,
     )
     members = models.ManyToManyField(
-        Organization,
+        MailEntity,
         verbose_name=_("Organisasjoner i denne gruppen"),
         related_name="mailinglists",
         blank=True,

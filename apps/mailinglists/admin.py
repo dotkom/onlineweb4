@@ -1,7 +1,7 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
-from .models import MailGroup, Organization
+from .models import MailGroup, MailEntity
 
 
 @admin.register(MailGroup)
@@ -10,6 +10,6 @@ class MailGroupAdmin(VersionAdmin):
     fields = ("email_name", "name", "description", "public", "members")
 
 
-@admin.register(Organization)
-class OrganizationMailAdmin(VersionAdmin):
+@admin.register(MailEntity)
+class MailEntityAdmin(VersionAdmin):
     fields = ("email", "name", "description", "public")
