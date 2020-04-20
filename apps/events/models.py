@@ -149,6 +149,12 @@ class Event(models.Model):
         default=True,
         help_text=_("Denne brukes for å skjule eksisterende arrangementer."),
     )
+    companies = models.ManyToManyField(
+        to=Company,
+        verbose_name=_("Bedrifter"),
+        related_name="events",
+        through="CompanyEvent",
+    )
 
     feedback = GenericRelation(FeedbackRelation)
 
@@ -181,6 +187,15 @@ class Event(models.Model):
             info[_("Venteliste")] = self.attendance_event.number_on_waitlist
 
         return info
+
+    @property
+    def images(self):
+        images = ResponsiveImage.objects.none()
+        if self.image:
+            images |= ResponsiveImage.objects.filter(pk=self.image.id)
+        company_image_ids = self.companies.values_list("image")
+        images |= ResponsiveImage.objects.filter(pk__in=company_image_ids)
+        return images.distinct()
 
     @property
     def company_event(self):
@@ -1017,7 +1032,7 @@ class CompanyEvent(models.Model):
     event = models.ForeignKey(
         Event,
         verbose_name=_("arrangement"),
-        related_name="companies",
+        related_name="company_events",
         on_delete=models.CASCADE,
     )
 
