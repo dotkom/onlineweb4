@@ -1,6 +1,7 @@
 import django_filters
 from django_filters.filters import BaseInFilter, NumberFilter
 from guardian.shortcuts import get_objects_for_user
+from watson import search as watson_search
 
 from apps.events.models import AttendanceEvent, Attendee, Event
 
@@ -9,7 +10,14 @@ class BaseNumberInFilter(BaseInFilter, NumberFilter):
     pass
 
 
-class EventDateFilter(django_filters.FilterSet):
+class WatsonFilter(django_filters.CharFilter):
+    def filter(self, queryset, value):
+        if value and value != "":
+            queryset = watson_search.filter(queryset, value)
+        return queryset
+
+
+class EventFilter(django_filters.FilterSet):
     event_start__gte = django_filters.DateTimeFilter(
         field_name="event_start", lookup_expr="gte"
     )
@@ -31,7 +39,8 @@ class EventDateFilter(django_filters.FilterSet):
     can_change = django_filters.BooleanFilter(method="filter_can_change")
     can_attend = django_filters.BooleanFilter(method="filter_can_attend")
     event_type = BaseNumberInFilter(field_name="event_type", lookup_expr="in")
-    companies = BaseNumberInFilter(field_name="companies", lookup_expr="company__in")
+    companies = BaseNumberInFilter(field_name="companies", lookup_expr="in")
+    query = WatsonFilter()
 
     def filter_can_attend(self, queryset, name, value):
         """
@@ -116,3 +125,7 @@ class AttendanceEventFilter(django_filters.FilterSet):
     class Meta:
         model = AttendanceEvent
         fields = ("has_extras",)
+
+
+class ExtrasFilter(django_filters.FilterSet):
+    query = WatsonFilter()

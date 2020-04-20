@@ -6,34 +6,20 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.signing import Signer
-from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from guardian.shortcuts import get_objects_for_user
-from rest_framework import mixins, permissions, status, viewsets
-from rest_framework.decorators import action
+from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
 from watson import search as watson
 
-from apps.events.filters import AttendanceEventFilter, EventDateFilter
+from apps.events.filters import EventFilter
 from apps.events.forms import CaptchaForm
-from apps.events.models import AttendanceEvent, Attendee, CompanyEvent, Event
+from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.events.pdf_generator import EventPDF
-from apps.events.serializers import (
-    AttendanceEventSerializer,
-    AttendeeRegistrationCreateSerializer,
-    AttendeeRegistrationReadOnlySerializer,
-    AttendeeRegistrationUpdateSerializer,
-    AttendeeSerializer,
-    CompanyEventSerializer,
-    EventSerializer,
-    RegisterAttendanceSerializer,
-    UserAttendanceEventSerializer,
-)
+from apps.events.serializers import EventSerializer
 from apps.events.utils import (
     handle_attend_event_payment,
     handle_attendance_event_detail,
@@ -41,10 +27,8 @@ from apps.events.utils import (
     handle_event_payment,
     handle_mail_participants,
 )
-from apps.online_oidc_provider.authentication import OidcOauth2Auth
 from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
-from .constants import AttendStatus
 from .utils import EventCalendar
 
 
@@ -444,7 +428,7 @@ class EventViewSet(
 ):
     serializer_class = EventSerializer
     permission_classes = (AllowAny,)
-    filterset_class = EventDateFilter
+    filterset_class = EventFilter
     filterset_fields = ("event_start", "event_end", "id")
     ordering_fields = (
         "event_start",
@@ -456,151 +440,5 @@ class EventViewSet(
     ordering = ("-is_today", "registration_filtered", "id")
 
     def get_queryset(self):
-        """
-        :return: Queryset filtered by these requirements:
-            event is visible AND (event has NO group restriction OR user having access to restricted event)
-            OR the user is attending the event themselves
-        """
         user = self.request.user
-        group_restriction_query = Q(group_restriction__isnull=True) | Q(
-            group_restriction__groups__in=user.groups.all()
-        )
-        is_attending_query = (
-            (
-                Q(attendance_event__isnull=False)
-                & Q(attendance_event__attendees__user=user)
-            )
-            if not user.is_anonymous
-            else Q()
-        )
-        is_visible_query = Q(visible=True)
-        return Event.by_registration.filter(
-            group_restriction_query & is_visible_query | is_attending_query
-        ).distinct()
-
-
-class RegistrationAttendaceEventViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = AttendanceEvent.objects.all()
-    serializer_class = UserAttendanceEventSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    filter_class = AttendanceEventFilter
-
-
-class AttendanceEventViewSet(
-    viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin
-):
-    queryset = AttendanceEvent.objects.all()
-    serializer_class = AttendanceEventSerializer
-    permission_classes = (AllowAny,)
-
-
-class RegistrationAttendeeViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
-    filterset_fields = ("event", "attended")
-
-    def get_queryset(self):
-        return Attendee.objects.filter(user=self.request.user)
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return AttendeeRegistrationCreateSerializer
-        if self.action in ["update", "partial_update"]:
-            return AttendeeRegistrationUpdateSerializer
-        if self.action in ["list", "retrieve"]:
-            return AttendeeRegistrationReadOnlySerializer
-
-        return super().get_serializer_class()
-
-    def destroy(self, request, *args, **kwargs):
-        user = self.request.user
-        attendee = self.get_object()
-        attendance_event = attendee.event
-
-        # User can only be unattended before the deadline, or if they are on the wait list.
-        if timezone.now() > attendance_event.unattend_deadline and not attendance_event.is_on_waitlist(
-            user
-        ):
-            return Response(
-                {
-                    "message": "Avmeldingsfristen har gått ut, det er ikke lenger mulig å melde seg av arrangementet."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if attendance_event.event.event_start < timezone.now():
-            return Response(
-                {
-                    "message": "Du kan ikke melde deg av et arrangement som allerde har startet."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if attendee.has_paid:
-            return Response(
-                {
-                    "message": "Du må refundere betalingene dine før du kan melde deg av."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Attendees un-attend with themselves as the admin user
-        attendee.unattend(user)
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class AttendeeViewSet(
-    viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin
-):
-    serializer_class = AttendeeSerializer
-    authentication_classes = [OidcOauth2Auth]
-    filterset_fields = ("event", "attended")
-
-    @staticmethod
-    def _get_allowed_attendees(user):
-        if user.is_superuser:
-            return Attendee.objects.all()
-        allowed_events = get_objects_for_user(
-            user, "events.change_event", accept_global_perms=False
-        )
-        attendance_events = AttendanceEvent.objects.filter(event__in=allowed_events)
-        return Attendee.objects.filter(event__in=attendance_events)
-
-    def get_queryset(self):
-        return self._get_allowed_attendees(self.request.user)
-
-    def get_serializer_class(self):
-        if self.action in ["list", "create"]:
-            return AttendeeSerializer
-        if self.action == "register_attendance":
-            return RegisterAttendanceSerializer
-
-        return super().get_serializer_class()
-
-    @action(detail=False, methods=["post"])
-    def register_attendance(self, request, pk=None):
-        request_serializer = self.get_serializer(data=request.data)
-        request_serializer.is_valid(raise_exception=True)
-
-        attendee = request_serializer.get_attendee(request.data)
-        attendee.attended = True
-        attendee.save()
-
-        return Response(
-            {
-                "detail": {
-                    "message": f"{attendee.user} er registrert som deltaker. Velkommen!",
-                    "attend_status": AttendStatus.REGISTER_SUCCESS,
-                    "attendee": attendee.id,
-                }
-            },
-            status=status.HTTP_200_OK,
-        )
-
-
-class CompanyEventViewSet(
-    viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin
-):
-    queryset = CompanyEvent.objects.all()
-    serializer_class = CompanyEventSerializer
-    permission_classes = (AllowAny,)
+        return Event.by_registration.get_queryset_for_user(user)

@@ -10,6 +10,7 @@ class EventsConfig(AppConfig):
 
         from watson import search as watson
 
-        from apps.events.models import Event
+        from apps.events.models import Event, Extras
 
         watson.register(Event)
+        watson.register(Extras)
