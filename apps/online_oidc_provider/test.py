@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from oidc_provider.models import (
@@ -14,6 +15,19 @@ User = get_user_model()
 
 
 class OIDCTestCase(TestCase):
+    basename = ""
+
+    def get_action_url(self, action: str, _id=None):
+        if _id:
+            return reverse(f"{self.basename}-{action}", args=[_id])
+        return reverse(f"{self.basename}-{action}")
+
+    def get_list_url(self):
+        return self.get_action_url("list")
+
+    def get_detail_url(self, _id):
+        return self.get_action_url("detail", _id)
+
     @staticmethod
     def _get_response_type():
         return ResponseType.objects.create(value=RESPONSE_TYPE_CHOICES[1])
