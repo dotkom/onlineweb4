@@ -137,6 +137,9 @@ if "apps.events" in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r"^events/", include("apps.events.urls")),
         url(r"^dashboard/events/", include("apps.events.dashboard.urls")),
+        url(
+            r"^events-api/", include("apps.events.api.urls")
+        ),  # url is a dummy, but needed to import the file
     ]
 
 if "apps.feedback" in settings.INSTALLED_APPS:
