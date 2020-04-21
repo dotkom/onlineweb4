@@ -14,7 +14,7 @@ class SerializerUserMethodField(serializers.SerializerMethodField):
 
     def to_representation(self, obj):
         request = self.context.get("request", None)
-        if request:
+        if request and request.user.is_authenticated:
             get_user_field_method = getattr(obj, self.method_name)
             return get_user_field_method(request.user)
         return None

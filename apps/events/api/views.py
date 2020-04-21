@@ -8,7 +8,14 @@ from rest_framework.response import Response
 from apps.payment.serializers import PaymentReadOnlySerializer
 
 from ..constants import AttendStatus
-from ..filters import EventFilter, ExtrasFilter
+from ..filters import (
+    EventFilter,
+    ExtrasFilter,
+    FieldOfStudyRuleFilter,
+    GradeRuleFilter,
+    RuleBundleFilter,
+    UserGroupRuleFilter,
+)
 from ..models import (
     AttendanceEvent,
     Attendee,
@@ -264,25 +271,25 @@ class RuleBundleViewSet(viewsets.ModelViewSet):
     serializer_class = RuleBundleSerializer
     queryset = RuleBundle.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    filterset_fields = ("field_of_study_rules", "grade_rules", "user_group_rules")
+    filterset_class = RuleBundleFilter
 
 
 class FieldOfStudyRuleViewSet(viewsets.ModelViewSet):
     serializer_class = FieldOfStudyRuleSerializer
     queryset = FieldOfStudyRule.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    filterset_fields = ("offset", "field_of_study")
+    filterset_class = FieldOfStudyRuleFilter
 
 
 class GradeRuleViewSet(viewsets.ModelViewSet):
     serializer_class = GradeRuleSerializer
     queryset = GradeRule.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    filterset_fields = ("offset", "grade")
+    filterset_class = GradeRuleFilter
 
 
 class UserGroupRuleViewSet(viewsets.ModelViewSet):
     serializer_class = UserGroupRuleSerializer
     queryset = UserGroupRule.objects.all()
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    filterset_fields = ("offset", "group")
+    filterset_class = UserGroupRuleFilter

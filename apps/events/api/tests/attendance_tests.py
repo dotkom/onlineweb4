@@ -64,6 +64,16 @@ class AttendanceEventTestCase(OIDCTestCase):
     def get_payment_url(self, event_id: int):
         return self.get_action_url("payment", event_id)
 
+    def test_anonymous_user_can_get_list(self):
+        response = self.client.get(self.get_list_url(), **self.bare_headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_anonymous_user_can_get_detail(self):
+        response = self.client.get(
+            self.get_detail_url(self.event.id), **self.bare_headers
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
     @mock_validate_recaptcha()
     def test_user_cannot_register_for_a_non_attendance_event(self, _):
         event_without_attendance = generate_event(
