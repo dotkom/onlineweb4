@@ -275,7 +275,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         )
 
     @mock_validate_recaptcha()
-    def test_user_can_re_register_for_and_event_after_unregistering(self, _):
+    def test_user_can_re_register_for_an_event_after_unregistering(self, _):
         attend_user_to_event(self.event, self.user)
         self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(
             days=2
