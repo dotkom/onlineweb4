@@ -1,15 +1,31 @@
 import django_filters
 from django_filters.filters import BaseInFilter, NumberFilter
 from guardian.shortcuts import get_objects_for_user
+from watson import search as watson_search
 
-from apps.events.models import AttendanceEvent, Attendee, Event
+from apps.events.models import (
+    AttendanceEvent,
+    Attendee,
+    Event,
+    FieldOfStudyRule,
+    GradeRule,
+    RuleBundle,
+    UserGroupRule,
+)
 
 
 class BaseNumberInFilter(BaseInFilter, NumberFilter):
     pass
 
 
-class EventDateFilter(django_filters.FilterSet):
+class WatsonFilter(django_filters.CharFilter):
+    def filter(self, queryset, value):
+        if value and value != "":
+            queryset = watson_search.filter(queryset, value)
+        return queryset
+
+
+class EventFilter(django_filters.FilterSet):
     event_start__gte = django_filters.DateTimeFilter(
         field_name="event_start", lookup_expr="gte"
     )
@@ -31,7 +47,8 @@ class EventDateFilter(django_filters.FilterSet):
     can_change = django_filters.BooleanFilter(method="filter_can_change")
     can_attend = django_filters.BooleanFilter(method="filter_can_attend")
     event_type = BaseNumberInFilter(field_name="event_type", lookup_expr="in")
-    companies = BaseNumberInFilter(field_name="companies", lookup_expr="company__in")
+    companies = BaseNumberInFilter(field_name="companies", lookup_expr="in")
+    query = WatsonFilter()
 
     def filter_can_attend(self, queryset, name, value):
         """
@@ -102,17 +119,48 @@ class EventDateFilter(django_filters.FilterSet):
         fields = ("event_start", "event_end", "event_type", "is_attendee")
 
 
-class AttendanceEventFilter(django_filters.FilterSet):
-    has_extras = django_filters.BooleanFilter(method="filter_has_extras")
+class ExtrasFilter(django_filters.FilterSet):
+    event = django_filters.ModelChoiceFilter(
+        field_name="attendanceevent", queryset=AttendanceEvent.objects.all()
+    )
+    query = WatsonFilter()
 
-    def filter_has_extras(self, queryset, name, value):
-        if value:
-            with_extras_pks = [
-                attendance.event.id for attendance in queryset if attendance.has_extras
-            ]
-            return queryset.filter(pk__in=with_extras_pks)
-        return queryset
+
+class RuleBundleFilter(django_filters.FilterSet):
+    event = django_filters.ModelChoiceFilter(
+        field_name="attendanceevent", queryset=AttendanceEvent.objects.all()
+    )
 
     class Meta:
-        model = AttendanceEvent
-        fields = ("has_extras",)
+        model = RuleBundle
+        fields = ("field_of_study_rules", "grade_rules", "user_group_rules")
+
+
+class FieldOfStudyRuleFilter(django_filters.FilterSet):
+    event = django_filters.ModelChoiceFilter(
+        field_name="rulebundle__attendanceevent", queryset=AttendanceEvent.objects.all()
+    )
+
+    class Meta:
+        model = FieldOfStudyRule
+        fields = ("offset", "field_of_study")
+
+
+class GradeRuleFilter(django_filters.FilterSet):
+    event = django_filters.ModelChoiceFilter(
+        field_name="rulebundle__attendanceevent", queryset=AttendanceEvent.objects.all()
+    )
+
+    class Meta:
+        model = GradeRule
+        fields = ("offset", "grade")
+
+
+class UserGroupRuleFilter(django_filters.FilterSet):
+    event = django_filters.ModelChoiceFilter(
+        field_name="rulebundle__attendanceevent", queryset=AttendanceEvent.objects.all()
+    )
+
+    class Meta:
+        model = UserGroupRule
+        fields = ("offset", "group")
