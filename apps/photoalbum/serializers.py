@@ -61,9 +61,7 @@ class PhotoRetrieveSerializer(serializers.ModelSerializer):
 
 
 class PhotoCreateOrUpdateSerializer(serializers.ModelSerializer):
-    photographer = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), default=serializers.CurrentUserDefault()
-    )
+    photographer = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     title = serializers.CharField(required=False, default=None)
     tags = TagListSerializerField(required=False)
     raw_image = ImageField(required=True)

@@ -8,6 +8,7 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
 from stripe.error import InvalidRequestError, StripeError
 
+from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.payment import status as payment_status
 from apps.payment.models import (
     PaymentDelay,
@@ -42,23 +43,13 @@ class PaymentDelayReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
         return PaymentDelay.objects.filter(user=user)
 
 
-class PaymentRelationViewSet(viewsets.ModelViewSet):
-
+class PaymentRelationViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
-
-    def get_serializer_class(self):
-        """
-        Get different serializers for creating (paying) and listing/retrieving previous payments.
-        Delete does not use a serializer, and logic resides in the view.
-        """
-        if self.action in ["list", "retrieve"]:
-            return PaymentRelationReadOnlySerializer
-        if self.action == "create":
-            return PaymentRelationCreateSerializer
-        if self.action in ["update", "partial_update"]:
-            return PaymentRelationUpdateSerializer
-
-        return super().get_serializer_class()
+    serializer_classes = {
+        "read": PaymentRelationReadOnlySerializer,
+        "create": PaymentRelationCreateSerializer,
+        "update": PaymentRelationUpdateSerializer,
+    }
 
     def get_queryset(self):
         user = self.request.user
@@ -123,7 +114,7 @@ class PaymentPriceReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PaymentPrice.objects.all()
 
 
-class PaymentTransactionViewSet(viewsets.ModelViewSet):
+class PaymentTransactionViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     """
     A user should be allowed to view their transactions.
     Transactions are created with Stripe payment intents.
@@ -132,16 +123,11 @@ class PaymentTransactionViewSet(viewsets.ModelViewSet):
     """
 
     permission_classes = (permissions.IsAuthenticated,)
-
-    def get_serializer_class(self):
-        if self.action in ["list", "retrieve"]:
-            return PaymentTransactionReadOnlySerializer
-        if self.action == "create":
-            return PaymentTransactionCreateSerializer
-        if self.action in ["update", "partial_update"]:
-            return PaymentTransactionUpdateSerializer
-
-        super().get_serializer_class()
+    serializer_classes = {
+        "read": PaymentTransactionReadOnlySerializer,
+        "create": PaymentTransactionCreateSerializer,
+        "update": PaymentTransactionUpdateSerializer,
+    }
 
     def get_queryset(self):
         user = self.request.user
