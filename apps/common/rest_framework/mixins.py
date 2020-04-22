@@ -5,6 +5,12 @@ from utils.metadata import ActionMeta
 
 
 class DefaultDestroySerializer(serializers.Serializer):
+    """
+    Destroy actions usually don't have a serializer, but for automatic schema generation to work
+    all actions need to have a serializer. This is provided as a default for destroy actions
+    for openapi schemas to be rendered correctly.
+    """
+
     pass
 
 
