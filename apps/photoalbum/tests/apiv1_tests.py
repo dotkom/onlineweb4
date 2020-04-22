@@ -228,7 +228,6 @@ class PhotoTestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         photo = Photo.objects.get(pk=response.json().get("id"))
-        self.assertEqual(photo.photographer, self.user)
         self.assertIsNotNone(photo.title)
         self.assertIsNotNone(photo.image)
 

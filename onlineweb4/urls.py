@@ -6,7 +6,6 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_js_reverse.views import urls_js
 from onlineweb4 import views
-from rest_framework.documentation import include_docs_urls
 
 from apps.api.urls import urlpatterns as api_urls
 
@@ -64,7 +63,6 @@ urlpatterns = [
         name="wiki-tree",
         kwargs={"path": ""},
     ),
-    url(r"^api-docs/", include_docs_urls(title="Onlineweb4 API")),
 ]
 
 

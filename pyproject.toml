@@ -75,6 +75,7 @@ redis = { version = "~3.3", optional = true }
 # Docs
 sphinx = { version = "*", optional = true }
 sphinx-rtd-theme = { version = "*", optional = true }
+pyyaml = "^5.3.1"
 
 
 [tool.poetry.dev-dependencies]
