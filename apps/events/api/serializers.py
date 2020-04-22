@@ -30,6 +30,10 @@ class EventSerializer(serializers.ModelSerializer):
     start_date = serializers.DateTimeField(source="event_start")
     end_date = serializers.DateTimeField(source="event_end")
     is_attendance_event = serializers.BooleanField(read_only=True)
+    max_capacity = serializers.IntegerField(source="attendance_event.max_capacity")
+    number_of_seats_taken = serializers.IntegerField(
+        source="attendance_event.number_of_seats_taken"
+    )
 
     class Meta:
         model = Event
@@ -50,6 +54,8 @@ class EventSerializer(serializers.ModelSerializer):
             "images",
             "companies",
             "is_attendance_event",
+            "max_capacity",
+            "number_of_seats_taken",
         )
 
 
