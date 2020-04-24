@@ -210,7 +210,14 @@ class PublicAttendeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attendee
-        fields = ("id", "full_name", "is_visible", "year_of_study", "field_of_study")
+        fields = (
+            "id",
+            "event",
+            "full_name",
+            "is_visible",
+            "year_of_study",
+            "field_of_study",
+        )
 
 
 class ExtrasSerializer(serializers.ModelSerializer):
