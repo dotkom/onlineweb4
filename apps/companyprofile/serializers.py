@@ -17,5 +17,6 @@ class CompanySerializer(serializers.ModelSerializer):
             "image",
             "long_description",
             "short_description",
+            "email_address",
             "phone_number",
         )
