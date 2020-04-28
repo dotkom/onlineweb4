@@ -12,7 +12,10 @@ class CareerOpportunity(models.Model):
     """
 
     company = models.ForeignKey(
-        Company, related_name="company", on_delete=models.CASCADE
+        Company,
+        verbose_name=_("Bedrift"),
+        related_name="career_opportunities",
+        on_delete=models.CASCADE,
     )
     title = models.CharField(_("tittel"), max_length=100)
     ingress = models.CharField(_("ingress"), max_length=250)
