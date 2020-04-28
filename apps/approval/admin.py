@@ -1,24 +1,33 @@
 # -*- coding: utf-8 -*-
 
 from django.contrib import admin
-from django.contrib.admin import register
 
 from apps.approval.models import (
     CommitteeApplication,
+    CommitteeApplicationPeriod,
     CommitteePriority,
     MembershipApproval,
 )
+
+
+@admin.register(CommitteeApplicationPeriod)
+class CommitteeApplicationPeriodAdmin(admin.ModelAdmin):
+    model = CommitteeApplicationPeriod
+    list_display = ["title", "year", "start", "deadline"]
+    search_fields = ["title", "start", "deadline"]
+    list_filter = ["committees"]
 
 
 class CommitteePriorityInline(admin.TabularInline):
     model = CommitteePriority
 
 
+@admin.register(CommitteeApplication)
 class CommitteeApplicationAdmin(admin.ModelAdmin):
     model = CommitteeApplication
     inlines = [CommitteePriorityInline]
     list_display = ["__str__", "get_name", "created", "prioritized"]
-    list_filter = ["prioritized", "committees"]
+    list_filter = ["application_period", "prioritized", "committees"]
     search_fields = [
         "name",
         "email",
@@ -28,7 +37,7 @@ class CommitteeApplicationAdmin(admin.ModelAdmin):
     ]
 
 
-@register(MembershipApproval)
+@admin.register(MembershipApproval)
 class MembershipApprovalAdmin(admin.ModelAdmin):
     model = MembershipApproval
     list_display = (
@@ -46,6 +55,3 @@ class MembershipApprovalAdmin(admin.ModelAdmin):
         "applicant__username",
         "applicant__ntnu_username",
     )
-
-
-admin.site.register(CommitteeApplication, CommitteeApplicationAdmin)

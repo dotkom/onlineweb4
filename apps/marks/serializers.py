@@ -7,6 +7,10 @@ from apps.marks.models import Mark, MarkRuleSet, MarkUser, RuleAcceptance, Suspe
 class MarkSerializer(serializers.ModelSerializer):
     given_by = UserNameSerializer()
     last_changed_by = UserNameSerializer()
+    category_display = serializers.SerializerMethodField()
+
+    def get_category_display(self, mark: Mark):
+        return mark.get_category_display()
 
     class Meta:
         model = Mark
@@ -16,6 +20,7 @@ class MarkSerializer(serializers.ModelSerializer):
             "last_changed_date",
             "description",
             "category",
+            "category_display",
             "given_by",
             "last_changed_by",
         )
@@ -54,6 +59,14 @@ class RuleAcceptanceReadOnlySerializer(serializers.ModelSerializer):
         model = RuleAcceptance
         fields = ("rule_set", "accepted_date")
         read_only = True
+
+
+class RuleAcceptanceSerializer(serializers.ModelSerializer):
+    rule_set = MarkRuleSetReadOnlySerializer()
+
+    class Meta:
+        model = RuleAcceptance
+        fields = ("rule_set", "accepted_date")
 
 
 class RuleAcceptanceCreateSerializer(serializers.ModelSerializer):

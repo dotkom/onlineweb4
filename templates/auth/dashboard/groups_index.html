@@ -22,7 +22,7 @@ Grupper
             <tbody>
             {% for group in groups %}
                 <tr>
-                    <td><a href="/dashboard/auth/groups/{{ group.id }}/">{{ group }}</a></td>
+                    <td><a href="/dashboard/auth/groups/{{ group.id }}/">{{ group.name_long }}</a></td>
                 </tr>
             {% endfor %}
             </tbody>

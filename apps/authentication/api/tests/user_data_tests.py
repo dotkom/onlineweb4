@@ -72,7 +72,7 @@ class EmailTestCase(OIDCTestCase):
     def test_user_can_change_primary_email(self):
         self.assertTrue(self.email.primary)
 
-        email: Email = G(Email, user=self.user, verfied=False)
+        email: Email = G(Email, user=self.user, verified=False)
 
         response = self.client.patch(
             self.id_url(email.id), {"primary": True}, **self.headers
@@ -89,7 +89,7 @@ class EmailTestCase(OIDCTestCase):
     def test_user_cannot_remove_primary_email_without_selecting_a_new_primary(self):
         self.assertTrue(self.email.primary)
 
-        email: Email = G(Email, user=self.user, verfied=False)
+        email: Email = G(Email, user=self.user, verified=False)
 
         response = self.client.patch(
             self.id_url(email.id), {"primary": False}, **self.headers
@@ -108,7 +108,7 @@ class EmailTestCase(OIDCTestCase):
         self.assertTrue(self.email.primary)
 
     def test_user_cannot_verify_emails_without_token(self):
-        email: Email = G(Email, user=self.user, verfied=False)
+        email: Email = G(Email, user=self.user, verified=False)
         response = self.client.patch(
             self.id_url(email.id), {"verified": True}, **self.headers
         )
@@ -121,7 +121,7 @@ class EmailTestCase(OIDCTestCase):
     def test_user_cannot_change_the_address_of_an_existing_email(self):
         address = "test@example.com"
         other_address = "test@test.io"
-        email: Email = G(Email, user=self.user, verfied=False, email=address)
+        email: Email = G(Email, user=self.user, verified=False, email=address)
         self.client.patch(
             self.id_url(email.id), {"email": other_address}, **self.headers
         )

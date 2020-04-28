@@ -22,7 +22,7 @@ class PaymentTest(TestCase):
         self.attendance_event: AttendanceEvent = G(
             AttendanceEvent,
             event=self.event,
-            unnatend_deadline=timezone.now() + timedelta(days=1),
+            unattend_deadline=timezone.now() + timedelta(days=1),
         )
         self.user: User = G(
             User,

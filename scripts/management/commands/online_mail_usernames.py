@@ -2,7 +2,6 @@
 
 import re
 
-from django.contrib.auth.models import Group
 from django.core.management.base import BaseCommand
 from django.db.models import Q
 from unidecode import unidecode
@@ -12,10 +11,10 @@ from apps.authentication.models import OnlineUser
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        # We only sync in members of the Komiteer group
-        group = Group.objects.get(name="Komiteer")
+        # We only sync members who are staff
+        staff_users = OnlineUser.objects.filter(is_staff=True)
         # Fetch all users that do not currently have an alias
-        nomail = group.user_set.filter(
+        nomail = staff_users.filter(
             Q(online_mail__isnull=True) | Q(online_mail__exact="")
         ).order_by("id")
         # Find a list of all taken email aliases in the system already
@@ -51,6 +50,6 @@ class Command(BaseCommand):
                     i = i + 1 if i else 2
 
         # Then produce a list of "alias: email" for all users in Komiteer
-        for user in group.user_set.all():
+        for user in staff_users:
             if user.online_mail and user.email:
                 print("%s: %s" % (user.online_mail, user.email))

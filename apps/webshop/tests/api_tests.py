@@ -228,7 +228,7 @@ class WebshopOrderTests(OIDCTestCase):
         )
 
     def test_user_cannot_create_order_for_a_product_with_a_size_without_specifying_size(
-        self
+        self,
     ):
         G(ProductSize, size="L", product=self.product1)
 
@@ -312,7 +312,7 @@ class WebshopOrderTests(OIDCTestCase):
         )
 
     def test_user_cannot_create_order_with_product_with_not_enough_stock_of_selected_size(
-        self
+        self,
     ):
         self.product1.stock = 10
         self.product1.save()

@@ -1,7 +1,17 @@
 from django.core.exceptions import ImproperlyConfigured
-from rest_framework import viewsets
+from rest_framework import serializers, viewsets
 
 from utils.metadata import ActionMeta
+
+
+class DefaultDestroySerializer(serializers.Serializer):
+    """
+    Destroy actions usually don't have a serializer, but for automatic schema generation to work
+    all actions need to have a serializer. This is provided as a default for destroy actions
+    for openapi schemas to be rendered correctly.
+    """
+
+    pass
 
 
 class MultiSerializerMixin(viewsets.GenericViewSet):
@@ -35,6 +45,8 @@ class MultiSerializerMixin(viewsets.GenericViewSet):
             default_class = self.serializer_classes.get("write", default_class)
             if action == "partial_update":
                 default_class = self.serializer_classes.get("update", default_class)
+        if action == "destroy":
+            default_class = DefaultDestroySerializer
 
         # Get the specific serializer matching the used action with the fallback specified above.
         return self.serializer_classes.get(action, default_class)

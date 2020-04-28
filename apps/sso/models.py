@@ -3,7 +3,7 @@
 # Created by 'myth' on 6/25/15
 
 from django.db.models import TextField
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from oauth2_provider.models import AbstractApplication
 
 

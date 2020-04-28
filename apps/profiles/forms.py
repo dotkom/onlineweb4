@@ -3,7 +3,7 @@ import re
 
 from django import forms
 from django.contrib import auth
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from apps.authentication.models import OnlineUser, Position
 from apps.profiles.models import Privacy

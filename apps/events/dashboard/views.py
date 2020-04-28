@@ -12,7 +12,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views.generic import CreateView, DeleteView, UpdateView
 from guardian.decorators import permission_required
 from guardian.shortcuts import get_objects_for_user
@@ -82,6 +82,12 @@ class CreateEventView(DashboardCreatePermissionMixin, CreateView):
     template_name = "events/dashboard/create.html"
     permission_required = "events.add_event"
 
+    def get_form_kwargs(self):
+        """Make the requesting user available to the form"""
+        kwargs = super().get_form_kwargs()
+        kwargs.update({"user": self.request.user})
+        return kwargs
+
     def get_success_url(self):
         return reverse("dashboard_event_details", kwargs={"event_id": self.object.id})
 
@@ -92,6 +98,12 @@ class UpdateEventView(DashboardObjectPermissionMixin, UpdateView):
     template_name = "events/dashboard/event_form.html"
     permission_required = "events.change_event"
     pk_url_kwarg = "event_id"
+
+    def get_form_kwargs(self):
+        """Make the requesting user available to the form"""
+        kwargs = super().get_form_kwargs()
+        kwargs.update({"user": self.request.user})
+        return kwargs
 
     def get_success_url(self):
         return reverse(
@@ -148,7 +160,6 @@ class AddCompanyEventView(DashboardCreatePermissionMixin, CreateView):
 class RemoveCompanyEventView(DashboardObjectPermissionMixin, DeleteView):
     model = CompanyEvent
     permission_required = "events.add_attendanceevent"
-    pk_url_kwarg = "event_id"
 
     def get_success_url(self):
         return reverse(
@@ -177,7 +188,6 @@ class AddFeedbackRelationView(DashboardCreatePermissionMixin, CreateView):
 class RemoveFeedbackRelationView(DashboardObjectPermissionMixin, DeleteView):
     model = FeedbackRelation
     permission_required = "events.add_attendanceevent"
-    pk_url_kwarg = "event_id"
 
     def get_success_url(self):
         return reverse(
@@ -315,7 +325,7 @@ def event_details(request, event_id, active_tab="details"):
     context = _create_details_context(request, event_id)
     event = context["event"]
     context["active_tab"] = active_tab
-    context["form"] = dashboard_forms.CreateEventForm(instance=event)
+    context["form"] = dashboard_forms.CreateEventForm(instance=event, user=request.user)
 
     extras = {}
     if event.is_attendance_event() and event.attendance_event.extras:

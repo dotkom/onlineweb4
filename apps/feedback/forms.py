@@ -65,14 +65,10 @@ class MultipleChoiceForm(forms.ModelForm):
         super(MultipleChoiceForm, self).__init__(*args, **kwargs)
 
         self.fields["answer"] = forms.ModelChoiceField(
-            queryset=Choice.objects.filter(
-                question=self.instance.question.multiple_choice_relation
-            ),
+            queryset=Choice.objects.filter(question=self.instance.question.question),
             widget=forms.Select(attrs={"class": "form-control"}),
         )
-        self.fields[
-            "answer"
-        ].label = self.instance.question.multiple_choice_relation.label
+        self.fields["answer"].label = self.instance.question.question.label
 
     class Meta:
         model = MultipleChoiceAnswer

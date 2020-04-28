@@ -2,7 +2,7 @@
 
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 User = settings.AUTH_USER_MODEL
 
@@ -17,6 +17,9 @@ class Privacy(models.Model):
     expose_address = models.BooleanField(_("vis addresse"), default=True)
     visible_as_attending_events = models.BooleanField(
         _("vis på påmeldingsarrangement"), default=False
+    )
+    allow_pictures = models.BooleanField(
+        _("greit å ta bilder på arrangement"), default=False
     )
 
     user = models.OneToOneField(User, related_name="privacy", on_delete=models.CASCADE)

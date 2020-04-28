@@ -58,7 +58,9 @@ def add_payment_delay(payment: Payment, user: OnlineUser) -> PaymentDelay:
 
 
 def generate_user(username: str) -> OnlineUser:
-    user = G(OnlineUser, username=username, ntnu_username=username)
+    user = G(
+        OnlineUser, username=username, ntnu_username=username, phone_number="12345678"
+    )
     G(Email, user=user)
     return user
 

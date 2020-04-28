@@ -1,10 +1,21 @@
-from oauth2_provider.contrib.rest_framework import OAuth2Authentication
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.viewsets import ModelViewSet
 
-from apps.api.permissions import TokenHasScopeOrUserHasObjectPermissionsOrWriteOnly
-from apps.approval.api.serializers import CommitteeApplicationSerializer
-from apps.approval.models import CommitteeApplication
+from apps.api.permissions import TokenHasScopeOrUserHasModelPermissionsOrWriteOnly
+from apps.approval.models import CommitteeApplication, CommitteeApplicationPeriod
+
+from .filters import CommitteeApplicationPeriodFilter
+from .serializers import (
+    CommitteeApplicationPeriodSerializer,
+    CommitteeApplicationSerializer,
+)
+
+
+class CommitteeApplicationPeriodViewSet(ModelViewSet):
+    serializer_class = CommitteeApplicationPeriodSerializer
+    queryset = CommitteeApplicationPeriod.objects.all()
+    filter_class = CommitteeApplicationPeriodFilter
+    permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
 
 class CommitteeApplicationViewSet(ModelViewSet):
@@ -15,9 +26,7 @@ class CommitteeApplicationViewSet(ModelViewSet):
 
     serializer_class = CommitteeApplicationSerializer
     queryset = CommitteeApplication.objects.all()
-    authentication_classes = [OAuth2Authentication, SessionAuthentication]
-    permission_classes = [TokenHasScopeOrUserHasObjectPermissionsOrWriteOnly]
-    required_scopes = ["approval"]
+    permission_classes = [TokenHasScopeOrUserHasModelPermissionsOrWriteOnly]
 
     def perform_create(self, serializer):
         if self.request.user and self.request.user.is_authenticated:

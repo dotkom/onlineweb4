@@ -2,21 +2,25 @@
 
 import datetime
 import hashlib
+import logging
 import urllib
 from functools import reduce
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, Group
-from django.db import models, transaction
+from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
-from django.utils.translation import ugettext as _
-from rest_framework.exceptions import NotAcceptable
+from django.utils.translation import gettext as _
 
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
+from apps.payment import status as PaymentStatus
+from apps.permissions.models import ObjectPermissionModel
+
+logger = logging.getLogger(__name__)
 
 GENDER_CHOICES = [("male", _("mann")), ("female", _("kvinne"))]
 
@@ -147,8 +151,6 @@ class OnlineUser(AbstractUser):
         _("kjønn"), max_length=10, choices=GENDER_CHOICES, default="male"
     )
     bio = models.TextField(_("bio"), max_length=2048, blank=True)
-    saldo = models.PositiveSmallIntegerField(_("saldo"), default=0, null=True)
-
     # NTNU credentials
     ntnu_username = models.CharField(
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
@@ -238,18 +240,14 @@ class OnlineUser(AbstractUser):
             return None
         return AllowedUsername.objects.get(username=self.ntnu_username.lower())
 
-    def change_saldo(self, amount):
-        """
-        Update the saldo of a user with an atomic transaction.
-        """
-        with transaction.atomic():
-            self.refresh_from_db()
-            self.saldo += amount
-
-            if self.saldo < 0:
-                raise NotAcceptable("Insufficient funds")
-
-            self.save()
+    @property
+    def saldo(self) -> int:
+        value = (
+            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
+            .aggregate(coins=models.Sum("amount"))
+            .get("coins")
+        )
+        return value if value is not None else 0
 
     @property
     def year(self):
@@ -472,7 +470,14 @@ class SpecialPosition(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class OnlineGroup(models.Model):
+def get_default_group_roles():
+    roles = [RoleType.LEADER, RoleType.DEPUTY_LEADER]
+    for role in roles:
+        GroupRole.get_for_type(role)
+    return GroupRole.objects.filter(role_type__in=roles)
+
+
+class OnlineGroup(ObjectPermissionModel, models.Model):
     """
     A group relating a Django group to a group in Online
     """
@@ -500,6 +505,12 @@ class OnlineGroup(models.Model):
     description_long = models.TextField(
         _("Beskrivelse (helhetlig)"), max_length=2048, blank=True
     )
+    application_description = models.TextField(
+        _("Opptaksbeskrivelse"),
+        max_length=2048,
+        blank=True,
+        help_text="Beskriv gruppen for de som ønsker å søke under et opptak",
+    )
     email = models.EmailField(_("E-post"), max_length=128, blank=True)
     image = models.ForeignKey(
         ResponsiveImage,
@@ -509,7 +520,6 @@ class OnlineGroup(models.Model):
         blank=True,
     )
     created = models.DateTimeField(_("Oprettelsesdato"), default=timezone.now)
-
     group_type = models.CharField(
         verbose_name=_("Gruppetype"),
         choices=GroupType.ALL_CHOICES,
@@ -518,41 +528,48 @@ class OnlineGroup(models.Model):
         null=False,
         blank=False,
     )
+    parent_group = models.ForeignKey(
+        to="self",
+        on_delete=models.SET_NULL,
+        related_name="sub_groups",
+        verbose_name=_("Administrerende gruppe"),
+        blank=True,
+        null=True,
+    )
+    roles = models.ManyToManyField(
+        to="GroupRole",
+        related_name="groups",
+        verbose_name=_("Tilgjengelige roller"),
+        default=get_default_group_roles,
+    )
+    admin_roles = models.ManyToManyField(
+        to="GroupRole",
+        related_name="admin_for_groups",
+        verbose_name=_("Administrerende roller"),
+        help_text=_("Roller som kan administrere denne gruppen og undergrupper"),
+        default=get_default_group_roles,
+    )
 
     @property
     def id(self):
         """ Proxy primary key/id from group object """
         return self.group.id
 
-    def get_members_with_role(self, role: RoleType):
-        member_ids = [
-            member.id for member in self.members.all() if member.has_role(role)
-        ]
-        return self.members.filter(pk__in=member_ids)
+    def get_members_with_role(self, role: str):
+        # Get role first instead of querying directly because the role may not exist yet
+        role = GroupRole.get_for_type(role)
+        return self.members.filter(roles=role)
 
-    @property
-    def leader(self) -> OnlineUser:
-        leader_members = self.get_members_with_role(RoleType.LEADER)
-        if leader_members.count() == 1:
-            return leader_members.first().user
-        elif leader_members.count() == 0:
-            return None
+    def get_users_with_role(self, role: str):
+        return OnlineUser.objects.filter(
+            group_memberships__in=self.get_members_with_role(role)
+        )
 
-    @property
-    def deputy_leader(self) -> OnlineUser:
-        deputy_leader_members = self.get_members_with_role(RoleType.DEPUTY_LEADER)
-        if deputy_leader_members.count() == 1:
-            return deputy_leader_members.first().user
-        elif deputy_leader_members.count() == 0:
-            return None
+    def add_user(self, user: OnlineUser):
+        return GroupMember.objects.create(group=self, user=user)
 
-    @property
-    def treasurer(self) -> OnlineUser:
-        treasurer_members = self.get_members_with_role(RoleType.TREASURER)
-        if treasurer_members.count() == 1:
-            return treasurer_members.first().user
-        elif treasurer_members.count() == 0:
-            return None
+    def remove_user(self, user: OnlineUser):
+        self.members.filter(user=user).delete()
 
     @property
     def verbose_type(self):
@@ -560,6 +577,19 @@ class OnlineGroup(models.Model):
 
     def __str__(self):
         return self.name_short
+
+    def _get_admin_members_query(self):
+        """ Gather a single query for getting permitted member users from this group and parent groups. """
+        query = models.Q(group=self, roles__in=self.admin_roles.all())
+        if self.parent_group:
+            query |= self.parent_group._get_admin_members_query()
+        return query
+
+    def get_permission_users(self):
+        query = self._get_admin_members_query()
+        members = GroupMember.objects.filter(query)
+        users = OnlineUser.objects.filter(group_memberships__in=members)
+        return users
 
     class Meta:
         verbose_name = _("Onlinegruppe")
@@ -569,7 +599,7 @@ class OnlineGroup(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class GroupMember(models.Model):
+class GroupMember(ObjectPermissionModel, models.Model):
     """
     Model relating a user to an Online group
     """
@@ -590,8 +620,18 @@ class GroupMember(models.Model):
     )
     added = models.DateTimeField(default=timezone.now)
 
+    is_on_leave = models.BooleanField(_("Permittert"), default=False)
+    is_retired = models.BooleanField(_("Pensjonert"), default=False)
+
+    @property
+    def is_active(self):
+        return not (self.is_on_leave or self.is_retired)
+
     def has_role(self, role: RoleType):
         return self.roles.filter(role_type=role).exists()
+
+    def get_permission_users(self):
+        return self.group.get_permission_users()
 
     def __str__(self):
         return f"{self.user} - {self.group}"
@@ -613,12 +653,18 @@ class GroupRole(models.Model):
     role_type = models.CharField(
         verbose_name="Rolle",
         choices=RoleType.ALL_CHOICES,
-        default=RoleType.MEMBER,
         max_length=256,
         null=False,
         blank=False,
         unique=True,
     )
+
+    @classmethod
+    def get_for_type(cls, role_type: str):
+        if role_type not in RoleType.ALL_TYPES:
+            raise ValueError(f"'{role_type}' is not a legal role_type")
+        role, created = cls.objects.get_or_create(role_type=role_type)
+        return role
 
     @property
     def verbose_name(self):

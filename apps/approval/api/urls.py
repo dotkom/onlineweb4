@@ -1,6 +1,6 @@
 from apps.api.utils import SharedAPIRootRouter
 
-from .views import CommitteeApplicationViewSet
+from .views import CommitteeApplicationPeriodViewSet, CommitteeApplicationViewSet
 
 urlpatterns = []
 
@@ -10,4 +10,9 @@ router.register(
     "committeeapplications",
     CommitteeApplicationViewSet,
     basename="committeeapplications",
+)
+router.register(
+    "committee-application-periods",
+    CommitteeApplicationPeriodViewSet,
+    basename="committee-application-periods",
 )

@@ -4,7 +4,7 @@
 
 from django.forms.utils import format_html
 from django.forms.widgets import TextInput
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 DATEPICKER_WIDGET_STRING = """
 <div class="input-group dp">\r\n
@@ -105,7 +105,7 @@ class DatePickerInput(TextInput):
         final_attrs = self.build_attrs(attrs, {"type": self.input_type, "name": name})
         if value != "":
             final_attrs["value"] = format_html(
-                'value="{}"', force_text(self.format_value(value))
+                'value="{}"', force_str(self.format_value(value))
             )
         else:
             final_attrs["value"] = ""
@@ -114,13 +114,13 @@ class DatePickerInput(TextInput):
         final_attrs["placeholder"] = "Vennligst velg en dato ..."
         if attrs.get("placeholder", False):
             # Update the placeholder text if supplied.
-            final_attrs["placeholder"] = force_text(attrs.get("placeholder"))
+            final_attrs["placeholder"] = force_str(attrs.get("placeholder"))
 
         return format_html(
             DATEPICKER_WIDGET_STRING,
-            id=force_text(final_attrs["id"]),
-            name=force_text(final_attrs["name"]),
-            placeholder=force_text(final_attrs["placeholder"]),
+            id=force_str(final_attrs["id"]),
+            name=force_str(final_attrs["name"]),
+            placeholder=force_str(final_attrs["placeholder"]),
             value=final_attrs["value"],
         )
 
@@ -149,7 +149,7 @@ class DatetimePickerInput(TextInput):
         attrs = self.build_attrs(self.attrs, attrs)
         final_attrs = self.build_attrs(attrs, {"type": self.input_type, "name": name})
         if value != "":
-            final_attrs["value"] = force_text(self.format_value(value))
+            final_attrs["value"] = force_str(self.format_value(value))
         else:
             final_attrs["value"] = ""
 
@@ -157,13 +157,13 @@ class DatetimePickerInput(TextInput):
         final_attrs["placeholder"] = "Vennligst velg dato og klokkeslett ..."
         if self.attrs.get("placeholder", False):
             # Update the placeholder text if supplied.
-            final_attrs["placeholder"] = force_text(self.attrs.get("placeholder"))
+            final_attrs["placeholder"] = force_str(self.attrs.get("placeholder"))
 
         return format_html(
             DATETIMEPICKER_WIDGET_STRING,
-            id=force_text(final_attrs["id"]),
-            name=force_text(final_attrs["name"]),
-            placeholder=force_text(final_attrs["placeholder"]),
+            id=force_str(final_attrs["id"]),
+            name=force_str(final_attrs["name"]),
+            placeholder=force_str(final_attrs["placeholder"]),
             value=final_attrs["value"],
         )
 
@@ -193,7 +193,7 @@ class TimePickerInput(TextInput):
         final_attrs = self.build_attrs(attrs, {"type": self.input_type, "name": name})
         if value != "":
             final_attrs["value"] = format_html(
-                'value="{}"', force_text(self.format_value(value))
+                'value="{}"', force_str(self.format_value(value))
             )
         else:
             final_attrs["value"] = ""
@@ -202,12 +202,12 @@ class TimePickerInput(TextInput):
         final_attrs["placeholder"] = "Vennligst velg klokkeslett ..."
         if attrs.get("placeholder", False):
             # Update the placeholder text if supplied.
-            final_attrs["placeholder"] = force_text(attrs.get("placeholder"))
+            final_attrs["placeholder"] = force_str(attrs.get("placeholder"))
 
         return format_html(
             TIMEPICKER_WIDGET_STRING,
-            id=force_text(final_attrs["id"]),
-            name=force_text(final_attrs["name"]),
-            placeholder=force_text(final_attrs["placeholder"]),
+            id=force_str(final_attrs["id"]),
+            name=force_str(final_attrs["name"]),
+            placeholder=force_str(final_attrs["placeholder"]),
             value=final_attrs["value"],
         )

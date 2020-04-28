@@ -14,6 +14,8 @@ from apps.payment.models import (
     PaymentTransaction,
 )
 
+from .transaction_constants import TransactionSource
+
 logger = logging.getLogger(__name__)
 
 
@@ -25,14 +27,27 @@ class PaymentPriceReadOnlySerializer(serializers.ModelSerializer):
 
 
 class PaymentReadOnlySerializer(serializers.ModelSerializer):
-    payment_prices = serializers.SerializerMethodField()
+    payment_prices = PaymentPriceReadOnlySerializer(
+        many=True, source="paymentprice_set"
+    )
+    payment_type_display = serializers.CharField(source="get_payment_type_display")
+    content_type = serializers.SerializerMethodField()
 
-    def get_payment_prices(self, payment: Payment):
-        return PaymentPriceReadOnlySerializer(payment.prices(), many=True).data
+    def get_content_type(self, obj: Payment):
+        return f"{obj.content_type.app_label}.{obj.content_type.model}"
 
     class Meta:
         model = Payment
-        fields = ("id", "payment_prices", "description", "stripe_public_key")
+        fields = (
+            "id",
+            "object_id",
+            "content_type",
+            "payment_type",
+            "payment_type_display",
+            "payment_prices",
+            "description",
+            "stripe_public_key",
+        )
         read_only = True
 
 
@@ -278,6 +293,7 @@ class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
             "payment_intent_secret",
             "description",
             "items",
+            "source",
         )
         read_only = True
 
@@ -285,7 +301,7 @@ class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
 class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     payment_method_id = serializers.CharField(write_only=True)
-    used_stripe = serializers.HiddenField(default=True)
+    source = serializers.HiddenField(default=TransactionSource.STRIPE)
     amount = serializers.IntegerField(required=True)
 
     def validate_amount(self, amount):
@@ -370,6 +386,7 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
             "user",
             "status",
             "datetime",
+            "source",
         )
         read_only_fields = ("id", "payment_intent_secret", "status", "datetime")
 
@@ -437,6 +454,7 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
             "status",
             "used_stripe",
             "datetime",
+            "source",
         )
         read_only_fields = (
             "id",
@@ -445,4 +463,5 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
             "status",
             "used_stripe",
             "datetime",
+            "source",
         )

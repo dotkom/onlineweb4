@@ -3,7 +3,9 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from onlineweb4.celery import app
 
+from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.mommy.registry import Task
 
@@ -104,3 +106,21 @@ class SynchronizeGroups(Task):
                                 "%s removed from group %s"
                                 % (user, destination_group.name)
                             )
+
+
+@app.task(bind=True)
+def assign_permission_from_group_admins(self, group_id: int):
+    """
+    Assign permission to handle groups recursively for all members of a group and sub groups.
+    This task should be run when there are changes to which users should manage the group.
+    """
+
+    def assign_perms(group: OnlineGroup):
+        group.assign_permissions()
+        for member in group.members.all():
+            member.assign_permissions()
+        for sub_group in group.sub_groups.all():
+            assign_perms(sub_group)
+
+    origin_group = OnlineGroup.objects.get(pk=group_id)
+    assign_perms(group=origin_group)

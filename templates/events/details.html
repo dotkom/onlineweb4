@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load markdown_deux_tags %}
 {% load crispy_forms_tags %}
-{% load group_membership %}
 {% load calendar_filters %}
 {% load payment_tag %}
 {% load render_bundle from webpack_loader %}
@@ -31,11 +30,8 @@
                 <div class="col-md-12">
                     <div class="page-header">
                         <h2 id="event-details-heading">
-                            {% if user.is_authenticated %}
-                                {% in_group "Komiteer" as in_komiteer %}
-                            {% endif %}
                             {{ event.title }}
-                            <div class="{% if user.is_authenticated and in_komiteer %}btn-group {% endif %}pull-right">
+                            <div class="{% if user.is_authenticated and user.is_staff %}btn-group {% endif %}pull-right">
                                 <div class="btn-group">
                                   <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                     <span class="glyphicon glyphicon-calendar"></span>
@@ -48,8 +44,7 @@
                                   </ul>
                                 </div>
 
-                            {% if user.is_authenticated %}
-                                {% if in_komiteer %}
+                            {% if user.is_authenticated and user.is_staff%}
                                 <div class="btn-group pull-right">
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                         Administrasjon
@@ -65,7 +60,6 @@
                                         {% endif %}
                                     </ul>
                                 </div>
-                                {% endif %}
                             {% endif %}
                             </div>
                         </h2>
@@ -318,14 +312,14 @@
                         <div class="row">
                             <div class="col-md-12 event-status-companies">
                                 <div class="title">Medarrangører</div>
-                                {% for company_relation in event.companies.all %}
+                                {% for company in event.companies.all %}
                                     <div class="heading clearfix row-space">
-                                        <a href="{% url 'company_details' company_relation.company.pk %}">
-                                            <div class="title">{{ company_relation.company.name }}</div>
+                                        <a href="{% url 'company_details' company.pk %}">
+                                            <div class="title">{{ company.name }}</div>
                                             <div class="image-holder">
                                                 <picture>
-                                                    <source srcset="{{ company_relation.company.image.lg }}" media="(max-width: 992px)">
-                                                    <img src="{{ company_relation.company.image.md }}" width="100%" alt="{{ company_relation.company.name }}" />
+                                                    <source srcset="{{ company.image.lg }}" media="(max-width: 992px)">
+                                                    <img src="{{ company.image.md }}" width="100%" alt="{{ company.name }}" />
                                                 </picture>
                                             </div>
                                         </a>
@@ -455,7 +449,7 @@
                 </div>
             </div>
             {% endif %}
-            
+
             {% if payment_relation_id %}
             <div id="refund" class="modal fade">
                 <div class="modal-dialog">

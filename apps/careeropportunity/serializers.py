@@ -5,7 +5,7 @@ from apps.careeropportunity.models import CareerOpportunity
 from apps.companyprofile.serializers import CompanySerializer
 
 
-class LocationTagListSerializerFieldWithSlug(serializers.ModelSerializer):
+class LocationTagListSerializerFieldWithSlug(serializers.Serializer):
     def to_representation(self, obj):
         locations = []
         for tag in obj.all():

@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from reversion.admin import VersionAdmin
 
 from apps.authentication.models import (
@@ -55,6 +55,7 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
                     "mark_rules_accepted",
                     "rfid",
                     "nickname",
+                    "saldo",
                     "website",
                 )
             },
@@ -74,7 +75,7 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
     )
     filter_horizontal = ("groups", "user_permissions")
     search_fields = ("first_name", "last_name", "username", "ntnu_username")
-    readonly_fields = ("mark_rules_accepted",)
+    readonly_fields = ("mark_rules_accepted", "saldo")
 
     def is_member(self, instance: OnlineUser):
         return instance.is_member
@@ -139,12 +140,13 @@ admin.site.register(SpecialPosition, SpecialPositionAdmin)
 class GroupMemberInlineAdmin(admin.StackedInline):
     model = GroupMember
     extra = 0
+    fk_name = "group"
 
 
 @admin.register(OnlineGroup)
 class OnlineGroupAdmin(VersionAdmin):
     model = OnlineGroup
-    list_display = ("name_short", "name_long", "member_count", "verbose_type", "leader")
+    list_display = ("name_short", "name_long", "member_count", "verbose_type")
     list_display_links = ("name_short", "name_long")
     search_fields = ("name_short", "name_long", "group_type", "email")
     inlines = (GroupMemberInlineAdmin,)
@@ -153,13 +155,19 @@ class OnlineGroupAdmin(VersionAdmin):
         return f"{group.members.count()} ({group.group.user_set.count()})"
 
     member_count.admin_order_field = "members__count"
-    member_count.short_description = "Antall medlemmder (synkronisert)"
+    member_count.short_description = "Antall medlemmer (synkronisert)"
+
+
+class MemberRoleInline(admin.TabularInline):
+    model = GroupMember.roles.through
+    extra = 0
 
 
 @admin.register(GroupMember)
 class GroupMemberAdmin(VersionAdmin):
     model = GroupMember
     list_display = ("user", "group", "all_roles")
+    list_filter = ("group", "roles")
     search_fields = (
         "user__username",
         "user__first_name",
@@ -168,6 +176,7 @@ class GroupMemberAdmin(VersionAdmin):
         "group__name_long",
         "roles__role_type",
     )
+    inlines = (MemberRoleInline,)
 
     def all_roles(self, member: GroupMember):
         return ", ".join([role.verbose_name for role in member.roles.all()])
@@ -181,5 +190,6 @@ class GroupMemberAdmin(VersionAdmin):
 @admin.register(GroupRole)
 class GroupRoleAdmin(VersionAdmin):
     model = GroupRole
+    fields = ("role_type",)
     list_display = ("role_type", "verbose_name")
     search_fields = ("role_type",)

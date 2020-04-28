@@ -21,7 +21,7 @@ from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from guardian.shortcuts import assign_perm
 from unidecode import unidecode
 
@@ -82,6 +82,30 @@ class EventOrderedByRegistration(models.Manager):
             .order_by("-is_today", "registration_filtered")
         )
 
+    def get_queryset_for_user(self, user: User):
+        """
+        :return: Queryset filtered by these requirements:
+            event is visible AND (event has NO group restriction OR user having access to restricted event)
+            OR the user is attending the event themselves
+        """
+        group_restriction_query = Q(group_restriction__isnull=True) | Q(
+            group_restriction__groups__in=user.groups.all()
+        )
+        is_attending_query = (
+            (
+                Q(attendance_event__isnull=False)
+                & Q(attendance_event__attendees__user=user)
+            )
+            if not user.is_anonymous
+            else Q()
+        )
+        is_visible_query = Q(visible=True)
+        return (
+            self.get_queryset()
+            .filter(group_restriction_query & is_visible_query | is_attending_query)
+            .distinct()
+        )
+
 
 class Event(models.Model):
     """
@@ -96,7 +120,12 @@ class Event(models.Model):
     by_registration = EventOrderedByRegistration()
 
     author = models.ForeignKey(
-        User, related_name="oppretter", null=True, blank=True, on_delete=models.CASCADE
+        User,
+        related_name="created_events",
+        verbose_name=_("Oppretter"),
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     title = models.CharField(_("tittel"), max_length=60)
     """Event title"""
@@ -144,6 +173,12 @@ class Event(models.Model):
         default=True,
         help_text=_("Denne brukes for å skjule eksisterende arrangementer."),
     )
+    companies = models.ManyToManyField(
+        to=Company,
+        verbose_name=_("Bedrifter"),
+        related_name="events",
+        through="CompanyEvent",
+    )
 
     feedback = GenericRelation(FeedbackRelation)
 
@@ -176,6 +211,15 @@ class Event(models.Model):
             info[_("Venteliste")] = self.attendance_event.number_on_waitlist
 
         return info
+
+    @property
+    def images(self):
+        images = ResponsiveImage.objects.none()
+        if self.image:
+            images |= ResponsiveImage.objects.filter(pk=self.image.id)
+        company_image_ids = self.companies.values_list("image")
+        images |= ResponsiveImage.objects.filter(pk__in=company_image_ids)
+        return images.distinct()
 
     @property
     def company_event(self):
@@ -535,6 +579,11 @@ class AttendanceEvent(models.Model):
     extras = models.ManyToManyField(Extras, blank=True)
 
     payments = GenericRelation("payment.Payment")
+
+    @property
+    def id(self):
+        """ Proxy Event id """
+        return self.event_id
 
     @property
     def feedback(self):
@@ -1007,7 +1056,7 @@ class CompanyEvent(models.Model):
     event = models.ForeignKey(
         Event,
         verbose_name=_("arrangement"),
-        related_name="companies",
+        related_name="company_events",
         on_delete=models.CASCADE,
     )
 
@@ -1053,6 +1102,7 @@ class Attendee(models.Model):
     show_as_attending_event = models.BooleanField(
         _("vis som påmeldt arrangementet"), default=False
     )
+    allow_pictures = models.BooleanField(_("greit å ta bilde"), default=False)
 
     def __str__(self):
         return self.user.get_full_name()

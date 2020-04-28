@@ -53,7 +53,7 @@ TIME_ZONE = "Europe/Oslo"
 
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = "nb"
-LANGUAGES = (("nb", "Norwegian"), ("en_US", "English"))
+LANGUAGES = (("nb", "Norwegian"), ("en-US", "English"))
 LOCALE_PATHS = [os.path.join(PROJECT_ROOT_DIRECTORY, "locale")]
 
 SITE_ID = 1
@@ -218,6 +218,7 @@ INSTALLED_APPS = (
     "apps.online_oidc_provider",
     "apps.inventory",
     "apps.payment",
+    "apps.permissions",
     "apps.photoalbum",
     "apps.posters",
     "apps.slack",

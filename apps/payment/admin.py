@@ -12,7 +12,6 @@ from apps.payment.models import (
     PaymentRelation,
     PaymentTransaction,
 )
-from utils.admin import DepositWithdrawalFilter
 
 
 class PaymentInline(GenericStackedInline):
@@ -52,7 +51,12 @@ class PaymentAdmin(VersionAdmin):
 class PaymentRelationAdmin(VersionAdmin):
     model = PaymentRelation
     list_display = ("payment", "user", "datetime", "refunded")
-    list_filter = ["refunded"]
+    list_filter = [
+        "refunded",
+        "payment__active",
+        "payment__stripe_key",
+        "payment__payment_type",
+    ]
     search_fields = [
         "user__first_name",
         "user__last_name",
@@ -82,8 +86,7 @@ class PaymentReceiptAdmin(admin.ModelAdmin):
 
 class PaymentTransactionAdmin(VersionAdmin):
     model = PaymentTransaction
-    list_display = ("__str__", "user", "datetime", "amount", "used_stripe")
-    list_filter = ("used_stripe", DepositWithdrawalFilter)
+    list_display = ("__str__", "user", "datetime", "amount", "used_stripe", "source")
 
 
 admin.site.register(PaymentReceipt, PaymentReceiptAdmin)

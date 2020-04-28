@@ -14,8 +14,11 @@ from django.db.models.signals import (
 )
 from django.dispatch import receiver
 
-from apps.authentication.models import Email, GroupMember, OnlineGroup
-from apps.authentication.tasks import SynchronizeGroups
+from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
+from apps.authentication.tasks import (
+    SynchronizeGroups,
+    assign_permission_from_group_admins,
+)
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
 from apps.gsuite.mail_syncer.tasks import update_mailing_list
 
@@ -26,12 +29,10 @@ sync_uuid = uuid.uuid1()
 MAILING_LIST_USER_FIELDS_TO_LIST_NAME = settings.MAILING_LIST_USER_FIELDS_TO_LIST_NAME
 
 
-def run_group_syncer(user):
+def run_group_syncer(user: User) -> None:
     """
     Tasks to run after User is changed.
     :param user: The user instance to sync groups for.
-    :type user: OnlineUser
-    :return: None
     """
     SynchronizeGroups.run()
     if settings.OW4_GSUITE_SYNC.get("ENABLED", False):
@@ -48,7 +49,7 @@ def run_group_syncer(user):
 
 
 @receiver(post_save, sender=Group)
-def trigger_group_syncer(sender, instance, created=False, **kwargs):
+def trigger_group_syncer(sender, instance: Group, created=False, **kwargs):
     """
     :param sender: The model that triggered this hook
     :param instance: The model instance triggering this hook
@@ -149,3 +150,14 @@ def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
                 update_mailing_list.delay(jobmail, email=instance.email, added=False)
             if user.infomail:
                 update_mailing_list.delay(infomail, email=instance.email, added=False)
+
+
+def assign_group_perms(sender, instance, created=False, **kwargs):
+    if isinstance(instance, GroupMember):
+        assign_permission_from_group_admins.delay(group_id=instance.group.id)
+    if isinstance(instance, OnlineGroup):
+        assign_permission_from_group_admins.delay(group_id=instance.id)
+
+
+m2m_changed.connect(assign_group_perms, sender=GroupRole.memberships.through)
+m2m_changed.connect(assign_group_perms, sender=GroupRole.admin_for_groups.through)

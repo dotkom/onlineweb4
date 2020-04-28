@@ -18,6 +18,7 @@ from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.inventory.models import Item
 from apps.payment.models import PaymentTransaction
+from apps.payment.transaction_constants import TransactionSource
 from apps.shop.forms import SetRFIDForm
 from apps.shop.models import MagicToken, OrderLine
 from apps.shop.serializers import (
@@ -37,16 +38,6 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     permission_classes = [TokenHasScope]
     required_scopes = ["shop.readwrite"]
 
-    def create(self, request):
-        serializer = OrderLineSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def perform_create(self, serializer):
-        serializer.save()
-
 
 class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = PaymentTransaction.objects.all()
@@ -55,14 +46,11 @@ class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     permission_classes = [TokenHasScope]
     required_scopes = ["shop.readwrite"]
 
-    def create(self, request):
-        serializer = TransactionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
     def perform_create(self, serializer):
-        serializer.save()
+        """
+        Transactions created by this view are strictly allowed to handle cash additions.
+        """
+        serializer.save(source=TransactionSource.CASH)
 
 
 class UserOrderViewSet(

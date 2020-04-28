@@ -63,20 +63,9 @@ class CurrentOrderLineDefault(serializers.CurrentUserDefault):
     Gets the currently active order_line for the logged in user
     """
 
-    def __init__(self, *args, **kwargs):
-        self.order_line = None
-        super().__init__(*args, **kwargs)
-
-    def set_context(self, serializer_field):
-        # Call set_context to set the user in the context of this object
-        super().set_context(serializer_field)
-        self.order_line = self.get_or_create_order_line()
-
-    def get_or_create_order_line(self) -> OrderLine:
-        return OrderLine.get_current_order_line_for_user(self.user)
-
-    def __call__(self):
-        return self.order_line
+    def __call__(self, serializer_field):
+        user = super().__call__(serializer_field)
+        return OrderLine.get_current_order_line_for_user(user)
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):

@@ -14,12 +14,12 @@ urlpatterns = [
     url(base_url + r"results/$", views.result, name="result"),
     url(base_url + r"results/chartdata/$", views.chart_data, name="chart_data"),
     url(
-        base_url + r"results/(?P<token>\w+)/$",
+        base_url + r"results/(?P<token>(\w|\-)+)/$",
         views.results_token,
         name="results_token",
     ),
     url(
-        base_url + r"results/(?P<token>\w+)/chartdata/$",
+        base_url + r"results/(?P<token>(\w|\-)+)/chartdata/$",
         views.chart_data_token,
         name="chart_data_token",
     ),

@@ -396,7 +396,7 @@ class WaitlistAttendanceEventTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     def test_changing_max_capacity_should_notify_waitlist_with_capacity_larger_than_guestlist(
-        self
+        self,
     ):
         for i in range(4):
             generate_attendee(self.attendance_event.event, "user" + str(i))

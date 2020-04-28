@@ -36,6 +36,7 @@ class OAuth2TestCase(TestCase):
         _headers = {}
         _headers.update(headers)
 
+        _headers.update({"content_type": "application/json"})
         _headers.update({"HTTP_AUTHORIZATION": "Bearer " + self.access_token.token})
 
         return _headers
