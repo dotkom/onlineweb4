@@ -80,7 +80,16 @@ class ProductView(DashboardPermissionMixin, DetailView):
 
 class ProductCreate(DashboardPermissionMixin, CreateView):
     model = Product
-    fields = ["name", "slug", "short", "description", "price", "stock"]
+    fields = [
+        "name",
+        "slug",
+        "short",
+        "description",
+        "price",
+        "stock",
+        "vat_type",
+        "fiken_account",
+    ]
     template_name = "webshop/dashboard/product_update.html"
     permission_required = "webshop.add_product"
 
@@ -107,7 +116,16 @@ class ProductCreate(DashboardPermissionMixin, CreateView):
 
 class ProductUpdate(DashboardPermissionMixin, UpdateView):
     model = Product
-    fields = ["name", "slug", "short", "description", "price", "stock"]
+    fields = [
+        "name",
+        "slug",
+        "short",
+        "description",
+        "price",
+        "stock",
+        "vat_type",
+        "fiken_account",
+    ]
     template_name = "webshop/dashboard/product_update.html"
     context_object_name = "product"
     permission_required = "webshop.change_product"

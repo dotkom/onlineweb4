@@ -14,6 +14,8 @@ from apps.events.tests.utils import (
     generate_user,
     pay_for_event,
 )
+from apps.fiken.models import FikenAccount
+from apps.fiken.settings import NIBBLE_ACCOUNT_IDENTIFIER
 from apps.online_oidc_provider.test import OIDCTestCase
 from apps.payment import status as payment_status
 from apps.payment.models import PaymentRelation
@@ -487,6 +489,12 @@ class PaymentTransactionTestCase(OIDCTestCase):
         self.user = generate_user(username="test_user")
         self.token = self.generate_access_token(self.user)
         self.headers = {**self.generate_headers(), **self.bare_headers}
+
+        self.fiken_account_nibble, created = FikenAccount.objects.get_or_create(
+            identifier=NIBBLE_ACCOUNT_IDENTIFIER,
+            name="Salgsinntekt Nibble",
+            code="1006",
+        )
 
         self.url = reverse("payment_transactions-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"

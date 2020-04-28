@@ -6,6 +6,7 @@ from onlineweb4.settings.base import *
 from onlineweb4.settings.celery import *
 from onlineweb4.settings.dataporten import *
 from onlineweb4.settings.django_wiki import *
+from onlineweb4.settings.fiken import *
 from onlineweb4.settings.gsuite import *
 from onlineweb4.settings.logging import *
 from onlineweb4.settings.raven import *

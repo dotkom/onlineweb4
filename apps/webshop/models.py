@@ -12,6 +12,8 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
+from apps.fiken.constants import VatTypeSale
+from apps.fiken.models import FikenAccount
 from apps.gallery.models import ResponsiveImage
 
 
@@ -38,6 +40,20 @@ class Product(models.Model):
 
     deadline = models.DateTimeField(null=True, blank=True)
     active = models.BooleanField(default=True)
+    vat_type = models.CharField(
+        "Momstype",
+        max_length=200,
+        choices=VatTypeSale.ALL_CHOICES,
+        default=VatTypeSale.NONE,
+    )
+    fiken_account = models.ForeignKey(
+        to=FikenAccount,
+        related_name="products",
+        verbose_name="Konto i Fiken",
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=False,
+    )
 
     def calculate_stock(self):
         """Calculates amount of stock based on either product sizes or product stock

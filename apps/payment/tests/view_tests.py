@@ -13,16 +13,18 @@ from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
 
+from .utils import get_fiken_account
+
 
 class PaymentTest(TestCase):
     def setUp(self):
-        self.event = G(Event, title="Sjakkturnering")
-        self.attendance_event = G(
+        self.event: Event = G(Event, title="Sjakkturnering")
+        self.attendance_event: AttendanceEvent = G(
             AttendanceEvent,
             event=self.event,
             unattend_deadline=timezone.now() + timedelta(days=1),
         )
-        self.user = G(
+        self.user: User = G(
             User,
             username="ola123",
             ntnu_username="ola123ntnu",
@@ -30,10 +32,13 @@ class PaymentTest(TestCase):
             last_name="nordmann",
         )
 
-        self.event_payment = G(
+        self.fiken_account = get_fiken_account()
+
+        self.event_payment: Payment = G(
             Payment,
             object_id=self.event.id,
             content_type=ContentType.objects.get_for_model(AttendanceEvent),
+            fiken_account=self.fiken_account,
         )
         self.payment_price = G(PaymentPrice, price=200, payment=self.event_payment)
 
