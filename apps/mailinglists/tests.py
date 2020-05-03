@@ -42,7 +42,7 @@ class MailGroupTests(MailTestMixin):
         super().setUp()
 
     def test_add_mail_group_adds_mail_entity_signal(self):
-        assign_perm("add_mailgroup", self.user)
+        assign_perm("mailinglists.add_mailgroup", self.user)
 
         response = self.client.post(
             self.url,
@@ -52,7 +52,7 @@ class MailGroupTests(MailTestMixin):
                 "domain": MailGroup.Domains.ONLINE_NTNU_NO,
                 "description": "En haug i Trondheim",
             },
-            {**self.generate_headers()},
+            **self.headers,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         mailinglist = response.data
@@ -70,9 +70,9 @@ class MailGroupTests(MailTestMixin):
         self.assertEqual(len(response.data["results"]), 1)
 
     def test_authenticated_get(self):
-        assign_perm("view_mailgroup", self.user)
+        assign_perm("mailinglists.view_mailgroup", self.user)
 
-        response = self.client.get(self.url, {**self.generate_headers()})
+        response = self.client.get(self.url, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
@@ -90,19 +90,17 @@ class MailEntityTests(MailTestMixin):
         self.assertEqual(len(response.data["results"]), 2)
 
     def test_authenticated_get(self):
-        assign_perm("view_mailentity", self.user)
+        assign_perm("mailinglists.view_mailentity", self.user)
 
-        response = self.client.get(self.url, {**self.generate_headers()})
+        response = self.client.get(self.url, **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 4)
 
     def test_get_associated_entities(self):
-        assign_perm("view_mailentity", self.user)
+        assign_perm("mailinglists.view_mailentity", self.user)
 
-        response = self.client.get(
-            f"{self.url}?groups={self.group.id}", {**self.generate_headers()}
-        )
+        response = self.client.get(f"{self.url}?groups={self.group.id}", **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
