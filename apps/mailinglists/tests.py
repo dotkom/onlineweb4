@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django_dynamic_fixture import G
@@ -12,7 +10,7 @@ from apps.online_oidc_provider.test import OIDCTestCase
 
 
 class MailTestMixin(OIDCTestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.beta = MailEntity.objects.create(
             email="hs@beta.ntnu.no",
             name="Beta Linjeforening",
@@ -46,7 +44,7 @@ class MailTestMixin(OIDCTestCase):
 
 class MailGroupTests(MailTestMixin):
     def setUp(self):
-        self.url = reverse("mailinglists-list")
+        self.url = reverse("mailinglists_groups-list")
         super().setUp()
 
     def test_add_mail_group_adds_mail_entity_signal(self):
@@ -65,13 +63,14 @@ class MailGroupTests(MailTestMixin):
                 "description": "En haug i Trondheim",
             },
         )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         mailinglist = response.data
 
-        mail = MailEntity.objects.get(name=mailinglist.name)
+        mail = MailEntity.objects.get(name=mailinglist.get("name"))
 
-        self.assertEqual(mail.description, mailinglist.description)
-        self.assertEqual(mail.email, mailinglist.email)
-        self.assertEqual(mail.public, mailinglist.public)
+        self.assertEqual(mail.description, mailinglist.get("description"))
+        self.assertEqual(mail.email, mailinglist.get("email"))
+        self.assertEqual(mail.public, mailinglist.get("public"))
 
     def test_anon_get(self):
         response = self.client.get(self.url)
@@ -94,7 +93,7 @@ class MailGroupTests(MailTestMixin):
 
 class MailEntityTests(MailTestMixin):
     def setUp(self):
-        self.url = reverse("mailinglists-list")
+        self.url = reverse("mailinglists_entities-list")
         super().setUp()
 
     def test_anon_get(self):

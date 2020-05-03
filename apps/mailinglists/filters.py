@@ -3,7 +3,7 @@ import logging
 from django_filters import filters, filterset
 from watson import search as watson_search
 
-from .models import MailGroup, MailEntity
+from .models import MailEntity, MailGroup
 
 logger = logging.getLogger(__name__)
 

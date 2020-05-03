@@ -2,9 +2,9 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
-from .filters import MailGroupFilter, MailEntityFilter
-from .models import MailGroup, MailEntity
-from .serializers import MailGroupSerializer, MailEntitySerializer
+from .filters import MailEntityFilter, MailGroupFilter
+from .models import MailEntity, MailGroup
+from .serializers import MailEntitySerializer, MailGroupSerializer
 
 
 class MailGroupViewSet(viewsets.ModelViewSet):

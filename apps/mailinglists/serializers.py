@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import MailGroup, MailEntity
+from .models import MailEntity, MailGroup
 
 
 class MailGroupSerializer(serializers.ModelSerializer):
