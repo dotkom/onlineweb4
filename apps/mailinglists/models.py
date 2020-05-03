@@ -23,7 +23,6 @@ class MailEntity(models.Model):
         ),
         verbose_name=_("Beskrivelse"),
         blank=True,
-        null=True,
     )
     public = models.BooleanField(
         help_text=_("Hvorvidt e-posten skal være offentlig synlig"),
@@ -80,7 +79,6 @@ class MailGroup(models.Model):
         ),
         verbose_name=_("Beskrivelse"),
         blank=True,
-        null=True,
     )
     public = models.BooleanField(
         help_text=_("Hvorvidt e-postlisten skal være offentlig synlig"),
