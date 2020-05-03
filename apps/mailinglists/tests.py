@@ -1,10 +1,7 @@
-from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
-from django_dynamic_fixture import G
+from guardian.shortcuts import assign_perm
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from apps.authentication.models import OnlineUser
 from apps.mailinglists.models import MailEntity, MailGroup
 from apps.online_oidc_provider.test import OIDCTestCase
 
@@ -45,11 +42,7 @@ class MailGroupTests(MailTestMixin):
         super().setUp()
 
     def test_add_mail_group_adds_mail_entity_signal(self):
-        content_type = ContentType.objects.get_for_model(MailGroup)
-        permission = Permission.objects.get(
-            codename="add_mailgroup", content_type=content_type
-        )
-        self.user.user_permissions.add(permission)
+        assign_perm("add_mailgroup", self.user)
 
         response = self.client.post(
             self.url,
@@ -77,11 +70,7 @@ class MailGroupTests(MailTestMixin):
         self.assertEqual(len(response.data["results"]), 1)
 
     def test_authenticated_get(self):
-        content_type = ContentType.objects.get_for_model(MailGroup)
-        permission = Permission.objects.get(
-            codename="view_mailgroup", content_type=content_type
-        )
-        self.user.user_permissions.add(permission)
+        assign_perm("view_mailgroup", self.user)
 
         response = self.client.get(self.url, {**self.generate_headers()})
 
@@ -101,11 +90,7 @@ class MailEntityTests(MailTestMixin):
         self.assertEqual(len(response.data["results"]), 2)
 
     def test_authenticated_get(self):
-        content_type = ContentType.objects.get_for_model(MailEntity)
-        permission = Permission.objects.get(
-            codename="view_mailentity", content_type=content_type
-        )
-        self.user.user_permissions.add(permission)
+        assign_perm("view_mailentity", self.user)
 
         response = self.client.get(self.url, {**self.generate_headers()})
 
@@ -113,11 +98,7 @@ class MailEntityTests(MailTestMixin):
         self.assertEqual(len(response.data["results"]), 4)
 
     def test_get_associated_entities(self):
-        content_type = ContentType.objects.get_for_model(MailEntity)
-        permission = Permission.objects.get(
-            codename="view_mailentity", content_type=content_type
-        )
-        self.user.user_permissions.add(permission)
+        assign_perm("view_mailentity", self.user)
 
         response = self.client.get(
             f"{self.url}?groups={self.group.id}", {**self.generate_headers()}
