@@ -24,6 +24,7 @@ class Company(models.Model):
     phone_number = models.CharField(
         _("telefonnummer"), max_length=20, blank=True, null=True
     )
+    created_date = models.DateTimeField(_("Opprettet dato"), auto_now_add=True)
 
     def __str__(self):
         return self.name
