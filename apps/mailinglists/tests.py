@@ -38,9 +38,6 @@ class MailTestMixin(OIDCTestCase):
         )
         self.group.members.add(self.beta, self.gamma)
 
-        self.user = G(OnlineUser)
-        self.token = self.generate_access_token(self.user)
-
 
 class MailGroupTests(MailTestMixin):
     def setUp(self):
@@ -62,6 +59,7 @@ class MailGroupTests(MailTestMixin):
                 "domain": MailGroup.Domains.ONLINE_NTNU_NO,
                 "description": "En haug i Trondheim",
             },
+            {**self.generate_headers()},
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         mailinglist = response.data
