@@ -12,6 +12,7 @@ class MailinglistsConfig(AppConfig):
 
         from watson import search as watson
 
-        from apps.mailinglists.models import MailGroup
+        from apps.mailinglists.models import MailGroup, MailEntity
 
         watson.register(MailGroup)
+        watson.register(MailEntity)

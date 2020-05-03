@@ -1,11 +1,10 @@
-from django.db.models import Q
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
-from .filters import MailGroupFilter
-from .models import MailGroup
-from .serializers import MailGroupSerializer
+from .filters import MailGroupFilter, MailEntityFilter
+from .models import MailGroup, MailEntity
+from .serializers import MailGroupSerializer, MailEntitySerializer
 
 
 class MailGroupViewSet(viewsets.ModelViewSet):
@@ -21,6 +20,23 @@ class MailGroupViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         if not self.request.user.has_perm("mailinglists.view_mailgroup"):
+            queryset = queryset.filter(public=True)
+        return queryset
+
+
+class MailEnitytViewSet(viewsets.ModelViewSet):
+    """
+    The individual mails we use on our mailingslist.
+    """
+
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+    serializer_class = MailEntitySerializer
+    filterset_class = MailEntityFilter
+    queryset = MailEntity.objects.all()
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.has_perm("mailinglists.view_mailentity"):
             queryset = queryset.filter(public=True)
         return queryset
 

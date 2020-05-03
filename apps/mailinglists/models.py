@@ -87,8 +87,8 @@ class MailGroup(models.Model):
     )
     members = models.ManyToManyField(
         MailEntity,
-        verbose_name=_("Organisasjoner i denne gruppen"),
-        related_name="mailinglists",
+        verbose_name=_("Entiteter i denne gruppen"),
+        related_name="groups",
         blank=True,
     )
 

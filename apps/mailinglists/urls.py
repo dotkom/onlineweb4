@@ -7,4 +7,7 @@ urlpatterns = [url(r"^$", views.index, name="mailinglists_index")]
 
 
 router = SharedAPIRootRouter()
-router.register("mailinglists", views.MailGroupViewSet, basename="mailinglists")
+router.register("mailinglists/groups", views.MailGroupViewSet, basename="mailinglists")
+router.register(
+    "mailinglists/entities", views.MailEnitytViewSet, basename="mailinglists"
+)
