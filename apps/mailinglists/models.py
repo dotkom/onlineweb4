@@ -59,7 +59,7 @@ class MailGroup(models.Model):
         unique=True,
     )
     domain = models.CharField(
-        help_text=_("Domenet denne gruppen ligger under, f.eks. oline.ntnu.no"),
+        help_text=_("Domenet denne gruppen ligger under, f.eks. online.ntnu.no"),
         verbose_name=_("E-postdomenet"),
         choices=Domains.choices,
         default=Domains.ONLINE_NTNU_NO,

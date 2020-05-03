@@ -14,4 +14,4 @@ class MailinglistsConfig(AppConfig):
 
         from apps.mailinglists.models import MailGroup
 
-        watson.register(MailGroup, store=("public",))
+        watson.register(MailGroup)

@@ -20,4 +20,4 @@ class MailGroupFilter(filterset.FilterSet):
 
     class Meta:
         model = MailGroup
-        fields = ("domain",)
+        fields = ("domain", "public")
