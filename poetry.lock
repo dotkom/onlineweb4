@@ -1382,10 +1382,9 @@ python-versions = "*"
 version = "1.2.4"
 
 [package.source]
-reference = "21721b83944359919ad97009ac6c8a2f9c200e32"
+reference = "db65804cc9b9e8ee9f574f3d11ae89d2055bc258"
 type = "git"
 url = "https://github.com/dotkom/redwine.git"
-
 [[package]]
 category = "dev"
 description = "Alternative regular expression module, to replace re."
@@ -1815,7 +1814,7 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 prod = ["psycopg2-binary", "uwsgi", "redis"]
 
 [metadata]
-content-hash = "bdfff797eac3ed5f96ff1658ca8104e063859da83c4b6fac38b8e9005508b7dd"
+content-hash = "a481e102d4c4f3c29d1b3e48b8e2b2a8c65bb2dd1e7502b57cab6c6974e08b3a"
 python-versions = "~3.7"
 
 [metadata.files]
