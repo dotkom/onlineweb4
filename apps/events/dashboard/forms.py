@@ -12,6 +12,7 @@ from apps.dashboard.widgets import (
 )
 from apps.events.models import AttendanceEvent, CompanyEvent, Event, Reservation
 from apps.feedback.models import Feedback, FeedbackRelation
+from apps.gallery.constants import ImageFormat
 from apps.gallery.widgets import SingleImageInput
 from apps.payment.models import Payment, PaymentPrice
 
@@ -44,7 +45,9 @@ class CreateEventForm(forms.ModelForm, HTML5RequiredMixin):
             "visible",
         )
 
-        img_fields = [("image", {"id": "responsive-image-id"})]
+        img_fields = [
+            ("image", {"id": "responsive-image-id", "preset": ImageFormat.EVENT})
+        ]
         dtp_fields = [
             ("event_start", {"placeholder": "Arrangementsstart"}),
             ("event_end", {"placeholder": "Arrangementsslutt"}),

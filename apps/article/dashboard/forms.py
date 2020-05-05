@@ -4,6 +4,7 @@ from taggit.forms import TagWidget
 
 from apps.article.models import Article
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
+from apps.gallery.constants import ImageFormat
 from apps.gallery.widgets import SingleImageInput
 
 
@@ -28,7 +29,9 @@ class ArticleForm(forms.ModelForm):
         ]
 
         # Fields should be a mapping between field name and an attribute dictionary
-        img_fields = [("image", {"id": "responsive-image-id"})]
+        img_fields = [
+            ("image", {"id": "responsive-image-id", "preset": ImageFormat.ARTICLE})
+        ]
         dtp_fields = [("published_date", {})]
         widgetlist = [(DatetimePickerInput, dtp_fields), (SingleImageInput, img_fields)]
 
