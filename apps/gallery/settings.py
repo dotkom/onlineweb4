@@ -2,6 +2,8 @@
 
 import os
 
+from .constants import ImageFormat
+
 # Unhandled images
 UNHANDLED_IMAGES_PATH = os.path.join("images", "non-edited")
 UNHANDLED_THUMBNAIL_PATH = os.path.join(UNHANDLED_IMAGES_PATH, "thumbnails")
@@ -21,20 +23,22 @@ RESPONSIVE_IMAGES_XS_PATH = os.path.join(RESPONSIVE_IMAGES_PATH, "xs")
 THUMBNAIL_QUALITY = 70
 RESPONSIVE_IMAGE_QUALITY = 100
 
+
 # Presets and aspect ratios. Active presets are defined in the PRESETS list
 ARTICLE = {
-    "name": "article",
-    "description": "Artikkel",
+    "name": ImageFormat.ARTICLE.value,
+    "description": ImageFormat.ARTICLE.title(),
     "aspect_ratio": True,
-    "aspect_ratio_x": 19,
-    "aspect_ratio_y": 7,
+    "aspect_ratio_x": 16,
+    "aspect_ratio_y": 9,
     "min_width": 1280,
-    "min_height": 474,
-    "sizes": {"lg": (1280, 474), "md": (720, 405), "sm": (864, 486), "xs": (640, 360)},
+    "min_height": 720,
+    "sizes": {"lg": (1280, 720), "md": (864, 486), "sm": (720, 405), "xs": (640, 360)},
 }
+
 COMPANY = {
-    "name": "company",
-    "description": "Bedriftslogo",
+    "name": ImageFormat.COMPANY.value,
+    "description": ImageFormat.COMPANY.title(),
     "aspect_ratio": True,
     "aspect_ratio_x": 16,
     "aspect_ratio_y": 9,
@@ -42,19 +46,21 @@ COMPANY = {
     "min_height": 405,
     "sizes": {"lg": (720, 405), "md": (320, 180), "sm": (320, 180), "xs": (160, 90)},
 }
+
 EVENT = {
-    "name": "event",
-    "description": "Arrangement",
+    "name": ImageFormat.EVENT.value,
+    "description": ImageFormat.EVENT.title(),
     "aspect_ratio": True,
     "aspect_ratio_x": 16,
     "aspect_ratio_y": 9,
     "min_width": 1280,
     "min_height": 720,
-    "sizes": {"lg": (1280, 720), "md": (720, 405), "sm": (720, 405), "xs": (640, 360)},
+    "sizes": {"lg": (1280, 720), "md": (864, 486), "sm": (720, 405), "xs": (640, 360)},
 }
+
 OFFLINE = {
-    "name": "offline",
-    "description": "Offline",
+    "name": ImageFormat.OFFLINE.value,
+    "description": ImageFormat.OFFLINE.title(),
     "aspect_ratio": True,
     "aspect_ratio_x": 1,
     "aspect_ratio_y": 1.28,
@@ -67,9 +73,10 @@ OFFLINE = {
         "xs": (156, 200),
     },
 }
+
 PHOTOALBUM = {
-    "name": "photoalbum",
-    "description": "Fotoalbum",
+    "name": ImageFormat.PHOTOALBUM.value,
+    "description": ImageFormat.PHOTOALBUM.title(),
     "aspect_ratio": False,
     "aspect_ratio_x": 4,
     "aspect_ratio_y": 3,
@@ -82,9 +89,10 @@ PHOTOALBUM = {
         "xs": (300, 225),
     },
 }
+
 PRODUCT = {
-    "name": "product",
-    "description": "Produktbilde",
+    "name": ImageFormat.PRODUCT.value,
+    "description": ImageFormat.PRODUCT.title(),
     "aspect_ratio": True,
     "aspect_ratio_x": 5,
     "aspect_ratio_y": 6,
@@ -94,8 +102,8 @@ PRODUCT = {
 }
 
 RESOURCE = {
-    "name": "resource",
-    "description": "Ressurs",
+    "name": ImageFormat.RESOURCE.value,
+    "description": ImageFormat.RESOURCE.title(),
     "aspect_ratio": True,
     "aspect_ratio_x": 1,
     "aspect_ratio_y": 1,
@@ -104,16 +112,19 @@ RESOURCE = {
     "sizes": {"lg": (710, 710), "md": (710, 710), "sm": (540, 540), "xs": (360, 360)},
 }
 
-# Keyword lookup
-MODELS = {
-    "article": ARTICLE,
-    "event": EVENT,
-    "company": COMPANY,
-    "offline": OFFLINE,
-    "product": PRODUCT,
-    "resource": RESOURCE,
-    "photoalbum": PHOTOALBUM,
+GROUP = {
+    "name": ImageFormat.GROUP.value,
+    "description": ImageFormat.GROUP.title(),
+    "aspect_ratio": True,
+    "aspect_ratio_x": 1,
+    "aspect_ratio_y": 1,
+    "min_width": 710,
+    "min_height": 710,
+    "sizes": {"lg": (710, 710), "md": (710, 710), "sm": (540, 540), "xs": (360, 360)},
 }
 
 # Active presets
-PRESETS = [EVENT, ARTICLE, COMPANY, PRODUCT, RESOURCE, PHOTOALBUM]
+PRESETS = [EVENT, ARTICLE, COMPANY, PRODUCT, RESOURCE, PHOTOALBUM, OFFLINE, GROUP]
+
+# Keyword lookup
+MODELS = {config["name"]: config for config in PRESETS}

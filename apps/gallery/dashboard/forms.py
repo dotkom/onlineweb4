@@ -11,7 +11,7 @@ from apps.gallery.models import ResponsiveImage
 class ResponsiveImageForm(forms.ModelForm):
     class Meta:
         model = ResponsiveImage
-        fields = ["name", "description", "photographer", "tags"]
+        fields = ["name", "description", "photographer", "tags", "preset"]
         widgets = {
             "tags": TagWidget(
                 attrs={"placeholder": "Eksempel: kontoret, kjelleren, åre"}

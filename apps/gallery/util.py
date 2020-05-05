@@ -647,6 +647,7 @@ class ResponsiveImageHandler(BaseImageHandler):
             name=self._config["name"],
             description=self._config["description"],
             photographer=self._config["photographer"],
+            preset=self._config["preset"],
             image_original=original_media,
             image_lg=lg_media,
             image_md=md_media,

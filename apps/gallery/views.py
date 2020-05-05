@@ -283,7 +283,7 @@ class ResponsiveImageViewSet(
     queryset = ResponsiveImage.objects.filter().order_by("-timestamp")
     serializer_class = ResponsiveImageSerializer
     permission_classes = (AllowAny,)
-    filterset_fields = ("id", "name", "timestamp")
+    filterset_fields = ("id", "name", "timestamp", "preset")
 
     def get_queryset(self):
         queryset = self.queryset
