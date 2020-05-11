@@ -1491,6 +1491,14 @@ version = "0.14.4"
 certifi = "*"
 urllib3 = ">=1.10.0"
 
+[package.dependencies.celery]
+optional = true
+version = ">=3"
+
+[package.dependencies.django]
+optional = true
+version = ">=1.8"
+
 [package.extras]
 aiohttp = ["aiohttp (>=3.5)"]
 beam = ["beam (>=2.12)"]
@@ -1861,7 +1869,7 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 prod = ["psycopg2-binary", "uwsgi"]
 
 [metadata]
-content-hash = "eb4d8f5a561317766f39383da48a90d35d6753e58f17c4a9b7a7b671f7b2d69b"
+content-hash = "bfdda757b1a0cbd06fae43349c37101438739ace82e643bac9f3ca832eb1fd8f"
 lock-version = "1.0"
 python-versions = "~3.7"
 
