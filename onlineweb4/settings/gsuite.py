@@ -4,16 +4,19 @@ from decouple import config
 
 from .base import PROJECT_ROOT_DIRECTORY
 
-OW4_GSUITE_CREDENTIALS_FILENAME = config(
-    "OW4_GSUITE_CREDENTIALS_FILENAME", default="gsuitecredentials.json"
-)
-OW4_GSUITE_CREDENTIALS_PATH = config(
-    "OW4_GSUITE_CREDENTIALS_PATH",
-    default=os.path.join(PROJECT_ROOT_DIRECTORY, OW4_GSUITE_CREDENTIALS_FILENAME),
-)
-
 OW4_GSUITE_SETTINGS = {
-    "CREDENTIALS": OW4_GSUITE_CREDENTIALS_PATH,
+    "CREDENTIALS": {
+        "type": config("OW4_GSUITE_ACCOUNT_TYPE", default="service_account"),
+        "project_id": config("OW4_GSUITE_PROJECT_ID", default=""),
+        "private_key_id": config("OW4_GSUITE_PRIVATE_KEY_ID", default=""),
+        "private_key": config("OW4_GSUITE_PRIVATE_KEY", default=""),
+        "client_email": config("OW4_GSUITE_CLIENT_EMAIL", default=""),
+        "client_id": config("OW4_GSUITE_CLIENT_ID", default=""),
+        "auth_uri": config("OW4_GSUITE_AUTH_URI", default=""),
+        "token_uri": config("OW4_GSUITE_TOKEN_URI", default=""),
+        "auth_provider_x509_cert_url": config("OW4_GSUITE_PROVIDER_CERT_URL", default=""),
+        "client_x509_cert_url": config("OW4_GSUITE_CLIENT_CERT_URL", default=""),
+    },
     "DOMAIN": config("OW4_GSUITE_SYNC_DOMAIN", default="online.ntnu.no"),
     # DELEGATED_ACCOUNT: G Suite Account with proper permissions to perform insertions and removals.
     "DELEGATED_ACCOUNT": config("OW4_GSUITE_DELEGATED_ACCOUNT", default=""),

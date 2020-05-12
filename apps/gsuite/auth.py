@@ -17,16 +17,8 @@ def generate_g_suite_credentials(scopes=list()):
     :rtype: ServiceAccountCredentials
     """
     
-    try:
-        account = ServiceAccount.objects.all()[:1]
-        info = serializers.serialize("json", account)
-        info = json.loads(info)
-        info = info[0]["fields"]
-    except:
-        info = ""
-
     credentials = service_account.Credentials.from_service_account_info(
-        info, scopes=scopes
+        settings.OW4_GSUITE_SYNC.get("CREDENTIALS"), scopes=scopes
     )
     credentials = credentials.with_subject(
         settings.OW4_GSUITE_SETTINGS.get("DELEGATED_ACCOUNT")
