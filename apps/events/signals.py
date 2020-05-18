@@ -15,7 +15,9 @@ def create_event_updated_notification(sender, instance: Event, created=False, **
 
 
 @receiver(post_save, sender=AttendanceEvent)
-def create_attendance_event_updated_notification(sender, instance: AttendanceEvent, created=False, **kwargs):
+def create_attendance_event_updated_notification(
+    sender, instance: AttendanceEvent, created=False, **kwargs
+):
     """
     Send notifications to users updates to attendance events
     """

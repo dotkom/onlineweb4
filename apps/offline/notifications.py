@@ -14,14 +14,13 @@ class OfflineCreatedNotification(AbstractNotificationHandler):
         super().__init__(*args, **kwargs)
 
     def get_tag(self, user) -> str:
-        return f'{self.get_type()}-{self.issue.id}'
+        return f"{self.get_type()}-{self.issue.id}"
 
     def get_title(self, user) -> str:
-        return f'En ny versjon a Offline har blitt lastet opp'
+        return f"En ny versjon a Offline har blitt lastet opp"
 
     def get_body(self, user) -> str:
-        return (f'{self.issue.title}\n'
-                f'{self.issue.description}')
+        return f"{self.issue.title}\n" f"{self.issue.description}"
 
     def get_url(self, user) -> str:
         return self.issue.issue.url

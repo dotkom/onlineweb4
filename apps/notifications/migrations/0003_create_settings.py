@@ -6,11 +6,16 @@ from apps.notifications.types import NotificationType
 
 
 def add_user_notification_settings(apps, schema_editor):
-    User = apps.get_model('authentication', 'OnlineUser')
-    NotificationSetting = apps.get_model('notifications', 'NotificationSetting')
+    User = apps.get_model("authentication", "OnlineUser")
+    NotificationSetting = apps.get_model("notifications", "NotificationSetting")
 
     for user in User.objects.all():
-        current_types = set([setting.message_type for setting in NotificationSetting.objects.filter(user=user)])
+        current_types = set(
+            [
+                setting.message_type
+                for setting in NotificationSetting.objects.filter(user=user)
+            ]
+        )
         missing_types = set(NotificationType.ALL_TYPES) - current_types
 
         for message_type in missing_types:
@@ -18,7 +23,7 @@ def add_user_notification_settings(apps, schema_editor):
 
 
 def undo_add_user_notification_settings(apps, schema_editor):
-    NotificationSetting = apps.get_model('notifications', 'NotificationSetting')
+    NotificationSetting = apps.get_model("notifications", "NotificationSetting")
     user_settings = NotificationSetting.objects.all()
     for settings in user_settings:
         settings.delete()
@@ -27,9 +32,11 @@ def undo_add_user_notification_settings(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('notifications', '0002_auto_20190512_2004'),
+        ("notifications", "0002_auto_20190512_2004"),
     ]
 
     operations = [
-        migrations.RunPython(add_user_notification_settings, undo_add_user_notification_settings),
+        migrations.RunPython(
+            add_user_notification_settings, undo_add_user_notification_settings
+        ),
     ]

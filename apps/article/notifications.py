@@ -15,10 +15,10 @@ class ArticleCreatedNotification(AbstractNotificationHandler):
         super().__init__(*args, **kwargs)
 
     def get_tag(self, user) -> str:
-        return f'{self.get_type()}-{self.article.id}'
+        return f"{self.get_type()}-{self.article.id}"
 
     def get_title(self, user) -> str:
-        return f'Ny artikkel på fra Online, {self.article.heading}'
+        return f"Ny artikkel på fra Online, {self.article.heading}"
 
     def get_body(self, user) -> str:
         return self.article.ingress_short

@@ -1,15 +1,23 @@
 from rest_framework import mixins, permissions, viewsets
 
-from apps.notifications.models import Notification, NotificationSetting, NotificationSubscription
-from apps.notifications.serializers import (NotificationReadOnlySerializer,
-                                            NotificationSettingSerializer,
-                                            NotificationSubscriptionSerializer)
+from apps.notifications.models import (
+    Notification,
+    NotificationSetting,
+    NotificationSubscription,
+)
+from apps.notifications.serializers import (
+    NotificationReadOnlySerializer,
+    NotificationSettingSerializer,
+    NotificationSubscriptionSerializer,
+)
 
 
-class NotificationSettingsViewSet(viewsets.GenericViewSet,
-                                  mixins.UpdateModelMixin,
-                                  mixins.ListModelMixin,
-                                  mixins.RetrieveModelMixin):
+class NotificationSettingsViewSet(
+    viewsets.GenericViewSet,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+):
 
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = NotificationSettingSerializer

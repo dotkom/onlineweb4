@@ -32,7 +32,7 @@ class AbstractNotificationHandler:
         The main title of the notification
         """
         if self.title is None:
-            raise NotImplementedError('NotificationHandler has to implement get_title')
+            raise NotImplementedError("NotificationHandler has to implement get_title")
         return self.title
 
     def get_body(self, user: User) -> str:
@@ -80,30 +80,31 @@ class AbstractNotificationHandler:
 
     def create_notification(self):
         settings = NotificationSetting.objects.filter(
-            message_type=self.get_type(),
-            user__in=self.get_recipients(),
+            message_type=self.get_type(), user__in=self.get_recipients(),
         )
         users = [setting.user for setting in settings if setting.push or setting.mail]
 
         for user in users:
             data = {
-                'title': self.get_title(user),
-                'body': self.get_body(user),
-                'image': self.get_image(user),
-                'tag': self.get_tag(user),
-                'url': self.get_url(user),
-                'icon': self.get_icon(user),
-                'message_type': self.get_type(),
-                'user': user.id,
+                "title": self.get_title(user),
+                "body": self.get_body(user),
+                "image": self.get_image(user),
+                "tag": self.get_tag(user),
+                "url": self.get_url(user),
+                "icon": self.get_icon(user),
+                "message_type": self.get_type(),
+                "user": user.id,
             }
-            non_null_data = {key: value for key, value in data.items() if value is not None}
+            non_null_data = {
+                key: value for key, value in data.items() if value is not None
+            }
 
             notification_serializer = NotificationCreateSerializer(data=non_null_data)
 
             try:
                 notification_serializer.is_valid(raise_exception=True)
             except serializers.ValidationError as error:
-                logger.error(f'Failed at creating notification for user: {user}', error)
+                logger.error(f"Failed at creating notification for user: {user}", error)
 
             notification = notification_serializer.save()
             self.notifications.append(notification)
@@ -117,7 +118,6 @@ class AbstractNotificationHandler:
 
 
 class NotificationCreateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Notification
-        fields = '__all__'
+        fields = "__all__"

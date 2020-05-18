@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 VAPID_PRIVATE_KEY = settings.OW4_VAPID_PRIVATE_KEY_PATH
 
 VAPID_CLAIMS = {
-    'sub': 'mailto:dotkom@online.ntnu.no',
+    "sub": "mailto:dotkom@online.ntnu.no",
 }
 
 
@@ -26,11 +26,8 @@ def send_webpush(self, subscription_id, notification_id, target=None, **kwargs):
 
     """ Convert subscription info to VAPID format """
     subscription_info = {
-        'endpoint': subscription.endpoint,
-        'keys': {
-            'auth': subscription.auth,
-            'p256dh': subscription.p256dh,
-        }
+        "endpoint": subscription.endpoint,
+        "keys": {"auth": subscription.auth, "p256dh": subscription.p256dh},
     }
 
     data = json.dumps(notification.data)

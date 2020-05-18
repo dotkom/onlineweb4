@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('notifications', '0007_auto_20190714_1005'),
+        ("notifications", "0007_auto_20190714_1005"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='notification',
-            name='icon',
-            field=models.CharField(blank=True, default='https://beta.online.ntnu.no/static/pwa-icon-v0-192.png', max_length=1024),
+            model_name="notification",
+            name="icon",
+            field=models.CharField(
+                blank=True,
+                default="https://beta.online.ntnu.no/static/pwa-icon-v0-192.png",
+                max_length=1024,
+            ),
         ),
     ]

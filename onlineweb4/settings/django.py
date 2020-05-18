@@ -61,8 +61,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 DATETIME_FORMAT = "N j, Y, H:i"
-SECRET_KEY = config("OW4_DJANGO_SECRET_KEY",
-                    default="override-this-in-local.py")
+SECRET_KEY = config("OW4_DJANGO_SECRET_KEY", default="override-this-in-local.py")
 
 # Session cookie expires after one year
 SESSION_COOKIE_AGE = 31540000
@@ -100,8 +99,7 @@ STATICFILES_FINDERS = (
 )
 
 # Prefix for default profile picture
-DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(
-    STATIC_URL, "img", "profile_default")
+DEFAULT_PROFILE_PICTURE_PREFIX = os.path.join(STATIC_URL, "img", "profile_default")
 
 
 TEMPLATES = [

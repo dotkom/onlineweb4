@@ -14,14 +14,16 @@ class EventUpdateNotification(AbstractNotificationHandler):
         super().__init__(*args, **kwargs)
 
     def get_tag(self, user) -> str:
-        return f'{self.get_type()}-{self.event.id}'
+        return f"{self.get_type()}-{self.event.id}"
 
     def get_title(self, user) -> str:
-        return f'Arrangementet {self.event.title} har blitt oppdatert'
+        return f"Arrangementet {self.event.title} har blitt oppdatert"
 
     def get_body(self, user) -> str:
-        return (f'Det har skjedd endringer i arrangementet,\n'
-                f'vennligst sjekk endringene og pass på at du fortsatt kan møte')
+        return (
+            f"Det har skjedd endringer i arrangementet,\n"
+            f"vennligst sjekk endringene og pass på at du fortsatt kan møte"
+        )
 
     def get_url(self, user) -> str:
         return self.event.get_absolute_url()
@@ -38,5 +40,8 @@ class EventUpdateNotification(AbstractNotificationHandler):
 
     def get_recipients(self):
         if self.event.is_attendance_event():
-            return [attendee.user for attendee in self.event.attendance_event.attendees.all()]
+            return [
+                attendee.user
+                for attendee in self.event.attendance_event.attendees.all()
+            ]
         super().get_recipients()

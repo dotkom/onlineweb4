@@ -18,22 +18,21 @@ class NotificationTestMixin:
         "M5xqEwuPM7VuQcyiLDhvovthPIXx+gsQRQ=="
     )
 
-    def _gen_subscription_info(self,
-                               recv_key=None,
-                               endpoint="https://example.com/"):
+    def _gen_subscription_info(self, recv_key=None, endpoint="https://example.com/"):
         if not recv_key:
             recv_key = ec.generate_private_key(ec.SECP256R1, default_backend())
         return {
             "endpoint": endpoint,
             "keys": {
-                'auth': base64.urlsafe_b64encode(os.urandom(16)).strip(b'='),
-                'p256dh': self._get_pubkey_str(recv_key),
-            }
+                "auth": base64.urlsafe_b64encode(os.urandom(16)).strip(b"="),
+                "p256dh": self._get_pubkey_str(recv_key),
+            },
         }
 
     def _get_pubkey_str(self, priv_key):
         return base64.urlsafe_b64encode(
             priv_key.public_key().public_bytes(
                 encoding=serialization.Encoding.X962,
-                format=serialization.PublicFormat.UncompressedPoint
-            )).strip(b'=')
+                format=serialization.PublicFormat.UncompressedPoint,
+            )
+        ).strip(b"=")

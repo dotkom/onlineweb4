@@ -148,8 +148,7 @@ if "apps.gallery" in settings.INSTALLED_APPS:
         url(r"^gallery/", include("apps.gallery.urls", namespace="gallery")),
         url(
             r"^dashboard/gallery/",
-            include("apps.gallery.dashboard.urls",
-                    namespace="gallery_dashboard"),
+            include("apps.gallery.dashboard.urls", namespace="gallery_dashboard"),
         ),
     ]
 
@@ -165,9 +164,9 @@ if "apps.marks" in settings.INSTALLED_APPS:
         url(r"^dashboard/marks/", include("apps.marks.dashboard.urls")),
     ]
 
-if 'apps.notifications' in settings.INSTALLED_APPS:
+if "apps.notifications" in settings.INSTALLED_APPS:
     urlpatterns += [
-        url(r'^notifications/', include('apps.notifications.urls')),
+        url(r"^notifications/", include("apps.notifications.urls")),
     ]
 
 if "apps.online_oidc_provider" in settings.INSTALLED_APPS:
@@ -185,8 +184,7 @@ if "apps.offline" in settings.INSTALLED_APPS:
     urlpatterns += [url(r"^offline/", include("apps.offline.urls"))]
 
 if "apps.posters" in settings.INSTALLED_APPS:
-    urlpatterns += [url(r"^dashboard/posters/",
-                        include("apps.posters.dashboard.urls"))]
+    urlpatterns += [url(r"^dashboard/posters/", include("apps.posters.dashboard.urls"))]
 
 if "apps.profiles" in settings.INSTALLED_APPS:
     urlpatterns += [url(r"^profile/", include("apps.profiles.urls"))]
@@ -196,14 +194,13 @@ if "apps.photoalbum" in settings.INSTALLED_APPS:
         url(r"^photoalbum/", include("apps.photoalbum.urls")),
         url(
             r"^dashboard/photoalbum/",
-            include("apps.photoalbum.dashboard.urls",
-                    namespace="dashboard-photoalbum"),
+            include("apps.photoalbum.dashboard.urls", namespace="dashboard-photoalbum"),
         ),
     ]
 
 if (
-    "apps.resourcecenter" in settings.INSTALLED_APPS and
-    "apps.mailinglists" in settings.INSTALLED_APPS
+    "apps.resourcecenter" in settings.INSTALLED_APPS
+    and "apps.mailinglists" in settings.INSTALLED_APPS
 ):
     urlpatterns += [
         url(
@@ -238,8 +235,7 @@ if "apps.webshop" in settings.INSTALLED_APPS:
         url(r"^webshop/", include("apps.webshop.urls")),
         url(
             r"^dashboard/webshop/",
-            include("apps.webshop.dashboard.urls",
-                    namespace="dashboard-webshop"),
+            include("apps.webshop.dashboard.urls", namespace="dashboard-webshop"),
         ),
     ]
 

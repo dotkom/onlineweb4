@@ -5,17 +5,17 @@ urlpatterns = []
 
 router = SharedAPIRootRouter()
 router.register(
-    prefix='notifications/settings',
+    prefix="notifications/settings",
     viewset=views.NotificationSettingsViewSet,
-    basename='notifications_settings',
+    basename="notifications_settings",
 )
 router.register(
-    prefix='notifications/subscriptions',
+    prefix="notifications/subscriptions",
     viewset=views.NotificationSubscriptionViewSet,
-    basename='notifications_subscriptions',
+    basename="notifications_subscriptions",
 )
 router.register(
-    prefix='notifications/messages',
+    prefix="notifications/messages",
     viewset=views.NotificationViewSet,
-    basename='notifications_messages'
+    basename="notifications_messages",
 )
