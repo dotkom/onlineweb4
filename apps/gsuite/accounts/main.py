@@ -2,7 +2,6 @@ import logging
 import uuid
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from googleapiclient.errors import HttpError
 
@@ -10,6 +9,8 @@ from apps.authentication.utils import create_online_mail_alias
 from apps.gsuite.auth import build_and_authenticate_g_suite_service
 from apps.gsuite.mail_syncer.main import update_g_suite_user
 from apps.gsuite.mail_syncer.utils import get_user_key
+from apps.notifications.constants import PermissionType
+from apps.notifications.utils import send_message_to_users
 
 logger = logging.getLogger(__name__)
 
@@ -140,9 +141,11 @@ def notify_g_suite_user_account(user, password):
         "authentication/email/gsuite_account_notification.txt",
         {"user": user, "password": password},
     )
-    send_mail(
-        "Informasjon om G Suite konto fra Online",
-        message,
-        settings.EMAIL_DOTKOM,
-        [user.primary_email],
+
+    send_message_to_users(
+        title="Informasjon om G Suite konto fra Online",
+        content=message,
+        recipients=[user],
+        from_email=settings.EMAIL_DOTKOM,
+        permission_type=PermissionType.DEFAULT,
     )

@@ -7,7 +7,6 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -16,6 +15,8 @@ from django.utils.translation import gettext as _
 from apps.authentication.models import OnlineGroup
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
+from apps.notifications.constants import PermissionType
+from apps.notifications.utils import send_message_to_users
 from apps.payment import status
 from apps.webshop.models import OrderLine
 
@@ -371,8 +372,8 @@ class PaymentRelation(StripeMixin, models.Model):
     def get_from_mail(self):
         return self.payment.responsible_mail()
 
-    def get_to_mail(self):
-        return self.user.email
+    def get_paying_user(self):
+        return self.user
 
     def refund(self):
         self.status = status.REFUNDED
@@ -497,8 +498,8 @@ class PaymentTransaction(StripeMixin, models.Model):
     def get_from_mail(self):
         return settings.EMAIL_TRIKOM
 
-    def get_to_mail(self):
-        return self.user.primary_email
+    def get_paying_user(self):
+        return self.user
 
     def __str__(self):
         return f"{self.user} - {self.amount} ({self.datetime})"
@@ -523,12 +524,13 @@ class PaymentReceipt(models.Model):
 
     def save(self, *args, **kwargs):
         transaction = self.content_object
+        paying_user = transaction.get_paying_user()
         self.timestamp = transaction.get_timestamp()
         self.subject = transaction.get_subject()
         self.description = transaction.get_description()
         self.items = transaction.get_items()
         self.from_mail = transaction.get_from_mail()
-        self.to_mail = [transaction.get_to_mail()]
+        self.to_mail = [paying_user.primary_email]
 
         self._send_receipt(
             self.timestamp,
@@ -538,6 +540,7 @@ class PaymentReceipt(models.Model):
             self.items,
             self.to_mail,
             self.from_mail,
+            paying_user,
         )
         super().save(*args, **kwargs)
 
@@ -546,7 +549,15 @@ class PaymentReceipt(models.Model):
         return ContentType.objects.get_for_model(model_type) == self.content_type
 
     def _send_receipt(
-        self, payment_date, subject, description, payment_id, items, to_mail, from_mail
+        self,
+        payment_date,
+        subject,
+        description,
+        payment_id,
+        items,
+        to_mail,
+        from_mail,
+        paying_user: User,
     ):
         """Send confirmation email with receipt
         param receipt: object
@@ -575,8 +586,14 @@ class PaymentReceipt(models.Model):
             "from_mail": from_mail,
         }
 
-        email_message = render_to_string("payment/email/confirmation_mail.txt", context)
-        send_mail(subject, email_message, from_mail, to_mail)
+        message = render_to_string("payment/email/confirmation_mail.txt", context)
+        send_message_to_users(
+            title=subject,
+            content=message,
+            recipients=[paying_user],
+            from_email=from_mail,
+            permission_type=PermissionType.RECEIPT,
+        )
 
     class Meta:
         default_permissions = ("add", "change", "delete")
