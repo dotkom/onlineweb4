@@ -2,62 +2,66 @@ from rest_framework import serializers
 
 from apps.notifications.models import (
     Notification,
-    NotificationSetting,
-    NotificationSubscription,
+    Permission,
+    Subscription,
+    UserPermission,
 )
 
 
-class NotificationSubscriptionSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault(),)
-
+class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = NotificationSubscription
+        model = Subscription
         fields = ("id", "endpoint", "auth", "p256dh", "user")
+        read_only_fields = ("user",)
 
 
-class NotificationSettingSerializer(serializers.ModelSerializer):
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault(),)
-    verbose_type = serializers.SerializerMethodField()
-
-    def get_verbose_type(self, setting: NotificationSetting):
-        return setting.get_message_type_display()
-
-    class Meta:
-        model = NotificationSetting
-        fields = (
-            "id",
-            "message_type",
-            "mail",
-            "push",
-            "user",
-            "verbose_type",
-        )
-        read_only_fields = ("message_type", "user", "id")
-
-
-class NotificationReadOnlySerializer(serializers.ModelSerializer):
-    verbose_type = serializers.SerializerMethodField()
-
-    def get_verbose_type(self, setting: NotificationSetting):
-        return setting.get_message_type_display()
-
+class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = (
             "id",
-            "message_type",
-            "sent",
+            "created_date",
+            "sent_email",
+            "sent_push",
             "title",
             "body",
+            "url",
             "tag",
-            "badge",
-            "image",
             "icon",
             "require_interaction",
             "renotify",
             "silent",
-            "timestamp",
-            "url",
-            "verbose_type",
         )
-        read_only = True
+
+
+class PermissionSerializer(serializers.ModelSerializer):
+    permission_type_display = serializers.CharField(
+        source="get_permission_type_display"
+    )
+
+    class Meta:
+        model = Permission
+        fields = (
+            "id",
+            "permission_type",
+            "permission_type_display",
+            "allow_email",
+            "allow_push",
+            "force_email",
+            "force_push",
+            "default_value_email",
+            "default_value_push",
+        )
+
+
+class UserPermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPermission
+        fields = (
+            "id",
+            "permission",
+            "user",
+            "allow_email",
+            "allow_push",
+        )
+        read_only_fields = ("user", "created_date")

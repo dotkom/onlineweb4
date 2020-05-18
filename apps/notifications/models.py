@@ -1,18 +1,70 @@
 import logging
 
+from django.conf import settings
 from django.db import models
-from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import ResponsiveImage
 
-from .tasks import send_webpush
-from .types import NotificationType
+from .constants import DEFAULT_NOTIFICATION_ICON_URL, PermissionType
 
 logger = logging.getLogger(__name__)
 
 
-class NotificationSubscription(models.Model):
+class Notification(models.Model):
+    """
+    Standard notification message which is sent to a single user on creation
+    """
+
+    recipient = models.ForeignKey(
+        to=User,
+        verbose_name="Mottaker",
+        related_name="notifications",
+        on_delete=models.CASCADE,
+    )
+    created_date = models.DateTimeField(auto_now_add=True)
+    sent_email = models.BooleanField(default=False)
+    sent_push = models.BooleanField(default=False)
+    permission = models.ForeignKey(
+        to="Permission", related_name="notifications", on_delete=models.DO_NOTHING
+    )
+    from_mail = models.EmailField(default=settings.DEFAULT_FROM_EMAIL)
+
+    """ Icon can be overridden, but should probably not be in most cases """
+    icon = models.URLField(
+        max_length=1024, default=DEFAULT_NOTIFICATION_ICON_URL, blank=True,
+    )
+    image = models.ForeignKey(
+        to=ResponsiveImage,
+        related_name="notifications",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    title = models.CharField(max_length=60)
+    body = models.CharField(max_length=512)
+    tag = models.CharField(max_length=50, null=True, blank=True)
+    url = models.CharField(max_length=1024, default="/", blank=True)
+
+    require_interaction = models.BooleanField(default=False)
+    renotify = models.BooleanField(default=False)
+    silent = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.title} - {self.recipient}"
+
+    class Meta:
+        verbose_name = "Varsel"
+        verbose_name_plural = "Varsler"
+        ordering = (
+            "created_date",
+            "recipient",
+            "title",
+        )
+
+
+class Subscription(models.Model):
     """
     Model describing a webpush notification subscription.
     """
@@ -26,197 +78,71 @@ class NotificationSubscription(models.Model):
     auth = models.CharField(unique=True, max_length=500)
     p256dh = models.CharField(unique=True, max_length=500)
 
+    def to_vapid_format(self):
+        subscription_info = {
+            "endpoint": self.endpoint,
+            "keys": {"auth": self.auth, "p256dh": self.p256dh},
+        }
+        return subscription_info
+
     def __str__(self):
         return f"{self.user} - {self.endpoint}"
 
     class Meta:
-        verbose_name = "Pushvarslingsabbonement"
-        verbose_name_plural = "Pushvarslingsabbonement"
+        verbose_name = "Varselsabbonement"
+        verbose_name_plural = "Varselsabbonementer"
         ordering = (
             "user",
             "endpoint",
         )
         unique_together = (("user", "endpoint"),)
-        permissions = (
-            ("view_notificationsubscription", "View Notification Subscription"),
-        )
-        default_permissions = ("add", "change", "delete")
 
 
-class NotificationSetting(models.Model):
-    user = models.ForeignKey(
-        to=User, related_name="notification_settings", on_delete=models.CASCADE
+class Permission(models.Model):
+    permission_type = models.CharField(
+        "Type", max_length=128, choices=PermissionType.choices, unique=True
     )
-    message_type = models.CharField(
-        max_length=100, choices=NotificationType.ALL_CHOICES
+    users = models.ManyToManyField(
+        to=User, through="UserPermission", related_name="notification_permissions"
     )
+    # Override user permission for specific sending methods.
+    force_email = models.BooleanField("Tving e-post", default=False)
+    force_push = models.BooleanField("Tving pushvarsel", default=False)
 
-    """ Different notification dispatchers """
-    mail = models.BooleanField(default=False)
-    push = models.BooleanField(default=False)
+    # Allow or disallow specific sending methods for this permission type.
+    allow_email = models.BooleanField("Tillat e-post", default=True)
+    allow_push = models.BooleanField("Tillat pushvarsel", default=True)
 
-    @classmethod
-    def get_for_user_by_type(
-        cls, user: User, message_type: str
-    ) -> "NotificationSetting":
-
-        if message_type not in NotificationType.ALL_TYPES:
-            raise ValueError("Notification type does not exist")
-
-        """ Make sure the notification setting exists for the user before getting it """
-        cls.create_all_for_user(user)
-
-        try:
-            return cls.objects.get(user=user, message_type=message_type)
-        except cls.DoesNotExist:
-            logger.error(
-                f"Notification setting: {message_type} does not exist for user: {user}"
-            )
-
-    @classmethod
-    def create_all_for_user(cls, user: User):
-        """
-        Create all missing notification types as settings for the user is they are missing.
-        """
-        current_types = set(
-            [setting.message_type for setting in cls.objects.filter(user=user)]
-        )
-        missing_types = set(NotificationType.ALL_TYPES) - current_types
-
-        for message_type in missing_types:
-            NotificationSetting.objects.create(user=user, message_type=message_type)
+    # Default values permissions types
+    default_value_email = models.BooleanField("Standardverdi for e-post", default=False)
+    default_value_push = models.BooleanField(
+        "Standardverdi fro pushvarsel", default=False
+    )
 
     def __str__(self):
-        return f"{self.user} - {self.get_message_type_display()}"
+        return self.permission_type
 
     class Meta:
-        verbose_name = "Varselinnstilling"
-        verbose_name_plural = "Varselinnstillinger"
-        ordering = (
-            "user",
-            "message_type",
-        )
-        unique_together = (("user", "message_type"),)
-        permissions = (("view_notificationsetting", "View Notification Setting"),)
-        default_permissions = ("add", "change", "delete")
+        verbose_name = "Varseltillatelse"
+        verbose_name_plural = "Varseltillatelser"
+        ordering = ("permission_type",)
 
 
-def get_current_timestamp():
-    return timezone.now().timestamp()
-
-
-class Notification(models.Model):
-    """
-    Standard notification message which is sent to a single user on creation
-    """
-
-    """ Small badge used as the app-icon """
-    badge = "https://beta.online.ntnu.no/static/owf-badge-128.png"
-    """ The vibration rythm, could be replaced with a more custom Online version """
-    vibrate = [
-        500,
-        110,
-        500,
-        110,
-        450,
-        110,
-        200,
-        110,
-        170,
-        40,
-        450,
-        110,
-        200,
-        110,
-        170,
-        40,
-        500,
-    ]
-    """ Tune played when the notification is triggered """
-    sound = ""
-
+class UserPermission(models.Model):
+    permission = models.ForeignKey(
+        to=Permission, related_name="user_permission", on_delete=models.CASCADE
+    )
     user = models.ForeignKey(
-        to=User,
-        related_name="notifications",
-        on_delete=models.CASCADE,
-        null=False,
-        blank=False,
+        to=User, related_name="user_notification_permissions", on_delete=models.CASCADE
     )
-    message_type = models.CharField(
-        max_length=100, choices=NotificationType.ALL_CHOICES
-    )
-    sent = models.BooleanField(default=False)
-
-    image = models.ForeignKey(
-        to=ResponsiveImage,
-        related_name="notifications",
-        blank=True,
-        null=True,
-        on_delete=models.SET_NULL,
-    )
-    icon = models.CharField(
-        max_length=1024,
-        default="https://beta.online.ntnu.no/static/pwa-icon-v0-192.png",
-        blank=True,
-    )
-    title = models.CharField(max_length=60, null=False, blank=False)
-    body = models.CharField(max_length=512, null=False, blank=False)
-    tag = models.CharField(max_length=50, null=True, blank=True)
-
-    require_interaction = models.BooleanField(default=False,)
-    renotify = models.BooleanField(default=False,)
-    silent = models.BooleanField(default=False,)
-    timestamp = models.IntegerField(default=get_current_timestamp)
-    url = models.CharField(max_length=1024, default="/", blank=True)
-
-    @property
-    def data(self):
-        image_url = None
-        if isinstance(self.image, ResponsiveImage):
-            image_url = self.image.md
-        return {
-            "badge": self.badge,
-            "vibrate": self.vibrate,
-            "sound": self.sound,
-            "image": image_url,
-            "icon": self.icon,
-            "title": self.title,
-            "body": self.body,
-            "tag": self.tag,
-            "require_interaction": self.require_interaction,
-            "renotify": self.renotify,
-            "silent": self.silent,
-            "timestamp": self.timestamp,
-            "url": self.url,
-        }
-
-    def dispatch(self):
-        """
-        Dispatch the notification to all subscribed units the user has.
-        """
-        """ Notifications should not be dispatched again if they have already been dispatched """
-        if self.sent:
-            return
-
-        """ Message should not be sent if the user has disabled this type of notification """
-        setting = NotificationSetting.get_for_user_by_type(self.user, self.message_type)
-        if not setting.push:
-            return
-
-        subscriptions = NotificationSubscription.objects.filter(user=self.user)
-        for subscription in subscriptions:
-            send_webpush.delay(subscription_id=subscription.id, notification_id=self.id)
+    allow_email = models.BooleanField(default=False)
+    allow_push = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.title} - {self.user}"
+        return f"{self.permission} - {self.user}"
 
     class Meta:
-        verbose_name = "Varsel"
-        verbose_name_plural = "Varsler"
-        ordering = (
-            "timestamp",
-            "user",
-            "title",
-        )
-        permissions = (("view_notification", "View Notification"),)
-        default_permissions = ("add", "change", "delete")
+        verbose_name = "Varseltillatelse for bruker"
+        verbose_name_plural = "varseltillatelser for brukere"
+        unique_together = (("permission", "user",),)
+        ordering = ("permission", "user")

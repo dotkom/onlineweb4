@@ -1,52 +1,61 @@
-from rest_framework import mixins, permissions, viewsets
+from rest_framework import permissions, viewsets
 
 from apps.notifications.models import (
     Notification,
-    NotificationSetting,
-    NotificationSubscription,
+    Permission,
+    Subscription,
+    UserPermission,
 )
 from apps.notifications.serializers import (
-    NotificationReadOnlySerializer,
-    NotificationSettingSerializer,
-    NotificationSubscriptionSerializer,
+    NotificationSerializer,
+    PermissionSerializer,
+    SubscriptionSerializer,
+    UserPermissionSerializer,
 )
 
 
-class NotificationSettingsViewSet(
-    viewsets.GenericViewSet,
-    mixins.UpdateModelMixin,
-    mixins.ListModelMixin,
-    mixins.RetrieveModelMixin,
-):
-
+class SubscriptionViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = NotificationSettingSerializer
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
 
     def get_queryset(self):
         user = self.request.user
-        settings = NotificationSetting.objects.filter(user=user)
+        queryset = super().get_queryset()
+        return queryset.filter(user=user)
 
-        """ Make sure notification settings for all types exist for user """
-        if settings.count() == 0:
-            NotificationSetting.create_all_for_user(user)
-            settings = NotificationSetting.objects.filter(user=user)
-
-        return settings
-
-
-class NotificationSubscriptionViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = NotificationSubscriptionSerializer
-
-    def get_queryset(self):
+    def perform_create(self, serializer):
         user = self.request.user
-        return NotificationSubscription.objects.filter(user=user)
+        serializer.save(user=user)
 
 
 class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = NotificationReadOnlySerializer
+    serializer_class = NotificationSerializer
+    queryset = Notification.objects.all()
 
     def get_queryset(self):
         user = self.request.user
-        return Notification.objects.filter(user=user)
+        queryset = super().get_queryset()
+        return queryset.filter(recipient=user)
+
+
+class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = PermissionSerializer
+    queryset = Permission.objects.all()
+
+
+class UserPermissionViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserPermissionSerializer
+    queryset = UserPermission.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = super().get_queryset()
+        return queryset.filter(user=user)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(user=user)
