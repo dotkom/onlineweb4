@@ -4,6 +4,7 @@ from django.forms.fields import URLField
 
 from apps.companyprofile.models import Company
 from apps.dashboard.widgets import widget_generator
+from apps.gallery.constants import ImageFormat
 from apps.gallery.widgets import SingleImageInput
 
 
@@ -26,5 +27,6 @@ class CompanyForm(ModelForm):
 
         # Widget generator accepts a form widget, and a list of tuples between field name and an attribute dict
         widgets = widget_generator(
-            SingleImageInput, [("image", {"id": "responsive-image-id"})]
+            SingleImageInput,
+            [("image", {"id": "responsive-image-id", "preset": ImageFormat.COMPANY})],
         )

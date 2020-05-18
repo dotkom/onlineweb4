@@ -11,6 +11,8 @@ from taggit.managers import TaggableManager
 from apps.gallery import settings as gallery_settings
 from utils.helpers import humanize_size
 
+from .constants import ImageFormat
+
 
 class UnhandledImage(models.Model):
     image = models.ImageField(upload_to=gallery_settings.UNHANDLED_IMAGES_PATH)
@@ -71,6 +73,9 @@ class BaseResponsiveImage(models.Model):
     )
     timestamp = models.DateTimeField(
         auto_now_add=True, editable=False, null=False, blank=False
+    )
+    preset = models.CharField(
+        "Format", max_length=128, choices=ImageFormat.choices, null=False, blank=False
     )
 
     def __str__(self):

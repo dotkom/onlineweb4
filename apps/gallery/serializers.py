@@ -9,7 +9,7 @@ from apps.gallery.models import ResponsiveImage
 
 
 class ResponsiveImageSerializer(TaggitSerializer, serializers.ModelSerializer):
-
+    preset_display = serializers.CharField(source="get_preset_display")
     tags = TagListSerializerField()
 
     class Meta:
@@ -28,4 +28,6 @@ class ResponsiveImageSerializer(TaggitSerializer, serializers.ModelSerializer):
             "xs",
             "tags",
             "photographer",
+            "preset",
+            "preset_display",
         )
