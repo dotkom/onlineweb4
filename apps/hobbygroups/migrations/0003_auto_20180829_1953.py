@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hobbygroups', '0002_hobby_priority'),
-    ]
+    dependencies = [("hobbygroups", "0002_hobby_priority")]
 
     operations = [
         migrations.AlterField(
-            model_name='hobby',
-            name='description',
+            model_name="hobby",
+            name="description",
             field=models.TextField(max_length=300),
-        ),
+        )
     ]

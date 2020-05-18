@@ -5,13 +5,17 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('offline', '0002_auto_20170124_1555'),
-    ]
+    dependencies = [("offline", "0002_auto_20170124_1555")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='issue',
-            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['-release_date'], 'permissions': (('view_issue', 'View Issue'),), 'verbose_name': 'Utgivelse', 'verbose_name_plural': 'Utgivelser'},
-        ),
+            name="issue",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "ordering": ["-release_date"],
+                "permissions": (("view_issue", "View Issue"),),
+                "verbose_name": "Utgivelse",
+                "verbose_name_plural": "Utgivelser",
+            },
+        )
     ]

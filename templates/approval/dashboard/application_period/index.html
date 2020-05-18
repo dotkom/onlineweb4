@@ -1,0 +1,47 @@
+{% extends 'dashboard_base.html' %}
+{% block title %}Opptaksperioder{% endblock %}
+
+{% block page-header %}
+Grupper
+{% endblock %}
+
+{% block breadcrumbs %}
+<li>Grupper</li>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <p></p>
+        <table class="table table-striped table-condensed">
+            <thead>
+            <tr>
+                <th>Tittel</th>
+                <th>Starttid</th>
+                <th>Frist</th>
+                <th>Tar imot søknader nå</th>
+                <th>Antall søknader</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for application_period in application_periods %}
+                <tr>
+                    <td><a href="{% url 'application-periods-detail' pk=application_period.id %}">{{ application_period }}</a></td>
+                    <td>{{ application_period.start | date:"Y-m-j H:i"}}</td>
+                    <td>{{ application_period.deadline | date:"Y-m-j H:i"}}</td>
+                    <td>
+                        <i class="fa fa-lg {% if application_period.accepting_applications %}fa-check-square-o checked{% else %}fa-square-o{% endif %}"></i>
+                    </td>
+                    <td>{{ application_period.applications.count }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    <!-- Dashboard JS here -->
+{% endblock %}

@@ -7,81 +7,168 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('events', '0017_auto_20180221_2200'),
-    ]
+    dependencies = [("events", "0017_auto_20180221_2200")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='attendanceevent',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_attendanceevent', 'View AttendanceEvent'),), 'verbose_name': 'påmelding', 'verbose_name_plural': 'påmeldinger'},
+            name="attendanceevent",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_attendanceevent", "View AttendanceEvent"),),
+                "verbose_name": "påmelding",
+                "verbose_name_plural": "påmeldinger",
+            },
         ),
         migrations.AlterModelOptions(
-            name='attendee',
-            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['timestamp'], 'permissions': (('view_attendee', 'View Attendee'),)},
+            name="attendee",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "ordering": ["timestamp"],
+                "permissions": (("view_attendee", "View Attendee"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='companyevent',
-            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ('company',), 'permissions': (('view_companyevent', 'View CompanyEvent'),), 'verbose_name': 'bedrift', 'verbose_name_plural': 'bedrifter'},
+            name="companyevent",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "ordering": ("company",),
+                "permissions": (("view_companyevent", "View CompanyEvent"),),
+                "verbose_name": "bedrift",
+                "verbose_name_plural": "bedrifter",
+            },
         ),
         migrations.AlterModelOptions(
-            name='event',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_event', 'View Event'),), 'verbose_name': 'arrangement', 'verbose_name_plural': 'arrangementer'},
+            name="event",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_event", "View Event"),),
+                "verbose_name": "arrangement",
+                "verbose_name_plural": "arrangementer",
+            },
         ),
         migrations.AlterModelOptions(
-            name='extras',
-            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['choice'], 'verbose_name': 'ekstra valg', 'verbose_name_plural': 'ekstra valg'},
+            name="extras",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "ordering": ["choice"],
+                "verbose_name": "ekstra valg",
+                "verbose_name_plural": "ekstra valg",
+            },
         ),
         migrations.AlterModelOptions(
-            name='fieldofstudyrule',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_fieldofstudyrule', 'View FieldOfStudyRule'),)},
+            name="fieldofstudyrule",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_fieldofstudyrule", "View FieldOfStudyRule"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='graderule',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_graderule', 'View GradeRule'),)},
+            name="graderule",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_graderule", "View GradeRule"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='grouprestriction',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_restriction', 'View Restriction'),), 'verbose_name': 'restriksjon', 'verbose_name_plural': 'restriksjoner'},
+            name="grouprestriction",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_restriction", "View Restriction"),),
+                "verbose_name": "restriksjon",
+                "verbose_name_plural": "restriksjoner",
+            },
         ),
         migrations.AlterModelOptions(
-            name='reservation',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_reservation', 'View Reservation'),), 'verbose_name': 'reservasjon', 'verbose_name_plural': 'reservasjoner'},
+            name="reservation",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_reservation", "View Reservation"),),
+                "verbose_name": "reservasjon",
+                "verbose_name_plural": "reservasjoner",
+            },
         ),
         migrations.AlterModelOptions(
-            name='reservee',
-            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['id'], 'permissions': (('view_reservee', 'View Reservee'),), 'verbose_name': 'reservasjon', 'verbose_name_plural': 'reservasjoner'},
+            name="reservee",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "ordering": ["id"],
+                "permissions": (("view_reservee", "View Reservee"),),
+                "verbose_name": "reservasjon",
+                "verbose_name_plural": "reservasjoner",
+            },
         ),
         migrations.AlterModelOptions(
-            name='rule',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_rule', 'View Rule'),)},
+            name="rule",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_rule", "View Rule"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='rulebundle',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_rulebundle', 'View RuleBundle'),)},
+            name="rulebundle",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_rulebundle", "View RuleBundle"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='usergrouprule',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_usergrouprule', 'View UserGroupRule'),)},
+            name="usergrouprule",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_usergrouprule", "View UserGroupRule"),),
+            },
         ),
         migrations.AlterField(
-            model_name='event',
-            name='ingress',
-            field=models.TextField(help_text='En ingress som blir vist før beskrivelsen.', validators=[django.core.validators.MinLengthValidator(25)], verbose_name='ingress'),
+            model_name="event",
+            name="ingress",
+            field=models.TextField(
+                help_text="En ingress som blir vist før beskrivelsen.",
+                validators=[django.core.validators.MinLengthValidator(25)],
+                verbose_name="ingress",
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='ingress_short',
-            field=models.CharField(help_text='En kort ingress som blir vist på forsiden', max_length=150, validators=[django.core.validators.MinLengthValidator(25)], verbose_name='kort ingress'),
+            model_name="event",
+            name="ingress_short",
+            field=models.CharField(
+                help_text="En kort ingress som blir vist på forsiden",
+                max_length=150,
+                validators=[django.core.validators.MinLengthValidator(25)],
+                verbose_name="kort ingress",
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='organizer',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='auth.Group', verbose_name='arrangør'),
+            model_name="event",
+            name="organizer",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="auth.Group",
+                verbose_name="arrangør",
+            ),
         ),
         migrations.AlterField(
-            model_name='fieldofstudyrule',
-            name='field_of_study',
-            field=models.SmallIntegerField(choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk'), (10, 'Programvaresystemer'), (11, 'Databaser og søk'), (12, 'Algoritmer og datamaskiner'), (13, 'Spillteknologi'), (14, 'Kunstig intelligens'), (15, 'Helseinformatikk'), (16, 'Interaksjonsdesign, spill- og læringsteknologi'), (30, 'Annen mastergrad'), (40, 'Sosialt medlem'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')], verbose_name='studieretning'),
+            model_name="fieldofstudyrule",
+            name="field_of_study",
+            field=models.SmallIntegerField(
+                choices=[
+                    (0, "Gjest"),
+                    (1, "Bachelor i Informatikk"),
+                    (10, "Programvaresystemer"),
+                    (11, "Databaser og søk"),
+                    (12, "Algoritmer og datamaskiner"),
+                    (13, "Spillteknologi"),
+                    (14, "Kunstig intelligens"),
+                    (15, "Helseinformatikk"),
+                    (16, "Interaksjonsdesign, spill- og læringsteknologi"),
+                    (30, "Annen mastergrad"),
+                    (40, "Sosialt medlem"),
+                    (80, "PhD"),
+                    (90, "International"),
+                    (100, "Annet Onlinemedlem"),
+                ],
+                verbose_name="studieretning",
+            ),
         ),
     ]

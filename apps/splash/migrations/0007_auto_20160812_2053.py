@@ -8,14 +8,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('splash', '0006_auto_20151213_0309'),
-    ]
+    dependencies = [("splash", "0006_auto_20151213_0309")]
 
     operations = [
         migrations.AlterField(
-            model_name='splashevent',
-            name='splash_year',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='splash_events', to='splash.SplashYear'),
-        ),
+            model_name="splashevent",
+            name="splash_year",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="splash_events",
+                to="splash.SplashYear",
+            ),
+        )
     ]

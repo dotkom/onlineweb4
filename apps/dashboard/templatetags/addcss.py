@@ -5,11 +5,9 @@ from django import template
 register = template.Library()
 
 
-@register.filter(name='addclass')
+@register.filter(name="addclass")
 def addclass(field, css):
 
-    attrs = {
-        "class": css
-    }
+    attrs = {"class": css}
 
     return field.as_widget(attrs=attrs)

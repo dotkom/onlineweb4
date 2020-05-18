@@ -8,15 +8,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('authentication', '0027_auto_20180412_1730'),
-    ]
+    dependencies = [("authentication", "0027_auto_20180412_1730")]
 
     operations = [
         migrations.AlterField(
-            model_name='onlineuser',
-            name='rfid',
-            field=models.CharField(blank=True, max_length=50, null=True, unique=True,
-                                   validators=[apps.authentication.validators.validate_rfid], verbose_name='RFID'),
-        ),
+            model_name="onlineuser",
+            name="rfid",
+            field=models.CharField(
+                blank=True,
+                max_length=50,
+                null=True,
+                unique=True,
+                validators=[apps.authentication.validators.validate_rfid],
+                verbose_name="RFID",
+            ),
+        )
     ]

@@ -7,14 +7,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('authentication', '0021_auto_20160331_0940'),
-    ]
+    dependencies = [("authentication", "0021_auto_20160331_0940")]
 
     operations = [
         migrations.AddField(
-            model_name='onlineuser',
-            name='internal_services_password',
-            field=models.CharField(max_length=100, null=True, verbose_name='Tjenester-Passord'),
-        ),
+            model_name="onlineuser",
+            name="internal_services_password",
+            field=models.CharField(
+                max_length=100, null=True, verbose_name="Tjenester-Passord"
+            ),
+        )
     ]

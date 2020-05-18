@@ -20,7 +20,7 @@ class SplashModelsTestCase(TestCase):
 class SplashURLTestCase(APITestCase):
     def test_calendar_export(self):
         G(SplashEvent)
-        url = reverse('splash_calendar')
+        url = reverse("splash_calendar")
 
         response = self.client.get(url)
 
@@ -29,7 +29,7 @@ class SplashURLTestCase(APITestCase):
 
 class SplashAPIURLTestCase(APITestCase):
     def test_splash_events_list_no_events(self):
-        url = reverse('splashevent-list')
+        url = reverse("splashevent-list")
 
         response = self.client.get(url)
 
@@ -37,7 +37,7 @@ class SplashAPIURLTestCase(APITestCase):
 
     def test_splash_events_list_with_events_exist(self):
         G(SplashEvent)
-        url = reverse('splashevent-list')
+        url = reverse("splashevent-list")
 
         response = self.client.get(url)
 
@@ -50,12 +50,14 @@ class SplashAPIURLTestCase(APITestCase):
         G(SplashEvent, start_time=last_week, end_time=last_week)
         next_week_event = G(SplashEvent, start_time=next_week, end_time=next_week)
 
-        url = reverse('splashevent-list')
+        url = reverse("splashevent-list")
 
-        url += '?start_time__gte=%s' % datetime.datetime.now()
+        url += "?start_time__gte=%s" % datetime.datetime.now()
 
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(1, response.data.get('count'))
-        self.assertEqual(next_week_event.title, response.data.get('results')[0].get('title'))
+        self.assertEqual(1, response.data.get("count"))
+        self.assertEqual(
+            next_week_event.title, response.data.get("results")[0].get("title")
+        )

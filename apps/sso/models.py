@@ -3,7 +3,7 @@
 # Created by 'myth' on 6/25/15
 
 from django.db.models import TextField
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from oauth2_provider.models import AbstractApplication
 
 
@@ -14,7 +14,7 @@ class Client(AbstractApplication):
     scopes on a per-client basis.
     """
 
-    scopes = TextField(verbose_name=_('Tilganger'), blank=True)
+    scopes = TextField(verbose_name=_("Tilganger"), blank=True)
 
     def get_scopes(self):
         """
@@ -30,7 +30,7 @@ class Client(AbstractApplication):
         :param scopes: A list of scope strings
         """
 
-        self.scopes = ' '.join(scopes)
+        self.scopes = " ".join(scopes)
 
     def get_redirect_uris(self):
         """
@@ -41,7 +41,5 @@ class Client(AbstractApplication):
         return self.redirect_uris.split()
 
     class Meta:
-        permissions = (
-            ('view_client', 'View Client'),
-        )
-        default_permissions = ('add', 'change', 'delete')
+        permissions = (("view_client", "View Client"),)
+        default_permissions = ("add", "change", "delete")

@@ -10,7 +10,7 @@ from apps.profiles.forms import ZIP_CODE_VALIDATION_ERROR, ProfileForm
 class ProfilesURLTestCase(TestCase):
     def test_user_search(self):
         user = G(User)
-        url = reverse('profiles_user_search')
+        url = reverse("profiles_user_search")
 
         self.client.force_login(user)
 
@@ -23,7 +23,7 @@ class ProfileViewEditTestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls._url = reverse('profile_edit')
+        cls._url = reverse("profile_edit")
         cls._user = G(User)
 
     def setUp(self):
@@ -40,39 +40,31 @@ class ProfileViewEditTestCase(TestCase):
         self.assertEqual(200, response.status_code)
 
     def test_profile_save_valid_zip(self):
-        data = {
-            'zip_code': 7030
-        }
+        data = {"zip_code": 7030}
 
         response = self.client.post(self._url, data)
 
         self.assertEqual(200, response.status_code)
 
     def test_profile_save_invalid_zip(self):
-        data = {
-            'zip_code': 123
-        }
+        data = {"zip_code": 123}
 
         response = self.client.post(self._url, data)
 
-        self.assertFormError(response, 'user_profile_form', 'zip_code', ZIP_CODE_VALIDATION_ERROR)
+        self.assertFormError(
+            response, "user_profile_form", "zip_code", ZIP_CODE_VALIDATION_ERROR
+        )
 
 
 class ProfileEditFormTestCase(TestCase):
     def test_profile_form_valid_zip(self):
-        data = {
-            'gender': 'male',
-            'zip_code': 7030
-        }
+        data = {"gender": "male", "zip_code": 7030}
         form = ProfileForm(data=data)
 
         self.assertTrue(form.is_valid())
 
     def test_profile_form_invalid_zip(self):
-        data = {
-            'gender': 'male',
-            'zip_code': 123
-        }
+        data = {"gender": "male", "zip_code": 123}
         form = ProfileForm(data=data)
 
         self.assertFalse(form.is_valid())

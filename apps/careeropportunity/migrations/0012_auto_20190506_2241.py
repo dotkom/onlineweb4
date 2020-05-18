@@ -5,19 +5,29 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('careeropportunity', '0011_auto_20190506_1719'),
-    ]
+    dependencies = [("careeropportunity", "0011_auto_20190506_1719")]
 
     operations = [
         migrations.AlterField(
-            model_name='careeropportunity',
-            name='employment',
-            field=models.IntegerField(choices=[(1, 'Fastjobb'), (2, 'Deltidsjobb'), (3, 'Sommerjobb/internship'), (4, 'Start-up'), (6, 'Graduate'), (5, 'Annet')], verbose_name='stillingstype'),
+            model_name="careeropportunity",
+            name="employment",
+            field=models.IntegerField(
+                choices=[
+                    (1, "Fastjobb"),
+                    (2, "Deltidsjobb"),
+                    (3, "Sommerjobb/internship"),
+                    (4, "Start-up"),
+                    (6, "Graduate"),
+                    (5, "Annet"),
+                ],
+                verbose_name="stillingstype",
+            ),
         ),
         migrations.AlterField(
-            model_name='careeropportunity',
-            name='featured',
-            field=models.BooleanField(blank=True, default=False, verbose_name='fremhevet'),
+            model_name="careeropportunity",
+            name="featured",
+            field=models.BooleanField(
+                blank=True, default=False, verbose_name="fremhevet"
+            ),
         ),
     ]

@@ -16,11 +16,28 @@ const mergeEventImages = (eventImage, companyEvent) => {
   return [...eventImages, ...companyImages];
 };
 
+const DAYS_BACK_DELTA = moment().subtract(3, 'days');
+const DAYS_FORWARD_DELTA = moment().add(3, 'days');
+
+const getRegistrationFiltered = ({ attendance_event: attendance, event_start: startDate }) => {
+  if (
+    attendance &&
+    moment(attendance.registration_start).isBetween(
+      DAYS_BACK_DELTA,
+      DAYS_FORWARD_DELTA,
+    )
+  ) {
+    return attendance.registration_start;
+  }
+  return startDate;
+};
+
 const apiEventsToEvents = event => ({
   eventUrl: `/events/${event.id}/${event.slug}`,
   ingress: event.ingress_short,
   startDate: event.event_start,
   endDate: event.event_end,
+  registrationFiltered: getRegistrationFiltered(event),
   title: event.title,
   images: mergeEventImages(event.image, event.company_event),
 });
@@ -33,7 +50,7 @@ const sortEvents = (a, b) => {
     }
     return -1;
   }
-  return moment(a.startDate).isBefore(b.startDate) ? -1 : 1;
+  return moment(a.registrationFiltered).isBefore(b.registrationFiltered) ? -1 : 1;
 };
 
 /*

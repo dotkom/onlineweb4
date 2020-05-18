@@ -6,9 +6,8 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('resourcecenter', '0003_auto_20190506_1719'),
-        ('resourcecenter', '0004_resource_active'),
+        ("resourcecenter", "0003_auto_20190506_1719"),
+        ("resourcecenter", "0004_resource_active"),
     ]
 
-    operations = [
-    ]
+    operations = []

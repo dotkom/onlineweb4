@@ -2,8 +2,8 @@ from django.apps import AppConfig
 
 
 class GalleryConfig(AppConfig):
-    name = 'apps.gallery'
-    verbose_name = 'Gallery'
+    name = "apps.gallery"
+    verbose_name = "Gallery"
 
     def ready(self):
         super(GalleryConfig, self).ready()
@@ -17,6 +17,7 @@ class GalleryConfig(AppConfig):
 
         # Perform checks that necessary directories exist on the disk
         from apps.gallery.util import verify_directory_structure
+
         verify_directory_structure()
 
         # Register the ResponsiveImage model for watson indexing

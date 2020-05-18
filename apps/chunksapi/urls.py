@@ -7,4 +7,4 @@ from apps.chunksapi import views
 urlpatterns = []
 
 router = SharedAPIRootRouter()
-router.register('chunks', views.ChunkViewSet)
+router.register("chunks", views.ChunkViewSet)

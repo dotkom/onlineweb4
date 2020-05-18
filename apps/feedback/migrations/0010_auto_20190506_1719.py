@@ -5,58 +5,119 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('feedback', '0009_auto_20180424_1352'),
-    ]
+    dependencies = [("feedback", "0009_auto_20180424_1352")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='choice',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_choice', 'View Choice'),)},
+            name="choice",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_choice", "View Choice"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='feedback',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_feedback', 'View Feedback'),), 'verbose_name': 'tilbakemeldingsskjema', 'verbose_name_plural': 'tilbakemeldingsskjemaer'},
+            name="feedback",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_feedback", "View Feedback"),),
+                "verbose_name": "tilbakemeldingsskjema",
+                "verbose_name_plural": "tilbakemeldingsskjemaer",
+            },
         ),
         migrations.AlterModelOptions(
-            name='feedbackrelation',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_feedbackrelation', 'View FeedbackRelation'),), 'verbose_name': 'tilbakemelding', 'verbose_name_plural': 'tilbakemeldinger'},
+            name="feedbackrelation",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_feedbackrelation", "View FeedbackRelation"),),
+                "verbose_name": "tilbakemelding",
+                "verbose_name_plural": "tilbakemeldinger",
+            },
         ),
         migrations.AlterModelOptions(
-            name='fieldofstudyanswer',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_fieldofstudyanswer', 'View FieldOfStudyAnswer'),)},
+            name="fieldofstudyanswer",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (
+                    ("view_fieldofstudyanswer", "View FieldOfStudyAnswer"),
+                ),
+            },
         ),
         migrations.AlterModelOptions(
-            name='multiplechoiceanswer',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_multiplechoiceanswer', 'View MultipleChoiceAnswer'),)},
+            name="multiplechoiceanswer",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (
+                    ("view_multiplechoiceanswer", "View MultipleChoiceAnswer"),
+                ),
+            },
         ),
         migrations.AlterModelOptions(
-            name='multiplechoicerelation',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_multiplechoicerelation', 'View MultipleChoiceRelation'),)},
+            name="multiplechoicerelation",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (
+                    ("view_multiplechoicerelation", "View MultipleChoiceRelation"),
+                ),
+            },
         ),
         migrations.AlterModelOptions(
-            name='ratinganswer',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_ratinganswer', 'View RatingAnswer'),)},
+            name="ratinganswer",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_ratinganswer", "View RatingAnswer"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='ratingquestion',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_ratingquestion', 'View RatingQuestion'),)},
+            name="ratingquestion",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_ratingquestion", "View RatingQuestion"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='registertoken',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_feedbackregistertoken', 'View FeedbackRegisterToken'),)},
+            name="registertoken",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (
+                    ("view_feedbackregistertoken", "View FeedbackRegisterToken"),
+                ),
+            },
         ),
         migrations.AlterModelOptions(
-            name='textanswer',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_textanswer', 'View TextAnswer'),)},
+            name="textanswer",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_textanswer", "View TextAnswer"),),
+            },
         ),
         migrations.AlterModelOptions(
-            name='textquestion',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_textquestion', 'View TextQuestion'),)},
+            name="textquestion",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_textquestion", "View TextQuestion"),),
+            },
         ),
         migrations.AlterField(
-            model_name='fieldofstudyanswer',
-            name='answer',
-            field=models.SmallIntegerField(choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk'), (10, 'Programvaresystemer'), (11, 'Databaser og søk'), (12, 'Algoritmer og datamaskiner'), (13, 'Spillteknologi'), (14, 'Kunstig intelligens'), (15, 'Helseinformatikk'), (16, 'Interaksjonsdesign, spill- og læringsteknologi'), (30, 'Annen mastergrad'), (40, 'Sosialt medlem'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')], verbose_name='Studieretning'),
+            model_name="fieldofstudyanswer",
+            name="answer",
+            field=models.SmallIntegerField(
+                choices=[
+                    (0, "Gjest"),
+                    (1, "Bachelor i Informatikk"),
+                    (10, "Programvaresystemer"),
+                    (11, "Databaser og søk"),
+                    (12, "Algoritmer og datamaskiner"),
+                    (13, "Spillteknologi"),
+                    (14, "Kunstig intelligens"),
+                    (15, "Helseinformatikk"),
+                    (16, "Interaksjonsdesign, spill- og læringsteknologi"),
+                    (30, "Annen mastergrad"),
+                    (40, "Sosialt medlem"),
+                    (80, "PhD"),
+                    (90, "International"),
+                    (100, "Annet Onlinemedlem"),
+                ],
+                verbose_name="Studieretning",
+            ),
         ),
     ]

@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('authentication', '0024_merge'),
-    ]
+    dependencies = [("authentication", "0024_merge")]
 
     operations = [
         migrations.AlterField(
-            model_name='onlineuser',
-            name='bio',
-            field=models.TextField(blank=True, max_length=2048, verbose_name='bio'),
-        ),
+            model_name="onlineuser",
+            name="bio",
+            field=models.TextField(blank=True, max_length=2048, verbose_name="bio"),
+        )
     ]

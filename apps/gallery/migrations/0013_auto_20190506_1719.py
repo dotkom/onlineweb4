@@ -5,17 +5,25 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('gallery', '0012_auto_20160309_2133'),
-    ]
+    dependencies = [("gallery", "0012_auto_20160309_2133")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='responsiveimage',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_responsiveimage', 'View ResponsiveImage'),), 'verbose_name': 'Responsivt Bilde', 'verbose_name_plural': 'Responsive Bilder'},
+            name="responsiveimage",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_responsiveimage", "View ResponsiveImage"),),
+                "verbose_name": "Responsivt Bilde",
+                "verbose_name_plural": "Responsive Bilder",
+            },
         ),
         migrations.AlterModelOptions(
-            name='unhandledimage',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_unhandledimage', 'View UnhandledImage'),), 'verbose_name': 'Ubehandlet bilde', 'verbose_name_plural': 'Ubehandlede bilder'},
+            name="unhandledimage",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_unhandledimage", "View UnhandledImage"),),
+                "verbose_name": "Ubehandlet bilde",
+                "verbose_name_plural": "Ubehandlede bilder",
+            },
         ),
     ]

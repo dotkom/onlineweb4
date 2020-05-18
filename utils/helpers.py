@@ -10,7 +10,6 @@ from django.utils.timezone import make_aware
 
 
 class JsonHelper(json.JSONEncoder):
-
     def default(self, obj):
         if isinstance(obj, datetime):
             return obj.strftime("%d.%m.%Y %H.%M")
@@ -27,7 +26,7 @@ class JsonHelper(json.JSONEncoder):
         return json.JSONEncoder.default(self, obj)
 
 
-def humanize_size(size, suffix='B'):
+def humanize_size(size, suffix="B"):
     """
     Converts an integer of bytes to a properly scaled human readable
     string.
@@ -40,11 +39,11 @@ def humanize_size(size, suffix='B'):
     :return: A string of the formatted file size
     """
 
-    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+    for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
         if abs(size) < 1024.0:
-            return '%.1f%s%s' % (size, unit, suffix)
+            return "%.1f%s%s" % (size, unit, suffix)
         size /= 1024.0
-    return '%.1f%s%s' % (size, '', suffix)
+    return "%.1f%s%s" % (size, "", suffix)
 
 
 def timezoneaware(dt, current_tz=settings.TIME_ZONE, is_dst=False):

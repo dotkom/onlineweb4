@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load render_bundle from webpack_loader %}
 {% load markdown_deux_tags %}
-{% load group_membership %}
 
 {% block title %}{{ article.heading }} - Online{% endblock title %}
 
@@ -46,9 +45,7 @@
                         <div class="page-header">
                             <h1>
                                 {{ article.heading }}
-                                {% if user.is_authenticated %}
-                                    {% in_group "Komiteer" as in_komiteer %}
-                                    {% if in_komiteer %}
+                                {% if user.is_authenticated and user.is_staff %}
                                         <div class="btn-group pull-right">
                                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                                 <span class="caret"></span>
@@ -57,7 +54,6 @@
                                                 <li><a href="{% url 'dashboard_article_edit' article.id %}">Endre</a></li>
                                             </ul>
                                         </div>
-                                    {% endif %}
                                 {% endif %}
                             </h1>
                         </div>

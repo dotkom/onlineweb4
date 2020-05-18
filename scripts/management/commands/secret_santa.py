@@ -13,17 +13,19 @@ from apps.events.models import AttendanceEvent
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('event_id')
+        parser.add_argument("event_id")
 
     def handle(self, *args, **options):
-        event_id = options['event_id']
+        event_id = options["event_id"]
         event = AttendanceEvent.objects.get(event=event_id)
         users = event.attending_attendees_qs
         random_users = self.generate_random_list(users)
         to_from_dict = {}
         for count, user in enumerate(users):
-            to_from_dict['Par %s' % (count+1)] = {'To': user.user.get_full_name(),
-                                                  'From': users[random_users[count]].user.get_full_name()}
+            to_from_dict["Par %s" % (count + 1)] = {
+                "To": user.user.get_full_name(),
+                "From": users[random_users[count]].user.get_full_name(),
+            }
             self.send_mail(user, users[random_users[count]])
 
         self.write_to_file(to_from_dict)
@@ -57,22 +59,27 @@ class Command(BaseCommand):
         random_list = list(random_list)
         user_swap_index = random.choice(random_list)
         if user_swap_index == user_index:
-            if user_swap_index != len(random_list)-1:
+            if user_swap_index != len(random_list) - 1:
                 user_swap_index += 1
             else:
                 user_swap_index -= 1
-        random_list[user_index], random_list[user_swap_index] = \
-            random_list[user_swap_index], random_list[user_index]
+        random_list[user_index], random_list[user_swap_index] = (
+            random_list[user_swap_index],
+            random_list[user_index],
+        )
         return random_list
 
     @staticmethod
     def send_mail(user_to, user_from):
         subject = "Secret santa"
 
-        content = render_to_string('secret_santa/attendee_mail.txt', {
-            'user_to': user_to.user.get_full_name(),
-            'mail_committee': settings.EMAIL_TRIKOM,
-        })
+        content = render_to_string(
+            "secret_santa/attendee_mail.txt",
+            {
+                "user_to": user_to.user.get_full_name(),
+                "mail_committee": settings.EMAIL_TRIKOM,
+            },
+        )
 
         receiver = user_from.user.email
 
@@ -82,21 +89,23 @@ class Command(BaseCommand):
     def mail_to_committee():
         subject = "Secret santa e-post sendt til påmeldte"
 
-        content = render_to_string('secret_santa/committee_mail.txt')
+        content = render_to_string("secret_santa/committee_mail.txt")
 
-        EmailMessage(subject, content, settings.EMAIL_TRIKOM, [settings.EMAIL_TRIKOM]).send()
+        EmailMessage(
+            subject, content, settings.EMAIL_TRIKOM, [settings.EMAIL_TRIKOM]
+        ).send()
 
     @staticmethod
     def write_to_file(to_from_dict):
-        directory = 'uploaded_media/txt'
+        directory = "uploaded_media/txt"
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-        txt_file = open(directory + '/secret_santa_to_from.txt', 'w+')
+        txt_file = open(directory + "/secret_santa_to_from.txt", "w+")
 
-        content = render_to_string('secret_santa/to_from_list.txt', {
-            'to_from_dict': to_from_dict,
-        })
+        content = render_to_string(
+            "secret_santa/to_from_list.txt", {"to_from_dict": to_from_dict}
+        )
 
         txt_file.write(content)
         txt_file.close()

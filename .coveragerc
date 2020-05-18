@@ -1,0 +1,7 @@
+[report]
+
+omit =
+    apps/*/migrations/*
+    apps/*/tests/*
+    apps/*/test_*.py
+    onlineweb4/settings/*

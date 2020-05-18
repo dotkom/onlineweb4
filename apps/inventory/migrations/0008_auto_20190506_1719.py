@@ -5,21 +5,33 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('inventory', '0007_batch_low_stock_treshhold'),
-    ]
+    dependencies = [("inventory", "0007_batch_low_stock_treshhold")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='batch',
-            options={'default_permissions': ('add', 'change', 'delete'), 'verbose_name': 'Batch', 'verbose_name_plural': 'Batches'},
+            name="batch",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "verbose_name": "Batch",
+                "verbose_name_plural": "Batches",
+            },
         ),
         migrations.AlterModelOptions(
-            name='item',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_item', 'View Inventory Item'),), 'verbose_name': 'Vare', 'verbose_name_plural': 'Varer'},
+            name="item",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_item", "View Inventory Item"),),
+                "verbose_name": "Vare",
+                "verbose_name_plural": "Varer",
+            },
         ),
         migrations.AlterModelOptions(
-            name='itemcategory',
-            options={'default_permissions': ('add', 'change', 'delete'), 'permissions': (('view_itemcategory', 'View Item Category'),), 'verbose_name': 'Kategori', 'verbose_name_plural': 'Kategorier'},
+            name="itemcategory",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "permissions": (("view_itemcategory", "View Item Category"),),
+                "verbose_name": "Kategori",
+                "verbose_name_plural": "Kategorier",
+            },
         ),
     ]

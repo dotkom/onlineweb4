@@ -7,24 +7,51 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('events', '0008_auto_20151029_1558'),
-    ]
+    dependencies = [("events", "0008_auto_20151029_1558")]
 
     operations = [
         migrations.AlterField(
-            model_name='attendee',
-            name='note',
-            field=models.CharField(blank=True, default='', max_length=100, verbose_name='notat'),
+            model_name="attendee",
+            name="note",
+            field=models.CharField(
+                blank=True, default="", max_length=100, verbose_name="notat"
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='event_type',
-            field=models.SmallIntegerField(choices=[(1, 'Sosialt'), (2, 'Bedriftspresentasjon'), (3, 'Kurs'), (4, 'Utflukt'), (5, 'Ekskursjon'), (6, 'Internt'), (7, 'Annet')], verbose_name='type'),
+            model_name="event",
+            name="event_type",
+            field=models.SmallIntegerField(
+                choices=[
+                    (1, "Sosialt"),
+                    (2, "Bedriftspresentasjon"),
+                    (3, "Kurs"),
+                    (4, "Utflukt"),
+                    (5, "Ekskursjon"),
+                    (6, "Internt"),
+                    (7, "Annet"),
+                ],
+                verbose_name="type",
+            ),
         ),
         migrations.AlterField(
-            model_name='fieldofstudyrule',
-            name='field_of_study',
-            field=models.SmallIntegerField(choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk'), (10, 'Programvaresystemer'), (11, 'Databaser og søk'), (12, 'Algoritmer og datamaskiner'), (13, 'Spillteknologi'), (14, 'Kunstig intelligens'), (15, 'Helseinformatikk'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')], verbose_name='studieretning'),
+            model_name="fieldofstudyrule",
+            name="field_of_study",
+            field=models.SmallIntegerField(
+                choices=[
+                    (0, "Gjest"),
+                    (1, "Bachelor i Informatikk"),
+                    (10, "Programvaresystemer"),
+                    (11, "Databaser og søk"),
+                    (12, "Algoritmer og datamaskiner"),
+                    (13, "Spillteknologi"),
+                    (14, "Kunstig intelligens"),
+                    (15, "Helseinformatikk"),
+                    (30, "Annen mastergrad"),
+                    (80, "PhD"),
+                    (90, "International"),
+                    (100, "Annet Onlinemedlem"),
+                ],
+                verbose_name="studieretning",
+            ),
         ),
     ]

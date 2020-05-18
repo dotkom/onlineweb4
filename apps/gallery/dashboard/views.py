@@ -25,10 +25,10 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
     ResponsiveImages.
     """
 
-    permission_required = 'gallery.view_responsiveimage'
-    template_name = 'gallery/dashboard/index.html'
-    queryset = ResponsiveImage.objects.all().order_by('-timestamp')[:15]
-    context_object_name = 'images'
+    permission_required = "gallery.view_responsiveimage"
+    template_name = "gallery/dashboard/index.html"
+    queryset = ResponsiveImage.objects.all().order_by("-timestamp")[:15]
+    context_object_name = "images"
 
     def get_context_data(self, **kwargs):
         """
@@ -49,17 +49,24 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
                 try:
                     total_disk_usage += img.sizeof_total_raw()
                 except OSError as e:
-                    getLogger(__name__).error('GalleryIndex file summation on missing file: %s' % e)
+                    getLogger(__name__).error(
+                        "GalleryIndex file summation on missing file: %s" % e
+                    )
 
         # Filter out potential ResponsiveImage objects that have orphan file references
-        context['images'] = [i for i in context['images'] if i.file_status_ok()]
+        context["images"] = [i for i in context["images"] if i.file_status_ok()]
 
         # Add query filters and some statistics on disk usage
-        context['years'] = years
-        context['tags'] = sorted(set(tag.tag.name for tag in TaggedItem.objects.filter(
-            content_type=ContentType.objects.get_for_model(ResponsiveImage)
-        ).order_by('tag__name')))
-        context['disk_usage'] = humanize_size(total_disk_usage)
+        context["years"] = years
+        context["tags"] = sorted(
+            set(
+                tag.tag.name
+                for tag in TaggedItem.objects.filter(
+                    content_type=ContentType.objects.get_for_model(ResponsiveImage)
+                ).order_by("tag__name")
+            )
+        )
+        context["disk_usage"] = humanize_size(total_disk_usage)
 
         return context
 
@@ -71,11 +78,11 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
     ResponsiveImages.
     """
 
-    permission_required = 'gallery.change_responsiveimage'
+    permission_required = "gallery.change_responsiveimage"
     accept_global_perms = True
-    template_name = 'gallery/dashboard/detail.html'
+    template_name = "gallery/dashboard/detail.html"
     model = ResponsiveImage
-    context_object_name = 'image'
+    context_object_name = "image"
     form_class = ResponsiveImageForm
 
     def form_valid(self, form):
@@ -83,8 +90,10 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         Add success message
         """
 
-        messages.success(self.request, 'Bildet ble oppdatert.')
-        getLogger(__name__).info('%s updated ResponsiveImage %d' % (self.request.user, self.object.id))
+        messages.success(self.request, "Bildet ble oppdatert.")
+        getLogger(__name__).info(
+            "%s updated ResponsiveImage %d" % (self.request.user, self.object.id)
+        )
 
         return super(GalleryDetail, self).form_valid(form)
 
@@ -93,7 +102,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         Add error message if invalid
         """
 
-        messages.error(self.request, 'Noen av feltene inneholder feil.')
+        messages.error(self.request, "Noen av feltene inneholder feil.")
 
         return super(GalleryDetail, self).form_invalid(form)
 
@@ -104,7 +113,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         the image should be the path to the LG version.
         """
 
-        return reverse('gallery_dashboard:detail', kwargs={'pk': self.object.id})
+        return reverse("gallery_dashboard:detail", kwargs={"pk": self.object.id})
 
     def get_object(self, queryset=None):
         """
@@ -116,7 +125,9 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
         obj = super().get_object(queryset=queryset)
 
         if not obj.file_status_ok():
-            messages.error(self.request, 'Dette bildeobjektet er korrupt/ødelagt og bør slettes!')
+            messages.error(
+                self.request, "Dette bildeobjektet er korrupt/ødelagt og bør slettes!"
+            )
 
         return obj
 
@@ -127,8 +138,8 @@ class GalleryUpload(DashboardPermissionMixin, TemplateView):
     which facilitates upload, cropping and version generation of images.
     """
 
-    permission_required = 'gallery.add_responsiveimage'
-    template_name = 'gallery/dashboard/upload.html'
+    permission_required = "gallery.add_responsiveimage"
+    template_name = "gallery/dashboard/upload.html"
 
 
 class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
@@ -138,25 +149,27 @@ class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
     Administrators may remove images from this view.
     """
 
-    permission_required = 'gallery.view_unhandledimage'
-    template_name = 'gallery/dashboard/unhandled.html'
+    permission_required = "gallery.view_unhandledimage"
+    template_name = "gallery/dashboard/unhandled.html"
     queryset = UnhandledImage.objects.all()
-    context_object_name = 'images'
+    context_object_name = "images"
 
     def post(self, request, *args, **kwargs):
-        if 'action' in request.POST and request.POST['action'] == 'delete_all':
+        if "action" in request.POST and request.POST["action"] == "delete_all":
             if self.queryset:
                 self.queryset.delete()
-                messages.success(request, 'Alle ubehandlede bilder ble slettet')
+                messages.success(request, "Alle ubehandlede bilder ble slettet")
 
-                getLogger(__name__).info('%s deleted all UnhandledImage instances' % self.request.user)
+                getLogger(__name__).info(
+                    "%s deleted all UnhandledImage instances" % self.request.user
+                )
 
-                return redirect(reverse('gallery_dashboard:unhandled'))
+                return redirect(reverse("gallery_dashboard:unhandled"))
             else:
-                messages.warning(request, 'Fant ingen bilder. Ingen operasjon utført.')
-                return redirect(reverse('gallery_dashboard:unhandled'))
+                messages.warning(request, "Fant ingen bilder. Ingen operasjon utført.")
+                return redirect(reverse("gallery_dashboard:unhandled"))
         else:
-            return HttpResponseBadRequest('Bad request')
+            return HttpResponseBadRequest("Bad request")
 
 
 class GalleryDelete(DashboardPermissionMixin, DetailView):
@@ -164,7 +177,7 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
     GalleryDelete facilitates removal of ResponsiveImages
     """
 
-    permission_required = 'gallery.delete_responsiveimage'
+    permission_required = "gallery.delete_responsiveimage"
     accept_global_perms = True
     model = ResponsiveImage
 
@@ -177,7 +190,7 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
         :return: 405 Method Not Allowed
         """
 
-        return HttpResponseNotAllowed(permitted_methods=['POST'])
+        return HttpResponseNotAllowed(permitted_methods=["POST"])
 
     def post(self, request, *args, **kwargs):
         img = self.get_object(queryset=self.model.objects.all())
@@ -185,21 +198,21 @@ class GalleryDelete(DashboardPermissionMixin, DetailView):
             image_name = img.name
             image_id = img.id
             img.delete()
-            messages.success(request, '%s (%d) ble slettet.' % (image_name, image_id))
+            messages.success(request, "%s (%d) ble slettet." % (image_name, image_id))
 
-            getLogger(__name__).info('%s deleted ResponsiveImage %d' % (self.request.user, image_id))
-
-            return redirect(reverse('gallery_dashboard:index'))
-        else:
-            messages.error(request, 'Det oppstod en feil, klarte ikke slette bildet.')
-            getLogger(__name__).error(
-                '%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
-                    self.request.user,
-                    kwargs['pk']
-                )
+            getLogger(__name__).info(
+                "%s deleted ResponsiveImage %d" % (self.request.user, image_id)
             )
 
-            return redirect(reverse('gallery_dashboard:detail', **kwargs))
+            return redirect(reverse("gallery_dashboard:index"))
+        else:
+            messages.error(request, "Det oppstod en feil, klarte ikke slette bildet.")
+            getLogger(__name__).error(
+                "%s attempted to delete image with ID %d, but failed as queryset was empty."
+                % (self.request.user, kwargs["pk"])
+            )
+
+            return redirect(reverse("gallery_dashboard:detail", **kwargs))
 
 
 class GalleryUnhandledDelete(DashboardPermissionMixin, DetailView):
@@ -207,7 +220,7 @@ class GalleryUnhandledDelete(DashboardPermissionMixin, DetailView):
     GalleryUnhandledDelete facilitates removal of UnhandledImages
     """
 
-    permission_required = 'gallery.delete_unhandledimage'
+    permission_required = "gallery.delete_unhandledimage"
     accept_global_perms = True
     model = UnhandledImage
 
@@ -220,23 +233,25 @@ class GalleryUnhandledDelete(DashboardPermissionMixin, DetailView):
         :return: 405 Method Not Allowed
         """
 
-        return HttpResponseNotAllowed(permitted_methods=['POST'])
+        return HttpResponseNotAllowed(permitted_methods=["POST"])
 
     def post(self, request, *args, **kwargs):
         img = self.get_object(queryset=self.model.objects.all())
         if img:
             image_id = img.id
             img.delete()
-            messages.success(request, 'Ubehandlet bilde %d ble slettet.' % image_id)
+            messages.success(request, "Ubehandlet bilde %d ble slettet." % image_id)
 
-            getLogger(__name__).info('%s deleted UnhandledImage %d' % (self.request.user, image_id))
+            getLogger(__name__).info(
+                "%s deleted UnhandledImage %d" % (self.request.user, image_id)
+            )
 
-            return redirect(reverse('gallery_dashboard:unhandled'))
+            return redirect(reverse("gallery_dashboard:unhandled"))
         else:
-            messages.error(request, 'Det oppstod en feil, klarte ikke slette bildet.')
-            getLogger(__name__).error('%s attempted to delete image with ID %d, but failed as queryset was empty.' % (
-                self.request.user,
-                kwargs['pk']
-            ))
+            messages.error(request, "Det oppstod en feil, klarte ikke slette bildet.")
+            getLogger(__name__).error(
+                "%s attempted to delete image with ID %d, but failed as queryset was empty."
+                % (self.request.user, kwargs["pk"])
+            )
 
-            return redirect(reverse('gallery_dashboard:unhandled'))
+            return redirect(reverse("gallery_dashboard:unhandled"))

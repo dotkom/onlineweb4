@@ -82,10 +82,15 @@
                         {{ field_of_study_application.started_year|as_crispy_field }}
                         {{ field_of_study_application.field_of_study|as_crispy_field }}
                         <div id="field-of-study-application-documentation">
-                            <p>For å søke sosialt medlemsskap i linjeforeningen, kreves det at du tar over 50% informatikk
+                            <p>
+                                Manuell søknad om studieretning krever at du laster opp f.eks et screenshot av
+                                studentweb for å vise til at du studerer informatikk.
+                            </p>
+                            <p id="social-membership-application">
+                                For å søke sosialt medlemsskap i linjeforeningen, kreves det at du tar over 50% informatikk
                                 emner (15 stp+) ved NTNU per semester og at du planlegger å søke overgang til informatikk.
-                                Dette må dokumenteres ved at du laster opp f.eks et screenshot av din studieplan på
-                                studentweb.</p>
+                                Dette kan du vise ved studieplanen på studentweb.
+                            </p>
                             {{ field_of_study_application.documentation|as_crispy_field }}
                         </div>
                         <button type="submit" class="btn btn-success pull-right">Send søknad</button>

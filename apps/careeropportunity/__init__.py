@@ -1,1 +1,1 @@
-default_app_config = 'apps.careeropportunity.appconfig.CareeropportunityConfig'
+default_app_config = "apps.careeropportunity.appconfig.CareeropportunityConfig"

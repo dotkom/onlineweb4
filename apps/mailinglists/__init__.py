@@ -1,1 +1,1 @@
-default_app_config = 'apps.mailinglists.appconfig.MailinglistsConfig'
+default_app_config = "apps.mailinglists.appconfig.MailinglistsConfig"

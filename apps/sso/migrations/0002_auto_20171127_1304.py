@@ -8,25 +8,25 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('sso', '0001_initial'),
-    ]
+    dependencies = [("sso", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='client',
-            name='created',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="client",
+            name="created",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='client',
-            name='updated',
+            model_name="client",
+            name="updated",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterField(
-            model_name='client',
-            name='id',
+            model_name="client",
+            name="id",
             field=models.BigAutoField(primary_key=True, serialize=False),
         ),
     ]

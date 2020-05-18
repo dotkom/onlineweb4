@@ -21,7 +21,7 @@ class SimpleTest(TestCase):
 
 class ResourceCenterURLTestCase(TestCase):
     def test_resourcecenter_index(self):
-        url = reverse('resourcecenter_index')
+        url = reverse("resourcecenter_index")
 
         response = self.client.get(url)
 
@@ -29,7 +29,7 @@ class ResourceCenterURLTestCase(TestCase):
 
     @skip  # django.template.exceptions.TemplateDoesNotExist: resourcecenter/gameservers.html
     def test_resourcecenter_gameservers(self):
-        url = reverse('resourcecenter_gameservers')
+        url = reverse("resourcecenter_gameservers")
 
         response = self.client.get(url)
 

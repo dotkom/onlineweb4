@@ -10,22 +10,22 @@ WIKI_COMMITTEE_ACCESS_GROUP_ID = 3
 WIKI_REVISIONS_PER_HOUR = 1000
 WIKI_REVISIONS_PER_MINUTES = 500
 WIKI_ATTACHMENTS_EXTENSIONS = [
-    'pdf',
-    'doc',
-    'odt',
-    'docx',
-    'txt',
-    'xlsx',
-    'xls',
-    'png',
-    'psd',
-    'ai',
-    'ods',
-    'zip',
-    'jpg',
-    'jpeg',
-    'gif',
-    'patch',
+    "pdf",
+    "doc",
+    "odt",
+    "docx",
+    "txt",
+    "xlsx",
+    "xls",
+    "png",
+    "psd",
+    "ai",
+    "ods",
+    "zip",
+    "jpg",
+    "jpeg",
+    "gif",
+    "patch",
 ]
 
 # Disable django-wiki's internal signup/login pages

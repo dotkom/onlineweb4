@@ -7,19 +7,45 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('feedback', '0006_auto_20151101_0522'),
-    ]
+    dependencies = [("feedback", "0006_auto_20151101_0522")]
 
     operations = [
         migrations.AlterField(
-            model_name='fieldofstudyanswer',
-            name='answer',
-            field=models.SmallIntegerField(choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk'), (10, 'Programvaresystemer'), (11, 'Databaser og søk'), (12, 'Algoritmer og datamaskiner'), (13, 'Spillteknologi'), (14, 'Kunstig intelligens'), (15, 'Helseinformatikk'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')], verbose_name='Studieretning'),
+            model_name="fieldofstudyanswer",
+            name="answer",
+            field=models.SmallIntegerField(
+                choices=[
+                    (0, "Gjest"),
+                    (1, "Bachelor i Informatikk"),
+                    (10, "Programvaresystemer"),
+                    (11, "Databaser og søk"),
+                    (12, "Algoritmer og datamaskiner"),
+                    (13, "Spillteknologi"),
+                    (14, "Kunstig intelligens"),
+                    (15, "Helseinformatikk"),
+                    (30, "Annen mastergrad"),
+                    (80, "PhD"),
+                    (90, "International"),
+                    (100, "Annet Onlinemedlem"),
+                ],
+                verbose_name="Studieretning",
+            ),
         ),
         migrations.AlterField(
-            model_name='ratinganswer',
-            name='answer',
-            field=models.SmallIntegerField(choices=[('', ''), (1, '1'), (2, '2'), (3, '3'), (4, '4'), (5, '5'), (6, '6')], default=0, verbose_name='karakter'),
+            model_name="ratinganswer",
+            name="answer",
+            field=models.SmallIntegerField(
+                choices=[
+                    ("", ""),
+                    (1, "1"),
+                    (2, "2"),
+                    (3, "3"),
+                    (4, "4"),
+                    (5, "5"),
+                    (6, "6"),
+                ],
+                default=0,
+                verbose_name="karakter",
+            ),
         ),
     ]

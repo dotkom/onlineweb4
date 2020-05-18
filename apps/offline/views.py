@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 
 from django.shortcuts import render
-# API v1
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 
@@ -17,16 +16,14 @@ def main(request):
 
     years = list(reversed(sorted(years)))
 
-    ctx = {
-        "issues": issues,
-        "years": years,
-
-    }
+    ctx = {"issues": issues, "years": years}
     return render(request, "offline/offline.html", ctx)
 
 
-class OfflineIssueViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+class OfflineIssueViewSet(
+    viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin
+):
     queryset = Issue.objects.all()
     serializer_class = OfflineIssueSerializer
     permission_classes = (AllowAny,)
-    filterset_fields = ('id', 'release_date', 'title')
+    filterset_fields = ("id", "release_date", "title")

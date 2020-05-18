@@ -7,14 +7,21 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('careeropportunity', '0009_auto_20171115_2208'),
-    ]
+    dependencies = [("careeropportunity", "0009_auto_20171115_2208")]
 
     operations = [
         migrations.AlterField(
-            model_name='careeropportunity',
-            name='employment',
-            field=models.IntegerField(choices=[(1, 'Fastjobb'), (2, 'Deltidsjobb'), (3, 'Sommerjobb/internship'), (4, 'Start-up'), (5, 'Annet')], verbose_name='stillingstype'),
-        ),
+            model_name="careeropportunity",
+            name="employment",
+            field=models.IntegerField(
+                choices=[
+                    (1, "Fastjobb"),
+                    (2, "Deltidsjobb"),
+                    (3, "Sommerjobb/internship"),
+                    (4, "Start-up"),
+                    (5, "Annet"),
+                ],
+                verbose_name="stillingstype",
+            ),
+        )
     ]

@@ -1,1 +1,1 @@
-default_app_config = 'apps.feedback.appconfig.FeedbackConfig'
+default_app_config = "apps.feedback.appconfig.FeedbackConfig"

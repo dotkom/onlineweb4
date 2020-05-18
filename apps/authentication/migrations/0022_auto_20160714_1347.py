@@ -7,14 +7,30 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('authentication', '0021_auto_20160331_0940'),
-    ]
+    dependencies = [("authentication", "0021_auto_20160331_0940")]
 
     operations = [
         migrations.AlterField(
-            model_name='onlineuser',
-            name='field_of_study',
-            field=models.SmallIntegerField(choices=[(0, 'Gjest'), (1, 'Bachelor i Informatikk'), (10, 'Programvaresystemer'), (11, 'Databaser og søk'), (12, 'Algoritmer og datamaskiner'), (13, 'Spillteknologi'), (14, 'Kunstig intelligens'), (15, 'Helseinformatikk'), (16, 'Interaksjonsdesign, spill- og læringsteknologi'), (30, 'Annen mastergrad'), (80, 'PhD'), (90, 'International'), (100, 'Annet Onlinemedlem')], default=0, verbose_name='studieretning'),
-        ),
+            model_name="onlineuser",
+            name="field_of_study",
+            field=models.SmallIntegerField(
+                choices=[
+                    (0, "Gjest"),
+                    (1, "Bachelor i Informatikk"),
+                    (10, "Programvaresystemer"),
+                    (11, "Databaser og søk"),
+                    (12, "Algoritmer og datamaskiner"),
+                    (13, "Spillteknologi"),
+                    (14, "Kunstig intelligens"),
+                    (15, "Helseinformatikk"),
+                    (16, "Interaksjonsdesign, spill- og læringsteknologi"),
+                    (30, "Annen mastergrad"),
+                    (80, "PhD"),
+                    (90, "International"),
+                    (100, "Annet Onlinemedlem"),
+                ],
+                default=0,
+                verbose_name="studieretning",
+            ),
+        )
     ]

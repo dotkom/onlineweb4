@@ -7,16 +7,10 @@ from apps.authentication.constants import GroupType, RoleType
 
 
 def load_data(apps, schema_editor):
-    GroupRole = apps.get_model('authentication', 'GroupRole')
-    GroupMember = apps.get_model('authentication', 'GroupMember')
+    GroupRole = apps.get_model("authentication", "GroupRole")
 
     for role_type in RoleType.ALL_TYPES:
         GroupRole.objects.create(role_type=role_type)
-
-    member_role = GroupRole.objects.get(role_type=RoleType.MEMBER)
-
-    for group_member in GroupMember.objects.all():
-        group_member.roles.add(member_role)
 
 
 def revert_data(apps, schema_editor):
@@ -25,10 +19,6 @@ def revert_data(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('authentication', '0039_auto_20190801_2159'),
-    ]
+    dependencies = [("authentication", "0039_auto_20190801_2159")]
 
-    operations = [
-        migrations.RunPython(load_data, revert_data)
-    ]
+    operations = [migrations.RunPython(load_data, revert_data)]

@@ -107,6 +107,7 @@ const GalleryDashboard = (function PrivateGalleryDashboard($) {
               </td>
               <td>${data.results[i].description}</td>
               <td>${timestamp.format('YYYY-MM-DD HH:MM:SS')}</td>
+              <td>${data.results[i].preset_display}</td>
             </tr>`;
         }
       }

@@ -21,7 +21,6 @@ function OfflineWidget() {
   OfflineWidget.prototype.createDom = () => {
     const data = that.data;
     const offlines = data.results;
-    const suffix = '.thumb.png';
     const itemWrapperStart = '<div class="item centered">';
     const itemWrapperEnd = '</div>';
     let insertMe = '';
@@ -29,16 +28,17 @@ function OfflineWidget() {
     const maxWidthPer = 156;
     const issuesPerSlide = Math.floor(maxWidth / maxWidthPer);
 
-    if (offlines.length <= 0) {
-            // No issues added
+    if (!offlines || offlines.length <= 0) {
+      // No issues added
       insertMe += '<p>Ingen utgaver funnet.</p>';
     } else {
-            // Create DOM for issues.
+      // Create DOM for issues.
       for (let i = 0; i < offlines.length; i += 1) {
         if (i === 0) {
           insertMe += itemWrapperStart;
         }
-        insertMe += `<a href="${offlines[i].issue}"><img src="${offlines[i].issue}${suffix}" /></a>`;
+        const issue = offlines[i];
+        insertMe += `<a href="${offlines[i].issue}"><img src="${issue.image && issue.image.xs}" /></a>`;
 
         if (i === offlines.length - 1 || (i + 1) % issuesPerSlide === 0) {
           insertMe += itemWrapperEnd;

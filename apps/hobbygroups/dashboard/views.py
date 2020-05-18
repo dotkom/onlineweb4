@@ -7,7 +7,7 @@ from apps.dashboard.tools import get_base_context, has_access
 
 
 @login_required
-@permission_required('hobbygroups.change_hobby', return_403=True)
+@permission_required("hobbygroups.change_hobby", return_403=True)
 def index(request):
 
     if not has_access(request):
@@ -15,4 +15,4 @@ def index(request):
 
     context = get_base_context(request)
 
-    return render(request, 'hobbygroups/dashboard/index.html', context)
+    return render(request, "hobbygroups/dashboard/index.html", context)

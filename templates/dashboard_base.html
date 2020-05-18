@@ -144,20 +144,30 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'authentication.change_onlineuser' in user_permissions %}
+                    {% if request.user.is_superuser %} <!-- TODO: Fix! -->
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-image blue"></i> <span>Fotalbum</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'dashboard-photoalbum:albums' %}"><i class="fa fa-angle-double-right orange"></i> Alle album</a></li>
+                            <li><a href="{% url 'dashboard-photoalbum:index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-group blue"></i> <span>Grupper</span>
                             <i class="fa fa-angle-down pull-right"></i>
                         </a>
                         <ul class="treeview-menu">
-                            {% if 'authentication.add_onlineuser' in user_permissions %}
-                                <li><a href="{% url 'admin:auth_group_add' %}"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
+                            {% if 'authentication.add_onlinegroup' in user_permissions %}
+                                <li><a href="{% url 'groups_create' %}"><i class="fa fa-angle-double-right orange"></i> Ny gruppe</a></li>
                             {% endif %}
                             <li><a href="{% url 'groups_index' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
                         </ul>
                     </li>
-                    {% endif %}
                     {% if 'hobbygroups.change_hobby' in user_permissions %}
                     <li>
                         <a href="/dashboard/hobbies">
@@ -233,19 +243,24 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if request.user.is_superuser %}
-                    <li>
-                        <a href="/dashboard/rutinator/">
-                            <i class="fa fa-trophy blue"></i> <span>Rutinator</span>
-                        </a>
-                    </li>
-                    {% endif %}
                     {% if 'approval.view_membershipapproval' in user_permissions %}
                     <li>
                         <a href="{% url 'approvals' %}">
-                            <i class="fa fa-envelope-o blue"></i> <span>Søknader</span>
+                            <i class="fa fa-envelope-o blue"></i> <span>Medlemsskapsøknader</span>
                             {% if approval_pending %}<small class="badge pull-right">{{ approval_pending }}</small>{% endif %}
                         </a>
+                    </li>
+                    {% endif %}
+                    {% if 'approval.view_committeeapplicationperiod' in user_permissions and 'approval.view_committeeapplication' in user_permissions %}
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-inbox blue"></i> <span>Komitésøknader</span>
+                            <i class="fa fa-angle-down pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{% url 'application-periods-create' %}"><i class="fa fa-angle-double-right orange"></i>Ny opptaksperiode</a></li>
+                            <li><a href="{% url 'application-periods-list' %}"><i class="fa fa-angle-double-right orange"></i>Se opptaksperioder</a></li>
+                        </ul>
                     </li>
                     {% endif %}
                     {% if 'feedback.view_feedback' in user_permissions %}
@@ -271,6 +286,7 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a href="{% url 'dashboard_inventory_index' %}"><i class="fa fa-angle-double-right orange"></i> Administrere varelager</a></li>
+                            <li><a href="{% url 'dashboard_discontinued_index' %}"><i class="fa fa-angle-double-right orange"></i> Administrere utgått varelager</a></li>
                             <li><a href="{% url 'dashboard_category_index' %}"><i class="fa fa-angle-double-right orange"></i> Administrere kategorier</a></li>
                             <li><a href="{% url 'dashboard_inventory_statistics' %}"><i class="fa fa-angle-double-right orange"></i> Statistikk</a></li>
                         </ul>

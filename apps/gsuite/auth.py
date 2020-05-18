@@ -4,7 +4,9 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 
 
-def generate_g_suite_credentials(json_keyfile_name=settings.OW4_GSUITE_SYNC.get('CREDENTIALS'), scopes=list()):
+def generate_g_suite_credentials(
+    json_keyfile_name=settings.OW4_GSUITE_SYNC.get("CREDENTIALS"), scopes=list()
+):
     """
     Creates the credentials required for building a Google API Client Resource.
     :param json_keyfile_name: Path to the JSON keyfile. Get this at
@@ -15,8 +17,12 @@ def generate_g_suite_credentials(json_keyfile_name=settings.OW4_GSUITE_SYNC.get(
     :return: Credentials
     :rtype: ServiceAccountCredentials
     """
-    credentials = service_account.Credentials.from_service_account_file(json_keyfile_name, scopes=scopes)
-    credentials = credentials.with_subject(settings.OW4_GSUITE_SETTINGS.get('DELEGATED_ACCOUNT'))
+    credentials = service_account.Credentials.from_service_account_file(
+        json_keyfile_name, scopes=scopes
+    )
+    credentials = credentials.with_subject(
+        settings.OW4_GSUITE_SETTINGS.get("DELEGATED_ACCOUNT")
+    )
 
     return credentials
 
@@ -33,17 +39,23 @@ def build_g_suite_service(service, version, credentials):
     :return: A Google API Resource Client
     """
     if not credentials:
-        raise ValueError('Missing credentials for G Suite API service!')
+        raise ValueError("Missing credentials for G Suite API service!")
 
-    if not settings.OW4_GSUITE_SETTINGS.get('ENABLED', False):
-        raise ImproperlyConfigured('Enable G Suite Syncer in OW4 settings to be able to use it.')
+    if not settings.OW4_GSUITE_SETTINGS.get("ENABLED", False):
+        raise ImproperlyConfigured(
+            "Enable G Suite Syncer in OW4 settings to be able to use it."
+        )
 
     # Example of build: build('admin', 'directory_v1', credentials=credentials)
     return build(service, version, credentials=credentials)
 
 
-def build_and_authenticate_g_suite_service(service, version, scopes,
-                                           json_keyfile_name=settings.OW4_GSUITE_SETTINGS.get('CREDENTIALS')):
+def build_and_authenticate_g_suite_service(
+    service,
+    version,
+    scopes,
+    json_keyfile_name=settings.OW4_GSUITE_SETTINGS.get("CREDENTIALS"),
+):
     """
     Method which combines building and authenticating a Client towards the Google API.
     :param service: The service to get a client for.
@@ -57,5 +69,7 @@ def build_and_authenticate_g_suite_service(service, version, scopes,
     :type json_keyfile_name: str
     :return: A Google API Resource Client
     """
-    credentials = generate_g_suite_credentials(json_keyfile_name=json_keyfile_name, scopes=scopes)
+    credentials = generate_g_suite_credentials(
+        json_keyfile_name=json_keyfile_name, scopes=scopes
+    )
     return build_g_suite_service(service, version, credentials)

@@ -8,6 +8,4 @@ class ChunkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chunk
 
-        fields = (
-            'key', 'content', 'description', 'pk',
-        )
+        fields = ("key", "content", "description", "pk")

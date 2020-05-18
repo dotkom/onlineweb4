@@ -6,12 +6,15 @@ from apps.article.models import Article
 
 class ArticleAdmin(VersionAdmin):
     model = Article
-    ordering = ['-published_date']
-    list_display = ("heading", "created_by", "changed_by", 'featured', 'published_date')
-    list_filter = ['featured']
+    ordering = ["-published_date"]
+    list_display = ("heading", "created_by", "changed_by", "featured", "published_date")
+    list_filter = ["featured"]
     search_fields = [
-        'heading', 'created_by__first_name', 'created_by__last_name', 'created_by__username',
-        'created_by__ntnu_username',
+        "heading",
+        "created_by__first_name",
+        "created_by__last_name",
+        "created_by__username",
+        "created_by__ntnu_username",
     ]
 
     # set the created and changed by fields

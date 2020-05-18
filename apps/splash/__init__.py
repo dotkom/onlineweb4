@@ -1,1 +1,1 @@
-default_app_config = 'apps.splash.appconfig.SplashConfig'
+default_app_config = "apps.splash.appconfig.SplashConfig"

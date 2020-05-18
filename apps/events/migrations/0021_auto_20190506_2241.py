@@ -5,14 +5,16 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('events', '0020_merge_20190506_2241'),
-    ]
+    dependencies = [("events", "0020_merge_20190506_2241")]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='visible',
-            field=models.BooleanField(default=True, help_text='Denne brukes for å skjule eksisterende arrangementer.', verbose_name='Vis arrangementet utenfor Dashboard og Adminpanelet'),
-        ),
+            model_name="event",
+            name="visible",
+            field=models.BooleanField(
+                default=True,
+                help_text="Denne brukes for å skjule eksisterende arrangementer.",
+                verbose_name="Vis arrangementet utenfor Dashboard og Adminpanelet",
+            ),
+        )
     ]

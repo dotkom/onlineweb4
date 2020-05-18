@@ -3,19 +3,20 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from apps.offline.models import Issue
+<<<<<<< HEAD
 from apps.offline.notifications import OfflineCreatedNotification
 from apps.offline.tasks import create_thumbnail
+=======
+from apps.offline.tasks import create_thumbnail_task
+>>>>>>> develop
 
 
 @receiver(post_save, sender=Issue)
-def trigger_create_thumbnail(sender, instance, created, **kwargs):
+def trigger_create_thumbnail(sender, instance: Issue, created=False, **kwargs):
     """
-    :param sender: The model that triggered this hook
-    :param instance: The model instance triggering this hook
-    :param created: True if the instance was created, False if the instance was updated
-
     Calls the create thumbnail task if an issue saved (either created or updated).
     """
+<<<<<<< HEAD
 
     create_thumbnail(instance)
 
@@ -28,3 +29,7 @@ def create_offline_created_notification(sender, instance, created=False, **kwarg
     if created:
         notification = OfflineCreatedNotification(issue=instance)
         notification.dispatch()
+=======
+    if not instance.image:
+        create_thumbnail_task.delay(issue_id=instance.id)
+>>>>>>> develop

@@ -1,23 +1,36 @@
 # -*- encoding: utf-8 -*-
-
-import json
-
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DeleteView, DetailView, ListView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 from guardian.decorators import permission_required
+from guardian.shortcuts import get_objects_for_user
 from watson.views import SearchView
 
 from apps.authentication.forms import UserUpdateForm
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import AllowedUsername, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
+
+from .forms import OnlineGroupForm
+from .utils import (
+    handle_group_member_add,
+    handle_group_member_remove,
+    handle_group_role_add,
+    handle_group_role_remove,
+)
 
 
 @login_required
@@ -31,12 +44,11 @@ def index(request):
 
     context = get_base_context(request)
 
-    return render(request, 'auth/dashboard/index.html', context)
+    return render(request, "auth/dashboard/index.html", context)
 
 
 # GROUP MODULE VIEWS
 @login_required
-@permission_required('authentication.change_onlineuser', return_403=True)
 def groups_index(request):
     """
     Group module in dashboard that lists groups.
@@ -46,15 +58,42 @@ def groups_index(request):
         raise PermissionDenied
 
     context = get_base_context(request)
+    online_groups = get_objects_for_user(
+        request.user, "authentication.change_onlinegroup"
+    )
+    context["groups"] = online_groups
 
-    context['groups'] = list(Group.objects.all())
-    context['groups'].sort(key=lambda x: str(x).lower())
+    return render(request, "auth/dashboard/groups_index.html", context)
 
-    return render(request, 'auth/dashboard/groups_index.html', context)
+
+def groups_detail_post_handler(request, group):
+    if request.is_ajax and "action" in request.POST:
+        action = request.POST.get("action")
+        if action == "remove_user":
+            return handle_group_member_remove(request, group)
+
+        elif action == "add_user":
+            return handle_group_member_add(request, group)
+
+        elif action == "add_role":
+            return handle_group_role_add(request, group)
+
+        elif action == "remove_role":
+            return handle_group_role_remove(request, group)
+
+        else:
+            return HttpResponse("Ugyldig handling.", status=400)
+    else:
+        form = OnlineGroupForm(data=request.POST, instance=group, user=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Gruppen ble oppdatert")
+        else:
+            messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
+        return redirect(groups_detail, pk=group.id)
 
 
 @login_required
-@permission_required('authentication.change_onlineuser', return_403=True)
 def groups_detail(request, pk):
     """
     Group module in dashboard that lists groups.
@@ -64,57 +103,64 @@ def groups_detail(request, pk):
         raise PermissionDenied
 
     context = get_base_context(request)
+    online_groups = get_objects_for_user(
+        request.user, "authentication.change_onlinegroup"
+    )
+    group = get_object_or_404(online_groups, pk=pk)
+    context["group"] = group
+    context["form"] = OnlineGroupForm(instance=group, user=request.user)
 
-    context['group'] = get_object_or_404(Group, pk=pk)
+    if request.method == "POST":
+        return groups_detail_post_handler(request, group)
 
-    # AJAX
-    if request.method == 'POST':
-        if request.is_ajax and 'action' in request.POST:
-            resp = {'status': 200}
-            if request.POST['action'] == 'remove_user':
-                user = get_object_or_404(User, pk=int(request.POST['user_id']))
-                context['group'].user_set.remove(user)
-                resp['message'] = '%s ble fjernet fra %s' % (user.get_full_name(), context['group'].name)
-                resp['users'] = [{'user': u.get_full_name(), 'id': u.id} for u in context['group'].user_set.all()]
-                resp['users'].sort(key=lambda x: x['user'])
-
-                return HttpResponse(json.dumps(resp), status=200)
-            elif request.POST['action'] == 'add_user':
-                user = get_object_or_404(User, pk=int(request.POST['user_id']))
-                context['group'].user_set.add(user)
-                resp['full_name'] = user.get_full_name()
-                resp['users'] = [{'user': u.get_full_name(), 'id': u.id} for u in context['group'].user_set.all()]
-                resp['users'].sort(key=lambda x: x['user'])
-                resp['message'] = '%s ble lagt til i %s' % (resp['full_name'], context['group'].name)
-
-                return HttpResponse(json.dumps(resp), status=200)
-
-        return HttpResponse('Ugyldig handling.', status=400)
-
-    if hasattr(settings, 'GROUP_SYNCER') and settings.GROUP_SYNCER:
+    if hasattr(settings, "GROUP_SYNCER") and settings.GROUP_SYNCER:
         group_id = int(pk)
         # Groups that list this one as their destination
-        context['sync_group_from'] = []
+        context["sync_group_from"] = []
         # Groups that list this one as one of their sources
-        context['sync_group_to'] = []
+        context["sync_group_to"] = []
 
         # Make a dict that simply maps {id: name} for all groups
-        groups = {g.id: g.name for g in Group.objects.all().order_by('id')}
+        groups = {g.id: g.name for g in Group.objects.all().order_by("id")}
 
         for job in settings.GROUP_SYNCER:
-            if group_id in job['source']:
-                context['sync_group_to'].extend([groups[g_id] for g_id in job['destination']])
-            if group_id in job['destination']:
-                context['sync_group_from'].extend([groups[g_id] for g_id in job['source']])
+            if group_id in job["source"]:
+                context["sync_group_to"].extend(
+                    [groups[g_id] for g_id in job["destination"]]
+                )
+            if group_id in job["destination"]:
+                context["sync_group_from"].extend(
+                    [groups[g_id] for g_id in job["source"]]
+                )
 
-    context['group_users'] = list(context['group'].user_set.all())
+    context["group_permissions"] = list(group.group.permissions.all())
+    context["group_permissions"].sort(key=lambda x: str(x))
+    context["roles"] = GroupRole.objects.all()
 
-    context['group_permissions'] = list(context['group'].permissions.all())
+    return render(request, "auth/dashboard/groups_detail.html", context)
 
-    context['group_users'].sort(key=lambda x: str(x).lower())
-    context['group_permissions'].sort(key=lambda x: str(x))
 
-    return render(request, 'auth/dashboard/groups_detail.html', context)
+class GroupCreateView(DashboardPermissionMixin, CreateView):
+    model = OnlineGroup
+    form_class = OnlineGroupForm
+    template_name = "auth/dashboard/groups_create.html"
+    permission_required = "authentication.add_onlinegroup"
+
+    def get_success_url(self):
+        return reverse("groups_index")
+
+    def get_form_kwargs(self):
+        """Make the requesting user available to the form"""
+        kwargs = super().get_form_kwargs()
+        kwargs.update({"user": self.request.user})
+        return kwargs
+
+    def form_valid(self, form):
+        online_group: OnlineGroup = form.save(commit=False)
+        django_group = Group.objects.create(name=online_group.name_short)
+        online_group.group = django_group
+        online_group.save()
+        return super().form_valid(form)
 
 
 @login_required
@@ -137,9 +183,9 @@ def members_index(request):
 
     context = get_base_context(request)
     members = AllowedUsername.objects.all()
-    context['members'] = merge_names(members)
+    context["members"] = merge_names(members)
 
-    return render(request, 'auth/dashboard/user_list.html', context)
+    return render(request, "auth/dashboard/user_list.html", context)
 
 
 class UserListView(DashboardPermissionMixin, ListView):
@@ -147,8 +193,8 @@ class UserListView(DashboardPermissionMixin, ListView):
     queryset = User.objects.all().exclude(id=-1)
     paginate_by = 25
     paginator_class = Paginator
-    permission_required = 'authentication.view_onlineuser'
-    template_name = 'auth/dashboard/user_list.html'
+    permission_required = "authentication.view_onlineuser"
+    template_name = "auth/dashboard/user_list.html"
 
 
 class UserSearchView(DashboardPermissionMixin, SearchView):
@@ -156,36 +202,38 @@ class UserSearchView(DashboardPermissionMixin, SearchView):
     queryset = User.objects.all().exclude(id=-1)
     paginate_by = 25
     paginator_class = Paginator
-    permission_required = 'authentication.view_onlineuser'
-    template_name = 'auth/dashboard/user_list.html'
-    empty_query_redirect = reverse_lazy('user_list')
+    permission_required = "authentication.view_onlineuser"
+    template_name = "auth/dashboard/user_list.html"
+    empty_query_redirect = reverse_lazy("user_list")
 
 
 class UserDetailView(DashboardPermissionMixin, DetailView):
     model = User
-    context_object_name = 'user'
-    permission_required = 'authentication.view_onlineuser'
-    pk_url_kwarg = 'user_id'
-    template_name = 'auth/dashboard/user_detail.html'
+    context_object_name = "user"
+    permission_required = "authentication.view_onlineuser"
+    pk_url_kwarg = "user_id"
+    template_name = "auth/dashboard/user_detail.html"
 
 
 class UserUpdateView(DashboardPermissionMixin, UpdateView):
     form_class = UserUpdateForm
     model = User
-    context_object_name = 'user'
-    permission_required = 'authentication.change_onlineuser'
-    pk_url_kwarg = 'user_id'
-    template_name = 'auth/dashboard/user_edit.html'
+    context_object_name = "user"
+    permission_required = "authentication.change_onlineuser"
+    pk_url_kwarg = "user_id"
+    template_name = "auth/dashboard/user_edit.html"
 
     def get_success_url(self):
-        return reverse('dashboard_user_detail', kwargs={'user_id': self.kwargs.get('user_id')})
+        return reverse(
+            "dashboard_user_detail", kwargs={"user_id": self.kwargs.get("user_id")}
+        )
 
 
 class UserDeleteView(DashboardPermissionMixin, DeleteView):
     model = User
-    permission_required = 'authentication.delete_onlineuser'
-    pk_url_kwarg = 'user_id'
-    success_url = reverse_lazy('user_list')
+    permission_required = "authentication.delete_onlineuser"
+    pk_url_kwarg = "user_id"
+    success_url = reverse_lazy("user_list")
 
 
 @login_required
@@ -199,4 +247,4 @@ def members_new(request):
 
     context = get_base_context(request)
 
-    return render(request, 'auth/dashboard/members_new.html', context)
+    return render(request, "auth/dashboard/members_new.html", context)

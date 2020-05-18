@@ -14,7 +14,7 @@ class ModelPermission(permissions.BasePermission):
     create_permissions = []
     delete_permissions = []
 
-    def _check_permissions(self, user, perms, obj = None):
+    def _check_permissions(self, user, perms, obj=None):
         if len(perms) == 0:
             return True
         if user.is_authenticated:
@@ -26,21 +26,21 @@ class ModelPermission(permissions.BasePermission):
                     if user.has_perm(permission, obj):
                         return True
         return False
-    
+
     def has_permission(self, request, view):
         if request.user.is_superuser:
             return True
 
-        if view.action in ['list', 'retrieve']:
+        if view.action in ["list", "retrieve"]:
             return self._check_permissions(request.user, self.view_permissions)
 
-        elif view.action in ['update', 'partial_update']:
+        elif view.action in ["update", "partial_update"]:
             return self._check_permissions(request.user, self.update_permissions)
 
-        elif view.action in ['create']:
+        elif view.action in ["create"]:
             return self._check_permissions(request.user, self.create_permissions)
 
-        elif view.action in ['destroy']:
+        elif view.action in ["destroy"]:
             return self._check_permissions(request.user, self.delete_permissions)
 
         return False
@@ -53,13 +53,13 @@ class ModelPermission(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
 
-        if view.action in ['retrieve']:
+        if view.action in ["retrieve"]:
             return self._check_permissions(request.user, self.view_permissions, obj)
 
-        elif view.action in ['update', 'partial_update']:
+        elif view.action in ["update", "partial_update"]:
             return self._check_permissions(request.user, self.update_permissions, obj)
 
-        elif view.action in ['destroy']:
+        elif view.action in ["destroy"]:
             return self._check_permissions(request.user, self.delete_permissions, obj)
 
         return False

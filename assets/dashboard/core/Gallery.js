@@ -1,6 +1,7 @@
 import jQuery from 'jquery';
 import MicroEvent from 'common/utils/MicroEvent';
 import { ajaxEnableCSRF, format, render } from 'common/utils';
+import moment from 'moment';
 import GalleryCrop from './GalleryCrop';
 import GalleryUpload from './GalleryUpload';
 
@@ -9,12 +10,13 @@ const TMPL_IMAGE_SEARCH_RESULT = `
 <div class="col-md-6 col-sm-12 col-xs-12">
  <div class="image-selection-thumbnail" data-id="<%= image.id %>">
   <div class="image-selection-thumbnail-image">
-   <img src="<%= image.thumbnail %>" title="<%= image.name %>">
+   <img src="<%= image.thumb %>" title="<%= image.name %>">
   </div>
   <div class="image-selection-thumbnail-text">
     <h4 class="image-title"><%= image.name %></h4>
     <span class="image-timestamp"><%= image.timestamp %></span>
     <p class="image-description"><%= image.description %></p>
+    <p class="image-description">Type: <%= image.preset_display %></p>
   </div>
  </div>
 </div>
@@ -141,11 +143,14 @@ const Gallery = (function PrivateGallery($) {
        * @param query A string containing a keyword or sentence.
        */
       const searchImages = (query) => {
-        const payload = { query };
-
-        Gallery.ajax('GET', '/gallery/search/', payload, (data) => {
-          let html = render(TMPL_IMAGE_SEARCH_RESULT, { images: data.images });
-          if (!data.images.length) html = '<div class="col-md-12"><p>Ingen bilder matchet søket...</p></div></div>';
+        const preset = $('#responsive-image-id').attr('preset');
+        Gallery.ajax('GET', `/api/v1/images/?query=${query}${preset ? `&preset=${preset}` : ''}`, null, (data) => {
+          const images = data.results.map(image => ({
+            ...image,
+            timestamp: moment(image.timpstamp).format('YYYY-MM-DD HH:MM:SS'),
+          }));
+          let html = render(TMPL_IMAGE_SEARCH_RESULT, { images });
+          if (!data.results.length) html = '<div class="col-md-12"><p>Ingen bilder matchet søket...</p></div></div>';
           else html += '</div>';
 
           $('#image-gallery-search-results').html(html);

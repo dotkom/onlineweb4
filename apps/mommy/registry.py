@@ -2,7 +2,6 @@
 
 
 class Task(object):
-
     @staticmethod
     def run():
         raise NotImplementedError("you must define a run() method for your task")
@@ -27,7 +26,9 @@ class Schedule(object):
         if task in self._tasks:
             raise ValueError("Could not register %s, already registered", task.__name__)
         if task.__name__ in self._tasks:
-            raise ValueError("Could not register %s, a task with the same name already registered")
+            raise ValueError(
+                "Could not register %s, a task with the same name already registered"
+            )
 
         self._tasks[task] = kwargs
 

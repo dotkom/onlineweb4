@@ -22,7 +22,7 @@ def _get_error_message_from_httperror(err):
     :rtype: str
     """
     json_error = json.loads(str(err.content.decode()))
-    return json_error.get('error', {}).get('message', '')
+    return json_error.get("error", {}).get("message", "")
 
 
 def insert_user_into_group_pass_if_already_member(domain, group, email):
@@ -44,10 +44,12 @@ def insert_user_into_group_pass_if_already_member(domain, group, email):
     except HttpError as err:
         error_message = _get_error_message_from_httperror(err)
 
-        if 'Member already exists' in error_message:
-            logger.warning('Email address "{email}" was already subscribed to mailing list "{list}"!'.format(
-                email=email, list=group
-            ))
+        if "Member already exists" in error_message:
+            logger.warning(
+                'Email address "{email}" was already subscribed to mailing list "{list}"!'.format(
+                    email=email, list=group
+                )
+            )
         else:
             raise err
 
@@ -71,18 +73,24 @@ def remove_user_from_group_pass_if_not_subscribed(domain, group, email):
     except HttpError as err:
         error_message = _get_error_message_from_httperror(err)
 
-        if 'Resource Not Found' in error_message:
-            logger.warning('Email address "{email}" was not subscribed to mailing list "{list}"!'.format(
-                email=email, list=group
-            ))
+        if "Resource Not Found" in error_message:
+            logger.warning(
+                'Email address "{email}" was not subscribed to mailing list "{list}"!'.format(
+                    email=email, list=group
+                )
+            )
         else:
             raise err
 
 
 @shared_task
 def update_mailing_list(g_suite_mailing_list, email, added):
-    domain = settings.OW4_GSUITE_SYNC.get('DOMAIN')
+    domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
     if added:
-        insert_user_into_group_pass_if_already_member(domain, g_suite_mailing_list, email)
+        insert_user_into_group_pass_if_already_member(
+            domain, g_suite_mailing_list, email
+        )
     else:
-        remove_user_from_group_pass_if_not_subscribed(domain, g_suite_mailing_list, email)
+        remove_user_from_group_pass_if_not_subscribed(
+            domain, g_suite_mailing_list, email
+        )

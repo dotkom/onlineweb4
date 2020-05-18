@@ -4,6 +4,7 @@ from taggit.forms import TagWidget
 
 from apps.article.models import Article
 from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
+from apps.gallery.constants import ImageFormat
 from apps.gallery.widgets import SingleImageInput
 
 
@@ -15,29 +16,32 @@ class ArticleForm(forms.ModelForm):
 
         model = Article
         fields = [
-            'heading',
-            'ingress_short',
-            'ingress',
-            'content',
-            'image',
-            'video',
-            'published_date',
-            'authors',
-            'tags',
-            'featured'
+            "heading",
+            "ingress_short",
+            "ingress",
+            "content",
+            "image",
+            "video",
+            "published_date",
+            "authors",
+            "tags",
+            "featured",
         ]
 
         # Fields should be a mapping between field name and an attribute dictionary
-        img_fields = [('image', {'id': 'responsive-image-id'})]
-        dtp_fields = [('published_date', {})]
-        widgetlist = [
-            (DatetimePickerInput, dtp_fields),
-            (SingleImageInput, img_fields)
+        img_fields = [
+            ("image", {"id": "responsive-image-id", "preset": ImageFormat.ARTICLE})
         ]
+        dtp_fields = [("published_date", {})]
+        widgetlist = [(DatetimePickerInput, dtp_fields), (SingleImageInput, img_fields)]
 
         # Multiple widget generator merges results from regular widget_generator into a single widget dict
         widgets = multiple_widget_generator(widgetlist)
-        widgets.update({'tags': TagWidget(attrs={'placeholder': 'Eksempel: åre, online, kjelleren'})})
-        labels = {
-            'tags': 'Tags'
-        }
+        widgets.update(
+            {
+                "tags": TagWidget(
+                    attrs={"placeholder": "Eksempel: åre, online, kjelleren"}
+                )
+            }
+        )
+        labels = {"tags": "Tags"}

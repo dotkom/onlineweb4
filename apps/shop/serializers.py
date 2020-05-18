@@ -12,13 +12,21 @@ from apps.shop.models import Order, OrderLine
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = (
-            'object_id', 'quantity',
-        )
+        fields = ("object_id", "quantity")
 
 
 class OrderLineSerializer(serializers.ModelSerializer):
     orders = OrderSerializer(many=True)
+
+    def validate_orders(self, orders: dict):
+        for order in orders:
+            item = Item.objects.get(pk=order.get("object_id"))
+            if not item.available:
+                raise serializers.ValidationError(
+                    "Enklte av de gitte produktene er ikke tilgjengelig"
+                )
+
+        return orders
 
     def create(self, validated_data):
         order_list = validated_data.pop("orders")
@@ -37,34 +45,26 @@ class OrderLineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderLine
-        fields = (
-            'user', 'orders',
-        )
+        fields = ("user", "orders")
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            'pk', 'first_name', 'last_name', 'saldo',
-        )
+        fields = ("pk", "first_name", "last_name", "saldo")
 
 
 class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentTransaction
-        fields = (
-            'user', 'amount',
-        )
+        fields = ("user", "amount")
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemCategory
 
-        fields = (
-            'pk', 'name'
-        )
+        fields = ("pk", "name")
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -73,9 +73,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
-        fields = (
-            'pk', 'name', 'price', 'description', 'image', 'category'
-        )
+        fields = ("pk", "name", "price", "description", "image", "category")
 
 
 class UserOrderSerializer(serializers.ModelSerializer):
@@ -83,7 +81,7 @@ class UserOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('price', 'quantity', 'content_object')
+        fields = ("price", "quantity", "content_object")
 
 
 class UserOrderLineSerializer(serializers.ModelSerializer):
@@ -91,4 +89,4 @@ class UserOrderLineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderLine
-        fields = ('orders', 'paid', 'datetime')
+        fields = ("orders", "paid", "datetime")

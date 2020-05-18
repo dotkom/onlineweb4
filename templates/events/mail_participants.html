@@ -44,20 +44,6 @@ Send epost til påmeldte - Online
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="from_email">Fra epost</label>
-                        <select id="from_email" name="from_email" class="form-control">
-                            <option value="1">arrkom@online.ntnu.no</option>
-                            <option value="2">bedkom@online.ntnu.no</option>
-                            <option value="3">fagkom@online.ntnu.no</option>
-                            <option value="4" hidden>arrkom@online.ntnu.no</option>
-                            <option value="5">ekskom@online.ntnu.no</option>
-                            <option value="6">itex@online.ntnu.no</option>
-                            <option value="7">x-sport@online.ntnu.no</option>
-                            <option value="8">kontakt@online.ntnu.no</option>
-
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="subject">Emne</label>
                         <input type="text" class="form-control" name="subject" id="subject" />
                     </div>
@@ -67,7 +53,7 @@ Send epost til påmeldte - Online
                     </div>
                     <div class="form-group">
                         <label for="image">Bilder</label>
-                        <input type="file" name="image" accept="image/png, image/jpeg" multiple>
+                        <input id="image" type="file" name="image" accept="image/png, image/jpeg" multiple>
                     </div>
                     <p class="alert-warning">Vi legger automatisk på signatur for deg, skriv BARE din beskjed.</p>
                     <input name="submit" class="btn btn-success" type="submit" value="Send" />

@@ -1,0 +1,40 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{{ product.album }} - #{{ photo.id }} - Online Dashboard
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardPhotoAlbum' 'css' %}
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardPhotoAlbum' 'js' %}
+{% endblock %}
+
+{% block page-header %}
+Album {{ photo.album }} - {{ photo }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-photoalbum:albums' %}">Album</a></li>
+    <li>{{ photo }}</li>
+{% endblock %}
+
+{% block content %}
+<p><a href="{% url 'dashboard-photoalbum:photo_update' pk=photo.pk %}" class="btn btn-primary"><i class="fa fa-edit"></i> Rediger</a></p>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Bilde</h3>
+    </div>
+    <div class="panel-body">
+    {{ photo }}
+    </div>
+</div>
+{% endblock content %}

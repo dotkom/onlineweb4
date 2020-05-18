@@ -5,13 +5,14 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('hobbygroups', '0004_auto_20190130_2126'),
-    ]
+    dependencies = [("hobbygroups", "0004_auto_20190130_2126")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='hobby',
-            options={'default_permissions': ('add', 'change', 'delete'), 'verbose_name_plural': 'Hobbies'},
-        ),
+            name="hobby",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "verbose_name_plural": "Hobbies",
+            },
+        )
     ]

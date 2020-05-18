@@ -10,12 +10,12 @@ from apps.webshop.models import OrderLine, Product, ProductSize
 class WebshopTestMixin:
     @staticmethod
     def assert_in_messages(message_text, response):
-        messages = [str(message) for message in response.context['messages']]
+        messages = [str(message) for message in response.context["messages"]]
         assert message_text in messages
 
 
 class WebshopHome(TestCase):
-    url = reverse('webshop_home')
+    url = reverse("webshop_home")
 
     def test_ok(self):
         response = self.client.get(self.url)
@@ -29,15 +29,22 @@ class WebshopHome(TestCase):
 
         response = self.client.get(self.url)
 
-        self.assertEqual(len(response.context['products']), 2)
+        self.assertEqual(len(response.context["products"]), 2)
 
 
 class WebshopProductDetail(TestCase, WebshopTestMixin):
-    url = reverse('webshop_product', kwargs={'slug': 'product1'})
+    url = reverse("webshop_product", kwargs={"slug": "product1"})
 
     def setUp(self):
-        self.user = G(OnlineUser, username='test', ntnu_username='test')
-        self.product = G(Product, name='Product 1', slug='product1', active=True, stock=12, deadline=None)
+        self.user = G(OnlineUser, username="test", ntnu_username="test")
+        self.product = G(
+            Product,
+            name="Product 1",
+            slug="product1",
+            active=True,
+            stock=12,
+            deadline=None,
+        )
 
     def test_ok(self):
         response = self.client.get(self.url)
@@ -47,11 +54,9 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
     def test_order(self):
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 2,
-        })
+        response = self.client.post(self.url, {"quantity": 2})
 
-        self.assertRedirects(response, reverse('webshop_checkout'))
+        self.assertRedirects(response, reverse("webshop_checkout"))
         order_line = OrderLine.objects.get(user=self.user)
         order = order_line.orders.get(product=self.product)
         self.assertEqual(order.quantity, 2)
@@ -59,110 +64,88 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
     def test_order_twice(self):
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 1,
-        })
-        response = self.client.post(self.url, {
-            'quantity': 2,
-        })
+        response = self.client.post(self.url, {"quantity": 1})
+        response = self.client.post(self.url, {"quantity": 2})
 
-        self.assertRedirects(response, reverse('webshop_checkout'))
+        self.assertRedirects(response, reverse("webshop_checkout"))
         order_line = OrderLine.objects.get(user=self.user)
         order = order_line.orders.get(product=self.product)
         self.assertEqual(order.quantity, 3)
 
     def test_order_not_logged_in(self):
-        response = self.client.post(self.url, {
-            'quantity': 1,
-        })
+        response = self.client.post(self.url, {"quantity": 1})
 
-        self.assertRedirects(response, '{}?next={}'.format(reverse('auth_login'), self.url))
+        self.assertRedirects(
+            response, "{}?next={}".format(reverse("auth_login"), self.url)
+        )
 
     def test_order_deadline_reached(self):
-        self.product.deadline = '2010-12-12 00:00Z'
+        self.product.deadline = "2010-12-12 00:00Z"
         self.product.save()
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 1,
-        })
+        response = self.client.post(self.url, {"quantity": 1})
 
-        self.assert_in_messages('Dette produktet er ikke lenger tilgjengelig.', response)
+        self.assert_in_messages(
+            "Dette produktet er ikke lenger tilgjengelig.", response
+        )
 
     def test_order_out_of_stock(self):
         self.product.stock = 0
         self.product.save()
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 1,
-        })
+        response = self.client.post(self.url, {"quantity": 1})
 
-        self.assert_in_messages('Dette produktet er utsolgt.', response)
+        self.assert_in_messages("Dette produktet er utsolgt.", response)
 
     def test_order_not_enough_stock(self):
         self.product.stock = 5
         self.product.save()
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 7,
-        })
+        response = self.client.post(self.url, {"quantity": 7})
 
-        self.assert_in_messages('Det er ikke nok produkter på lageret.', response)
+        self.assert_in_messages("Det er ikke nok produkter på lageret.", response)
 
     def test_order_size(self):
-        size = G(ProductSize, product=self.product, size='M', stock=5)
+        size = G(ProductSize, product=self.product, size="M", stock=5)
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 2,
-            'size': size.pk
-        })
+        response = self.client.post(self.url, {"quantity": 2, "size": size.pk})
 
-        self.assertRedirects(response, reverse('webshop_checkout'))
+        self.assertRedirects(response, reverse("webshop_checkout"))
         order_line = OrderLine.objects.get(user=self.user)
         order = order_line.orders.get(product=self.product)
         self.assertEqual(order.quantity, 2)
 
     def test_order_unknown_size(self):
-        size = G(ProductSize, product=self.product, size='M', stock=5)
+        size = G(ProductSize, product=self.product, size="M", stock=5)
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 2,
-            'size': size.pk + 1
-        })
+        response = self.client.post(self.url, {"quantity": 2, "size": size.pk + 1})
 
-        self.assert_in_messages('Vennligst oppgi et gyldig antall', response)
+        self.assert_in_messages("Vennligst oppgi et gyldig antall", response)
 
     def test_order_size_not_enough_stock(self):
-        size = G(ProductSize, product=self.product, size='M', stock=5)
+        size = G(ProductSize, product=self.product, size="M", stock=5)
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 6,
-            'size': size.pk
-        })
+        response = self.client.post(self.url, {"quantity": 6, "size": size.pk})
 
-        self.assert_in_messages('Det er ikke nok produkter på lageret.', response)
+        self.assert_in_messages("Det er ikke nok produkter på lageret.", response)
 
     def test_order_size_out_of_stock(self):
-        size = G(ProductSize, product=self.product, size='M', stock=5)
+        size = G(ProductSize, product=self.product, size="M", stock=5)
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': 6,
-            'size': size.pk
-        })
+        response = self.client.post(self.url, {"quantity": 6, "size": size.pk})
 
-        self.assert_in_messages('Det er ikke nok produkter på lageret.', response)
+        self.assert_in_messages("Det er ikke nok produkter på lageret.", response)
 
     def test_order_negative_quantity(self):
         self.client.force_login(self.user)
 
-        response = self.client.post(self.url, {
-            'quantity': -1,
-        })
+        response = self.client.post(self.url, {"quantity": -1})
 
-        self.assert_in_messages('Vennligst oppgi et gyldig antall', response)
+        self.assert_in_messages("Vennligst oppgi et gyldig antall", response)

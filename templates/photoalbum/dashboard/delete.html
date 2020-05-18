@@ -1,0 +1,25 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+{% load addcss %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Slett - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+Fotoalbum - Slett
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li><a href="{% url 'dashboard-photoalbum:index' %}">Fotoalbum</a></li>
+    <li>Slett</li>
+{% endblock %}
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger"><i class="fa fa-times"></i> Slett</button>
+    <a href="javascript:history.back()" class="btn btn-primary">Gå tilbake</a>
+</form>
+{% endblock content %}
