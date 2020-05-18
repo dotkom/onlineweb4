@@ -832,6 +832,17 @@ grpc = ["grpcio (>=1.0.0)"]
 
 [[package]]
 category = "main"
+description = "Encrypted Content Encoding for HTTP"
+name = "http-ece"
+optional = false
+python-versions = "*"
+version = "1.1.0"
+
+[package.dependencies]
+cryptography = ">=2.5"
+
+[[package]]
+category = "main"
 description = "A comprehensive HTTP client library."
 name = "httplib2"
 optional = false
@@ -1146,6 +1157,17 @@ version = "1.8.1"
 
 [[package]]
 category = "main"
+description = "Simple VAPID header generation library"
+name = "py-vapid"
+optional = false
+python-versions = "*"
+version = "1.7.0"
+
+[package.dependencies]
+cryptography = ">=2.5"
+
+[[package]]
+category = "main"
 description = "ASN.1 types and codecs"
 name = "pyasn1"
 optional = false
@@ -1344,6 +1366,20 @@ version = "2019.3"
 
 [[package]]
 category = "main"
+description = "WebPush publication library"
+name = "pywebpush"
+optional = false
+python-versions = "*"
+version = "1.11.0"
+
+[package.dependencies]
+cryptography = ">=2.6.1"
+http-ece = ">=1.1.0"
+py-vapid = ">=1.7.0"
+requests = ">=2.21.0"
+
+[[package]]
+category = "main"
 description = "YAML parser and emitter for Python"
 name = "pyyaml"
 optional = false
@@ -1385,6 +1421,7 @@ version = "1.2.4"
 reference = "db65804cc9b9e8ee9f574f3d11ae89d2055bc258"
 type = "git"
 url = "https://github.com/dotkom/redwine.git"
+
 [[package]]
 category = "dev"
 description = "Alternative regular expression module, to replace re."
@@ -1814,7 +1851,7 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 prod = ["psycopg2-binary", "uwsgi", "redis"]
 
 [metadata]
-content-hash = "a481e102d4c4f3c29d1b3e48b8e2b2a8c65bb2dd1e7502b57cab6c6974e08b3a"
+content-hash = "500771eb604588a55e6452325e0271587e3b33c0b1960fbea9fe7899ba6a94ad"
 python-versions = "~3.7"
 
 [metadata.files]
@@ -2139,6 +2176,9 @@ google-auth-httplib2 = [
 googleapis-common-protos = [
     {file = "googleapis-common-protos-1.51.0.tar.gz", hash = "sha256:013c91704279119150e44ef770086fdbba158c1f978a6402167d47d5409e226e"},
 ]
+http-ece = [
+    {file = "http_ece-1.1.0.tar.gz", hash = "sha256:932ebc2fa7c216954c320a188ae9c1f04d01e67bec9cdce1bfbc912813b0b4f8"},
+]
 httplib2 = [
     {file = "httplib2-0.17.0-py3-none-any.whl", hash = "sha256:79751cc040229ec896aa01dced54de0cd0bf042f928e84d5761294422dde4454"},
     {file = "httplib2-0.17.0.tar.gz", hash = "sha256:de96d0a49f46d0ee7e0aae80141d37b8fcd6a68fb05d02e0b82c128592dd8261"},
@@ -2339,6 +2379,9 @@ py = [
     {file = "py-1.8.1-py2.py3-none-any.whl", hash = "sha256:c20fdd83a5dbc0af9efd622bee9a5564e278f6380fffcacc43ba6f43db2813b0"},
     {file = "py-1.8.1.tar.gz", hash = "sha256:5e27081401262157467ad6e7f851b7aa402c5852dbcb3dae06768434de5752aa"},
 ]
+py-vapid = [
+    {file = "py-vapid-1.7.0.tar.gz", hash = "sha256:03057a3270ddc7d53c31e2915083d01ba8a3169f4032cab3dd9f4ebe44e2564a"},
+]
 pyasn1 = [
     {file = "pyasn1-0.4.8-py2.4.egg", hash = "sha256:fec3e9d8e36808a28efb59b489e4528c10ad0f480e57dcc32b4de5c9d8c9fdf3"},
     {file = "pyasn1-0.4.8-py2.5.egg", hash = "sha256:0458773cfe65b153891ac249bcf1b5f8f320b7c2ce462151f8fa74de8934becf"},
@@ -2478,6 +2521,9 @@ python-memcached = [
 pytz = [
     {file = "pytz-2019.3-py2.py3-none-any.whl", hash = "sha256:1c557d7d0e871de1f5ccd5833f60fb2550652da6be2693c1e02300743d21500d"},
     {file = "pytz-2019.3.tar.gz", hash = "sha256:b02c06db6cf09c12dd25137e563b31700d3b80fcc4ad23abb7a315f2789819be"},
+]
+pywebpush = [
+    {file = "pywebpush-1.11.0.tar.gz", hash = "sha256:596c74020f9cbabc99f7964127ab0bb6cc045fcfe781b7c73cffb3ea45947820"},
 ]
 pyyaml = [
     {file = "PyYAML-5.3.1-cp27-cp27m-win32.whl", hash = "sha256:74809a57b329d6cc0fdccee6318f44b9b8649961fa73144a98735b0aaf029f1f"},
