@@ -9,7 +9,7 @@ NOTIFICATION_BADGE_URL = f"{STATIC_PATH}img/notification-badge.png"
 
 # Used as the app icon for notifications
 # variable: icon
-DEFAULT_NOTIFICATION_ICON_URL = f"{STATIC_PATH}img/notification-icon-192.png"
+NOTIFICATION_ICON_URL = f"{STATIC_PATH}img/notification-icon-192.png"
 
 # The vibration rhythm to use for the notification
 # variable: vibrate

@@ -6,7 +6,7 @@ from django.db import models
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import ResponsiveImage
 
-from .constants import DEFAULT_NOTIFICATION_ICON_URL, PermissionType
+from .constants import PermissionType
 
 logger = logging.getLogger(__name__)
 
@@ -30,10 +30,6 @@ class Notification(models.Model):
     )
     from_email = models.EmailField(default=settings.DEFAULT_FROM_EMAIL)
 
-    """ Icon can be overridden, but should probably not be in most cases """
-    icon = models.URLField(
-        max_length=1024, default=DEFAULT_NOTIFICATION_ICON_URL, blank=True
-    )
     image = models.ForeignKey(
         to=ResponsiveImage,
         related_name="notifications",

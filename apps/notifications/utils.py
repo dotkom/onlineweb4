@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from apps.authentication.models import OnlineGroup as Group
 from apps.authentication.models import OnlineUser as User
 
-from .constants import DEFAULT_NOTIFICATION_ICON_URL, PermissionType
+from .constants import PermissionType
 from .models import Notification, Permission, UserPermission
 from .tasks import dispatch_email_notification_task, dispatch_push_notification_task
 
@@ -20,7 +20,6 @@ def send_message_to_users(
     image=None,
     url="/",
     tag=None,
-    icon=DEFAULT_NOTIFICATION_ICON_URL,
     force_override_dont_send_email=False,
     force_override_dont_send_push=False,
 ):
@@ -43,7 +42,6 @@ def send_message_to_users(
             image=image,
             url=url,
             tag=tag,
-            icon=icon,
         )
 
         has_push_permission = permission.allow_push and (
@@ -71,7 +69,6 @@ def send_message_to_group(
     image=None,
     url="/",
     tag=None,
-    icon=DEFAULT_NOTIFICATION_ICON_URL,
 ):
     send_mail(
         subject=title,
@@ -91,6 +88,5 @@ def send_message_to_group(
         image=image,
         url=url,
         tag=tag,
-        icon=icon,
         force_override_dont_send_email=True,
     )

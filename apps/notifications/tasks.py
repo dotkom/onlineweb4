@@ -9,6 +9,7 @@ from rest_framework import serializers
 
 from .constants import (
     NOTIFICATION_BADGE_URL,
+    NOTIFICATION_ICON_URL,
     NOTIFICATION_SOUND,
     NOTIFICATION_VIBRATION_PATTERN,
 )
@@ -54,6 +55,7 @@ def _send_webpush(subscription_info: dict, data: dict) -> bool:
 
 class NotificationDataSerializer(serializers.ModelSerializer):
     badge = serializers.SerializerMethodField()
+    icon = serializers.SerializerMethodField()
     vibrate = serializers.SerializerMethodField()
     sound = serializers.SerializerMethodField()
     timestamp = serializers.SerializerMethodField()
@@ -61,6 +63,9 @@ class NotificationDataSerializer(serializers.ModelSerializer):
 
     def get_badge(self, obj: Notification):
         return NOTIFICATION_BADGE_URL
+
+    def get_icon(self, obj: Notification):
+        return NOTIFICATION_ICON_URL
 
     def get_vibrate(self, obj: Notification):
         return NOTIFICATION_VIBRATION_PATTERN
