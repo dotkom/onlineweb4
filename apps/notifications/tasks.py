@@ -16,7 +16,8 @@ from .models import Notification
 
 logger = logging.getLogger(__name__)
 
-VAPID_PRIVATE_KEY = settings.OW4_VAPID_PRIVATE_KEY_PATH
+VAPID_PRIVATE_KEY = settings.WEB_PUSH_PRIVATE_KEY
+WEB_PUSH_ENABLED = settings.WEB_PUSH_ENABLED
 
 VAPID_CLAIMS = {
     "sub": "mailto:dotkom@online.ntnu.no",
@@ -27,6 +28,8 @@ def _send_webpush(subscription_info: dict, data: dict) -> bool:
     """
     Send a webpush message asynchronously
     """
+    if not WEB_PUSH_ENABLED:
+        return False
 
     json_data = json.dumps(data)
 
