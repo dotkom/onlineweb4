@@ -73,7 +73,7 @@ class NotificationDataSerializer(serializers.ModelSerializer):
 
     def get_image(self, obj: Notification):
         if obj.image:
-            return obj.image.md
+            return f"{settings.BASE_URL}{obj.image.md}"
         return None
 
     class Meta:

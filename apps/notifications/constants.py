@@ -1,12 +1,15 @@
+from django.conf import settings
 from django.db.models import TextChoices
+
+STATIC_PATH = f"{settings.BASE_URL}{settings.STATIC_URL}"
 
 # Small badge used as the app-icon. Shown at the top bar of an android phone.
 # variable: badge
-NOTIFICATION_BADGE_URL = "https://beta.online.ntnu.no/static/owf-badge-128.png"
+NOTIFICATION_BADGE_URL = f"{STATIC_PATH}img/notification-badge.png"
 
 # Used as the app icon for notifications
 # variable: icon
-DEFAULT_NOTIFICATION_ICON_URL = "https://beta.online.ntnu.no/static/pwa-icon-v0-192.png"
+DEFAULT_NOTIFICATION_ICON_URL = f"{STATIC_PATH}img/notification-icon-192.png"
 
 # The vibration rhythm to use for the notification
 # variable: vibrate
