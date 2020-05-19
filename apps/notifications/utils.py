@@ -18,14 +18,18 @@ def send_message_to_users(
     permission_type: PermissionType,
     from_email=settings.DEFAULT_FROM_EMAIL,
     image=None,
-    url=None,
+    url="/",
     tag=None,
-    icon=None,
+    icon=DEFAULT_NOTIFICATION_ICON_URL,
     force_override_dont_send_email=False,
     force_override_dont_send_push=False,
 ):
     permission = Permission.objects.get(permission_type=permission_type)
     for recipient in recipients:
+        # Make sure all permissions exists for the user before sending anything.
+        # Available permissions might have changed since the user last loaded their permission dashboard.
+        UserPermission.create_all_for_user(recipient)
+
         user_permission = UserPermission.objects.get(
             user=recipient, permission=permission
         )

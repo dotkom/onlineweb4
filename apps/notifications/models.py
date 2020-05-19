@@ -138,6 +138,23 @@ class UserPermission(models.Model):
     allow_email = models.BooleanField(default=False)
     allow_push = models.BooleanField(default=False)
 
+    @classmethod
+    def create_all_for_user(cls, user: User):
+        """
+        Create permission settings for user if they don't all exists.
+        """
+        user_permissions_count = UserPermission.objects.filter(user=user).count()
+        permission_count = Permission.objects.all().count()
+        if user_permissions_count != permission_count:
+            for permission in Permission.objects.all():
+                user_permission, created = cls.objects.get_or_create(
+                    permission=permission, user=user
+                )
+                if created:
+                    user_permission.allow_email = permission.default_value_email
+                    user_permission.allow_push = permission.default_value_push
+                    user_permission.save()
+
     def __str__(self):
         return f"{self.permission} - {self.user}"
 

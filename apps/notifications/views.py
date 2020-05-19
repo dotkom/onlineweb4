@@ -53,6 +53,7 @@ class UserPermissionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        UserPermission.create_all_for_user(user)
         queryset = super().get_queryset()
         return queryset.filter(user=user)
 
