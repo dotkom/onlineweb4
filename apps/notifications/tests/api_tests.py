@@ -120,19 +120,17 @@ class UserPermissionTestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("id"), self.permission.id)
 
-    def test_user_can_create_user_permission(self):
-        response = self.client.post(
-            self.get_list_url(), {"permission": self.permission.id}, **self.headers,
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-    def test_user_can_delete_user_permission(self):
+    def test_user_can_update_user_permission(self):
         user_permission: UserPermission = G(
             UserPermission, user=self.user, permission=self.permission
         )
-        response = self.client.delete(
-            self.get_detail_url(user_permission.id), **self.headers
+        new_value = not user_permission.allow_push
+        response = self.client.patch(
+            self.get_detail_url(user_permission.id),
+            {"allow_push": new_value},
+            **self.headers,
         )
+        user_permission.refresh_from_db()
 
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(user_permission.allow_push, new_value)

@@ -13,6 +13,8 @@ from rest_framework import status
 
 from apps.authentication.models import AllowedUsername, OnlineGroup
 from apps.marks.models import MarkRuleSet
+from apps.notifications.constants import PermissionType
+from apps.notifications.models import Permission
 from apps.payment.models import PaymentDelay, PaymentPrice
 
 from ..constants import EventType
@@ -495,6 +497,7 @@ class EventsUnattend(EventsTestMixin, TestCase):
 
 class EventsUnattendWaitlist(TestCase):
     def setUp(self):
+        G(Permission, permission_type=PermissionType.WAIT_LIST_BUMP, force_email=True)
         self.event = G(Event, event_start=timezone.now() + timedelta(days=1))
         G(
             AttendanceEvent,

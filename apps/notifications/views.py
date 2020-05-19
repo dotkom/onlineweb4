@@ -1,4 +1,4 @@
-from rest_framework import permissions, viewsets
+from rest_framework import mixins, permissions, viewsets
 
 from apps.notifications.models import (
     Notification,
@@ -46,7 +46,12 @@ class PermissionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Permission.objects.all()
 
 
-class UserPermissionViewSet(viewsets.ModelViewSet):
+class UserPermissionViewSet(
+    viewsets.GenericViewSet,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
+):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = UserPermissionSerializer
     queryset = UserPermission.objects.all()

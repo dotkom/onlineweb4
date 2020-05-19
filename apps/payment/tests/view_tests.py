@@ -8,27 +8,37 @@ from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
+from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
+from apps.notifications.constants import PermissionType
+from apps.notifications.models import Permission
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
 
 
 class PaymentTest(TestCase):
     def setUp(self):
-        self.event = G(Event, title="Sjakkturnering")
-        self.attendance_event = G(
+        G(
+            Permission,
+            permission_type=PermissionType.RECEIPT,
+            force_email=True,
+            allow_email=True,
+        )
+        self.event: Event = G(Event, title="Sjakkturnering")
+        self.attendance_event: AttendanceEvent = G(
             AttendanceEvent,
             event=self.event,
             unattend_deadline=timezone.now() + timedelta(days=1),
         )
-        self.user = G(
+        self.user: User = G(
             User,
             username="ola123",
             ntnu_username="ola123ntnu",
             first_name="ola",
             last_name="nordmann",
         )
+        G(Email, user=self.user, primary=True)
 
         self.event_payment = G(
             Payment,

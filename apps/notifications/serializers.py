@@ -27,7 +27,6 @@ class NotificationSerializer(serializers.ModelSerializer):
             "body",
             "url",
             "tag",
-            "icon",
             "require_interaction",
             "renotify",
             "silent",

@@ -307,6 +307,9 @@ class OrderLine(models.Model):
     def get_to_mail(self):
         return self.user.email
 
+    def get_paying_user(self):
+        return self.user
+
     def send_receipt(self):
         from apps.payment.models import (
             PaymentReceipt,

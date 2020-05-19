@@ -8,6 +8,8 @@ from rest_framework.test import APITestCase
 
 from apps.authentication.models import Email, OnlineUser
 from apps.inventory.models import Item
+from apps.notifications.constants import PermissionType
+from apps.notifications.models import Permission
 from apps.oauth2_provider.test import OAuth2TestCase
 from apps.payment.models import PaymentTransaction
 from apps.payment.transaction_constants import TransactionSource
@@ -158,6 +160,7 @@ class ShopOrderLinesTestCase(OAuth2TestCase):
         self.assertEqual(self.user.saldo, 0)
 
     def test_purchase_triggers_receipt(self):
+        G(Permission, permission_type=PermissionType.RECEIPT, force_email=True)
         item: Item = G(Item, available=True, price=100)
 
         self.assertEqual(len(mail.outbox), 0)

@@ -1,27 +1,37 @@
+import logging
+
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.exceptions import ImproperlyConfigured
+from django.core.mail import EmailMessage, send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
 
-from apps.authentication.models import OnlineGroup
 from apps.notifications.constants import PermissionType
-from apps.notifications.utils import send_message_to_group, send_message_to_users
+from apps.notifications.utils import send_message_to_users
 
-from .models import CommitteeApplication
+from .models import Approval, CommitteeApplication
 
 
-def send_approval_notification(approval):
+def send_approval_notification(approval: Approval):
+    logger = logging.getLogger(__name__)
     d = {"approval": approval, "approval_url": settings.BASE_URL + reverse("approvals")}
 
-    approval_group = OnlineGroup.objects.get(name_long="Hovedstyret")  # TODO: Don't
+    to_emails = [settings.EMAIL_HS]
     content = render_to_string("approval/email/approval_notification.txt", d)
 
-    send_message_to_group(
-        title=f"[Medlemskapssøknad] {approval.applicant.get_full_name()}",
-        content=content,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        group=approval_group,
-    )
+    try:
+        EmailMessage(
+            "[Medlemskapssøknad] %s" % approval.applicant.get_full_name(),
+            content,
+            settings.DEFAULT_FROM_EMAIL,
+            to_emails,
+        ).send()
+    except ImproperlyConfigured:
+        logger.warning(
+            "Failed to send approval approver notification email for approval#{pk}.".format(
+                {"pk": approval.pk}
+            )
+        )
 
 
 def send_approval_status_update(approval):
@@ -54,12 +64,11 @@ def send_committee_application_notification_to_admins(application):
     message = render_to_string(
         "approval/email/committeeapplication_notification.txt", context
     )
-    approval_group = OnlineGroup.objects.get(name_long="Hovedstyret")  # TODO: Don't
-    send_message_to_group(
-        title="[opptak] Bekreftelse på komitesøknad",
-        content=message,
+    send_mail(
+        subject="[opptak] Bekreftelse på komitesøknad",
+        message=message,
         from_email=settings.DEFAULT_FROM_EMAIL,
-        group=approval_group,
+        recipient_list=[settings.EMAIL_HS],
     )
 
 

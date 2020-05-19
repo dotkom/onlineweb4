@@ -23,7 +23,9 @@ def send_message_to_users(
     force_override_dont_send_email=False,
     force_override_dont_send_push=False,
 ):
-    permission = Permission.objects.get(permission_type=permission_type)
+    permission, created = Permission.objects.get_or_create(
+        permission_type=permission_type
+    )
     for recipient in recipients:
         # Make sure all permissions exists for the user before sending anything.
         # Available permissions might have changed since the user last loaded their permission dashboard.
@@ -45,16 +47,14 @@ def send_message_to_users(
         )
 
         has_push_permission = permission.allow_push and (
-            permission.force_push
-            or user_permission.allow_push
+            (permission.force_push or user_permission.allow_push)
             and not force_override_dont_send_push
         )
         if has_push_permission:
             dispatch_push_notification_task.delay(notification_id=notification.id)
 
-        has_email_permission = (
-            permission.allow_email
-            and (permission.force_email or user_permission.allow_email)
+        has_email_permission = permission.allow_email and (
+            (permission.force_email or user_permission.allow_email)
             and not force_override_dont_send_email
         )
         if has_email_permission:
