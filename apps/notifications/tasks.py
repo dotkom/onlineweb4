@@ -50,12 +50,20 @@ def _send_webpush(subscription_info: dict, data: dict) -> bool:
 
 
 class NotificationDataSerializer(serializers.ModelSerializer):
-    badge = NOTIFICATION_BADGE_URL
-    vibrate = NOTIFICATION_VIBRATION_PATTERN
-    sound = NOTIFICATION_SOUND
-
+    badge = serializers.SerializerMethodField()
+    vibrate = serializers.SerializerMethodField()
+    sound = serializers.SerializerMethodField()
     timestamp = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
+
+    def get_badge(self, obj: Notification):
+        return NOTIFICATION_BADGE_URL
+
+    def get_vibrate(self, obj: Notification):
+        return NOTIFICATION_VIBRATION_PATTERN
+
+    def get_sound(self, obj: Notification):
+        return NOTIFICATION_SOUND
 
     def get_timestamp(self, obj: Notification):
         return obj.created_date.timestamp()
@@ -109,7 +117,7 @@ def dispatch_email_notification_task(_, notification_id: int):
     send_mail(
         subject=notification.title,
         message=notification.body,
-        from_email=notification.from_mail,
+        from_email=notification.from_email,
         recipient_list=[user.primary_email],
         fail_silently=False,
     )

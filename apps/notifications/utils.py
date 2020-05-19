@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from apps.authentication.models import OnlineGroup as Group
 from apps.authentication.models import OnlineUser as User
 
-from .constants import PermissionType
+from .constants import DEFAULT_NOTIFICATION_ICON_URL, PermissionType
 from .models import Notification, Permission, UserPermission
 from .tasks import dispatch_email_notification_task, dispatch_push_notification_task
 
@@ -65,9 +65,9 @@ def send_message_to_group(
     group: Group,
     from_email=settings.DEFAULT_FROM_EMAIL,
     image=None,
-    url=None,
+    url="/",
     tag=None,
-    icon=None,
+    icon=DEFAULT_NOTIFICATION_ICON_URL,
 ):
     send_mail(
         subject=title,

@@ -28,11 +28,11 @@ class Notification(models.Model):
     permission = models.ForeignKey(
         to="Permission", related_name="notifications", on_delete=models.DO_NOTHING
     )
-    from_mail = models.EmailField(default=settings.DEFAULT_FROM_EMAIL)
+    from_email = models.EmailField(default=settings.DEFAULT_FROM_EMAIL)
 
     """ Icon can be overridden, but should probably not be in most cases """
     icon = models.URLField(
-        max_length=1024, default=DEFAULT_NOTIFICATION_ICON_URL, blank=True,
+        max_length=1024, default=DEFAULT_NOTIFICATION_ICON_URL, blank=True
     )
     image = models.ForeignKey(
         to=ResponsiveImage,

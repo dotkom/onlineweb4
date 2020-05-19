@@ -64,4 +64,4 @@ class UserPermissionSerializer(serializers.ModelSerializer):
             "allow_email",
             "allow_push",
         )
-        read_only_fields = ("user", "created_date")
+        read_only_fields = ("user", "permission")
