@@ -35,6 +35,19 @@ def send_message_to_users(
             user=recipient, permission=permission
         )
 
+        has_push_permission = permission.allow_push and (
+            (permission.force_push or user_permission.allow_push)
+            and not force_override_dont_send_push
+        )
+        has_email_permission = permission.allow_email and (
+            (permission.force_email or user_permission.allow_email)
+            and not force_override_dont_send_email
+        )
+
+        if not has_push_permission and not has_email_permission:
+            # Don't create notification at all if permission for none of the types is given
+            continue
+
         notification = Notification.objects.create(
             title=title,
             body=content,
@@ -46,17 +59,9 @@ def send_message_to_users(
             tag=tag,
         )
 
-        has_push_permission = permission.allow_push and (
-            (permission.force_push or user_permission.allow_push)
-            and not force_override_dont_send_push
-        )
         if has_push_permission:
             dispatch_push_notification_task.delay(notification_id=notification.id)
 
-        has_email_permission = permission.allow_email and (
-            (permission.force_email or user_permission.allow_email)
-            and not force_override_dont_send_email
-        )
         if has_email_permission:
             dispatch_email_notification_task.delay(notification_id=notification.id)
 
