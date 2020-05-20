@@ -112,7 +112,7 @@ class Permission(models.Model):
     # Default values permissions types
     default_value_email = models.BooleanField("Standardverdi for e-post", default=False)
     default_value_push = models.BooleanField(
-        "Standardverdi fro pushvarsel", default=False
+        "Standardverdi for pushvarsel", default=False
     )
 
     def __str__(self):
