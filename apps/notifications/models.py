@@ -85,7 +85,7 @@ class Subscription(models.Model):
         return f"{self.user} - {self.endpoint}"
 
     class Meta:
-        verbose_name = "Varselsabbonement"
+        verbose_name = "Varselsabonnement"
         verbose_name_plural = "Varselsabbonementer"
         ordering = (
             "user",
