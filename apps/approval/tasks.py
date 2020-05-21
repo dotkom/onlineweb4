@@ -55,7 +55,9 @@ def send_approval_status_update(approval):
     )
 
 
-def send_committee_application_notification_to_admins(application):
+def send_committee_application_notification_to_admins(
+    application: CommitteeApplication,
+):
     context = {
         "link_to_admin": True,
         "absolute_url": settings.BASE_URL + application.get_absolute_url(),
@@ -65,7 +67,7 @@ def send_committee_application_notification_to_admins(application):
         "approval/email/committeeapplication_notification.txt", context
     )
     send_mail(
-        subject="[opptak] Bekreftelse på komitesøknad",
+        subject="[opptak] Bekreftelse på komitésøknad",
         message=message,
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[settings.EMAIL_HS],
@@ -83,7 +85,7 @@ def send_committee_application_notification_to_applicant(
     message = render_to_string(
         "approval/email/committeeapplication_notification.txt", context
     )
-    title = "[opptak] Bekreftelse på komitesøknad"
+    title = "[opptak] Bekreftelse på komitésøknad"
     if application.applicant:
         send_message_to_users(
             title=title,

@@ -14,6 +14,8 @@ logger = logging.getLogger(__name__)
 class Notification(models.Model):
     """
     Standard notification message which is sent to a single user on creation
+    Closely modeled after the web notification spec:
+    https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
     """
 
     recipient = models.ForeignKey(
@@ -40,6 +42,8 @@ class Notification(models.Model):
 
     title = models.CharField(max_length=60)
     body = models.CharField(max_length=512)
+    # Tag can be null since the tag serves an an ID but only is present.
+    # An empty string will result in all notifications without å specific tag being handled as the same notification.
     tag = models.CharField(max_length=50, null=True, blank=True)
     url = models.CharField(max_length=1024, default="/", blank=True)
 
@@ -69,7 +73,10 @@ class Subscription(models.Model):
         to=User, related_name="notification_subscriptions", on_delete=models.CASCADE
     )
 
-    """ Identifiers and keys used to send the push notification. Can be really damned long """
+    """
+    Identifiers and keys used to send the push notification,
+    as specified by https://w3c.github.io/push-api/#push-subscription
+    """
     endpoint = models.URLField(unique=True, max_length=500)
     auth = models.CharField(unique=True, max_length=500)
     p256dh = models.CharField(unique=True, max_length=500)
@@ -126,7 +133,7 @@ class Permission(models.Model):
 
 class UserPermission(models.Model):
     permission = models.ForeignKey(
-        to=Permission, related_name="user_permission", on_delete=models.CASCADE
+        to=Permission, related_name="user_permissions", on_delete=models.CASCADE
     )
     user = models.ForeignKey(
         to=User, related_name="user_notification_permissions", on_delete=models.CASCADE

@@ -54,6 +54,14 @@ def _send_webpush(subscription_info: dict, data: dict) -> bool:
 
 
 class NotificationDataSerializer(serializers.ModelSerializer):
+    """
+    Transform a Notification object to a valid notification message as
+    defined by the web push notification spec.
+    https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+    Note that the object is flattened, as in 'title' and 'options' are in the same object.
+    These need to be separated on the client.
+    """
+
     badge = serializers.SerializerMethodField()
     icon = serializers.SerializerMethodField()
     vibrate = serializers.SerializerMethodField()
