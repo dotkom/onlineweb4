@@ -9,8 +9,10 @@ from apps.notifications.models import (
 )
 from apps.online_oidc_provider.test import OIDCTestCase
 
+from .utils import NotificationTestMixin
 
-class SubscriptionTestCase(OIDCTestCase):
+
+class SubscriptionTestCase(NotificationTestMixin, OIDCTestCase):
     basename = "notifications_subscriptions"
 
     def setUp(self):
@@ -40,6 +42,20 @@ class SubscriptionTestCase(OIDCTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_user_can_create_subscription(self):
+        subscription = self._gen_subscription_info()
+        subscription_data = {
+            "endpoint": subscription.get("endpoint"),
+            "auth": subscription.get("keys").get("auth").decode("utf-8"),
+            "p256dh": subscription.get("keys").get("p256dh").decode("utf-8"),
+        }
+
+        response = self.client.post(
+            self.get_list_url(), subscription_data, **self.headers
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class NotificationTestCase(OIDCTestCase):
