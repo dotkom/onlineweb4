@@ -35,15 +35,15 @@ class EventTest(TestCase):
             expiration_date=self.now + datetime.timedelta(weeks=1),
         )
 
-    def testMommyNotAttended(self):
+    def test_mommy_not_attended(self):
         G(Attendee, event=self.attendance_event, user=self.user, attended=False)
         self.assertEqual([self.user], self.attendance_event.not_attended())
 
-    def testMommyAttended(self):
+    def test_mommy_attended(self):
         G(Attendee, event=self.attendance_event, user=self.user, attended=True)
         self.assertEqual([], self.attendance_event.not_attended())
 
-    def testMommyActiveEvents(self):
+    def test_mommy_active_events(self):
         self.attendance_event.event.event_end = timezone.now() - datetime.timedelta(
             days=1
         )
@@ -55,7 +55,7 @@ class EventTest(TestCase):
 
         self.assertEqual(self.attendance_event, SetEventMarks.active_events()[0])
 
-    def testMommyMarksHasBeenSet(self):
+    def test_mommy_marks_has_been_set(self):
         self.attendance_event.marks_has_been_set = True
         self.attendance_event.automatically_set_marks = True
         self.event.event_end = timezone.now() - datetime.timedelta(days=1)
@@ -64,7 +64,7 @@ class EventTest(TestCase):
 
         self.assertFalse(SetEventMarks.active_events())
 
-    def testMommyDontAutmaticallySetMarks(self):
+    def test_mommy_dont_automatically_set_marks(self):
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = False
         self.event.event_end = timezone.now() - datetime.timedelta(days=1)
@@ -73,7 +73,7 @@ class EventTest(TestCase):
 
         self.assertFalse(SetEventMarks.active_events())
 
-    def testMommyEventNotDone(self):
+    def test_mommy_event_not_done(self):
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
         self.event.event_end = timezone.now() + datetime.timedelta(days=1)
@@ -82,7 +82,7 @@ class EventTest(TestCase):
 
         self.assertFalse(SetEventMarks.active_events())
 
-    def testMommySetMarks(self):
+    def test_mommy_set_marks(self):
         G(Attendee, event=self.attendance_event, user=self.user, attended=False)
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
@@ -90,12 +90,12 @@ class EventTest(TestCase):
         self.attendance_event.save()
         self.event.save()
 
-        SetEventMarks.setMarks(self.attendance_event)
+        SetEventMarks.set_marks(self.attendance_event)
 
         self.assertTrue(self.attendance_event.marks_has_been_set)
         self.assertEqual(self.user, MarkUser.objects.get().user)
 
-    def testMommyEveryoneAttendend(self):
+    def test_mommy_everyone_attendend(self):
         G(Attendee, event=self.attendance_event, user=self.user, attended=True)
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
@@ -103,12 +103,12 @@ class EventTest(TestCase):
         self.attendance_event.save()
         self.event.save()
 
-        SetEventMarks.setMarks(self.attendance_event)
+        SetEventMarks.set_marks(self.attendance_event)
 
         self.assertTrue(self.attendance_event.marks_has_been_set)
         self.assertFalse(MarkUser.objects.all())
 
-    def testMommyGenerateEmptyMessage(self):
+    def test_mommy_generate_empty_message(self):
         G(Attendee, event=self.attendance_event, user=self.user, attended=True)
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True
@@ -121,7 +121,7 @@ class EventTest(TestCase):
         self.assertFalse(message.send)
         self.assertFalse(message.results_message)
 
-    def testMommyGenerateMessage(self):
+    def test_mommy_generate_message(self):
         G(Attendee, event=self.attendance_event, user=self.user, attended=False)
         self.attendance_event.marks_has_been_set = False
         self.attendance_event.automatically_set_marks = True

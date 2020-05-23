@@ -22,7 +22,7 @@ class SetEventMarks(Task):
         attendance_events = SetEventMarks().active_events()
 
         for attendance_event in attendance_events:
-            SetEventMarks.setMarks(attendance_event, logger)
+            SetEventMarks.set_marks(attendance_event, logger)
             message = SetEventMarks.generate_message(attendance_event)
 
             if message.send:
@@ -47,7 +47,7 @@ class SetEventMarks(Task):
                 logger.info("Email sent to: " + message.committee_mail)
 
     @staticmethod
-    def setMarks(attendance_event, logger=logging.getLogger()):
+    def set_marks(attendance_event, logger=logging.getLogger()):
         event = attendance_event.event
         logger.info('Proccessing "' + event.title + '"')
         mark = Mark()

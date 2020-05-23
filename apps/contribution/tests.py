@@ -25,7 +25,7 @@ class UpdateRepositoriesTest(TestCase):
             RepositoryLanguage, type="JavaScript", size=64000, repository=self.repo
         )
 
-    def testRepositoryUpdate(self):
+    def test_repository_update(self):
         local_now = timezone.now()
         fresh_repo = G(
             Repository,
@@ -49,7 +49,7 @@ class UpdateRepositoriesTest(TestCase):
         self.assertEqual(fresh_repo.issues, self.repo.issues)
         self.assertEqual(fresh_repo.languages, self.repo.languages)
 
-    def testRepositoryCreation(self):
+    def test_repository_creation(self):
         local_now = timezone.now()
         fresh_repo = G(
             Repository,

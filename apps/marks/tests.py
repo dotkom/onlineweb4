@@ -23,54 +23,58 @@ class MarksTest(TestCase):
         self.logger = logging.getLogger(__name__)
         self.user = G(User)
         self.mark = G(Mark, title="Testprikk", added_date=timezone.now().date())
-        self.userentry = G(MarkUser, user=self.user, mark=self.mark)
+        self.user_entry = G(MarkUser, user=self.user, mark=self.mark)
 
     # Rewrite to check
-    #    def testMarksActive(self):
+    #    def test_marks_active(self):
     #        self.logger.debug("Testing if Mark is active")
     #        self.assertTrue(self.mark.is_active)
 
-    def testMarkUnicode(self):
+    def test_mark_unicode(self):
         self.logger.debug("Testing Mark unicode with dynamic fixtures")
         self.assertEqual(str(self.mark), "Prikk for Testprikk")
 
-    def testMarkUser(self):
+    def test_mark_user(self):
         self.logger.debug("Testing MarkUser unicode with dynamic fixtures")
         self.assertEqual(
-            str(self.userentry), "Mark entry for user: %s" % self.user.get_full_name()
+            str(self.user_entry), "Mark entry for user: %s" % self.user.get_full_name()
         )
 
-    def testGettingExpirationDateWithNoVacationInSpring(self):
+    def test_getting_expiration_date_with_no_vacation_in_spring(self):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
         d = date(2013, 2, 1)
         self.assertEqual(date(2013, 3, 3), _get_with_duration_and_vacation(d))
 
-    def testGettingExpirationDateWithSummerVacation(self):
+    def test_setting_expiration_date_with_summer_vacation(self):
         self.logger.debug("Testing expiration date with the summer vacation span")
         d = date(2013, 5, 15)
         self.assertEqual(date(2013, 8, 28), _get_with_duration_and_vacation(d))
 
-    def testGettingExpirationDateWithNoVacationInFall(self):
+    def test_getting_expiration_date_eith_no_vacation_in_fall(self):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
         d = date(2013, 9, 1)
         self.assertEqual(date(2013, 10, 1), _get_with_duration_and_vacation(d))
 
-    def testGettingExpirationDateWithWinterVacation(self):
+    def test_getting_expiration_date_with_winter_vacation(self):
         self.logger.debug("Testing expiration date with the summer vacation span")
         d = date(2013, 11, 15)
         self.assertEqual(date(2014, 1, 29), _get_with_duration_and_vacation(d))
 
-    def testGettingExpirationDateWhenDateBetweenNewYearsAndEndOfWinterVacation(self):
+    def test_getting_expiration_date_ehen_date_between_new_years_and_end_of_winter_vacation(
+        self,
+    ):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
         d = date(2013, 1, 1)
         self.assertEqual(date(2013, 2, 14), _get_with_duration_and_vacation(d))
 
-    def testGettingExpirationDateWhenDateBetweenStartOfWinterVacationAndNewYears(self):
+    def test_getting_expiration_date_when_date_between_start_of_winter_vacation_and_new_years(
+        self,
+    ):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
         d = date(2013, 12, 15)
         self.assertEqual(date(2014, 2, 14), _get_with_duration_and_vacation(d))
 
-    def testGettingExpirationDateWhenDateInSummerVacation(self):
+    def test_getting_expiration_date_when_date_in_summer_vacation(self):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
         d = date(2013, 7, 1)
         self.assertEqual(date(2013, 9, 14), _get_with_duration_and_vacation(d))
