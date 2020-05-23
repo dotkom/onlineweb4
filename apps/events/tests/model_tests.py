@@ -48,9 +48,11 @@ class EventModelTest(TestCase):
 
 class AttendanceEventModelTest(TestCase):
     def setUp(self):
-        self.event = G(Event, title="Sjakkturnering")
-        self.attendance_event = G(AttendanceEvent, event=self.event, max_capacity=2)
-        self.user = G(
+        self.event: Event = G(Event, title="Sjakkturnering")
+        self.attendance_event: AttendanceEvent = G(
+            AttendanceEvent, event=self.event, max_capacity=2
+        )
+        self.user: User = G(
             User,
             username="ola123",
             ntnu_username="ola123ntnu",
@@ -64,18 +66,18 @@ class AttendanceEventModelTest(TestCase):
         )
         self.attendance_event.registration_end = self.now + datetime.timedelta(days=7)
         # Making the user a member.
-        self.allowed_username = G(
+        self.allowed_username: AllowedUsername = G(
             AllowedUsername,
             username="ola123ntnu",
             expiration_date=self.now + datetime.timedelta(weeks=1),
         )
 
     def create_attendance_event(self):
-        event = G(Event)
+        event: Event = G(Event)
         return G(AttendanceEvent, event=event)
 
-    def add_feedback(self, attendance_event):
-        feedback = G(Feedback)
+    def add_feedback(self, attendance_event: AttendanceEvent) -> FeedbackRelation:
+        feedback: Feedback = G(Feedback)
         return G(
             FeedbackRelation,
             feedback=feedback,
@@ -83,10 +85,10 @@ class AttendanceEventModelTest(TestCase):
             content_type=ContentType.objects.get_for_model(Event),
         )
 
-    def add_reservation(self, attendance_event):
+    def add_reservation(self, attendance_event: AttendanceEvent) -> Reservation:
         return G(Reservation, attendance_event=attendance_event)
 
-    def test_attendanceEventUnicode_IsCorrect(self):
+    def test_attendance_event_unicode_is_correct(self):
         self.assertEqual(self.attendance_event.__str__(), "Sjakkturnering")
 
     def test_get_feedback(self):
@@ -299,6 +301,53 @@ class AttendanceEventModelTest(TestCase):
         # Add a new grade rule with no offset and see if signup works
         self.grouprule2 = G(UserGroupRule, group=self.group, offset=0)
         self.rule_bundle.user_group_rules.add(self.grouprule2)
+
+        response = self.attendance_event.is_eligible_for_signup(self.user)
+        self.assertTrue(response["status"])
+        self.assertEqual(212, response["status_code"])
+
+    def test_rule_offset_and_mark_offset(self):
+        group: Group = G(Group, name="Testgroup")
+        group_rule: GradeRule = G(UserGroupRule, group=group, offset=24)
+        rule_bundle: RuleBundle = G(RuleBundle, description="")
+        rule_bundle.user_group_rules.add(group_rule)
+        self.attendance_event.rule_bundles.add(rule_bundle)
+        # Registration just opened
+        self.attendance_event.registration_start = timezone.now() - timezone.timedelta(
+            minutes=1
+        )
+
+        # User should not be able to register because of the group rule offset
+        self.user.groups.add(group)
+        response = self.attendance_event.is_eligible_for_signup(self.user)
+        self.assertFalse(response["status"])
+        self.assertEqual(422, response["status_code"])
+
+        # Simulate a day passing for the offset to not have an effect anymore
+        self.attendance_event.registration_start -= timezone.timedelta(hours=24)
+        self.attendance_event.save()
+
+        # User should be able to register for event since offset has passed
+        response = self.attendance_event.is_eligible_for_signup(self.user)
+        self.assertTrue(response["status"])
+        self.assertEqual(212, response["status_code"])
+
+        mark: Mark = G(Mark, title="Test mark")
+        G(
+            MarkUser,
+            user=self.user,
+            mark=mark,
+            expiration_date=self.now + datetime.timedelta(days=DURATION),
+        )
+
+        # User should not be eligible for signup anymore because they have a mark
+        response = self.attendance_event.is_eligible_for_signup(self.user)
+        self.assertFalse(response["status"])
+        self.assertEqual(401, response["status_code"])
+
+        # Set registration to be as far into the past as both the offset from the rule and the mark
+        self.attendance_event.registration_start -= timezone.timedelta(hours=24)
+        self.attendance_event.save()
 
         response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response["status"])
