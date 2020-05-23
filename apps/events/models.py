@@ -4,7 +4,11 @@ import logging
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from random import choice as random_choice
+<<<<<<< HEAD
 from typing import List
+=======
+from typing import List, Union
+>>>>>>> Fix mark registration offset and rule offsets not extending each other
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -462,7 +466,11 @@ class RuleBundle(models.Model):
     user_group_rules = models.ManyToManyField(UserGroupRule, blank=True)
 
     def get_all_rules(self):
+<<<<<<< HEAD
         rules: List[Rule] = []
+=======
+        rules: List[Union[FieldOfStudyRule, GradeRule, UserGroupRule]] = []
+>>>>>>> Fix mark registration offset and rule offsets not extending each other
         rules.extend(self.field_of_study_rules.all())
         rules.extend(self.grade_rules.all())
         rules.extend(self.user_group_rules.all())
