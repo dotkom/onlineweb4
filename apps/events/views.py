@@ -91,7 +91,7 @@ def get_attendee(attendee_id):
 
 
 @login_required
-def attendEvent(request, event_id):
+def attend_event(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
@@ -137,7 +137,7 @@ def attendEvent(request, event_id):
 
 
 @login_required
-def unattendEvent(request, event_id):
+def unattend_event(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():
@@ -400,7 +400,7 @@ def mail_participants(request, event_id):
 
 
 @login_required
-def toggleShowAsAttending(request, event_id):
+def toggle_show_as_attending(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
 
     if not event.is_attendance_event():

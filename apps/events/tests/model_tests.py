@@ -185,13 +185,13 @@ class AttendanceEventModelTest(TestCase):
         self.assertEqual(self.attendance_event.number_of_attendees, 2)
         self.assertEqual(self.attendance_event.number_of_seats_taken, 4)
 
-    def testSignUpWithNoRulesNoMarks(self):
+    def test_sign_up_with_no_rules_no_marks(self):
         # The user should be able to attend now, since the event has no rule bundles.
         response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response["status"])
         self.assertEqual(200, response["status_code"])
 
-    def testSignUpWithNoRulesNoMarksNoMembership(self):
+    def test_sign_up_with_no_rules_no_marks_no_membership(self):
         self.allowed_username.delete()
         # The user should not be able to attend, since the event has no rule bundles
         # and they are not a member.
@@ -199,7 +199,7 @@ class AttendanceEventModelTest(TestCase):
         self.assertFalse(response["status"])
         self.assertEqual(400, response["status_code"])
 
-    def testSignUpWithNoRulesAndAMark(self):
+    def test_sign_up_with_no_rules_and_a_mark(self):
         # Giving the user a mark to see if the status goes to False.
         mark1 = G(Mark, title="Testprikk12345")
         G(
@@ -212,16 +212,16 @@ class AttendanceEventModelTest(TestCase):
         self.assertFalse(response["status"])
         self.assertEqual(401, response["status_code"])
 
-    def testFieldOfStudyRule(self):
+    def test_field_of_study_rule(self):
         # Create the rule and rule_bundles
-        self.fosrule = G(FieldOfStudyRule, field_of_study=1, offset=24)
-        self.assertEqual(self.fosrule.field_of_study, 1)
-        self.assertEqual(self.fosrule.offset, 24)
-        self.assertEqual(str(self.fosrule), "Bachelor i Informatikk etter 24 timer")
-        self.rulebundle = G(RuleBundle, description="")
-        self.rulebundle.field_of_study_rules.add(self.fosrule)
-        self.assertEqual(str(self.rulebundle), "Bachelor i Informatikk etter 24 timer")
-        self.attendance_event.rule_bundles.add(self.rulebundle)
+        self.fos_rule = G(FieldOfStudyRule, field_of_study=1, offset=24)
+        self.assertEqual(self.fos_rule.field_of_study, 1)
+        self.assertEqual(self.fos_rule.offset, 24)
+        self.assertEqual(str(self.fos_rule), "Bachelor i Informatikk etter 24 timer")
+        self.rule_bundle = G(RuleBundle, description="")
+        self.rule_bundle.field_of_study_rules.add(self.fos_rule)
+        self.assertEqual(str(self.rule_bundle), "Bachelor i Informatikk etter 24 timer")
+        self.attendance_event.rule_bundles.add(self.rule_bundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
@@ -235,23 +235,23 @@ class AttendanceEventModelTest(TestCase):
         self.assertEqual(420, response["status_code"])
 
         # Add a new grade rule with no offset and see if signup works
-        self.fosrule2 = G(FieldOfStudyRule, field_of_study=1, offset=0)
-        self.rulebundle.field_of_study_rules.add(self.fosrule2)
+        self.fos_rule2 = G(FieldOfStudyRule, field_of_study=1, offset=0)
+        self.rule_bundle.field_of_study_rules.add(self.fos_rule2)
 
         response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response["status"])
         self.assertEqual(210, response["status_code"])
 
-    def testGradeRule(self):
+    def test_grade_rule(self):
         # Create the rule and rule_bundles
         self.graderule = G(GradeRule, grade=1, offset=24)
         self.assertEqual(self.graderule.grade, 1)
         self.assertEqual(self.graderule.offset, 24)
         self.assertEqual(str(self.graderule), "1. klasse etter 24 timer")
-        self.rulebundle = G(RuleBundle, description="")
-        self.rulebundle.grade_rules.add(self.graderule)
-        self.assertEqual(str(self.rulebundle), "1. klasse etter 24 timer")
-        self.attendance_event.rule_bundles.add(self.rulebundle)
+        self.rule_bundle = G(RuleBundle, description="")
+        self.rule_bundle.grade_rules.add(self.graderule)
+        self.assertEqual(str(self.rule_bundle), "1. klasse etter 24 timer")
+        self.attendance_event.rule_bundles.add(self.rule_bundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
@@ -267,23 +267,23 @@ class AttendanceEventModelTest(TestCase):
 
         # Add a new grade rule with no offset and see if signup works
         self.graderule2 = G(GradeRule, grade=1, offset=0)
-        self.rulebundle.grade_rules.add(self.graderule2)
+        self.rule_bundle.grade_rules.add(self.graderule2)
 
         response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response["status"])
         self.assertEqual(211, response["status_code"])
 
-    def testUserGroupRule(self):
+    def test_user_group_rule(self):
         # Create the rule and rule_bundles
         self.group = G(Group, name="Testgroup")
-        self.grouprule = G(UserGroupRule, group=self.group, offset=24)
-        self.assertEqual(self.grouprule.group, self.group)
-        self.assertEqual(self.grouprule.offset, 24)
-        self.assertEqual(str(self.grouprule), "Testgroup etter 24 timer")
-        self.rulebundle = G(RuleBundle, description="")
-        self.rulebundle.user_group_rules.add(self.grouprule)
-        self.assertEqual(str(self.rulebundle), "Testgroup etter 24 timer")
-        self.attendance_event.rule_bundles.add(self.rulebundle)
+        self.group_rule = G(UserGroupRule, group=self.group, offset=24)
+        self.assertEqual(self.group_rule.group, self.group)
+        self.assertEqual(self.group_rule.offset, 24)
+        self.assertEqual(str(self.group_rule), "Testgroup etter 24 timer")
+        self.rule_bundle = G(RuleBundle, description="")
+        self.rule_bundle.user_group_rules.add(self.group_rule)
+        self.assertEqual(str(self.rule_bundle), "Testgroup etter 24 timer")
+        self.attendance_event.rule_bundles.add(self.rule_bundle)
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
@@ -298,27 +298,27 @@ class AttendanceEventModelTest(TestCase):
 
         # Add a new grade rule with no offset and see if signup works
         self.grouprule2 = G(UserGroupRule, group=self.group, offset=0)
-        self.rulebundle.user_group_rules.add(self.grouprule2)
+        self.rule_bundle.user_group_rules.add(self.grouprule2)
 
         response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertTrue(response["status"])
         self.assertEqual(212, response["status_code"])
 
-    def testFutureAccessTrumpsOffset(self):
+    def test_future_access_trumps_offset(self):
         # Create two different rules, and verify that the response is false, but without offset
         # Group rule
         self.group = G(Group, name="Testgroup")
-        self.grouprule = G(UserGroupRule, group=self.group, offset=0)
+        self.group_rule = G(UserGroupRule, group=self.group, offset=0)
         self.user.groups.add(self.group)
         # Grade rule
         self.graderule = G(GradeRule, grade=1, offset=24)
         self.user.field_of_study = 1
         self.user.started_date = self.now.date()
         # Make the rule bundle
-        self.rulebundle = G(RuleBundle, description="")
-        self.rulebundle.grade_rules.add(self.graderule)
-        self.rulebundle.user_group_rules.add(self.grouprule)
-        self.attendance_event.rule_bundles.add(self.rulebundle)
+        self.rule_bundle = G(RuleBundle, description="")
+        self.rule_bundle.grade_rules.add(self.graderule)
+        self.rule_bundle.user_group_rules.add(self.group_rule)
+        self.attendance_event.rule_bundles.add(self.rule_bundle)
         # Move registration start into the future
         self.attendance_event.registration_start = self.now + datetime.timedelta(
             hours=1
@@ -327,7 +327,7 @@ class AttendanceEventModelTest(TestCase):
         self.assertFalse(response["status"])
         self.assertEqual(402, response["status_code"])
 
-    def testRestrictedEvents(self):
+    def test_restricted_events(self):
         allowed_groups = [G(Group), G(Group)]
         allowed_user = G(User, groups=[allowed_groups[0]])
 

@@ -28,86 +28,86 @@ class AuthenticationTest(TestCase):
         self.user = G(OnlineUser, username="testuser")
         self.now = timezone.now()
 
-    def testTokenActive(self):
+    def test_token_active(self):
         self.logger.debug("Testing that the token is active, with dynamic fixtures")
         self.registertoken = G(RegisterToken, created=self.now)
         self.assertTrue(self.registertoken.is_valid)
 
-    def testTokenNotActive(self):
+    def test_token_not_active(self):
         self.logger.debug("Testing that the token is not active, with dynamic fixtures")
         self.registertoken = G(RegisterToken, created=self.now - timedelta(days=1))
         self.assertFalse(self.registertoken.is_valid)
 
-    def testYearZeroIfNoFieldOfStudy(self):
+    def test_year_zero_if_no_field_of_study(self):
         self.user.started_date = self.now.date()
         self.assertEqual(0, self.user.year)
 
-    def testYearOneBachelor(self):
+    def test_year_one_bachelor(self):
         self.user.started_date = self.now.date()
         self.user.field_of_study = 1
         self.assertEqual(1, self.user.year)
 
-    def testYearTwoBachelor(self):
+    def test_year_two_bachelor(self):
         self.user.started_date = self.now.date() - timedelta(days=365)
         self.user.field_of_study = 1
         self.assertEqual(2, self.user.year)
 
-    def testYearThreeBachelor(self):
+    def test_year_three_bachelor(self):
         self.user.started_date = self.now.date() - timedelta(days=365 * 2)
         self.user.field_of_study = 1
         self.assertEqual(3, self.user.year)
 
-    def testYearFourBachelorShouldNotBePossible(self):
+    def test_year_four_bachelor_should_not_be_possible(self):
         self.user.started_date = self.now.date() - timedelta(days=365 * 3)
         self.user.field_of_study = 1
         self.assertEqual(3, self.user.year)
 
-    def testYearFourMaster(self):
+    def test_year_four_master(self):
         self.user.started_date = self.now.date()
         self.user.field_of_study = 10
         self.assertEqual(4, self.user.year)
 
-    def testYearFiveMaster(self):
+    def test_year_five_master(self):
         self.user.started_date = self.now.date() - timedelta(days=365)
         self.user.field_of_study = 10
         self.assertEqual(5, self.user.year)
 
-    def testYearSixMasterShouldNotBePossible(self):
+    def test_year_six_master_should_not_be_possible(self):
         self.user.started_date = self.now.date() - timedelta(days=365 * 2)
         self.user.field_of_study = 10
         self.assertEqual(5, self.user.year)
 
-    def testFieldOfStudy30IsAlsoMaster(self):
+    def test_field_of_study_30_is_also_master(self):
         self.user.started_date = self.now.date()
         self.user.field_of_study = 30
         self.assertEqual(4, self.user.year)
 
-    def testPhD(self):
+    def test_phd(self):
         self.user.started_date = self.now.date()
         self.user.field_of_study = 80
         self.assertEqual(6, self.user.year)
 
-    def testPhdYearCouldBeInfinite(self):
+    def test_phd_year_could_be_infinite(self):
         self.user.started_date = self.now.date() - timedelta(days=365 * 5)
         self.user.field_of_study = 80
         self.assertEqual(11, self.user.year)
 
-    def testInternational(self):
+    def test_international(self):
         self.user.started_date = self.now.date()
         self.user.field_of_study = 90
         self.assertEqual(1, self.user.year)
 
-    def testSocial(self):
+    def test_social(self):
         self.user.started_date = self.now.date()
         self.user.field_of_study = 40
         self.assertEqual(0, self.user.year)
 
-    def testSocialYearIncrementShouldNotBePossible(self):
+    def test_social_year_increment_should_not_be_possible(self):
         self.user.started_date = self.now.date() - timedelta(days=365)
         self.user.field_of_study = 40
         self.assertEqual(0, self.user.year)
 
-    def testEmailPrimaryOnCreation(self):
+    def test_email_primary_on_creation(self):
         email = G(Email, user=self.user, email="test@test.com")
         self.assertTrue(email.primary)
 

@@ -46,7 +46,7 @@ class PaymentTest(TestCase):
         )
         self.event_payment.handle_payment(user)
 
-    def testPaymentCreation(self):
+    def test_payment_creation(self):
         PaymentRelation.objects.create(
             payment=self.event_payment, payment_price=self.payment_price, user=self.user
         )
@@ -55,10 +55,10 @@ class PaymentTest(TestCase):
         self.assertEqual(payment_relation.user, self.user)
         self.assertEqual(payment_relation.payment, self.event_payment)
 
-    def testEventDescription(self):
+    def test_event_description(self):
         self.assertEqual(self.event_payment.description(), "Sjakkturnering")
 
-    def testEventPostPaymentCreateAttendee(self):
+    def test_event_post_payment_create_attendee(self):
         self.event_payment.handle_payment(self.user)
 
         attendee = Attendee.objects.all()[0]
@@ -66,7 +66,7 @@ class PaymentTest(TestCase):
         self.assertEqual(attendee.user, self.user)
         self.assertEqual(attendee.event, self.attendance_event)
 
-    def testEventPaymentCompleteModifyAttendee(self):
+    def test_event_payment_complete_modify_attendee(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         self.event_payment.handle_payment(self.user)
 
@@ -74,7 +74,7 @@ class PaymentTest(TestCase):
 
         self.assertTrue(attendee.paid)
 
-    def testEventPaymentReceipt(self):
+    def test_event_payment_receipt(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         payment_relation = G(
             PaymentRelation,
@@ -90,7 +90,7 @@ class PaymentTest(TestCase):
         )
         self.assertEqual(mail.outbox[0].to, [payment_relation.user.email])
 
-    def testEventPaymentRefundCheckUnatendDeadlinePassed(self):
+    def test_event_payment_refund_check_unattend_deadline_passed(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         payment_relation = G(
             PaymentRelation,
@@ -104,7 +104,7 @@ class PaymentTest(TestCase):
 
         self.assertFalse(payment_relation.is_refundable)
 
-    def testEventPaymentRefundCheckAtendeeExists(self):
+    def test_event_payment_refund_check_attendee_exists(self):
         payment_relation = G(
             PaymentRelation,
             payment=self.event_payment,
@@ -114,7 +114,7 @@ class PaymentTest(TestCase):
 
         self.assertFalse(payment_relation.is_refundable)
 
-    def testEventPaymentRefundCheckEventStarted(self):
+    def test_event_payment_refund_check_event_started(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         payment_relation = G(
             PaymentRelation,
@@ -128,7 +128,7 @@ class PaymentTest(TestCase):
 
         self.assertFalse(payment_relation.is_refundable)
 
-    def testEventPaymentRefundCheck(self):
+    def test_event_payment_refund_check(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         self.attendance_event.unattend_deadline = timezone.now() + timedelta(days=1)
         self.attendance_event.save()
@@ -145,7 +145,7 @@ class PaymentTest(TestCase):
 
         self.assertTrue(payment_relation.is_refundable)
 
-    def testEventPaymentRefund(self):
+    def test_event_payment_refund(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         self.event_payment.handle_payment(self.user)
 
@@ -165,7 +165,7 @@ class PaymentTest(TestCase):
 
     # Mommy
 
-    def testEventMommyNotPaid(self):
+    def test_event_mommy_not_paid(self):
         user1 = G(User)
         user2 = G(User)
         G(Attendee, event=self.attendance_event, user=user1)
@@ -176,7 +176,7 @@ class PaymentTest(TestCase):
 
         self.assertEqual([user2], not_paid)
 
-    def testEventMommyPaid(self):
+    def test_event_mommy_paid(self):
         user1 = G(User)
         user2 = G(User)
         G(Attendee, event=self.attendance_event, user=user1)
@@ -188,7 +188,7 @@ class PaymentTest(TestCase):
 
         self.assertFalse(not_paid)
 
-    def testEventMommyPaidWithDelays(self):
+    def test_event_mommy_paid_with_delays(self):
         user1 = G(User)
         user2 = G(User)
         user3 = G(User)
@@ -207,13 +207,13 @@ class PaymentTest(TestCase):
 
         self.assertEqual([user1], not_paid)
 
-    def testEventMommyNotPaidMailAddress(self):
+    def test_event_mommy_not_paid_mail_address(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         not_paid_email = PaymentReminder.not_paid_mail_addresses(self.event_payment)
 
         self.assertEqual([self.user.email], not_paid_email)
 
-    def testMommyPaymentDelay(self):
+    def test_mommy_payment_delay(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         payment_delay = G(
             PaymentDelay,
@@ -228,7 +228,7 @@ class PaymentTest(TestCase):
 
         self.assertFalse(payment_delay.active)
 
-    def testMommyPaymentDelayExcluding(self):
+    def test_mommy_payment_delay_excluding(self):
         G(Attendee, event=self.attendance_event, user=self.user)
         not_paid = PaymentReminder.not_paid(self.event_payment)
 
