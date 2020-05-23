@@ -4,11 +4,7 @@ import logging
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from random import choice as random_choice
-<<<<<<< HEAD
-from typing import List
-=======
-from typing import List, Union
->>>>>>> Fix mark registration offset and rule offsets not extending each other
+from typing import List, Tuple
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -33,7 +29,8 @@ from unidecode import unidecode
 from apps.authentication.constants import FieldOfStudyType
 from apps.authentication.models import OnlineGroup
 from apps.companyprofile.models import Company
-from apps.events.constants import EventType
+from apps.events.constants import EventType, RegisterStatus
+from apps.events.exceptions import RegisterException
 from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
@@ -311,12 +308,10 @@ class Rule(models.Model):
     Super class for a rule object
     """
 
-    success_code = 213
-    not_opened_code = 402
-    delayed_signup_code = 423
-    delayed_singup_message = _("Du har utsatt påmelding")
-    not_satisfied_code = 413
-    not_satisfied_message = _("Du har ikke tilgang til å melde deg på arrangementet")
+    success_status = RegisterStatus.ALLOWED_GENERIC_RULE
+    not_opened_status = RegisterStatus.BLOCKED_NOT_OPEN_YET
+    delayed_signup_status = RegisterStatus.POSTPONED_GENERIC_RULE
+    not_satisfied_status = RegisterStatus.BLOCKED_GENERIC_RULE
 
     offset = models.PositiveSmallIntegerField(
         _("utsettelse"), help_text=_("utsettelse oppgis i timer"), default=0
@@ -331,38 +326,23 @@ class Rule(models.Model):
     def satisfies_constraint(self, user: User) -> bool:
         return True
 
-    def satisfied(self, user: User, registration_start: timezone.datetime):
+    def satisfied(
+        self, user: User, registration_start: timezone.datetime
+    ) -> Tuple[RegisterStatus, timedelta]:
         """ Override method """
 
         if self.satisfies_constraint(user):
             offset_datetime = self.get_offset_time(registration_start)
             # If the offset is in the past, it means you can attend even with the offset
             if offset_datetime < timezone.now():
-                return {
-                    "status": True,
-                    "message": None,
-                    "status_code": self.success_code,
-                }
+                return self.success_status, timedelta(hours=0)
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                return {
-                    "status": False,
-                    "message": _("Påmeldingen har ikke åpnet enda."),
-                    "status_code": self.not_opened_code,
-                }
+                return self.not_opened_status, timedelta(hours=0)
             # In the last case there is a delayed signup
             else:
-                return {
-                    "status": False,
-                    "message": self.delayed_singup_message,
-                    "offset": offset_datetime,
-                    "status_code": self.delayed_signup_code,
-                }
-        return {
-            "status": False,
-            "message": self.not_satisfied_message,
-            "status_code": self.not_satisfied_code,
-        }
+                return self.delayed_signup_status, timedelta(hours=self.offset)
+        return self.not_satisfied_status, timedelta(hours=0)
 
     def __str__(self):
         return "Rule"
@@ -373,13 +353,9 @@ class Rule(models.Model):
 
 
 class FieldOfStudyRule(Rule):
-    success_code = 210
-    delayed_signup_code = 420
-    delayed_singup_message = _("Din studieretning har utsatt påmelding.")
-    not_satisfied_code = 410
-    not_satisfied_message = _(
-        "Din studieretning er en annen enn de som har tilgang til dette arrangementet."
-    )
+    success_status = RegisterStatus.ALLOWED_FOS_RULE
+    delayed_signup_status = RegisterStatus.POSTPONED_FOS_RULE
+    not_satisfied_status = RegisterStatus.BLOCKED_FOS_RULE
 
     field_of_study = models.SmallIntegerField(
         _("studieretning"), choices=FieldOfStudyType.ALL_CHOICES
@@ -404,13 +380,9 @@ class FieldOfStudyRule(Rule):
 
 
 class GradeRule(Rule):
-    success_code = 211
-    delayed_signup_code = 421
-    delayed_singup_message = _("Ditt klassetrinn har utsatt påmelding.")
-    not_satisfied_code = 411
-    not_satisfied_message = _(
-        "Ditt klassetrinn har ikke tilgang til dette arrangementet.."
-    )
+    success_status = RegisterStatus.ALLOWED_GRADE_RULE
+    delayed_signup_status = RegisterStatus.POSTPONED_GRADE_RULE
+    not_satisfied_status = RegisterStatus.BLOCKED_GRADE_RULE
 
     grade = models.SmallIntegerField(_("klassetrinn"), null=False)
 
@@ -429,13 +401,9 @@ class GradeRule(Rule):
 
 
 class UserGroupRule(Rule):
-    success_code = 212
-    delayed_signup_code = 422
-    delayed_singup_message = _("Brukergruppene dine har utsatt påmelding")
-    not_satisfied_code = 412
-    not_satisfied_message = _(
-        "Din brukergruppe har ikke tilgang til dette arrangementet."
-    )
+    success_status = RegisterStatus.ALLOWED_GROUP_RULE
+    delayed_signup_status = RegisterStatus.POSTPONED_GROUP_RULE
+    not_satisfied_status = RegisterStatus.BLOCKED_GROUP_RULE
 
     group = models.ForeignKey(Group, blank=False, null=False, on_delete=models.CASCADE)
 
@@ -466,11 +434,7 @@ class RuleBundle(models.Model):
     user_group_rules = models.ManyToManyField(UserGroupRule, blank=True)
 
     def get_all_rules(self):
-<<<<<<< HEAD
         rules: List[Rule] = []
-=======
-        rules: List[Union[FieldOfStudyRule, GradeRule, UserGroupRule]] = []
->>>>>>> Fix mark registration offset and rule offsets not extending each other
         rules.extend(self.field_of_study_rules.all())
         rules.extend(self.grade_rules.all())
         rules.extend(self.user_group_rules.all())
@@ -480,18 +444,21 @@ class RuleBundle(models.Model):
     def rule_strings(self):
         return [str(rule) for rule in self.get_all_rules()]
 
-    def satisfied(self, user, registration_start):
-
-        errors = []
+    def satisfied(
+        self, user, registration_start
+    ) -> List[Tuple[RegisterStatus, timedelta]]:
+        all_statuses: List[Tuple[RegisterStatus, timedelta]] = []
 
         for rule in self.get_all_rules():
-            response = rule.satisfied(user, registration_start)
-            if response["status"]:
-                return [response]
-            else:
-                errors.append(response)
+            status, offset = rule.satisfied(user, registration_start)
+            # Return early if any of the responses is allowed for register.
+            # We won't have to care about the rest since we know the user can register.
+            if RegisterStatus.is_allowed(status):
+                return [(status, offset)]
 
-        return errors
+            all_statuses.append((status, offset))
+
+        return all_statuses
 
     def get_minimum_offset_for_user(self, user: User):
         offsets = [
@@ -791,97 +758,56 @@ class AttendanceEvent(models.Model):
         bumped_attendees = self.waitlist_qs[:extra_capacity]
         handle_waitlist_bump(self.event, bumped_attendees, self.payment())
 
-    def is_eligible_for_signup(self, user):
-        """
-        Checks if a user can attend a specific event
-        This method checks for:
-        - Already attended
-        - Waitlist
-        - Room on event
-        - Rules
-        - Marks
-        - Suspension
-        @param User object
-        The returned dict contains a key called 'status_code'. These codes follow the HTTP
-        standard in terms of overlying scheme.
-        2XX = successful
-        4XX = client error (user related)
-        5XX = server error (event related)
-        These codes are meant as a debugging tool only. The eligibility checking is quite
-        extensive, and tracking where it's going wrong is much needed.
-        """
-
-        response = {"status": False, "message": "", "status_code": None}
-
+    def _check_signup(self, user: User):
         # User is already an attendee
-        if self.attendees.filter(user=user).exists():
-            response["message"] = "Du er allerede meldt på dette arrangementet."
-            response["status_code"] = 404
-            return response
+        if self.is_attendee(user):
+            raise RegisterException(status=RegisterStatus.BLOCKED_IS_ATTENDING)
 
         # Registration closed
         if timezone.now() > self.registration_end:
-            response["message"] = _("Påmeldingen er ikke lenger åpen.")
-            response["status_code"] = 502
-            return response
+            raise RegisterException(status=RegisterStatus.ERROR_REGISTRATION_CLOSED)
 
         # Room for me on the event?
         if not self.room_on_event:
-            response["message"] = _("Det er ikke mer plass på dette arrangementet.")
-            response["status_code"] = 503
-            return response
-
-        #
-        # Offset calculations.
-        #
-
-        # Are there any rules preventing me from attending?
-        # This should be checked last of the offsets, because it can completely deny you access.
-        response = self.rules_satisfied(user)
-
-        if not response["status"]:
-            if "offset" not in response:
-                return response
-
-        # Do I have any marks that postpone my registration date?
-        response = self._check_marks(response, user)
-
-        # Return response if offset was set.
-        if "offset" in response and response["offset"] > timezone.now():
-            return response
-
-        #
-        # Offset calculations end
-        #
+            raise RegisterException(status=RegisterStatus.ERROR_NO_SEATS_LEFT)
 
         # Registration not open
         if timezone.now() < self.registration_start:
-            response["status"] = False
-            response["message"] = _("Påmeldingen har ikke åpnet enda.")
-            response["status_code"] = 501
-            return response
+            raise RegisterException(status=RegisterStatus.BLOCKED_NOT_OPEN_YET)
 
         # Is suspended
         if self.is_suspended(user):
-            response["status"] = False
-            response["message"] = _("Du er suspendert og kan ikke melde deg på.")
-            response["status_code"] = 402
-
-            return response
+            raise RegisterException(status=RegisterStatus.BLOCKED_SUSPENSION)
 
         # Checks if the event is group restricted and if the user is in the right group
         if not self.event.can_display(user):
-            response["status"] = False
-            response["message"] = _(
-                "Du har ikke tilgang til å melde deg på dette arrangementet."
-            )
-            response["status_code"] = 403
+            raise RegisterException(status=RegisterStatus.BLOCKED_NO_ACCESS)
 
-            return response
+    def build_status_response(self, status: RegisterStatus):
+        return {
+            "status": RegisterStatus.is_allowed(status),
+            "status_code": status.value,
+            "message": status.label,
+        }
 
-        # No objections, set eligible.
-        response["status"] = True
-        return response
+    def is_eligible_for_signup(self, user: User):
+        """
+        Checks if a user can attend a specific event
+        """
+        try:
+            self._check_signup(user)
+            self._check_marks(user)
+            # Are there any rules preventing me from attending?
+            # This should be checked last of the offsets, because it can completely deny you access.
+            status = self.rules_satisfied(user)
+            if status:
+                return self.build_status_response(status)
+
+            # Base case is allowing all members
+            return self.build_status_response(RegisterStatus.ALLOWED_MEMBERS)
+
+        except RegisterException as register_exception:
+            return self.build_status_response(register_exception.status)
 
     def get_minimum_rule_offset_for_user(self, user: User):
         offsets_deltas = [
@@ -893,85 +819,91 @@ class AttendanceEvent(models.Model):
         offsets_deltas.sort()
         return offsets_deltas[0]
 
-    def _check_marks(self, response: dict, user: User):
+    def get_minimum_offset_for_user(self, user: User):
+        minimum_user_offset = self.get_minimum_rule_offset_for_user(user)
+        mark_expiry_date = get_expiration_date(user)
+        if mark_expiry_date and mark_expiry_date > timezone.now().date():
+            # Offset is currently 1 day if you have marks, regardless of amount.
+            mark_offset = timedelta(days=1)
+            minimum_user_offset += mark_offset
+
+        return minimum_user_offset
+
+    def _check_marks(self, user: User):
         expiry_date = get_expiration_date(user)
         if expiry_date and expiry_date > timezone.now().date():
             # Offset is currently 1 day if you have marks, regardless of amount.
             mark_offset = timedelta(days=1)
             rule_offset = self.get_minimum_rule_offset_for_user(user)
-            postponed_registration_start = (
-                self.registration_start + rule_offset + mark_offset
-            )
+
+            previous_offset = self.registration_start + rule_offset
+            postponed_registration_start = previous_offset + mark_offset
+
+            logger.debug(self.registration_start)
+            logger.debug(postponed_registration_start)
+            logger.debug(rule_offset)
 
             before_expiry = self.registration_start.date() < expiry_date
 
             if postponed_registration_start > timezone.now() and before_expiry:
                 if (
-                    "offset" in response
-                    and response["offset"] < postponed_registration_start
-                    or "offset" not in response
+                    previous_offset < postponed_registration_start
+                    or previous_offset == self.registration_start
                 ):
-                    response["status"] = False
-                    response["status_code"] = 401
-                    response["message"] = _("Din påmelding er utsatt grunnet prikker.")
-                    response["offset"] = postponed_registration_start
-        return response
+                    raise RegisterException(
+                        status=RegisterStatus.BLOCKED_MARK,
+                        offset=postponed_registration_start,
+                    )
 
-    def _process_rulebundle_satisfaction_responses(self, responses):
-        # Put the smallest offset faaar into the future.
-        smallest_offset = timezone.now() + timedelta(days=365)
-        offset_response = {}
-        future_response = {}
-        errors = []
+    def _process_rulebundle_satisfaction_responses(self, user: User):
+        # Obtain status for every rule in every rule bundle for the event
+        statuses: List[Tuple[RegisterStatus, timedelta]] = []
+        for rule_bundle in self.rule_bundles.all():
+            bundle_statuses = rule_bundle.satisfied(user, self.registration_start)
+            statuses.extend(bundle_statuses)
 
-        for response in responses:
-            if response["status"]:
-                return response
-            elif "offset" in response:
-                if response["offset"] < smallest_offset:
-                    smallest_offset = response["offset"]
-                    offset_response = response
-            elif response["status_code"] == 402:
-                future_response = response
-            else:
-                errors.append(response)
+        postponed_statuses: List[Tuple[RegisterStatus, timedelta]] = []
+        blocked_statuses: List[RegisterStatus] = []
+        error_statuses: List[RegisterStatus] = []
 
-        if future_response:
-            return future_response
-        if smallest_offset > timezone.now() and offset_response:
-            return offset_response
-        if errors:
-            return errors[0]
+        for status, offset in statuses:
+            # Return early if any status allows the user to register
+            if RegisterStatus.is_allowed(status):
+                return status
+            # If registration is not open no users will be able to register anyways
+            if status == RegisterStatus.BLOCKED_NOT_OPEN_YET:
+                raise RegisterException(status=RegisterStatus.BLOCKED_NOT_OPEN_YET)
+            if RegisterStatus.is_postponed(status):
+                postponed_statuses.append((status, offset))
+            if RegisterStatus.is_blocked(status):
+                error_statuses.append(status)
 
-    def rules_satisfied(self, user):
+        if len(postponed_statuses) > 0:
+            # TODO: Get the actual least offset one
+            least_offset_status, offset = postponed_statuses[0]
+            raise RegisterException(status=least_offset_status)
+        if len(blocked_statuses) > 0:
+            raise RegisterException(status=blocked_statuses[0])
+        if len(error_statuses) > 0:
+            raise RegisterException(status=error_statuses[0])
+
+    def rules_satisfied(self, user: User) -> RegisterStatus:
         """
         Checks a user against rules applied to an attendance event
         """
         # If the event has guest attendance, allow absolutely anyone
         if self.guest_attendance:
-            return {"status": True, "status_code": 201}
+            return RegisterStatus.ALLOWED_GUEST
 
-        # If the user is not a member, return False right away
-        # TODO check for guest list
+        # Without guest attendance the user has to be a member to attend
         if not user.is_member:
-            return {
-                "status": False,
-                "message": _("Dette arrangementet er kun åpent for medlemmer."),
-                "status_code": 400,
-            }
+            raise RegisterException(status=RegisterStatus.BLOCKED_MEMBERS_ONLY)
 
         # If there are no rule_bundles on this object, all members of Online are allowed.
         if not self.rule_bundles.exists() and user.is_member:
-            return {"status": True, "status_code": 200}
+            return RegisterStatus.ALLOWED_MEMBERS
 
-        # Check all rule bundles
-        responses = []
-
-        # If one satisfies, return true, else append to the error list
-        for rule_bundle in self.rule_bundles.all():
-            responses.extend(rule_bundle.satisfied(user, self.registration_start))
-
-        return self._process_rulebundle_satisfaction_responses(responses)
+        return self._process_rulebundle_satisfaction_responses(user)
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user).exists()
