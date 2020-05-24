@@ -4,6 +4,7 @@ import logging
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from random import choice as random_choice
+from typing import List
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -33,6 +34,8 @@ from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
 from apps.payment import status as payment_status
+
+logger = logging.getLogger(__name__)
 
 User = settings.AUTH_USER_MODEL
 
@@ -304,19 +307,58 @@ class Rule(models.Model):
     Super class for a rule object
     """
 
+    success_code = 213
+    not_opened_code = 402
+    delayed_signup_code = 423
+    delayed_singup_message = _("Du har utsatt påmelding")
+    not_satisfied_code = 413
+    not_satisfied_message = _("Du har ikke tilgang til å melde deg på arrangementet")
+
     offset = models.PositiveSmallIntegerField(
         _("utsettelse"), help_text=_("utsettelse oppgis i timer"), default=0
     )
 
-    def get_offset_time(self, time):
+    def get_offset_time(self, time: timezone.datetime):
         if type(time) is not datetime:
             raise TypeError("time must be a datetime, not %s" % type(time))
         else:
             return time + timedelta(hours=self.offset)
 
-    def satisfied(self, user):
-        """ Checks if a user satisfies the rules """
+    def satisfies_constraint(self, user: User) -> bool:
         return True
+
+    def satisfied(self, user: User, registration_start: timezone.datetime):
+        """ Override method """
+
+        if self.satisfies_constraint(user):
+            offset_datetime = self.get_offset_time(registration_start)
+            # If the offset is in the past, it means you can attend even with the offset
+            if offset_datetime < timezone.now():
+                return {
+                    "status": True,
+                    "message": None,
+                    "status_code": self.success_code,
+                }
+            # If there is no offset, the signup just hasn't started yet
+            elif self.offset == 0:
+                return {
+                    "status": False,
+                    "message": _("Påmeldingen har ikke åpnet enda."),
+                    "status_code": self.not_opened_code,
+                }
+            # In the last case there is a delayed signup
+            else:
+                return {
+                    "status": False,
+                    "message": self.delayed_singup_message,
+                    "offset": offset_datetime,
+                    "status_code": self.delayed_signup_code,
+                }
+        return {
+            "status": False,
+            "message": self.not_satisfied_message,
+            "status_code": self.not_satisfied_code,
+        }
 
     def __str__(self):
         return "Rule"
@@ -327,41 +369,20 @@ class Rule(models.Model):
 
 
 class FieldOfStudyRule(Rule):
+    success_code = 210
+    delayed_signup_code = 420
+    delayed_singup_message = _("Din studieretning har utsatt påmelding.")
+    not_satisfied_code = 410
+    not_satisfied_message = _(
+        "Din studieretning er en annen enn de som har tilgang til dette arrangementet."
+    )
+
     field_of_study = models.SmallIntegerField(
         _("studieretning"), choices=FieldOfStudyType.ALL_CHOICES
     )
 
-    def satisfied(self, user, registration_start):
-        """ Override method """
-
-        # If the user has the same FOS as this rule
-        if self.field_of_study == user.field_of_study:
-            offset_datetime = self.get_offset_time(registration_start)
-            # If the offset is in the past, it means you can attend even with the offset
-            if offset_datetime < timezone.now():
-                return {"status": True, "message": None, "status_code": 210}
-            # If there is no offset, the signup just hasn't started yet
-            elif self.offset == 0:
-                return {
-                    "status": False,
-                    "message": _("Påmeldingen har ikke åpnet enda."),
-                    "status_code": 402,
-                }
-            # In the last case there is a delayed signup
-            else:
-                return {
-                    "status": False,
-                    "message": _("Din studieretning har utsatt påmelding."),
-                    "offset": offset_datetime,
-                    "status_code": 420,
-                }
-        return {
-            "status": False,
-            "message": _(
-                "Din studieretning er en annen enn de som har tilgang til dette arrangementet."
-            ),
-            "status_code": 410,
-        }
+    def satisfies_constraint(self, user: User) -> bool:
+        return self.field_of_study == user.field_of_study
 
     def __str__(self):
         if self.offset > 0:
@@ -379,37 +400,18 @@ class FieldOfStudyRule(Rule):
 
 
 class GradeRule(Rule):
+    success_code = 211
+    delayed_signup_code = 421
+    delayed_singup_message = _("Ditt klassetrinn har utsatt påmelding.")
+    not_satisfied_code = 411
+    not_satisfied_message = _(
+        "Ditt klassetrinn har ikke tilgang til dette arrangementet.."
+    )
+
     grade = models.SmallIntegerField(_("klassetrinn"), null=False)
 
-    def satisfied(self, user, registration_start):
-        """ Override method """
-
-        # If the user has the same FOS as this rule
-        if self.grade == user.year:
-            offset_datetime = self.get_offset_time(registration_start)
-            # If the offset is in the past, it means you can attend even with the offset
-            if offset_datetime < timezone.now():
-                return {"status": True, "message": None, "status_code": 211}
-            # If there is no offset, the signup just hasn't started yet
-            elif self.offset == 0:
-                return {
-                    "status": False,
-                    "message": _("Påmeldingen har ikke åpnet enda."),
-                    "status_code": 402,
-                }
-            # In the last case there is a delayed signup
-            else:
-                return {
-                    "status": False,
-                    "message": _("Ditt klassetrinn har utsatt påmelding."),
-                    "offset": offset_datetime,
-                    "status_code": 421,
-                }
-        return {
-            "status": False,
-            "message": _("Ditt klassetrinn har ikke tilgang til dette arrangementet."),
-            "status_code": 411,
-        }
+    def satisfies_constraint(self, user: User) -> bool:
+        return self.grade == user.year
 
     def __str__(self):
         if self.offset > 0:
@@ -423,35 +425,18 @@ class GradeRule(Rule):
 
 
 class UserGroupRule(Rule):
+    success_code = 212
+    delayed_signup_code = 422
+    delayed_singup_message = _("Brukergruppene dine har utsatt påmelding")
+    not_satisfied_code = 412
+    not_satisfied_message = _(
+        "Din brukergruppe har ikke tilgang til dette arrangementet."
+    )
+
     group = models.ForeignKey(Group, blank=False, null=False, on_delete=models.CASCADE)
 
-    def satisfied(self, user, registration_start):
-        """ Override method """
-        if self.group in user.groups.all():
-            offset_datetime = self.get_offset_time(registration_start)
-            # If the offset is in the past, it means you can attend even with the offset
-            if offset_datetime < timezone.now():
-                return {"status": True, "message": None, "status_code": 212}
-            # If there is no offset, the signup just hasn't started yet
-            elif self.offset == 0:
-                return {
-                    "status": False,
-                    "message": _("Påmeldingen er ikke åpnet enda."),
-                    "status_code": 402,
-                }
-            # In the last case there is a delayed signup
-            else:
-                return {
-                    "status": False,
-                    "message": _("%s har utsatt påmelding.") % self.group,
-                    "offset": offset_datetime,
-                    "status_code": 422,
-                }
-        return {
-            "status": False,
-            "message": _("Din brukergruppe har ikke tilgang til dette arrangementet."),
-            "status_code": 412,
-        }
+    def satisfies_constraint(self, user: User) -> bool:
+        return self.group in user.groups.all()
 
     def __str__(self):
         if self.offset > 0:
@@ -477,7 +462,7 @@ class RuleBundle(models.Model):
     user_group_rules = models.ManyToManyField(UserGroupRule, blank=True)
 
     def get_all_rules(self):
-        rules = []
+        rules: List[Rule] = []
         rules.extend(self.field_of_study_rules.all())
         rules.extend(self.grade_rules.all())
         rules.extend(self.user_group_rules.all())
@@ -499,6 +484,17 @@ class RuleBundle(models.Model):
                 errors.append(response)
 
         return errors
+
+    def get_minimum_offset_for_user(self, user: User):
+        offsets = [
+            rule.offset
+            for rule in self.get_all_rules()
+            if rule.satisfies_constraint(user)
+        ]
+        if len(offsets) == 0:
+            return timezone.timedelta(hours=0)
+        offsets.sort()
+        return timezone.timedelta(hours=offsets[0])
 
     def __str__(self):
         if self.description:
@@ -834,6 +830,7 @@ class AttendanceEvent(models.Model):
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
         response = self.rules_satisfied(user)
+
         if not response["status"]:
             if "offset" not in response:
                 return response
@@ -878,12 +875,25 @@ class AttendanceEvent(models.Model):
         response["status"] = True
         return response
 
-    def _check_marks(self, response, user):
+    def get_minimum_rule_offset_for_user(self, user: User):
+        offsets_deltas = [
+            rule_bundle.get_minimum_offset_for_user(user)
+            for rule_bundle in self.rule_bundles.all()
+        ]
+        if len(offsets_deltas) == 0:
+            return timezone.timedelta(hours=0)
+        offsets_deltas.sort()
+        return offsets_deltas[0]
+
+    def _check_marks(self, response: dict, user: User):
         expiry_date = get_expiration_date(user)
         if expiry_date and expiry_date > timezone.now().date():
             # Offset is currently 1 day if you have marks, regardless of amount.
             mark_offset = timedelta(days=1)
-            postponed_registration_start = self.registration_start + mark_offset
+            rule_offset = self.get_minimum_rule_offset_for_user(user)
+            postponed_registration_start = (
+                self.registration_start + rule_offset + mark_offset
+            )
 
             before_expiry = self.registration_start.date() < expiry_date
 
@@ -985,9 +995,6 @@ class AttendanceEvent(models.Model):
         except ObjectDoesNotExist:
             return None
         except MultipleObjectsReturned:
-            import logging
-
-            logger = logging.getLogger(__name__)
             logger.warning(
                 "Multiple payment objects connected to attendance event #%s." % self.pk
             )
@@ -1178,7 +1185,6 @@ class Attendee(models.Model):
 
     # Unattend user from event
     def unattend(self, admin_user):
-        logger = logging.getLogger(__name__)
         logger.info(
             'User %s was removed from event "%s" by %s on %s'
             % (self.user.get_full_name(), self.event, admin_user, datetime.now())
