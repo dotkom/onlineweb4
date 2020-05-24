@@ -34,6 +34,7 @@ from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
 from apps.marks.models import get_expiration_date
 from apps.payment import status as payment_status
+from apps.payment.mixins import PaymentMixin
 
 logger = logging.getLogger(__name__)
 
@@ -532,7 +533,7 @@ class Extras(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class AttendanceEvent(models.Model):
+class AttendanceEvent(PaymentMixin, models.Model):
     """
     Events that require special considerations regarding attendance.
     """
@@ -1028,6 +1029,62 @@ class AttendanceEvent(models.Model):
         if extra_capacity > 0:
             # Using old object because waitlist has already been changed in self
             old_attendance_event.bump_waitlist_for_x_users(extra_capacity)
+
+    def get_payment_description(self):
+        return self.event.title
+
+    def get_payment_email(self):
+        organizer = self.event.organizer
+        organizer_group: OnlineGroup = OnlineGroup.objects.filter(
+            group=organizer
+        ).first()
+        if organizer_group and organizer_group.email:
+            return organizer_group.email
+        else:
+            return settings.DEFAULT_FROM_EMAIL
+
+    def is_user_allowed_to_pay(self, user: User):
+        """
+        In the case of attendance events the user should only be allowed to pay if they are attending
+        and has not paid yet.
+        """
+        is_attending = self.is_attendee(user)
+        if is_attending:
+            attendee = Attendee.objects.get(user=user, event=self)
+            return not attendee.has_paid
+        return False
+
+    def can_refund_payment(self, payment_relation) -> (bool, str):
+        if self.unattend_deadline < timezone.now():
+            return False, _("Fristen for å melde seg av har utgått")
+        if len(Attendee.objects.filter(event=self, user=payment_relation.user)) == 0:
+            return False, _("Du er ikke påmeldt dette arrangementet.")
+        if self.event.event_start < timezone.now():
+            return False, _("Dette arrangementet har allerede startet.")
+
+        return True, ""
+
+    def on_payment_done(self, user: User):
+        attendee = Attendee.objects.filter(event=self, user=user)
+
+        if attendee:
+            attendee[0].paid = True
+            attendee[0].save()
+        else:
+            Attendee.objects.create(event=self, user=user, paid=True)
+
+    def on_payment_refunded(self, payment_relation):
+        Attendee.objects.get(event=self, user=payment_relation.user).delete()
+
+    def get_payment_receipt_items(self, payment_relation) -> List[dict]:
+        items = [
+            {
+                "name": self.get_payment_description(),
+                "price": payment_relation.payment_price.price,
+                "quantity": 1,
+            }
+        ]
+        return items
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None

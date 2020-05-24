@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+from typing import List
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.contenttypes.models import ContentType
 from django.core.validators import (
     MinValueValidator,
     validate_comma_separated_integer_list,
@@ -13,6 +13,7 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineUser as User
 from apps.gallery.models import ResponsiveImage
+from apps.payment.mixins import PaymentMixin
 
 
 class Product(models.Model):
@@ -193,7 +194,7 @@ class Order(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class OrderLine(models.Model):
+class OrderLine(PaymentMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     datetime = models.DateTimeField(null=True, blank=True)
     paid = models.BooleanField(default=False)
@@ -278,18 +279,33 @@ class OrderLine(models.Model):
         self.paid = True
         self.datetime = timezone.now()
         self.save()
-        self.send_receipt()
 
-    def get_timestamp(self):
-        return self.datetime
+    def get_payment_description(self) -> str:
+        return f"{self.user} - {self.payment_description}"
 
-    def get_subject(self):
-        return "[Kvittering] Kjøp i webshop på online.ntnu.no"
+    def get_payment_email(self) -> str:
+        return settings.EMAIL_PROKOM
 
-    def get_description(self):
-        return "varer i webshop"
+    def is_user_allowed_to_pay(self, user: User) -> bool:
+        """
+        Payments for Webshop orderlines should only be payable for the owner of the orderline
+        """
+        return self.user == user
 
-    def get_items(self):
+    def can_refund_payment(self, user: User) -> (bool, str):
+        return (
+            False,
+            "Du kan ikke refundere betalinger i Webshop på dette tidspunktet",
+        )
+
+    def on_payment_done(self, user: User):
+        self.pay()
+
+    def on_payment_refunded(self, payment_relation):
+        self.paid = False
+        self.save()
+
+    def get_payment_receipt_items(self, payment_relation) -> List[dict]:
         items = []
 
         for order in self.orders.all():
@@ -300,22 +316,6 @@ class OrderLine(models.Model):
             }
             items.append(item)
         return items
-
-    def get_from_mail(self):
-        return settings.EMAIL_PROKOM
-
-    def get_to_mail(self):
-        return self.user.email
-
-    def send_receipt(self):
-        from apps.payment.models import (
-            PaymentReceipt,
-        )  # Import PaymentReceipt to avoid circular dependency.
-
-        receipt = PaymentReceipt(
-            object_id=self.id, content_type=ContentType.objects.get_for_model(self)
-        )
-        receipt.save()
 
     def __str__(self):
         return "Webshop purchase %s by %s" % (self.datetime, self.user)
