@@ -17,12 +17,12 @@ urlpatterns = [
         views.generate_json,
         name="event_attendees_json",
     ),
-    url(r"^(?P<event_id>\d+)/attend/$", views.attendEvent, name="attend_event"),
-    url(r"^(?P<event_id>\d+)/unattend/$", views.unattendEvent, name="unattend_event"),
+    url(r"^(?P<event_id>\d+)/attend/$", views.attend_event, name="attend_event"),
+    url(r"^(?P<event_id>\d+)/unattend/$", views.unattend_event, name="unattend_event"),
     url(
         r"^(?P<event_id>\d+)/show_attending/$",
-        views.toggleShowAsAttending,
-        name="toggleShowAsAttending",
+        views.toggle_show_as_attending,
+        name="toggle_show_as_attending",
     ),
     url(
         r"^(?P<event_id>\d+)/(?P<event_slug>[a-zA-Z0-9_-]+)/$",

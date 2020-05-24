@@ -2,6 +2,7 @@
 
 import logging
 import uuid
+from typing import List
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -12,14 +13,12 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from apps.authentication.models import OnlineGroup
-from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Suspension
 from apps.notifications.constants import PermissionType
 from apps.notifications.utils import send_message_to_users
 from apps.payment import status
-from apps.webshop.models import OrderLine
 
+from .mixins import PaymentMixin, ReceiptMixin
 from .transaction_constants import TransactionSource
 
 User = settings.AUTH_USER_MODEL
@@ -43,7 +42,7 @@ class Payment(models.Model):
     """Which model the payment is created for. For attendance events this should be attendance_event(påmelding)."""
     object_id = models.PositiveIntegerField()
     """Object id for the model chosen in content_type."""
-    content_object = GenericForeignKey()
+    content_object: PaymentMixin = GenericForeignKey()
     """Helper attribute which points to the object select in object_id"""
     stripe_key = models.CharField(
         _("stripe key"), max_length=10, choices=STRIPE_KEY_CHOICES, default="arrkom"
@@ -106,16 +105,7 @@ class Payment(models.Model):
             PaymentDelay.objects.create(payment=self, user=user, valid_to=deadline)
 
     def description(self):
-        if self._is_type(AttendanceEvent):
-            return self.content_object.event.title
-        if self._is_type(OrderLine):
-            order_line: OrderLine = self.content_object
-            return f"{order_line.user} - {order_line.payment_description}"
-        logging.getLogger(__name__).error(
-            f"Trying to get description for payment #{self.pk}, but it's not an AttendanceEvent or a "
-            f"Webshop OrderLine."
-        )
-        return "No description"
+        return self.content_object.get_payment_description()
 
     def get_receipt_description(self):
         receipt_description = ""
@@ -127,43 +117,10 @@ class Payment(models.Model):
         return receipt_description
 
     def responsible_mail(self):
-        if self._is_type(AttendanceEvent):
-            organizer = self.content_object.event.organizer
-            organizer_group: OnlineGroup = OnlineGroup.objects.filter(
-                group=organizer
-            ).first()
-            if organizer_group and organizer_group.email:
-                return organizer_group.email
-            else:
-                return settings.DEFAULT_FROM_EMAIL
-        elif self._is_type(OrderLine):
-            return settings.EMAIL_PROKOM
-        else:
-            return settings.DEFAULT_FROM_EMAIL
+        return self.content_object.get_payment_email()
 
     def is_user_allowed_to_pay(self, user: User) -> bool:
-        """
-        In the case of attendance events the user should only be allowed to pay if they are attending
-        and has not paid yet.
-        """
-        if self._is_type(AttendanceEvent):
-            event: AttendanceEvent = self.content_object
-            is_attending = event.is_attendee(user)
-            if is_attending:
-                attendee = Attendee.objects.get(user=user, event=event)
-                return not attendee.has_paid
-            return False
-
-        """
-        Payments for Webshop orderlines should only be payable for the owner of the orderline
-        """
-        if self._is_type(OrderLine):
-            order_line: OrderLine = self.content_object
-            is_order_line_owner = order_line.user == user
-            return is_order_line_owner
-
-        """ There are no rules prohibiting user from paying for other types of payments """
-        return True
+        return self.content_object.is_user_allowed_to_pay(user)
 
     def handle_payment(self, user: User):
         """
@@ -171,78 +128,25 @@ class Payment(models.Model):
         Deletes any relevant payment delays, suspensions and marks user's attendee object as paid.
 
         :param OnlineUser user: User who paid
-
         """
-        if self._is_type(AttendanceEvent):
-            attendee = Attendee.objects.filter(event=self.content_object, user=user)
+        # Delete payment delay objects for the user if there are any
+        delays = PaymentDelay.objects.filter(payment=self, user=user)
+        for delay in delays:
+            delay.delete()
 
-            # Delete payment delay objects for the user if there are any
-            delays = PaymentDelay.objects.filter(payment=self, user=user)
-            for delay in delays:
-                delay.delete()
+        # If the user is suspended because of a lack of payment the suspension is deactivated.
+        suspensions = Suspension.objects.filter(payment_id=self.id, user=user)
+        for suspension in suspensions:
+            suspension.active = False
+            suspension.save()
 
-            # If the user is suspended because of a lack of payment the suspension is deactivated.
-            suspensions = Suspension.objects.filter(payment_id=self.id, user=user)
-            for suspension in suspensions:
-                suspension.active = False
-                suspension.save()
-
-            if attendee:
-                attendee[0].paid = True
-                attendee[0].save()
-            else:
-                Attendee.objects.create(event=self.content_object, user=user, paid=True)
-
-        elif self._is_type(OrderLine):
-            order_line: OrderLine = self.content_object
-            order_line.pay()
+        self.content_object.on_payment_done(user)
 
     def handle_refund(self, payment_relation):
-        """
-        Method for handling refunds.
-        For events it deletes the Attendee object.
-
-        :param str host: hostname to include in email
-        :param PaymentRelation payment_relation: user payment to refund
-        """
-
-        if self._is_type(AttendanceEvent):
-            Attendee.objects.get(
-                event=self.content_object, user=payment_relation.user
-            ).delete()
-
-        if self._is_type(OrderLine):
-            order_line: OrderLine = self.content_object
-            order_line.paid = False
-            order_line.save()
+        self.content_object.on_payment_refunded(payment_relation)
 
     def check_refund(self, payment_relation) -> (bool, str):
-        """Method for checking if the payment can be refunded"""
-        if self._is_type(AttendanceEvent):
-            attendance_event = self.content_object
-            if attendance_event.unattend_deadline < timezone.now():
-                return False, _("Fristen for å melde seg av har utgått")
-            if (
-                len(
-                    Attendee.objects.filter(
-                        event=attendance_event, user=payment_relation.user
-                    )
-                )
-                == 0
-            ):
-                return False, _("Du er ikke påmeldt dette arrangementet.")
-            if attendance_event.event.event_start < timezone.now():
-                return False, _("Dette arrangementet har allerede startet.")
-
-            return True, ""
-
-        if self._is_type(OrderLine):
-            return (
-                False,
-                "Du kan ikke refundere betalinger i Webshop på dette tidspunktet",
-            )
-
-        return False, "Refund checks not implemented"
+        return self.content_object.can_refund_payment(payment_relation)
 
     def prices(self):
         return self.paymentprice_set.all()
@@ -261,14 +165,11 @@ class Payment(models.Model):
     def stripe_public_key(self):
         return settings.STRIPE_PUBLIC_KEYS[self.stripe_key]
 
-    def _is_type(self, model_type):
-        return ContentType.objects.get_for_model(model_type) == self.content_type
-
     def __str__(self):
         return self.description()
 
     def clean_generic_relation(self):
-        if not self._is_type(AttendanceEvent) and not self._is_type(OrderLine):
+        if not isinstance(self.content_object, PaymentMixin):
             raise ValidationError(
                 {
                     "content_type": _(
@@ -276,12 +177,6 @@ class Payment(models.Model):
                     )
                 }
             )
-        else:
-            if (
-                not self.content_object
-                or not self.content_object.event.is_attendance_event()
-            ):
-                raise ValidationError(_("Dette arrangementet har ikke påmelding."))
 
     def clean(self):
         super().clean()
@@ -333,7 +228,7 @@ class StripeMixin(models.Model):
         abstract = True
 
 
-class PaymentRelation(StripeMixin, models.Model):
+class PaymentRelation(ReceiptMixin, StripeMixin, models.Model):
     """Payment metadata for user"""
 
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
@@ -350,29 +245,22 @@ class PaymentRelation(StripeMixin, models.Model):
     unique_id = models.CharField(max_length=128, null=True, blank=True)
     """Unique ID for payment"""
 
-    def get_timestamp(self):
+    def get_receipt_timestamp(self) -> timezone.datetime:
         return self.datetime
 
-    def get_subject(self):
+    def get_receipt_subject(self) -> str:
         return "[Kvittering] " + self.payment.description()
 
-    def get_description(self):
+    def get_receipt_description(self) -> str:
         return self.payment.description()
 
-    def get_items(self):
-        items = [
-            {
-                "name": self.payment.description(),
-                "price": self.payment_price.price,
-                "quantity": 1,
-            }
-        ]
-        return items
+    def get_receipt_items(self) -> List[dict]:
+        return self.payment.content_object.get_payment_receipt_items(self)
 
-    def get_from_mail(self):
+    def get_receipt_from_email(self) -> str:
         return self.payment.responsible_mail()
 
-    def get_paying_user(self):
+    def get_receipt_to_user(self) -> User:
         return self.user
 
     def refund(self):
@@ -441,7 +329,7 @@ class TransactionManager(models.Manager):
         return value if value is not None else 0
 
 
-class PaymentTransaction(StripeMixin, models.Model):
+class PaymentTransaction(ReceiptMixin, StripeMixin, models.Model):
     """
     A transaction for a User
     The set of all transactions for a user defines the amount of 'coins' a user has.
@@ -460,13 +348,13 @@ class PaymentTransaction(StripeMixin, models.Model):
     def used_stripe(self):
         return self.source == TransactionSource.STRIPE
 
-    def get_timestamp(self):
+    def get_receipt_timestamp(self) -> timezone.datetime:
         return self.datetime
 
-    def get_subject(self):
-        return f"[Kvittering] {self.get_description()}"
+    def get_receipt_subject(self) -> str:
+        return f"[Kvittering] {self.get_receipt_description()}"
 
-    def get_description(self):
+    def get_receipt_description(self) -> str:
         if self.source == TransactionSource.STRIPE:
             return "Saldoinnskudd på online.ntnu.no"
         elif self.source == TransactionSource.TRANSFER:
@@ -476,7 +364,7 @@ class PaymentTransaction(StripeMixin, models.Model):
         elif self.source == TransactionSource.SHOP:
             return "Kjøp i Onlinekiosken"
 
-    def get_items(self):
+    def get_receipt_items(self):
         if self.source == TransactionSource.STRIPE:
             return [{"name": "Påfyll av saldo", "price": self.amount, "quantity": 1}]
         elif self.source == TransactionSource.TRANSFER:
@@ -495,10 +383,10 @@ class PaymentTransaction(StripeMixin, models.Model):
                     f"Transaction for a shop purchase is not connected to an OrderLine"
                 )
 
-    def get_from_mail(self):
+    def get_receipt_from_email(self):
         return settings.EMAIL_TRIKOM
 
-    def get_paying_user(self):
+    def get_receipt_to_user(self):
         return self.user
 
     def __str__(self):
@@ -519,49 +407,33 @@ class PaymentReceipt(models.Model):
     """Which model the receipt is created for"""
     object_id = models.PositiveIntegerField(null=True)
     """Object id for the model chosen in content_type"""
-    content_object = GenericForeignKey()
+    content_object: ReceiptMixin = GenericForeignKey()
     """Helper attribute which points to the object select in object_id"""
 
     def save(self, *args, **kwargs):
-        transaction = self.content_object
-        paying_user = transaction.get_paying_user()
-        self.timestamp = transaction.get_timestamp()
-        self.subject = transaction.get_subject()
-        self.description = transaction.get_description()
-        self.items = transaction.get_items()
-        self.from_mail = transaction.get_from_mail()
-        self.to_mail = [paying_user.primary_email]
-
+        paying_user = self.content_object.get_receipt_to_user()
         self._send_receipt(
-            self.timestamp,
-            self.subject,
-            self.description,
-            self.receipt_id,
-            self.items,
-            self.to_mail,
-            self.from_mail,
-            paying_user,
+            payment_id=self.receipt_id,
+            payment_date=self.content_object.get_receipt_timestamp(),
+            subject=self.content_object.get_receipt_subject(),
+            description=self.content_object.get_receipt_description(),
+            items=self.content_object.get_receipt_items(),
+            from_mail=self.content_object.get_receipt_from_email(),
+            to_users=[paying_user],
         )
         super().save(*args, **kwargs)
 
-    def _is_type(self, model_type):
-        """Function for comparing content types to differentiate payment types"""
-        return ContentType.objects.get_for_model(model_type) == self.content_type
-
     def _send_receipt(
         self,
-        payment_date,
-        subject,
-        description,
-        payment_id,
-        items,
-        to_mail,
-        from_mail,
-        paying_user: User,
+        payment_date: timezone.datetime,
+        subject: str,
+        description: str,
+        payment_id: str,
+        items: List[dict],
+        to_users: List[User],
+        from_mail: str,
     ):
-        """Send confirmation email with receipt
-        param receipt: object
-        """
+        """ Send confirmation email with receipt """
 
         # Calculate total item price and ensure correct input to template.
         receipt_items = []
@@ -582,7 +454,7 @@ class PaymentReceipt(models.Model):
             "payment_id": payment_id,
             "items": receipt_items,
             "total_amount": total_amount,
-            "to_mail": to_mail,
+            "to_mail": [user.primary_email for user in to_users],
             "from_mail": from_mail,
         }
 
@@ -590,7 +462,7 @@ class PaymentReceipt(models.Model):
         send_message_to_users(
             title=subject,
             content=message,
-            recipients=[paying_user],
+            recipients=to_users,
             from_email=from_mail,
             permission_type=PermissionType.RECEIPT,
         )

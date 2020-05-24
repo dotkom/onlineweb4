@@ -16,7 +16,7 @@ class ArticleTests(TestCase):
         self.logger = logging.getLogger(__name__)
         self.article = G(Article, heading="test_heading")
 
-    def testArticleUnicodeIsCorrect(self):
+    def test_article_unicode_is_correct(self):
         self.logger.debug("Article __str__() should return correct heading")
         self.assertEqual(self.article.__str__(), "test_heading")
 

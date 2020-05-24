@@ -438,9 +438,9 @@
                         <div class="modal-footer">
                             {% if user_attending and not place_on_wait_list %}
                                 {% if show_as_attending and user_attending %}
-                                    <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-warning">Ikke vis meg som påmeldt</button></a>
+                                    <a href="{% url 'toggle_show_as_attending' event.id %}"><button class="btn btn-warning">Ikke vis meg som påmeldt</button></a>
                                 {% else %}
-                                    <a href="{% url 'toggleShowAsAttending' event.id %}"><button class="btn btn-success">Gjør meg synlig som påmeldt</button></a>
+                                    <a href="{% url 'toggle_show_as_attending' event.id %}"><button class="btn btn-success">Gjør meg synlig som påmeldt</button></a>
                                 {% endif %}
                             {% endif %}
                             <button class="btn" data-dismiss="modal" aria-hidden="true">Lukk</button>
