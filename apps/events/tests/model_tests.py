@@ -25,6 +25,8 @@ from apps.events.models import (
 )
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.marks.models import DURATION, Mark, MarkUser
+from apps.notifications.constants import PermissionType
+from apps.notifications.models import Permission
 
 from .utils import attend_user_to_event, generate_attendance_event, generate_attendee
 
@@ -436,6 +438,7 @@ class WaitlistAttendanceEventTest(TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_changing_max_capacity_should_notify_waitlist(self):
+        G(Permission, permission_type=PermissionType.WAIT_LIST_BUMP, force_email=True)
         for i in range(4):
             generate_attendee(self.attendance_event.event, "user" + str(i))
 
@@ -447,6 +450,7 @@ class WaitlistAttendanceEventTest(TestCase):
     def test_changing_max_capacity_should_notify_waitlist_with_capacity_larger_than_guestlist(
         self,
     ):
+        G(Permission, permission_type=PermissionType.WAIT_LIST_BUMP, force_email=True)
         for i in range(4):
             generate_attendee(self.attendance_event.event, "user" + str(i))
 
@@ -456,6 +460,7 @@ class WaitlistAttendanceEventTest(TestCase):
         self.assertEqual(len(mail.outbox), 2)
 
     def test_changing_reservation_should_notify_waitlist(self):
+        G(Permission, permission_type=PermissionType.WAIT_LIST_BUMP, force_email=True)
         reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
         for i in range(4):
             generate_attendee(self.attendance_event.event, "user" + str(i))
@@ -466,6 +471,7 @@ class WaitlistAttendanceEventTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     def test_changing_reservation_and_max_capacity_should_notify_waitlist(self):
+        G(Permission, permission_type=PermissionType.WAIT_LIST_BUMP, force_email=True)
         reservation = G(Reservation, attendance_event=self.attendance_event, seats=2)
         for i in range(5):
             generate_attendee(self.attendance_event.event, "user" + str(i))

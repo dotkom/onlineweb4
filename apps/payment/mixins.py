@@ -79,5 +79,5 @@ class ReceiptMixin:
         pass
 
     @abstractmethod
-    def get_receipt_to_email(self) -> str:
+    def get_receipt_to_user(self) -> User:
         pass

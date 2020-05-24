@@ -1,7 +1,9 @@
 from django.conf import settings
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse
+
+from apps.notifications.constants import PermissionType
+from apps.notifications.utils import send_message_to_users
 
 from .models import MagicToken
 
@@ -16,11 +18,12 @@ def send_magic_link(user, token):
             "rfid_confirm_link": "{}{}".format(settings.BASE_URL, rfid_confirm_link),
         },
     )
-    send_mail(
-        "Oppdatert RFID på online.ntnu.no",
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [user.primary_email],
+    send_message_to_users(
+        title="Oppdatert RFID på online.ntnu.no",
+        content=message,
+        recipients=[user],
+        permission_type=PermissionType.DEFAULT,
+        url=rfid_confirm_link,
     )
 
     return token

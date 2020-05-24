@@ -164,6 +164,11 @@ if "apps.marks" in settings.INSTALLED_APPS:
         url(r"^dashboard/marks/", include("apps.marks.dashboard.urls")),
     ]
 
+if "apps.notifications" in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r"^notifications/", include("apps.notifications.urls")),
+    ]
+
 if "apps.online_oidc_provider" in settings.INSTALLED_APPS:
     urlpatterns += [url(r"^oidc/", include("apps.online_oidc_provider.urls"))]
 

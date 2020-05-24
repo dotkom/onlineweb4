@@ -5,7 +5,7 @@ import icalendar
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import EmailMessage
 from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -15,6 +15,8 @@ from pytz import timezone as tz
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee, Event, Extras
+from apps.notifications.constants import PermissionType
+from apps.notifications.utils import send_message_to_users
 from apps.payment.models import PaymentDelay, PaymentRelation
 
 
@@ -36,8 +38,13 @@ def handle_waitlist_bump(event, attendees, payment=None):
     message += "\n\nFor mer info:"
     message += "\n%s%s" % (settings.BASE_URL, event.get_absolute_url())
 
-    for attendee in attendees:
-        send_mail(title, message, settings.DEFAULT_FROM_EMAIL, [attendee.user.email])
+    send_message_to_users(
+        title=title,
+        content=message,
+        recipients=[attendee.user for attendee in attendees],
+        permission_type=PermissionType.WAIT_LIST_BUMP,
+        url=event.get_absolute_url(),
+    )
 
 
 def _handle_waitlist_bump_payment(payment, attendees):
@@ -300,7 +307,7 @@ def handle_event_extras(event, user, extras_id):
     return resp
 
 
-def handle_attend_event_payment(event, user):
+def handle_attend_event_payment(event: Event, user: User):
     attendance_event = event.attendance_event
     payment = attendance_event.payment()
 
@@ -328,9 +335,14 @@ def handle_attend_event_payment(event, user):
             },
         )
 
-        EmailMessage(
-            subject, content, event.feedback_mail(), [user.primary_email]
-        ).send()
+        send_message_to_users(
+            title=subject,
+            content=content,
+            from_email=event.feedback_mail(),
+            recipients=[user],
+            permission_type=PermissionType.DEFAULT,
+            url=event.get_absolute_url(),
+        )
 
 
 def handle_mail_participants(

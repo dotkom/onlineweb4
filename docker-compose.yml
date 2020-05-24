@@ -64,6 +64,8 @@ services:
       - OW4_GSUITE_SYNC_ENABLE_INSERT
       - OW4_GSUITE_SYNC_ENABLE_DELETE
       - OW4_VIMEO_API_TOKEN
+      - OW4_WEB_PUSH_PRIVATE_KEY
+      - OW4_WEB_PUSH_ENABLED
   webpack:
     build:
       context: .

@@ -18,6 +18,8 @@ from apps.approval.models import (
 from apps.approval.tasks import send_approval_status_update
 from apps.authentication.models import Email, OnlineGroup
 from apps.authentication.models import OnlineUser as User
+from apps.notifications.constants import PermissionType
+from apps.notifications.models import Permission
 from apps.online_oidc_provider.test import OIDCTestCase
 
 
@@ -97,6 +99,7 @@ class EmailTest(TestCase):
         self.logger = logging.getLogger(__name__)
 
     def testEmailWhenMembershipDenied(self):
+        G(Permission, permission_type=PermissionType.APPLICATIONS, force_email=True)
         mail.outbox = []
 
         self.logger.debug(
@@ -111,7 +114,7 @@ class EmailTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         # Verify that the subject of the first message is correct.
         self.assertEqual(
-            mail.outbox[0].subject, "Soknad om medlemskap i Online er vurdert"
+            mail.outbox[0].subject, "Søknad om medlemskap i Online er vurdert"
         )
         self.assertIn(
             "Ditt medlemskap i Online er ikke godkjent. Ta kontakt med Online for begrunnelse.",
@@ -119,6 +122,7 @@ class EmailTest(TestCase):
         )
 
     def testEmailWhenMembershipAccepted(self):
+        G(Permission, permission_type=PermissionType.APPLICATIONS, force_email=True)
         mail.outbox = []
 
         self.logger.debug(
@@ -133,7 +137,7 @@ class EmailTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
         # Verify that the subject of the first message is correct.
         self.assertEqual(
-            mail.outbox[0].subject, "Soknad om medlemskap i Online er vurdert"
+            mail.outbox[0].subject, "Søknad om medlemskap i Online er vurdert"
         )
         self.assertIn(
             "Ditt medlemskap i Online er godkjent.", str(mail.outbox[0].message())
