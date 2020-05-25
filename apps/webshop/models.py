@@ -329,3 +329,4 @@ class OrderLine(PaymentMixin, models.Model):
     class Meta:
         permissions = (("view_order_line", "View Order Line"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("pk",)

@@ -336,7 +336,6 @@ class Question(models.Model):
 
     class Meta:
         abstract = True
-        ordering = ("pk",)
 
 
 class FieldOfStudyAnswer(models.Model):
@@ -423,6 +422,7 @@ class RatingQuestion(Question, models.Model):
         verbose_name_plural = _("Vurderingsspørsmål")
         permissions = (("view_ratingquestion", "View RatingQuestion"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("pk",)
 
 
 class RatingAnswer(models.Model):
