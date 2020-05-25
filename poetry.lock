@@ -970,13 +970,11 @@ category = "main"
 description = "Python implementation of Markdown."
 name = "markdown"
 optional = false
-python-versions = ">=3.5"
-version = "3.2.2"
+python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*"
+version = "3.1.1"
 
 [package.dependencies]
-[package.dependencies.importlib-metadata]
-python = "<3.8"
-version = "*"
+setuptools = ">=36"
 
 [package.extras]
 testing = ["coverage", "pyyaml"]
@@ -1804,11 +1802,11 @@ description = "A wiki system written for the Django framework."
 name = "wiki"
 optional = false
 python-versions = "*"
-version = "0.6b2"
+version = "0.6b1"
 
 [package.dependencies]
 Django = ">=2.1,<3.1"
-Markdown = ">=3.1,<3.3"
+Markdown = ">=3.1,<3.2.0"
 Pillow = "*"
 bleach = ">=3.1.0,<3.2"
 django-mptt = ">=0.11,<0.12"
@@ -1840,7 +1838,7 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 prod = ["psycopg2-binary", "uwsgi", "redis"]
 
 [metadata]
-content-hash = "be245f6983c66e75c18c4b2017b3199304b5167b09364cc7a6922e99073fadc9"
+content-hash = "1713d5da7da972fb0aeb7ec65e7410edc1115ef736dacefafffecd1b4e876fcc"
 python-versions = "~3.7"
 
 [metadata.files]
@@ -2209,8 +2207,8 @@ mako = [
     {file = "Mako-1.1.2.tar.gz", hash = "sha256:3139c5d64aa5d175dbafb95027057128b5fbd05a40c53999f3905ceb53366d9d"},
 ]
 markdown = [
-    {file = "Markdown-3.2.2-py3-none-any.whl", hash = "sha256:c467cd6233885534bf0fe96e62e3cf46cfc1605112356c4f9981512b8174de59"},
-    {file = "Markdown-3.2.2.tar.gz", hash = "sha256:1fafe3f1ecabfb514a5285fca634a53c1b32a81cb0feb154264d55bf2ff22c17"},
+    {file = "Markdown-3.1.1-py2.py3-none-any.whl", hash = "sha256:56a46ac655704b91e5b7e6326ce43d5ef72411376588afa1dd90e881b83c7e8c"},
+    {file = "Markdown-3.1.1.tar.gz", hash = "sha256:2e50876bcdd74517e7b71f3e7a76102050edec255b3983403f1a63e7c8a41e7a"},
 ]
 markdown2 = [
     {file = "markdown2-2.3.9-py2.py3-none-any.whl", hash = "sha256:e6b401ec80b75e76a6b3dbb2c8ade513156fa55fa6c30b9640a1abf6184a07c8"},
@@ -2728,8 +2726,8 @@ webencodings = [
     {file = "webencodings-0.5.1.tar.gz", hash = "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"},
 ]
 wiki = [
-    {file = "wiki-0.6b2-py3-none-any.whl", hash = "sha256:8af675e3a43b1ca9a01ca62c4c66b33f907f12428c1cde64a69ec4002fdd476b"},
-    {file = "wiki-0.6b2.tar.gz", hash = "sha256:dbaaef2ec1634fd1bdba7dd4083770d398d6abda4e2114f394e362153564b3ea"},
+    {file = "wiki-0.6b1-py3-none-any.whl", hash = "sha256:3cc563d098cfcd7046f0ecbf4c085735e2600e3b93d26100e8015ef65959983e"},
+    {file = "wiki-0.6b1.tar.gz", hash = "sha256:275304dbcc8e8087d88a7cd43fb933c58623984d57e42327fc9a10ee15a219e7"},
 ]
 zipp = [
     {file = "zipp-3.1.0-py3-none-any.whl", hash = "sha256:aa36550ff0c0b7ef7fa639055d797116ee891440eac1a56f378e2d3179e0320b"},
