@@ -114,6 +114,7 @@ class OrderLine(models.Model):
 
     class Meta:
         default_permissions = ("add", "change", "delete")
+        ordering = ("-datetime", "-transaction")
 
 
 class MagicToken(models.Model):

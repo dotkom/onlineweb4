@@ -113,6 +113,7 @@ class Product(models.Model):
         verbose_name_plural = "Produkter"
         permissions = (("view_product", "View Product"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("category", "stock", "slug")
 
 
 class Category(models.Model):
@@ -192,6 +193,11 @@ class Order(models.Model):
         verbose_name_plural = "Bestillinger"
         permissions = (("view_order", "View Order"),)
         default_permissions = ("add", "change", "delete")
+        ordering = (
+            "order_line",
+            "product",
+            "id",
+        )
 
 
 class OrderLine(PaymentMixin, models.Model):

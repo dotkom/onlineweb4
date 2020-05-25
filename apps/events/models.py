@@ -367,6 +367,7 @@ class Rule(models.Model):
     class Meta:
         permissions = (("view_rule", "View Rule"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("id",)
 
 
 class FieldOfStudyRule(Rule):
@@ -508,6 +509,7 @@ class RuleBundle(models.Model):
     class Meta:
         permissions = (("view_rulebundle", "View RuleBundle"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("id",)
 
 
 """
@@ -1107,6 +1109,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
         verbose_name_plural = _("påmeldinger")
         permissions = (("view_attendanceevent", "View AttendanceEvent"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("pk",)
 
 
 class CompanyEvent(models.Model):

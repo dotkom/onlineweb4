@@ -19,6 +19,7 @@ class UserConsentViewSet(
 ):
     serializer_class = UserConsentReadOnlySerializer
     permission_classes = (permissions.IsAuthenticated,)
+    ordering = ("-date_given",)
 
     def get_queryset(self):
         user = self.request.user
@@ -31,6 +32,7 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         "read": ClientReadOnlySerializer,
         "write": ClientCreateAndUpdateSerializer,
     }
+    ordering = ("-date_created",)
 
     def get_permissions(self):
         return super().get_permissions()
@@ -51,3 +53,4 @@ class ResponseTypeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ResponseTypeReadOnlySerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     queryset = ResponseType.objects.all()
+    ordering = ("id",)

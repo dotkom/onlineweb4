@@ -14,7 +14,7 @@ from .serializers import (
 class CommitteeApplicationPeriodViewSet(ModelViewSet):
     serializer_class = CommitteeApplicationPeriodSerializer
     queryset = CommitteeApplicationPeriod.objects.all()
-    filter_class = CommitteeApplicationPeriodFilter
+    filterset_class = CommitteeApplicationPeriodFilter
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
 

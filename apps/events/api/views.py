@@ -200,7 +200,11 @@ class AttendeeViewSet(
         return attendees.distinct()
 
     def get_queryset(self):
-        return self._get_allowed_attendees(self.request.user)
+        return (
+            Attendee.objects.none()
+            if self.request.user.is_anonymous
+            else self._get_allowed_attendees(self.request.user)
+        )
 
     @action(
         detail=True,

@@ -206,6 +206,7 @@ class PaymentPrice(models.Model):
         verbose_name = _("pris")
         verbose_name_plural = _("priser")
         default_permissions = ("add", "change", "delete")
+        ordering = ("payment", "price")
 
 
 class StripeMixin(models.Model):
@@ -289,6 +290,7 @@ class PaymentRelation(ReceiptMixin, StripeMixin, models.Model):
         verbose_name = _("betalingsrelasjon")
         verbose_name_plural = _("betalingsrelasjoner")
         default_permissions = ("add", "change", "delete")
+        ordering = ("datetime", "unique_id")
 
 
 class PaymentDelay(models.Model):
@@ -309,11 +311,10 @@ class PaymentDelay(models.Model):
 
     class Meta:
         unique_together = ("payment", "user")
-
         verbose_name = _("betalingsutsettelse")
         verbose_name_plural = _("betalingsutsettelser")
-
         default_permissions = ("add", "change", "delete")
+        ordering = ("active", "valid_to")
 
 
 class TransactionManager(models.Manager):
