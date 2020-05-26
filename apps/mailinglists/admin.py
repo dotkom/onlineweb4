@@ -18,6 +18,11 @@ class MailGroupAdmin(VersionAdmin):
         "members",
     )
 
+    def get_exclude(self, request, obj=None):
+        # Hide email-field on create-form, since it's not relevant
+        # until the generated e-mail can be made
+        return ("email",) if obj is None else None
+
 
 @admin.register(MailEntity)
 class MailEntityAdmin(VersionAdmin):

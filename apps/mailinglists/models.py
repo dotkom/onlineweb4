@@ -7,7 +7,7 @@ class MailEntity(models.Model):
     This model can represent one of the following:
     1. An organization
     2. Individual person
-    3. Linked to an mailinglist
+    3. A mailinglist
     All who we are interested in having on one our our mailinglist
     """
 
@@ -34,8 +34,8 @@ class MailEntity(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = _("E-postentitet")
-        verbose_name_plural = _("E-postentiteter")
+        verbose_name = _("e-postentitet")
+        verbose_name_plural = _("e-postentiteter")
         ordering = ["name"]
 
 
@@ -45,10 +45,10 @@ class MailGroup(models.Model):
     """
 
     class Domains(models.TextChoices):
-        ONLINE_NTNU_NO = "online.ntnu.no"
-        LINJEFORENINGER_NO = "linjeforeninger.no"
-        ITFORENINGER_NO = "itforeninger.no"
-        TECHTALKS_NO = "techtalks.no"
+        ONLINE_NTNU_NO = "online.ntnu.no", "online.ntnu.no"
+        LINJEFORENINGER_NO = "linjeforeninger.no", "linjeforeninger.no"
+        ITFORENINGER_NO = "itforeninger.no", "itforeninger.no"
+        TECHTALKS_NO = "techtalks.no", "techtalks.no"
 
     # The part before `@` is called local_part
     # Source: https://tools.ietf.org/html/rfc3696#section-3
@@ -100,6 +100,6 @@ class MailGroup(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = _("E-postliste")
-        verbose_name_plural = _("E-postlister")
+        verbose_name = _("e-postliste")
+        verbose_name_plural = _("e-postlister")
         ordering = ["domain", "email_local_part"]
