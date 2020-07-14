@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
-from apps.authentication.models import AllowedUsername, get_length_of_membership
+from apps.authentication.models import get_length_of_membership
 
 
 @login_required
@@ -116,9 +116,14 @@ def create_membership_application(request):
             )
             return redirect("profiles_active", active_tab="membership")
 
-        # Extend length of membership by 1 year
-        membership = AllowedUsername.objects.get(username=request.user.ntnu_username)
-        new_expiration_date = datetime.date(membership.expiration_date.year + 1, 9, 16)
+        # Grant membership until 16th of September this year if the request was sent previous to 1st of July,
+        # or until 16th of September next year if the request was sent after 1st of July
+        if timezone.now().date().month < 7:
+            new_expiration_date = datetime.date(timezone.now().year, 9, 16)
+        else:
+            new_expiration_date = datetime.date(
+                timezone.now().year, 9, 16
+            ) + datetime.timedelta(days=365)
 
         application = MembershipApproval(
             applicant=request.user,
