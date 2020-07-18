@@ -19,7 +19,6 @@ from apps.marks.models import get_expiration_date
 from apps.payment import status as payment_status
 from apps.payment.mixins import PaymentMixin
 
-from .AccessRestriction import RuleBundle
 from .Event import Event, User, logger
 from .Extras import Extras
 
@@ -61,7 +60,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
     marks_has_been_set = models.BooleanField(default=False)
 
     # Access rules
-    rule_bundles = models.ManyToManyField(RuleBundle, blank=True)
+    rule_bundles = models.ManyToManyField("RuleBundle", blank=True)
 
     # Extra choices
     extras = models.ManyToManyField(Extras, blank=True)
