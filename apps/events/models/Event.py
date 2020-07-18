@@ -22,8 +22,6 @@ from apps.events.constants import EventType
 from apps.feedback.models import FeedbackRelation
 from apps.gallery.models import ResponsiveImage
 
-from .Attendance import CompanyEvent, GroupRestriction
-
 logger = logging.getLogger(__name__)
 
 User = settings.AUTH_USER_MODEL
@@ -215,6 +213,8 @@ class Event(models.Model):
 
     @property
     def company_event(self):
+        from .Attendance import CompanyEvent
+
         return CompanyEvent.objects.filter(event=self)
 
     @property
@@ -234,6 +234,8 @@ class Event(models.Model):
         return settings.DEFAULT_FROM_EMAIL
 
     def can_display(self, user):
+        from .Attendance import GroupRestriction
+
         restriction = GroupRestriction.objects.filter(event=self).first()
         if (
             not user.is_anonymous
