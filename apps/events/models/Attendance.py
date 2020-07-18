@@ -19,7 +19,7 @@ from apps.marks.models import get_expiration_date
 from apps.payment import status as payment_status
 from apps.payment.mixins import PaymentMixin
 
-from .Event import Event, User, logger
+from .Event import User, logger
 from .Extras import Extras
 
 
@@ -29,7 +29,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
     """
 
     event = models.OneToOneField(
-        Event,
+        "Event",
         primary_key=True,
         related_name="attendance_event",
         on_delete=models.CASCADE,
@@ -608,7 +608,7 @@ class CompanyEvent(models.Model):
         Company, verbose_name=_("bedrifter"), on_delete=models.CASCADE
     )
     event = models.ForeignKey(
-        Event,
+        "Event",
         verbose_name=_("arrangement"),
         related_name="company_events",
         on_delete=models.CASCADE,
@@ -884,7 +884,7 @@ class Reservee(models.Model):
 
 class GroupRestriction(models.Model):
     event = models.OneToOneField(
-        Event,
+        "Event",
         primary_key=True,
         related_name="group_restriction",
         on_delete=models.CASCADE,
