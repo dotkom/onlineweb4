@@ -167,7 +167,7 @@ class Event(models.Model):
         to=Company,
         verbose_name=_("Bedrifter"),
         related_name="events",
-        through="events.models.Attendance.CompanyEvent",
+        through="events.CompanyEvent",
     )
 
     feedback = GenericRelation(FeedbackRelation)
