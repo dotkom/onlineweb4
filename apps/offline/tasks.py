@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from onlineweb4.celery import app
-
 from apps.gallery.util import create_responsive_image_from_file
+from onlineweb4.celery import app
 
 from .models import Issue
 from .utils import pdf_page_to_png

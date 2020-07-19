@@ -3,9 +3,10 @@ import logging
 
 from django.conf import settings
 from django.core.mail import send_mail
-from onlineweb4.celery import app as celery_app
 from pywebpush import WebPushException, webpush
 from rest_framework import serializers
+
+from onlineweb4.celery import app as celery_app
 
 from .constants import (
     NOTIFICATION_BADGE_URL,

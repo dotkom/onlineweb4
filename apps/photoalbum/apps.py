@@ -9,10 +9,9 @@ class PhotoalbumConfig(AppConfig):
         super().ready()
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
-        import apps.photoalbum.signals  # noqa: F401
-
         from watson import search as watson
 
+        import apps.photoalbum.signals  # noqa: F401
         from apps.photoalbum.models import Album, Photo, UserTag
 
         watson.register(

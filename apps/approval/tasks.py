@@ -28,9 +28,7 @@ def send_approval_notification(approval: Approval):
         ).send()
     except ImproperlyConfigured:
         logger.warning(
-            "Failed to send approval approver notification email for approval#{pk}.".format(
-                {"pk": approval.pk}
-            )
+            f"Failed to send approval approver notification email for approval#{approval.pk}."
         )
 
 

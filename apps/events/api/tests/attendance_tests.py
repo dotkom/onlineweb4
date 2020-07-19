@@ -1,7 +1,6 @@
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from django_dynamic_fixture import G
-from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 from rest_framework import status
 
 from apps.events.tests.utils import (
@@ -13,6 +12,7 @@ from apps.events.tests.utils import (
 )
 from apps.online_oidc_provider.test import OIDCTestCase
 from apps.profiles.models import Privacy
+from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 
 from ...models import Extras
 from .utils import generate_attendee

@@ -17,7 +17,4 @@ class CommitteeApplicationPeriodFilter(filters.FilterSet):
         fields = {
             "start": ["gte", "lte"],
             "deadline": ["gte", "lte"],
-            "accepting_applications": "exact",
-            "actual_deadline__lte": "exact",
-            "actual_deadline__gte": "exact",
         }

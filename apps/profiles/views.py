@@ -56,7 +56,6 @@ from apps.profiles.serializers import (
 from apps.shop.models import Order
 from utils.shortcuts import render_json
 
-
 """
 Index for the entire user profile view
 Methods redirect to this view on save

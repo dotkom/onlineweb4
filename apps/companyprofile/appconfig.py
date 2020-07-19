@@ -9,6 +9,7 @@ class CompanyProfileConfig(AppConfig):
         super().ready()
 
         from watson import search as watson
+
         from apps.companyprofile.models import Company
 
         watson.register(
