@@ -7,7 +7,7 @@ from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from django.utils import timezone
 
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import Membership
 
 
 class Command(BaseCommand):
@@ -43,7 +43,7 @@ class Command(BaseCommand):
                 continue
 
             try:
-                entry = AllowedUsername(
+                entry = Membership(
                     username=line,
                     registered=now,
                     note=note,
@@ -54,7 +54,7 @@ class Command(BaseCommand):
 
                 new_count = new_count + 1
             except IntegrityError:
-                au = AllowedUsername.objects.get(username=line)
+                au = Membership.objects.get(username=line)
                 au.expiration_date = expiration_date
                 au.save()
 

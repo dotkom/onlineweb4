@@ -8,7 +8,7 @@ from django.utils.http import urlencode
 
 from apps.approval.models import MembershipApproval
 from apps.approval.views import get_expiry_date
-from apps.authentication.models import AllowedUsername, get_length_of_field_of_study
+from apps.authentication.models import Membership, get_length_of_field_of_study
 from apps.dataporten.study.utils import (
     get_field_of_study,
     get_group_id,
@@ -76,7 +76,7 @@ def find_user_study_and_update(user, groups):
             user.save()
 
         if application.is_membership_application():
-            membership = AllowedUsername.objects.filter(username=user.ntnu_username)
+            membership = Membership.objects.filter(username=user.ntnu_username)
             if membership.count() == 1:
                 membership = membership[0]
                 if not membership.description:
@@ -98,7 +98,7 @@ def find_user_study_and_update(user, groups):
                 )
 
             else:
-                membership = AllowedUsername()
+                membership = Membership()
                 membership.username = user.ntnu_username
                 membership.registered = timezone.now().date()
                 membership.description = """Added by dataporten app.

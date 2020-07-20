@@ -11,10 +11,10 @@ from rest_framework import serializers
 
 from apps.authentication.fields import OnlineUserEmailField
 from apps.authentication.models import (
-    AllowedUsername,
     Email,
     GroupMember,
     GroupRole,
+    Membership,
     OnlineGroup,
 )
 from apps.authentication.models import OnlineUser as User
@@ -113,7 +113,7 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
 
         # Related fields
         if instance.member() is not None:
-            AllowedUsername.objects.get(username=instance.member().username).delete()
+            Membership.objects.get(username=instance.member().username).delete()
         instance.email_user.all().delete()
         instance.positions.all().delete()
         instance.special_positions.all().delete()
