@@ -40,11 +40,11 @@ class Notification(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    title = models.CharField(max_length=60)
+    title = models.CharField(max_length=100)
     body = models.CharField(max_length=512)
     # Tag can be null since the tag serves an an ID but only is present.
     # An empty string will result in all notifications without å specific tag being handled as the same notification.
-    tag = models.CharField(max_length=50, null=True, blank=True)
+    tag = models.CharField(max_length=100, null=True, blank=True)
     url = models.CharField(max_length=1024, default="/", blank=True)
 
     require_interaction = models.BooleanField(default=False)
@@ -117,7 +117,8 @@ class Permission(models.Model):
     allow_push = models.BooleanField("Tillat pushvarsel", default=True)
 
     # Default values permissions types
-    default_value_email = models.BooleanField("Standardverdi for e-post", default=False)
+    default_value_email = models.BooleanField(
+        "Standardverdi for e-post", default=False)
     default_value_push = models.BooleanField(
         "Standardverdi for pushvarsel", default=False
     )
@@ -146,7 +147,8 @@ class UserPermission(models.Model):
         """
         Create permission settings for user if they don't all exists.
         """
-        user_permissions_count = UserPermission.objects.filter(user=user).count()
+        user_permissions_count = UserPermission.objects.filter(
+            user=user).count()
         permission_count = Permission.objects.all().count()
         if user_permissions_count != permission_count:
             for permission in Permission.objects.all():
