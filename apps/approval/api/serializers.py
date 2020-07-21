@@ -93,7 +93,7 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
     def validate_application_period(
         self, application_period: CommitteeApplicationPeriod
     ):
-        if not application_period.accepting_applications:
+        if not application_period.accepting_applications_at_time:
             raise ValidationError(
                 f"Opptaksperioden {application_period} tar ikke lenger imot søknader. "
                 f"Opptaket stengte {application_period.deadline}"

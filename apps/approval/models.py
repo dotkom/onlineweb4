@@ -140,8 +140,15 @@ class CommitteeApplicationPeriod(models.Model):
         default=timezone.timedelta(days=1),
     )
     committees = models.ManyToManyField(
-        to=OnlineGroup, verbose_name=_("Komiteer"), related_name="application_periods"
+        to=OnlineGroup,
+        verbose_name=_("Komiteer"),
+        through="CommiteeApplicationPeriodParticipation",
+        related_name="application_periods",
     )
+
+    @property
+    def actual_deadline(self) -> timezone.datetime:
+        return self.deadline + self.deadline_delta
 
     def accepting_applications_at_time(self, time: timezone.datetime) -> bool:
         is_after_start = time >= self.start
@@ -163,6 +170,19 @@ class CommitteeApplicationPeriod(models.Model):
         verbose_name = _("Opptaksperiode")
         verbose_name_plural = _("Opptaksperioder")
         ordering = ("-start", "-deadline")
+
+
+class CommiteeApplicationPeriodParticipation(models.Model):
+    committeeapplicationperiod = models.ForeignKey(
+        CommitteeApplicationPeriod, on_delete=models.CASCADE
+    )
+    onlinegroup = models.ForeignKey(OnlineGroup, on_delete=models.CASCADE)
+    open_for_applications = models.BooleanField(_("Åpen for søknader"), default=True)
+
+    class Meta:
+        verbose_name = _("Komité i opptaksperiode")
+        verbose_name_plural = _("Komité i opptaksperioder")
+        ordering = ("pk",)
 
 
 class CommitteeApplication(models.Model):
