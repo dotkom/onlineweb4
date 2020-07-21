@@ -117,8 +117,7 @@ class Permission(models.Model):
     allow_push = models.BooleanField("Tillat pushvarsel", default=True)
 
     # Default values permissions types
-    default_value_email = models.BooleanField(
-        "Standardverdi for e-post", default=False)
+    default_value_email = models.BooleanField("Standardverdi for e-post", default=False)
     default_value_push = models.BooleanField(
         "Standardverdi for pushvarsel", default=False
     )
@@ -147,8 +146,7 @@ class UserPermission(models.Model):
         """
         Create permission settings for user if they don't all exists.
         """
-        user_permissions_count = UserPermission.objects.filter(
-            user=user).count()
+        user_permissions_count = UserPermission.objects.filter(user=user).count()
         permission_count = Permission.objects.all().count()
         if user_permissions_count != permission_count:
             for permission in Permission.objects.all():
