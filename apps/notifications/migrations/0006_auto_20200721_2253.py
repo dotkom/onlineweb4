@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterField(
             model_name="notification",
-            name="from_email",
-            field=models.EmailField(default="online@online.ntnu.no", max_length=254),
-        ),
-        migrations.AlterField(
-            model_name="notification",
             name="tag",
             field=models.CharField(blank=True, max_length=100, null=True),
         ),
