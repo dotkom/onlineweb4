@@ -142,7 +142,7 @@ class CommitteeApplicationPeriod(models.Model):
     committees = models.ManyToManyField(
         to=OnlineGroup,
         verbose_name=_("Komiteer"),
-        through="CommiteeApplicationPeriodParticipation",
+        through="CommitteeApplicationPeriodParticipation",
         related_name="application_periods",
     )
 
@@ -172,7 +172,7 @@ class CommitteeApplicationPeriod(models.Model):
         ordering = ("-start", "-deadline")
 
 
-class CommiteeApplicationPeriodParticipation(models.Model):
+class CommitteeApplicationPeriodParticipation(models.Model):
     committeeapplicationperiod = models.ForeignKey(
         CommitteeApplicationPeriod, on_delete=models.CASCADE
     )
