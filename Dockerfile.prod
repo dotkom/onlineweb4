@@ -1,4 +1,5 @@
 FROM node:lts as webpack
+LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
 
 WORKDIR /srv/app/webpack
 

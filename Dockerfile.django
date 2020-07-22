@@ -1,5 +1,5 @@
 FROM python:3.7
-MAINTAINER dotkom
+LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
 
 ENV APP_DIR=/srv/app POETRY_VIRTUALENVS_CREATE=false
 
