@@ -9,10 +9,10 @@ COPY poetry.lock pyproject.toml /$APP_DIR/
 
 WORKDIR $APP_DIR
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libjpeg-dev \
-    ghostscript
+    ghostscript \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN pip install poetry
 
