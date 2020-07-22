@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.conf import settings
 from django.db import models
 from django.db.models import Case, ExpressionWrapper, F, Q, When
@@ -132,7 +130,7 @@ class CommitteeApplicationPeriod(models.Model):
 
     title = models.CharField(_("Tittel"), max_length=128)
     start = models.DateTimeField(_("Starttid"))
-    deadline = models.DateTimeField(_("First"))
+    deadline = models.DateTimeField(_("Frist"))
     # We have a deadline delta because we often accept applications after the actual deadline.
     deadline_delta = models.DurationField(
         _("Slingringsmonn"),

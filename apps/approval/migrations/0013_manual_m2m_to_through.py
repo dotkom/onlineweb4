@@ -70,4 +70,9 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "Komité i opptaksperioder",
             },
         ),
+        migrations.AlterField(
+            model_name="committeeapplicationperiod",
+            name="deadline",
+            field=models.DateTimeField(verbose_name="Frist"),
+        ),
     ]

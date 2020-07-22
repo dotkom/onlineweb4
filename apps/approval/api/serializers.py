@@ -2,12 +2,14 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from rest_framework import serializers
 
-from apps.approval.models import (
+from apps.authentication.serializers import UserReadOnlySerializer
+
+from ..models import (
     CommitteeApplication,
     CommitteeApplicationPeriod,
+    CommitteeApplicationPeriodParticipation,
     CommitteePriority,
 )
-from apps.authentication.serializers import UserReadOnlySerializer
 
 
 class CommitteeSerializer(serializers.ModelSerializer):
@@ -21,17 +23,27 @@ class CommitteeSerializer(serializers.ModelSerializer):
         return instance.group.name_long
 
 
+class CommitteeApplicationPeriodParticipationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CommitteeApplicationPeriodParticipation
+        fields = ("id", "open_for_applications")
+
+
 class CommitteeApplicationPeriodSerializer(serializers.ModelSerializer):
     # Define annotated fields manually since they can't be inferred from the class
     actual_deadline = serializers.DateTimeField(read_only=True)
     accepting_applications = serializers.BooleanField(read_only=True)
+    committees = CommitteeApplicationPeriodParticipationSerializer(
+        source="committeeapplicationperiodparticipation_set", many=True, read_only=True
+    )
 
     def validate(self, attrs: dict):
         # Validate on a class instance instead of on the attrs themselves.
         # This lets us use instance properties and default values correctly.
-        # Use request data without the 'many'-related properties, as the can't be added directly in the class.
+        # Use request data without the 'many'-related properties, as they can't be added directly in the class.
         data = attrs.copy()
-        data.pop("committees")
+        if "committees" in data:
+            del data["committees"]
         period = CommitteeApplicationPeriod(**data)
 
         minimum_duration = timezone.timedelta(days=1)
@@ -93,7 +105,7 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
     def validate_application_period(
         self, application_period: CommitteeApplicationPeriod
     ):
-        if not application_period.accepting_applications_at_time:
+        if not application_period.accepting_applications:
             raise ValidationError(
                 f"Opptaksperioden {application_period} tar ikke lenger imot søknader. "
                 f"Opptaket stengte {application_period.deadline}"
