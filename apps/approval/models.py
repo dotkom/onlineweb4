@@ -146,10 +146,6 @@ class CommitteeApplicationPeriod(models.Model):
         related_name="application_periods",
     )
 
-    @property
-    def actual_deadline(self) -> timezone.datetime:
-        return self.deadline + self.deadline_delta
-
     def accepting_applications_at_time(self, time: timezone.datetime) -> bool:
         is_after_start = time >= self.start
         is_before_deadline = time <= self.actual_deadline
