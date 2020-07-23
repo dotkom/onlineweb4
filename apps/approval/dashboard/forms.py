@@ -48,5 +48,5 @@ class ApplicationPeriodParticipantsUpdateForm(forms.Form):
         ]
 
     committees_with_applications = forms.MultipleChoiceField(
-        label="Komiteer som deltar"
+        label="Komiteer som deltar", required=False,
     )

@@ -1,11 +1,8 @@
-# -*- encoding: utf-8 -*-
-
 import json
-import logging
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
@@ -251,8 +248,18 @@ class ApplicationPeriodParticipantionUpdate(DashboardPermissionMixin, UpdateView
     context_object_name = "application_period"
 
     def post(self, request, *args, **kwargs):
-        pass
-        # TODO: Fix form handeling
-
-    def get_success_url(self):
-        return reverse("application-periods-detail", kwargs={"pk": self.object.pk})
+        instance = CommitteeApplicationPeriod.objects.get(pk=kwargs["pk"])
+        form = ApplicationPeriodParticipantsUpdateForm(request.POST, instance=instance)
+        if form.is_valid():
+            committes_to_be_set_true = form.cleaned_data["committees_with_applications"]
+            for c in instance.committeeapplicationperiodparticipation_set.all():
+                previous_open = c.open_for_applications
+                c.open_for_applications = False
+                if str(c.pk) in committes_to_be_set_true:
+                    c.open_for_applications = True
+                if not previous_open == c.open_for_applications:
+                    c.save()
+            return HttpResponseRedirect(
+                reverse("application-periods-detail", kwargs={"pk": instance.pk})
+            )
+        return super().form_invalid(form)
