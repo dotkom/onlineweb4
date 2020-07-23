@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 import json
+import logging
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -23,7 +24,10 @@ from apps.authentication.models import AllowedUsername
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
 from ..models import CommitteeApplicationPeriod, MembershipApproval
-from .forms import CommitteeApplicationPeriodForm
+from .forms import (
+    ApplicationPeriodParticipantsUpdateForm,
+    CommitteeApplicationPeriodForm,
+)
 
 
 @ensure_csrf_cookie
@@ -237,3 +241,18 @@ class ApplicationPeriodDelete(DashboardPermissionMixin, DeleteView):
 
     def get_success_url(self):
         return reverse("application-periods-list")
+
+
+class ApplicationPeriodParticipantionUpdate(DashboardPermissionMixin, UpdateView):
+    model = CommitteeApplicationPeriod
+    template_name = "approval/dashboard/application_period/create.html"
+    permission_required = "approval.delete_committeeapplicationperiod"
+    form_class = ApplicationPeriodParticipantsUpdateForm
+    context_object_name = "application_period"
+
+    def post(self, request, *args, **kwargs):
+        pass
+        # TODO: Fix form handeling
+
+    def get_success_url(self):
+        return reverse("application-periods-detail", kwargs={"pk": self.object.pk})

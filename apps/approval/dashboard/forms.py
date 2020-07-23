@@ -36,3 +36,17 @@ class CommitteeApplicationPeriodForm(forms.ModelForm):
         widgetlist = [(DatetimePickerInput, dtp_fields)]
 
         widgets = multiple_widget_generator(widgetlist)
+
+
+class ApplicationPeriodParticipantsUpdateForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        application_period: CommitteeApplicationPeriod = kwargs.pop("instance")
+        super().__init__(*args, **kwargs)
+        self.fields["committees_with_applications"].choices = [
+            (committee.pk, committee.name_short)
+            for committee in application_period.committees.all()
+        ]
+
+    committees_with_applications = forms.MultipleChoiceField(
+        label="Komiteer som deltar"
+    )
