@@ -140,6 +140,7 @@ class CommitteeApplicationPeriod(models.Model):
     committees = models.ManyToManyField(
         to=OnlineGroup,
         verbose_name=_("Komiteer"),
+        help_text="Komiteer som deltar i opptaken, men ikke nødvendigvis kan søkes opptak til",
         through="CommitteeApplicationPeriodParticipation",
         related_name="application_periods",
     )

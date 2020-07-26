@@ -48,5 +48,7 @@ class ApplicationPeriodParticipantsUpdateForm(forms.Form):
         ]
 
     committees_with_applications = forms.MultipleChoiceField(
-        label="Komiteer som deltar", required=False,
+        label="Komiteer som har opptak, de som ikke har opptak vil allikevel vises i opptaksperioden, men uten at en "
+        "kan søke direkte til den komiteen.",
+        required=False,
     )
