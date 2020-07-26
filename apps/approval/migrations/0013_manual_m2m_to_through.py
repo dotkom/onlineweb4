@@ -53,6 +53,8 @@ class Migration(migrations.Migration):
                         through="approval.CommitteeApplicationPeriodParticipation",
                         related_name="application_periods",
                         verbose_name="Komiteer",
+                        # help_text isn't saved in the DB, so changing it here is OK
+                        help_text="Komiteer som deltar i opptaken, men ikke nødvendigvis kan søkes opptak til",
                     ),
                 ),
             ],
