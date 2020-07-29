@@ -1,17 +1,11 @@
-## What kind of a pull request is this?
-
-- QA / Code Review
-<!-- Add other options if appropriate -->
-
+## Description of changes
+<!-- It is often obvious what changed by looking at the code, so it is more helpful to say _why_ it should be changed -->
+<!-- If the Pull Request is not ready to be merged, please use a draft pull request -->
 
 ## Code Checklist
 
-- [ ] The code follows dotkom code style 
-- [ ] The code passes the defined tests
 - [ ] I have added tests for the code I added
 - [ ] I have provided documentation for the code I added
-- [ ] The code is ready to be merged
-
 
 ## (Possible) Breaking Changes
 
@@ -22,10 +16,18 @@
     - [ ] I have applied the required changes in production
     - [ ] I cannot apply the required changes in production before this is deployed.
 
+<!-- REMOVE FROM HERE AND BELOW IF NO VISUAL CHANGES -->
+## Visual changes
+<!-- IF DOING ANY DESIGN CHANGE PLEASE ADD BEFORE PICTURES HERE -->
 
-## Description of changes
+<details>
+<summary>Before</summary>
+<!-- PASTE BEFORE IMAGE HERE -->
 
+</details>
 
-## Screenshot(s) if appropriate
+<details>
+<summary>After</summary>
+<!-- PASTE AFTER IMAGE HERE -->
 
-<!-- provide screenshots (before and after) if doing design changes -->
+</details>
