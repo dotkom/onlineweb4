@@ -47,12 +47,12 @@ from apps.webshop.models import ProductSize
 from apps.webshop.serializers import CategoryReadOnlySerializer
 
 from ...models import OnlineUser
-from ...serializers import AllowedUsername, PositionReadOnlySerializer
+from ...serializers import Membership, PositionReadOnlySerializer
 
 
-class AllowedUsernameSerializer(serializers.ModelSerializer):
+class MembershipSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AllowedUsername
+        model = Membership
         fields = ("username", "registered", "note", "expiration_date")
 
 
@@ -351,7 +351,7 @@ class UserDataSerializer(serializers.ModelSerializer):
     field_of_study = serializers.SerializerMethodField()
     gender = serializers.SerializerMethodField()
     privacy = PrivacySerializer()
-    member = AllowedUsernameSerializer()
+    member = MembershipSerializer()
     email_objects = EmailReadOnlySerializer(many=True, source="get_emails")
     # Articles
     created_articles = ArticleSerializer(many=True)

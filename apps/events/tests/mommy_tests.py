@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import Membership
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.events.mommy import SetEventMarks
@@ -30,7 +30,7 @@ class EventTest(TestCase):
         self.attendance_event.registration_end = self.now + datetime.timedelta(days=7)
         # Making the user a member.
         self.allowed_username = G(
-            AllowedUsername,
+            Membership,
             username="ola123ntnu",
             expiration_date=self.now + datetime.timedelta(weeks=1),
         )

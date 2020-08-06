@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
-from apps.authentication.models import AllowedUsername, get_length_of_membership
+from apps.authentication.models import Membership, get_length_of_membership
 
 
 @login_required
@@ -117,7 +117,7 @@ def create_membership_application(request):
             return redirect("profiles_active", active_tab="membership")
 
         # Extend length of membership by 1 year
-        membership = AllowedUsername.objects.get(username=request.user.ntnu_username)
+        membership = Membership.objects.get(username=request.user.ntnu_username)
         new_expiration_date = datetime.date(membership.expiration_date.year + 1, 9, 16)
 
         application = MembershipApproval(

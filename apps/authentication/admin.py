@@ -6,10 +6,10 @@ from django.utils.translation import gettext as _
 from reversion.admin import VersionAdmin
 
 from apps.authentication.models import (
-    AllowedUsername,
     Email,
     GroupMember,
     GroupRole,
+    Membership,
     OnlineGroup,
     OnlineUser,
     Position,
@@ -91,8 +91,8 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
 admin.site.register(OnlineUser, OnlineUserAdmin)
 
 
-class AllowedUsernameAdmin(VersionAdmin):
-    model = AllowedUsername
+class MembershipAdmin(VersionAdmin):
+    model = Membership
     list_display = ("username", "registered", "expiration_date", "note", "is_active")
     fieldsets = (
         (None, {"fields": ("username", "registered", "expiration_date")}),
@@ -120,7 +120,7 @@ class AllowedUsernameAdmin(VersionAdmin):
     is_active.boolean = True
 
 
-admin.site.register(AllowedUsername, AllowedUsernameAdmin)
+admin.site.register(Membership, MembershipAdmin)
 
 
 class PositionAdmin(VersionAdmin):

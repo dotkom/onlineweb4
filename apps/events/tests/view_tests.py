@@ -11,7 +11,7 @@ from django_dynamic_fixture import G
 from freezegun import freeze_time
 from rest_framework import status
 
-from apps.authentication.models import AllowedUsername, OnlineGroup
+from apps.authentication.models import Membership, OnlineGroup
 from apps.marks.models import MarkRuleSet
 from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
@@ -258,7 +258,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         form_params = {"g-recaptcha-response": "PASSED"}
         url = reverse("attend_event", args=(self.event.id,))
         G(
-            AllowedUsername,
+            Membership,
             username=self.user.ntnu_username,
             expiration_date=timezone.now() + timedelta(days=1),
         )
@@ -274,7 +274,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         url = reverse("attend_event", args=(self.event.id,))
         form_params = {"g-recaptcha-response": "WRONG"}
         G(
-            AllowedUsername,
+            Membership,
             username=self.user.ntnu_username,
             expiration_date=timezone.now() + timedelta(days=1),
         )
@@ -299,7 +299,7 @@ class EventsAttend(EventsTestMixin, TestCase):
 
         form_params = {"g-recaptcha-response": "PASSED"}
         G(
-            AllowedUsername,
+            Membership,
             username=self.user.ntnu_username,
             expiration_date=timezone.now() + timedelta(days=1),
         )
@@ -324,7 +324,7 @@ class EventsAttend(EventsTestMixin, TestCase):
 
         form_params = {"g-recaptcha-response": "PASSED"}
         G(
-            AllowedUsername,
+            Membership,
             username=self.user.ntnu_username,
             expiration_date=timezone.now() + timedelta(days=1),
         )
@@ -349,7 +349,7 @@ class EventsAttend(EventsTestMixin, TestCase):
 
         form_params = {"g-recaptcha-response": "PASSED"}
         G(
-            AllowedUsername,
+            Membership,
             username=self.user.ntnu_username,
             expiration_date=timezone.now() + timedelta(days=1),
         )
@@ -379,7 +379,7 @@ class EventsAttend(EventsTestMixin, TestCase):
 
         form_params = {"g-recaptcha-response": "PASSED"}
         G(
-            AllowedUsername,
+            Membership,
             username=self.user.ntnu_username,
             expiration_date=timezone.now() + timedelta(days=1),
         )
