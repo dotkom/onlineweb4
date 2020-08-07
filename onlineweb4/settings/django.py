@@ -18,7 +18,7 @@ INTERNAL_IPS = ("127.0.0.1",)
 
 ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*")
 
-ADMINS = (("dotKom", "dotkom@online.ntnu.no"),)
+ADMINS = (("dotkom", "dotkom@online.ntnu.no"),)
 MANAGERS = ADMINS
 
 DATABASES = {

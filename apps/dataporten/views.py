@@ -162,7 +162,7 @@ def study_callback(request):
             messages.error(
                 request,
                 "Studieretningen du studerer ved gir ikke medlemskap i Online. ",
-                "Hvis du mener dette er en feil; ta vennligst kontakt Dotkom slik at vi kan feilsøke prosessen.",
+                "Hvis du mener dette er en feil; ta vennligst kontakt dotkom slik at vi kan feilsøke prosessen.",
             )
             return redirect("profiles_active", active_tab="membership")
 

@@ -24,7 +24,7 @@ def index(request):
     :return: An HttpResponse
     """
 
-    # Force only the almighty dotKom to access this view
+    # Force only the almighty dotkom to access this view
     if not request.user.is_superuser:
         raise PermissionDenied
 
@@ -51,7 +51,7 @@ def new_app(request):
 
     _log = logging.getLogger("%s.%s" % (__name__, new_app.__name__))
 
-    # Force only the almighty dotKom to access this view
+    # Force only the almighty dotkom to access this view
     if not request.user.is_superuser:
         raise PermissionDenied
 
@@ -103,7 +103,7 @@ def app_details(request, app_pk):
 
     _log = logging.getLogger("%s.%s" % (__name__, app_details.__name__))
 
-    # Force only the almighty dotKom to access this view
+    # Force only the almighty dotkom to access this view
     if not request.user.is_superuser:
         raise PermissionDenied
 

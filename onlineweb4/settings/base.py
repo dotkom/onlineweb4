@@ -40,7 +40,7 @@ USER_SEARCH_GROUPS = [
     1,  # arrKom
     2,  # banKom
     3,  # bedKom
-    4,  # dotKom
+    4,  # dotkom
     5,  # eksKom
     14,  # Eldsteradet
     6,  # fagKom
