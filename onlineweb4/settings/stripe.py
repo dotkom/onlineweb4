@@ -1,4 +1,5 @@
 from decouple import config
+import stripe
 
 # Online stripe keys.
 # For development replace with https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
@@ -26,3 +27,5 @@ STRIPE_PRIVATE_KEYS = {
         "OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM", default="pk_test_replace_this"
     ),
 }
+
+stripe.api_version = config("OW4_DJANGO_STRIPE_API_VERSION", default="2020-03-02")
