@@ -11,7 +11,7 @@ from django.utils.translation import gettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
-from apps.authentication.models import get_length_of_membershipget_length_of_membership
+from apps.authentication.models import get_length_of_membership
 
 
 @login_required
