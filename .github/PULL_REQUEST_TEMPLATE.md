@@ -1,31 +1,31 @@
-## What kind of a pull request is this?
-
-- QA / Code Review
-<!-- Add other options if appropriate -->
-
+## Description of changes
+<!-- It is often obvious what changed by looking at the code, so it is more helpful to say _why_ it should be changed -->
+<!-- If the Pull Request is not ready to be merged, please use a draft pull request -->
 
 ## Code Checklist
 
-- [ ] The code follows dotkom code style 
-- [ ] The code passes the defined tests
-- [ ] I have added tests for the code I added
-- [ ] I have provided documentation for the code I added
-- [ ] The code is ready to be merged
+- [ ] I have added tests
+- [ ] I have provided documentation
 
+<!-- IF THERE ARE ANY BREAKING CHANGES
+E.G. IF THERE IS A CHANGE IN AN API OR A NEW API-TOKEN NEEDS TO BE ADDED,
+BE SURE TO DOCUMENT THEM, AND INFORM US ABOUT
+CHANGES NEEDED TO BE MADE IN OTHER PROJECTS,
+OR IN PRODUCTION. 
+ -->
 
-## (Possible) Breaking Changes
+<!-- REMOVE FROM HERE AND BELOW IF NO VISUAL CHANGES -->
+## Visual changes
+<!-- IF DOING ANY DESIGN CHANGE PLEASE ADD BEFORE PICTURES HERE -->
 
-- [ ] The changes are backwards compatible
-<!-- this means that other people can use this code without having to do/change anything -->
-- [ ] I have updated the build configuration
-- [ ] These changes requires changes to configuration in production <!-- E.g. an API token -->
-    - [ ] I have applied the required changes in production
-    - [ ] I cannot apply the required changes in production before this is deployed.
+<details>
+<summary>Before</summary>
+<!-- PASTE BEFORE IMAGE HERE -->
 
+</details>
 
-## Description of changes
+<details>
+<summary>After</summary>
+<!-- PASTE AFTER IMAGE HERE -->
 
-
-## Screenshot(s) if appropriate
-
-<!-- provide screenshots (before and after) if doing design changes -->
+</details>
