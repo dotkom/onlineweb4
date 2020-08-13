@@ -1,5 +1,5 @@
 FROM python:3.7
-LABEL MAINTAINER=dotkom@online.ntnu.no
+LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
 
 ENV POETRY_VIRTUALENVS_CREATE=false
 

@@ -40,11 +40,11 @@ class Notification(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    title = models.CharField(max_length=60)
+    title = models.CharField(max_length=100)
     body = models.CharField(max_length=512)
     # Tag can be null since the tag serves an an ID but only is present.
     # An empty string will result in all notifications without å specific tag being handled as the same notification.
-    tag = models.CharField(max_length=50, null=True, blank=True)
+    tag = models.CharField(max_length=100, null=True, blank=True)
     url = models.CharField(max_length=1024, default="/", blank=True)
 
     require_interaction = models.BooleanField(default=False)

@@ -165,7 +165,7 @@ class OnlineUser(AbstractUser):
         """
         if self.ntnu_username:
             if (
-                AllowedUsername.objects.filter(username=self.ntnu_username.lower())
+                Membership.objects.filter(username=self.ntnu_username.lower())
                 .filter(expiration_date__gte=timezone.now())
                 .count()
                 > 0
@@ -194,7 +194,7 @@ class OnlineUser(AbstractUser):
         if self.ntnu_username:
             expiration_threshold = timezone.now() + datetime.timedelta(days=60)
             if (
-                AllowedUsername.objects.filter(
+                Membership.objects.filter(
                     username=self.ntnu_username.lower(),
                     expiration_date__lt=expiration_threshold,
                 ).count()
@@ -238,7 +238,7 @@ class OnlineUser(AbstractUser):
     def member(self):
         if not self.is_member:
             return None
-        return AllowedUsername.objects.get(username=self.ntnu_username.lower())
+        return Membership.objects.get(username=self.ntnu_username.lower())
 
     @property
     def saldo(self) -> int:
@@ -379,7 +379,7 @@ class RegisterToken(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-class AllowedUsername(models.Model):
+class Membership(models.Model):
     """
     Holds usernames that are considered valid members of Online and the time they expire.
     """
@@ -396,7 +396,7 @@ class AllowedUsername(models.Model):
 
     def save(self, *args, **kwargs):
         self.username = self.username.lower()
-        super(AllowedUsername, self).save(*args, **kwargs)
+        super(Membership, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.username
@@ -405,7 +405,7 @@ class AllowedUsername(models.Model):
         verbose_name = _("medlem")
         verbose_name_plural = _("medlemsregister")
         ordering = ("username",)
-        permissions = (("view_allowedusername", "View AllowedUsername"),)
+        permissions = (("view_membership", "View Membership"),)
         default_permissions = ("add", "change", "delete")
 
 
