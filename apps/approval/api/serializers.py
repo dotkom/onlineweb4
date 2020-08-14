@@ -44,6 +44,9 @@ class CommitteeApplicationPeriodSerializer(serializers.ModelSerializer):
             period.start, period.actual_deadline_method()
         )
 
+        if self.instance:
+            overlapping_periods = overlapping_periods.exclude(pk=self.instance.pk)
+
         if overlapping_periods.exists():
             raise serializers.ValidationError(
                 "Opptaksperioder kan ikke overlappe med hverandre"
