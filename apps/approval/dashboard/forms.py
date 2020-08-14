@@ -21,7 +21,7 @@ class CommitteeApplicationPeriodForm(forms.ModelForm):
         actual_deadline = period.deadline + period.deadline_delta
         overlapping_periods = CommitteeApplicationPeriod.objects.filter_overlapping(
             period.start, actual_deadline
-        )
+        ).exclude(pk=self.instance.pk)
 
         if overlapping_periods.exists():
             raise ValidationError("Opptaksperioder kan ikke overlappe med hverandre")

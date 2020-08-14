@@ -42,7 +42,7 @@ class CommitteeApplicationPeriodSerializer(serializers.ModelSerializer):
 
         overlapping_periods = CommitteeApplicationPeriod.objects.filter_overlapping(
             period.start, period.actual_deadline_method()
-        )
+        ).exclude(pk=self.instance.pk)
 
         if overlapping_periods.exists():
             raise serializers.ValidationError(
