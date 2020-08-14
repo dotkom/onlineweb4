@@ -32,10 +32,8 @@ class Approval(models.Model):
         on_delete=models.CASCADE,
     )
     created = models.DateTimeField(_("opprettet"), auto_now_add=True)
-    processed = models.BooleanField(
-        _("behandlet"), default=False, editable=False)
-    processed_date = models.DateTimeField(
-        _("behandlet dato"), blank=True, null=True)
+    processed = models.BooleanField(_("behandlet"), default=False, editable=False)
+    processed_date = models.DateTimeField(_("behandlet dato"), blank=True, null=True)
     approved = models.BooleanField(_("godkjent"), default=False, editable=False)
     message = models.TextField(_("melding"))
 
@@ -44,8 +42,7 @@ class Approval(models.Model):
 
 
 class MembershipApproval(Approval):
-    new_expiry_date = models.DateField(
-        _("ny utløpsdato"), blank=True, null=True)
+    new_expiry_date = models.DateField(_("ny utløpsdato"), blank=True, null=True)
     field_of_study = models.SmallIntegerField(
         _("studieretning"),
         choices=FieldOfStudyType.ALL_CHOICES,
@@ -220,8 +217,7 @@ class CommitteeApplication(models.Model):
 
 
 class CommitteePriority(models.Model):
-    valid_priorities = [(1, "1. prioritet"),
-                        (2, "2. prioritet"), (3, "3. prioritet")]
+    valid_priorities = [(1, "1. prioritet"), (2, "2. prioritet"), (3, "3. prioritet")]
 
     committee_application = models.ForeignKey(
         CommitteeApplication,

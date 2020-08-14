@@ -23,9 +23,9 @@ class CommitteeApplicationPeriodForm(forms.ModelForm):
             period.start, actual_deadline
         )
 
+        # Will always overlap with itself. If we have 2 or more overlapped periods then we have an issue
         if len(overlapping_periods) > 1:
-            raise ValidationError(
-                "Opptaksperioder kan ikke overlappe med hverandre")
+            raise ValidationError("Opptaksperioder kan ikke overlappe med hverandre")
 
         return cleaned_data
 
