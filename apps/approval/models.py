@@ -143,9 +143,19 @@ class CommitteeApplicationPeriod(models.Model):
         to=OnlineGroup, verbose_name=_("Komiteer"), related_name="application_periods"
     )
 
+    # Not annotated with @property, since we add it as a property with our custom manager
+    # for use in filtering
+    def actual_deadline_method(self):
+        return self.deadline + self.deadline_delta
+
+    # Not annotated with @property, since we add it as a property with our custom manager
+    # for use in filtering
+    def accepting_applications_method(self):
+        return self.accepting_applications_at_time(timezone.now())
+
     def accepting_applications_at_time(self, time: timezone.datetime) -> bool:
         is_after_start = time >= self.start
-        is_before_deadline = time <= self.actual_deadline
+        is_before_deadline = time <= self.actual_deadline_method()
         return is_after_start and is_before_deadline
 
     @property
