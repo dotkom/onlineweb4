@@ -2,7 +2,7 @@
 name = "onlineweb4"
 version = "1.0.0"
 description = "Web pages for Online, Linjeforeningen for Informatikk at NTNU"
-authors = ["Dotkom <dotkom@online.ntnu.no>"]
+authors = ["dotkom <dotkom@online.ntnu.no>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
@@ -20,7 +20,7 @@ google-api-python-client = "~1.8"
 celery = "~4.4"
 PyMuPDF = "~1.17"
 django-filebrowser = "~3.13"
-django-chunks = { git = "https://github.com/dotKom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
+django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
 django-crispy-forms = "^1.9"
 django-extensions = "^2.2"
 django-dynamic-fixture = "^3.1"

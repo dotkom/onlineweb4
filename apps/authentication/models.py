@@ -491,7 +491,7 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         on_delete=models.CASCADE,
     )
 
-    """ The short name of a group, eg. HS or Dotkom """
+    """ The short name of a group, eg. HS or dotkom """
     name_short = models.CharField(
         _("Forkortelse"), null=False, blank=False, max_length=48
     )

@@ -89,12 +89,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dotKom/onlineweb4.git"
+    "url": "git+https://github.com/dotkom/onlineweb4.git"
   },
   "author": "dotkom",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dotKom/onlineweb4/issues"
+    "url": "https://github.com/dotkom/onlineweb4/issues"
   },
   "jest": {
     "modulePaths": [
