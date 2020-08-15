@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.db import models
 
 from apps.authentication.models import OnlineUser as User
@@ -30,7 +29,7 @@ class Notification(models.Model):
     permission = models.ForeignKey(
         to="Permission", related_name="notifications", on_delete=models.DO_NOTHING
     )
-    from_email = models.EmailField(default=settings.DEFAULT_FROM_EMAIL)
+    from_email = models.EmailField(default="online@online.ntnu.no")
 
     image = models.ForeignKey(
         to=ResponsiveImage,
