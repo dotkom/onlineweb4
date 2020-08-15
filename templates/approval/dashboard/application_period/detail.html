@@ -50,7 +50,7 @@
                         <tr>
                             <td>
                                 {% if application.applicant %}
-                                <a href="{% url 'profiles_view' application.applicant.username %}">{{ application.applicant.get_full_name }}</a>
+                                <a href="{% url 'profiles_view' application.applicant.username %}">{{ application.applicant.get_full_name }} ({{ application.applicant.primary_email }})</a>
                                 {% else %}
                                 <p>{{ application.name }} ({{ application.email }})</p>
                                 {% endif %}
