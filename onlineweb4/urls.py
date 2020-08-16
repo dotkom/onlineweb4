@@ -8,7 +8,6 @@ from django_js_reverse.views import urls_js
 from onlineweb4 import views
 
 from apps.api.urls import urlpatterns as api_urls
-from django.urls import path
 
 # URL config
 admin.autodiscover()

@@ -224,9 +224,11 @@
 
     {% block js %}
         <script
-            src='https://js.sentry-cdn.com/df3629be91944be79c790681d9a57f76.min.js'
+            src="https://browser.sentry-cdn.com/5.21.1/bundle.min.js"
+            integrity="sha384-uFON5MXfE3NkWO60hM8JaXAYAV0fqTCQbdy282z8YfelqBoXx+F7JFzX6+WfFIML"
             crossorigin="anonymous">
         </script>
+        <script>Sentry.init({ dsn: '{{ sentry_dsn }}' })</script>
         <script
             src="https://code.jquery.com/jquery-2.2.4.min.js"
             integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="

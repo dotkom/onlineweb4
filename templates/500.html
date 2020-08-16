@@ -1,15 +1,15 @@
 {% extends "base.html"%}
 
-
 {% block content %}
-<script src="https://browser.sentry-cdn.com/5.15.4/bundle.min.js" integrity="sha384-Nrg+xiw+qRl3grVrxJtWazjeZmUwoSt0FAVsbthlJ5OMpx0G08bqIq3b/v0hPjhB" crossorigin="anonymous"></script>
-
-{% if sentry_event_id %}
-<section>
-<script>
-  Sentry.init({ dsn: '{{ sentry_dsn }}' });
-  
-  Sentry.showReportDialog({ eventId: '{{ sentry_event_id }}' })
-</script>
-{% endif %}
+<section style="height: 80vh">
+</section>
 {% endblock content %}
+
+{% block js %}
+    {{ block.super }}
+    {% if sentry_event_id %}
+        <script>
+            Sentry.showReportDialog({ eventId: '{{ sentry_event_id }}' })
+        </script>
+    {% endif %}
+{% endblock %}

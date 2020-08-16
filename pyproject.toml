@@ -63,7 +63,7 @@ django-appconf = "~1.0"
 # libpq-dev						# From package repository.
 
 # Monitoring
-sentry-sdk = { version = "^0.14.3", extras = [ "django", "celery" ] }
+sentry-sdk = { version = "~0.16", extras = [ "django", "celery" ] }
 
 django-js-reverse = "~0.9"
 
