@@ -24,9 +24,10 @@ class CommitteeSerializer(serializers.ModelSerializer):
 
 
 class CommitteeApplicationPeriodParticipationSerializer(serializers.ModelSerializer):
+    id = serializers.PrimaryKeyRelatedField(source="onlinegroup")
     class Meta:
         model = CommitteeApplicationPeriodParticipation
-        fields = ("committeeapplicationperiod", "open_for_applications")
+        fields = ("id", "open_for_applications")
 
 
 class CommitteeApplicationPeriodSerializer(serializers.ModelSerializer):
