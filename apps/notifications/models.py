@@ -39,7 +39,7 @@ class Notification(models.Model):
         on_delete=models.SET_NULL,
     )
 
-    title = models.CharField(max_length=512)
+    title = models.CharField(max_length=100)
     body = models.TextField()
     # Tag can be null since the tag serves an an ID but only is present.
     # An empty string will result in all notifications without å specific tag being handled as the same notification.
