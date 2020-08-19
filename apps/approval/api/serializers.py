@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from rest_framework import serializers
 
+from apps.authentication.models import OnlineGroup
 from apps.authentication.serializers import UserReadOnlySerializer
 
 from ..models import (
@@ -24,7 +25,10 @@ class CommitteeSerializer(serializers.ModelSerializer):
 
 
 class CommitteeApplicationPeriodParticipationSerializer(serializers.ModelSerializer):
-    id = serializers.PrimaryKeyRelatedField(source="onlinegroup")
+    id = serializers.PrimaryKeyRelatedField(
+        source="onlinegroup", queryset=OnlineGroup.objects.all()
+    )
+
     class Meta:
         model = CommitteeApplicationPeriodParticipation
         fields = ("id", "open_for_applications")
