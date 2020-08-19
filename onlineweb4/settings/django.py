@@ -181,7 +181,6 @@ INSTALLED_APPS = (
     "datetimewidget",
     "webpack_loader",
     "oidc_provider",
-    "raven.contrib.django.raven_compat",  # Sentry, error tracking
     # Django apps
     "django.contrib.admin",
     "django.contrib.admindocs",

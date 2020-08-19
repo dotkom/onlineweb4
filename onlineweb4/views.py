@@ -9,39 +9,19 @@ from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.views.generic.base import TemplateView
 from onlineweb4.forms import ErrorForm
+from onlineweb4.settings.sentry import OW4_SENTRY_DSN
+from sentry_sdk import last_event_id
 from wiki.decorators import get_article
 from wiki.views.mixins import ArticleMixin
 
 
-def server_error(request):
-    log = logging.getLogger(__name__)
-
-    if request.method == "POST":
-        message = request.POST.get("reason")
-        if not message:
-            return redirect("home")
-        try:
-            log.error(
-                "%s triggered a 500 server error and provided the following description: %s"
-                % (request.user, message)
-            )
-            send_mail(
-                "500error user-report",
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [settings.EMAIL_DOTKOM],
-            )
-            log.debug("Finished sending error email to %s" % settings.EMAIL_DOTKOM)
-            messages.success(
-                request, "Feilmeldingen din ble sendt til %s" % settings.EMAIL_DOTKOM
-            )
-            return redirect("home")
-        except SMTPException:
-            messages.error(
-                request, "Det oppstod en uventet feil under sending av feilmeldingen"
-            )
-            return redirect("home")
-    return render(request, "500.html", {"error_form": ErrorForm})
+def handler500(request, *args, **argv):
+    return render(
+        request,
+        "500.html",
+        {"sentry_event_id": last_event_id(), "sentry_dsn": OW4_SENTRY_DSN},
+        status=500,
+    )
 
 
 class WikiTreeView(ArticleMixin, TemplateView):
