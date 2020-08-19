@@ -40,10 +40,12 @@ class CommitteeApplicationPeriodSerializer(serializers.ModelSerializer):
                 "En opptaksperiode må vare i minst én dag"
             )
 
-        actual_deadline = period.deadline + period.deadline_delta
         overlapping_periods = CommitteeApplicationPeriod.objects.filter_overlapping(
-            period.start, actual_deadline
+            period.start, period.actual_deadline_method()
         )
+
+        if self.instance:
+            overlapping_periods = overlapping_periods.exclude(pk=self.instance.pk)
 
         if overlapping_periods.exists():
             raise serializers.ValidationError(
@@ -93,7 +95,7 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
     def validate_application_period(
         self, application_period: CommitteeApplicationPeriod
     ):
-        if not application_period.accepting_applications:
+        if not application_period.accepting_applications_method():
             raise ValidationError(
                 f"Opptaksperioden {application_period} tar ikke lenger imot søknader. "
                 f"Opptaket stengte {application_period.deadline}"

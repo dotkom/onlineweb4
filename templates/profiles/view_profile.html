@@ -85,7 +85,7 @@
                         <div class="col-md-4">
                             <b>E-Post</b><br />
                             {% if user_profile.privacy.expose_email %}
-                                {% firstof user_profile.get_email|striptags 'Ikke tilgjengelig' %}
+                                {% firstof user_profile.primary_email|striptags 'Ikke tilgjengelig' %}
                             {% else %}
                                 Ikke tilgjengelig
                             {% endif %}

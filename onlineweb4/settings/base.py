@@ -36,21 +36,21 @@ OW4_SETTINGS = {
 
 # List of usergroups that should be listed under "Finn brukere" in user profile
 USER_SEARCH_GROUPS = [
-    16,  # appKom
-    1,  # arrKom
-    2,  # banKom
-    3,  # bedKom
-    4,  # dotKom
-    5,  # eksKom
+    16,  # appkom
+    1,  # arrkom
+    2,  # bankom
+    3,  # bedkom
+    4,  # dotkom
+    5,  # ekskom
     14,  # Eldsteradet
-    6,  # fagKom
+    6,  # fagkom
     11,  # Hovedstyret
-    19,  # jubKom
-    10,  # pangKom
-    7,  # proKom
-    18,  # seniorKom
-    8,  # triKom
-    9,  # velKom
+    19,  # jubkom
+    10,  # pangkom
+    7,  # prokom
+    18,  # seniorkom
+    8,  # trikom
+    9,  # velkom
     24,  # itex
     36,  # Online-IL
 ]

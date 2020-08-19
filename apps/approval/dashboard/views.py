@@ -19,7 +19,7 @@ from django.views.generic import (
 )
 from guardian.decorators import permission_required
 
-from apps.authentication.models import AllowedUsername
+from apps.authentication.models import Membership
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
 from ..models import CommitteeApplicationPeriod, MembershipApproval
@@ -96,7 +96,7 @@ Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no."""
                 user.save()
 
             if app.is_membership_application():
-                membership = AllowedUsername.objects.filter(username=user.ntnu_username)
+                membership = Membership.objects.filter(username=user.ntnu_username)
                 if membership.count() == 1:
                     membership = membership[0]
                     membership.expiration_date = app.new_expiry_date
@@ -120,7 +120,7 @@ Old notes:
                     )
                     membership.save()
                 else:
-                    membership = AllowedUsername()
+                    membership = Membership()
                     membership.username = user.ntnu_username
                     membership.expiration_date = app.new_expiry_date
                     membership.registered = timezone.now().date()

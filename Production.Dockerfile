@@ -1,4 +1,5 @@
 FROM node:lts as webpack
+LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
 
 WORKDIR /srv/app/webpack
 
@@ -20,11 +21,12 @@ ENV DJANGO_SETTINGS_MODULE=onlineweb4.settings POETRY_VIRTUALENVS_CREATE=false
 
 WORKDIR /srv/app
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   gcc \
   curl \
-  mime-support
+  mime-support \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml poetry.lock ./
 

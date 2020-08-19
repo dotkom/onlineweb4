@@ -20,7 +20,7 @@ from guardian.shortcuts import get_objects_for_user
 from watson.views import SearchView
 
 from apps.authentication.forms import UserUpdateForm
-from apps.authentication.models import AllowedUsername, GroupRole, OnlineGroup
+from apps.authentication.models import GroupRole, Membership, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
@@ -164,11 +164,11 @@ class GroupCreateView(DashboardPermissionMixin, CreateView):
 
 
 @login_required
-@permission_required("authentication.view_allowedusername", return_403=True)
+@permission_required("authentication.view_membership", return_403=True)
 def members_index(request):
 
     """
-    Index overview for allowedusernames in dashboard
+    Index overview for memberships in dashboard
     """
 
     if not has_access(request):
@@ -182,7 +182,7 @@ def members_index(request):
         return members
 
     context = get_base_context(request)
-    members = AllowedUsername.objects.all()
+    members = Membership.objects.all()
     context["members"] = merge_names(members)
 
     return render(request, "auth/dashboard/user_list.html", context)
@@ -237,10 +237,10 @@ class UserDeleteView(DashboardPermissionMixin, DeleteView):
 
 
 @login_required
-@permission_required("authentication.add_allowedusername", return_403=True)
+@permission_required("authentication.add_membership", return_403=True)
 def members_new(request):
     """
-    Create new allowedusername form and handling
+    Create new membership form and handling
     """
     if not has_access(request):
         raise PermissionDenied
