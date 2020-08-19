@@ -65,12 +65,11 @@ class FeedbackRelation(models.Model):
 
     class Meta:
         unique_together = ("feedback", "content_type", "object_id")
-
         permissions = (("view_feedbackrelation", "View FeedbackRelation"),)
         default_permissions = ("add", "change", "delete")
-
         verbose_name = _("tilbakemelding")
         verbose_name_plural = _("tilbakemeldinger")
+        ordering = ("content_type", "object_id", "feedback")
 
     @property
     def questions(self):
@@ -357,6 +356,7 @@ class FieldOfStudyAnswer(models.Model):
         verbose_name_plural = _("Studieretningssvar")
         permissions = (("view_fieldofstudyanswer", "View FieldOfStudyAnswer"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("pk",)
 
 
 class TextQuestion(Question, models.Model):
@@ -374,6 +374,7 @@ class TextQuestion(Question, models.Model):
         verbose_name_plural = _("Tekstspørsmål")
         permissions = (("view_textquestion", "View TextQuestion"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("pk",)
 
 
 class TextAnswer(models.Model):
@@ -421,6 +422,7 @@ class RatingQuestion(Question, models.Model):
         verbose_name_plural = _("Vurderingsspørsmål")
         permissions = (("view_ratingquestion", "View RatingQuestion"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("pk",)
 
 
 class RatingAnswer(models.Model):

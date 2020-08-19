@@ -597,6 +597,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
         verbose_name_plural = _("påmeldinger")
         permissions = (("view_attendanceevent", "View AttendanceEvent"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("pk",)
 
 
 class CompanyEvent(models.Model):

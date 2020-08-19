@@ -75,6 +75,7 @@ class Rule(models.Model):
     class Meta:
         permissions = (("view_rule", "View Rule"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("id",)
 
 
 class FieldOfStudyRule(Rule):
@@ -216,3 +217,4 @@ class RuleBundle(models.Model):
     class Meta:
         permissions = (("view_rulebundle", "View RuleBundle"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("id",)

@@ -356,6 +356,7 @@ class Email(models.Model):
         verbose_name_plural = _("epostadresser")
         permissions = (("view_email", "View Email"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("user", "email")
 
 
 class RegisterToken(models.Model):

@@ -193,6 +193,9 @@ class AttendeeViewSet(
         """
         A user is allowed to see attendees for their own user, and for events they are organizing.
         """
+        if user.is_anonymous:
+            return Attendee.objects.none()
+
         attendees = get_objects_for_user(
             user, "events.change_attendee", accept_global_perms=False
         )

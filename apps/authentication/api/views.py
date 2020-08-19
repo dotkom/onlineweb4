@@ -132,6 +132,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (AllowAny,)
     queryset = Group.objects.all()
     serializer_class = GroupReadOnlySerializer
+    ordering = ("name",)
 
 
 class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
