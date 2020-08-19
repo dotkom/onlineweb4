@@ -1,10 +1,8 @@
-# -*- encoding: utf-8 -*-
-
 import json
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
@@ -23,7 +21,10 @@ from apps.authentication.models import Membership
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
 from ..models import CommitteeApplicationPeriod, MembershipApproval
-from .forms import CommitteeApplicationPeriodForm
+from .forms import (
+    ApplicationPeriodParticipantsUpdateForm,
+    CommitteeApplicationPeriodForm,
+)
 
 
 @ensure_csrf_cookie
@@ -237,3 +238,28 @@ class ApplicationPeriodDelete(DashboardPermissionMixin, DeleteView):
 
     def get_success_url(self):
         return reverse("application-periods-list")
+
+
+class ApplicationPeriodParticipantionUpdate(DashboardPermissionMixin, UpdateView):
+    model = CommitteeApplicationPeriod
+    template_name = "approval/dashboard/application_period/create.html"
+    permission_required = "approval.delete_committeeapplicationperiod"
+    form_class = ApplicationPeriodParticipantsUpdateForm
+    context_object_name = "application_period"
+
+    def post(self, request, *args, **kwargs):
+        instance = CommitteeApplicationPeriod.objects.get(pk=kwargs["pk"])
+        form = ApplicationPeriodParticipantsUpdateForm(request.POST, instance=instance)
+        if form.is_valid():
+            committes_to_be_set_true = form.cleaned_data["committees_with_applications"]
+            for c in instance.committeeapplicationperiodparticipation_set.all():
+                previous_open = c.open_for_applications
+                c.open_for_applications = False
+                if str(c.pk) in committes_to_be_set_true:
+                    c.open_for_applications = True
+                if not previous_open == c.open_for_applications:
+                    c.save()
+            return HttpResponseRedirect(
+                reverse("application-periods-detail", kwargs={"pk": instance.pk})
+            )
+        return super().form_invalid(form)

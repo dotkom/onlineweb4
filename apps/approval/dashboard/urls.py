@@ -42,4 +42,9 @@ urlpatterns = [
         views.ApplicationPeriodDelete.as_view(),
         name="application-periods-delete",
     ),
+    path(
+        "application-periods/<int:pk>/update/participants",
+        views.ApplicationPeriodParticipantionUpdate.as_view(),
+        name="application-periods-update-participants",
+    ),
 ]

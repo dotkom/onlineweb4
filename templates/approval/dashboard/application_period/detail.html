@@ -34,6 +34,7 @@
             <div class="panel-body">
                 <p>Dette opptaket har mottat {{ application_period.applications.all | length }} søknader</p>
                 <a href="{% url 'application-periods-update' pk=application_period.id %}" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre</a>
+                <a href="{% url 'application-periods-update-participants' pk=application_period.id %}" class="btn btn-warning"><i class="fa fa-cogs"></i> Endre komiteer som har opptak</a>
                 <a href="{% url 'application-periods-delete' pk=application_period.id %}" class="btn btn-danger pull-right"><i class="fa fa-times"></i> Slett</a>
                 <br />
                 <table class="table table-striped" id="applications">

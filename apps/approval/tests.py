@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import logging
 
 from django.core import mail
@@ -10,17 +8,14 @@ from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm
 from rest_framework import status
 
-from apps.approval.models import (
-    CommitteeApplication,
-    CommitteeApplicationPeriod,
-    MembershipApproval,
-)
-from apps.approval.tasks import send_approval_status_update
 from apps.authentication.models import Email, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
 from apps.online_oidc_provider.test import OIDCTestCase
+
+from .models import CommitteeApplication, CommitteeApplicationPeriod, MembershipApproval
+from .tasks import send_approval_status_update
 
 
 class ApprovalTest(TestCase):

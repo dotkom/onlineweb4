@@ -2,8 +2,8 @@ from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from apps.api.permissions import TokenHasScopeOrUserHasModelPermissionsOrWriteOnly
-from apps.approval.models import CommitteeApplication, CommitteeApplicationPeriod
 
+from ..models import CommitteeApplication, CommitteeApplicationPeriod
 from .filters import CommitteeApplicationPeriodFilter
 from .serializers import (
     CommitteeApplicationPeriodSerializer,
@@ -14,7 +14,7 @@ from .serializers import (
 class CommitteeApplicationPeriodViewSet(ModelViewSet):
     serializer_class = CommitteeApplicationPeriodSerializer
     queryset = CommitteeApplicationPeriod.objects.all()
-    filter_class = CommitteeApplicationPeriodFilter
+    filterset_class = CommitteeApplicationPeriodFilter
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
 
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.conf import settings
 from django.db import models
 from django.db.models import Case, ExpressionWrapper, F, Q, When
@@ -132,7 +130,7 @@ class CommitteeApplicationPeriod(models.Model):
 
     title = models.CharField(_("Tittel"), max_length=128)
     start = models.DateTimeField(_("Starttid"))
-    deadline = models.DateTimeField(_("First"))
+    deadline = models.DateTimeField(_("Frist"))
     # We have a deadline delta because we often accept applications after the actual deadline.
     deadline_delta = models.DurationField(
         _("Slingringsmonn"),
@@ -140,7 +138,11 @@ class CommitteeApplicationPeriod(models.Model):
         default=timezone.timedelta(days=1),
     )
     committees = models.ManyToManyField(
-        to=OnlineGroup, verbose_name=_("Komiteer"), related_name="application_periods"
+        to=OnlineGroup,
+        verbose_name=_("Komiteer"),
+        help_text="Komiteer som deltar i opptaken, men ikke nødvendigvis kan søkes opptak til",
+        through="CommitteeApplicationPeriodParticipation",
+        related_name="application_periods",
     )
 
     # Not annotated with @property, since we add it as a property with our custom manager
@@ -173,6 +175,19 @@ class CommitteeApplicationPeriod(models.Model):
         verbose_name = _("Opptaksperiode")
         verbose_name_plural = _("Opptaksperioder")
         ordering = ("-start", "-deadline")
+
+
+class CommitteeApplicationPeriodParticipation(models.Model):
+    committeeapplicationperiod = models.ForeignKey(
+        CommitteeApplicationPeriod, on_delete=models.CASCADE
+    )
+    onlinegroup = models.ForeignKey(OnlineGroup, on_delete=models.CASCADE)
+    open_for_applications = models.BooleanField(_("Åpen for søknader"), default=True)
+
+    class Meta:
+        verbose_name = _("Komité i opptaksperiode")
+        verbose_name_plural = _("Komité i opptaksperioder")
+        ordering = ("pk",)
 
 
 class CommitteeApplication(models.Model):
