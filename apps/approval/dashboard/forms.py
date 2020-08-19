@@ -46,8 +46,8 @@ class ApplicationPeriodParticipantsUpdateForm(forms.Form):
         application_period: CommitteeApplicationPeriod = kwargs.pop("instance")
         super().__init__(*args, **kwargs)
         self.fields["committees_with_applications"].choices = [
-            (committee.pk, committee.name_short)
-            for committee in application_period.committees.all()
+            (participation.pk, participation.onlinegroup.name_short)
+            for participation in application_period.committeeapplicationperiodparticipation_set.all()
         ]
 
     committees_with_applications = forms.MultipleChoiceField(
