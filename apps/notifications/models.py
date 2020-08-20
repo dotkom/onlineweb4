@@ -40,7 +40,7 @@ class Notification(models.Model):
     )
 
     title = models.CharField(max_length=100)
-    body = models.CharField(max_length=512)
+    body = models.TextField()
     # Tag can be null since the tag serves an an ID but only is present.
     # An empty string will result in all notifications without å specific tag being handled as the same notification.
     tag = models.CharField(max_length=100, null=True, blank=True)
