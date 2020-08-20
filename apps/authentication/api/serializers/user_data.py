@@ -198,7 +198,7 @@ class PaymentTransactionSerializer(serializers.ModelSerializer):
         return obj.get_items()
 
     def get_description(self, obj: PaymentTransaction):
-        return obj.get_description()
+        return obj.get_receipt_description()
 
     class Meta:
         model = PaymentTransaction

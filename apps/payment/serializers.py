@@ -277,10 +277,10 @@ class PaymentTransactionReadOnlySerializer(serializers.ModelSerializer):
     description = serializers.SerializerMethodField()
 
     def get_items(self, obj: PaymentTransaction):
-        return obj.get_items()
+        return obj.get_receipt_items()
 
     def get_description(self, obj: PaymentTransaction):
-        return obj.get_description()
+        return obj.get_receipt_description()
 
     class Meta:
         model = PaymentTransaction
