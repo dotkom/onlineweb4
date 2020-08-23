@@ -1,17 +1,8 @@
-# -*- encoding: utf-8 -*-
-
 import logging
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from oauth2_provider.views.base import AuthorizationView as DefaultAuthorizationView
-
-# fmt: off
-from oauth2_provider.views.base import (  # noqa: F401  # isort:skip
-        RevokeTokenView,
-        TokenView,
-)
-# fmt: on
 
 _log = logging.getLogger("SSO")
 

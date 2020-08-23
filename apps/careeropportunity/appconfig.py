@@ -9,6 +9,7 @@ class CareeropportunityConfig(AppConfig):
         super().ready()
 
         from watson import search as watson
+
         from apps.careeropportunity.models import CareerOpportunity
 
         watson.register(

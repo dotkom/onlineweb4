@@ -50,11 +50,11 @@ def create_responsive_image_from_file(
     responsive_image_handler = ResponsiveImageHandler(base_image)
     status = responsive_image_handler.configure(config)
     if not status:
-        logger.error(f"Fatal error when creating responsive image from file")
+        logger.error("Fatal error when creating responsive image from file")
 
     status = responsive_image_handler.generate()
     if not status:
-        logger.error(f"Fatal error when creating responsive image from file")
+        logger.error("Fatal error when creating responsive image from file")
 
     return status.data
 

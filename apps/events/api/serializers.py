@@ -1,11 +1,11 @@
 from random import choice as random_choice
 
 from django.utils import timezone
-from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
 from apps.authentication.serializers import UserReadOnlySerializer
 from apps.gallery.serializers import ResponsiveImageSerializer
+from onlineweb4.fields.recaptcha import RecaptchaField
 
 from ..models import (
     AttendanceEvent,

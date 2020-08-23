@@ -82,17 +82,17 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
         if not product.active:
             raise serializers.ValidationError(
-                f"Produktet er ikke lenger aktivt og kan ikke kjøpes"
+                "Produktet er ikke lenger aktivt og kan ikke kjøpes"
             )
 
         if timezone.now() > product.deadline:
             raise serializers.ValidationError(
-                f"Tidsfristen for å kjøpe produktet har utgått"
+                "Tidsfristen for å kjøpe produktet har utgått"
             )
 
         if product.stock == 0:
             raise serializers.ValidationError(
-                f"Det er ikke flere varer igjen av produktet"
+                "Det er ikke flere varer igjen av produktet"
             )
 
         return product
@@ -118,17 +118,17 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
             if has_size and size not in allowed_sizes:
                 raise serializers.ValidationError(
-                    f"Den gitte størrelsen er ikke tilgjengelig for dette produktet"
+                    "Den gitte størrelsen er ikke tilgjengelig for dette produktet"
                 )
 
             if not product.enough_stock(quantity, size):
                 if not size:
                     raise serializers.ValidationError(
-                        f"Det er ikke flere varer igjen av dette produktet"
+                        "Det er ikke flere varer igjen av dette produktet"
                     )
                 else:
                     raise serializers.ValidationError(
-                        f"Det er ikke flere varer igjen av dette produktet in denne størrelsen"
+                        "Det er ikke flere varer igjen av dette produktet in denne størrelsen"
                     )
 
         return size
@@ -138,7 +138,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
         if order_line.user != request.user:
             raise serializers.ValidationError(
-                f"Du kan ikke legge varer til andre brukeres handlevogn"
+                "Du kan ikke legge varer til andre brukeres handlevogn"
             )
 
         return order_line
@@ -168,7 +168,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
         if not order.is_valid():
             order.delete()
-            raise serializers.ValidationError(f"Ordren er ikke gyldig")
+            raise serializers.ValidationError("Ordren er ikke gyldig")
 
         return order
 
@@ -195,17 +195,17 @@ class OrderUpdateSerializer(serializers.ModelSerializer):
 
         if allowed_sizes.count() > 0 and size not in allowed_sizes:
             raise serializers.ValidationError(
-                f"Denne størrelsen er ikke tilgjengelig for dette produktet"
+                "Denne størrelsen er ikke tilgjengelig for dette produktet"
             )
 
         if not product.enough_stock(size):
             if not size:
                 raise serializers.ValidationError(
-                    f"Det er ikke flere varer igjen av dette produktet"
+                    "Det er ikke flere varer igjen av dette produktet"
                 )
             else:
                 raise serializers.ValidationError(
-                    f"Det er ikke flere varer igjen av dette produktet in denne størrelsen"
+                    "Det er ikke flere varer igjen av dette produktet in denne størrelsen"
                 )
 
         return size
@@ -253,7 +253,7 @@ class OrderLineCreateSerializer(serializers.ModelSerializer):
         has_unpaid_order_line = any([not line.paid for line in user_order_lines])
         if has_unpaid_order_line:
             raise serializers.ValidationError(
-                f"Du har allerede en handlekurv som ikke er betalt, betal eller slett den for å kunne opprette en ny"
+                "Du har allerede en handlekurv som ikke er betalt, betal eller slett den for å kunne opprette en ny"
             )
 
         return super().validate(data)

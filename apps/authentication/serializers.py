@@ -6,7 +6,6 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.password_validation import validate_password
 from django.utils.timezone import datetime
 from guardian.shortcuts import get_objects_for_user
-from onlineweb4.fields.recaptcha import RecaptchaField
 from rest_framework import serializers
 
 from apps.authentication.fields import OnlineUserEmailField
@@ -22,6 +21,7 @@ from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.utils import send_register_verification_email
 from apps.gallery.models import ResponsiveImage
 from apps.gallery.serializers import ResponsiveImageSerializer
+from onlineweb4.fields.recaptcha import RecaptchaField
 
 
 class UserNameSerializer(serializers.ModelSerializer):

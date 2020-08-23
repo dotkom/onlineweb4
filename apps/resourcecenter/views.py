@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from django.shortcuts import render
-from onlineweb4.permissions import ModelPermission
 from rest_framework import viewsets
 
 from apps.resourcecenter.models import Resource
 from apps.resourcecenter.serializers import ResourceSerializer
+from onlineweb4.permissions import ModelPermission
 
 
 # Index page

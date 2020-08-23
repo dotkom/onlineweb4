@@ -1,12 +1,12 @@
 from django.core import mail
 from django.urls import reverse
 from django_dynamic_fixture import G
-from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 from rest_framework import status
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import RegisterToken
 from apps.online_oidc_provider.test import OIDCTestCase
+from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 
 
 class SignupAPIURLTestCase(OIDCTestCase):

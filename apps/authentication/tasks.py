@@ -3,11 +3,11 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.models import Group
-from onlineweb4.celery import app
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.mommy.registry import Task
+from onlineweb4.celery import app
 
 
 class SynchronizeGroups(Task):
