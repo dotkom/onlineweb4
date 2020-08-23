@@ -7,12 +7,10 @@ class MailinglistsConfig(AppConfig):
 
     def ready(self):
         super().ready()
-        # noinspection PyUnresolvedReferences
-        import apps.mailinglists.signals  # noqa: F401
-
         from watson import search as watson
 
-        from apps.mailinglists.models import MailGroup, MailEntity
+        import apps.mailinglists.signals  # noqa: F401
+        from apps.mailinglists.models import MailEntity, MailGroup
 
         watson.register(MailGroup)
         watson.register(MailEntity)
