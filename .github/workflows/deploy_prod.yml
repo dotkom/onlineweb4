@@ -1,0 +1,16 @@
+name: Deploy to production
+on:
+  release:
+    types: [published]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: executing deploy script
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.PROD_DEPLOYMENT_HOST }}
+          username: ${{ secrets.PROD_DEPLOYMENT_USER }}
+          key: ${{ secrets.PROD_DEPLOYMENT_KEY }}
+          script: source ${{ secrets.PROD_DEPLOYMENT_SCRIPT_LOCATION }}
+          timeout: 600s
