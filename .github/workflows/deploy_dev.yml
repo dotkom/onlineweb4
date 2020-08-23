@@ -4,13 +4,14 @@ on:
     branches:
       - develop
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: executing deploy script
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOYEMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USER }}
           key: ${{ secrets.DEPLOYMENT_KEY }}
           script: source ${{ secrets.DEPLOY_SCRIPT_LOCATION }}
           timeout: 300s
