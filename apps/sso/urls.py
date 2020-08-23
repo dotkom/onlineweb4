@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-
 from django.conf.urls import url
+from oauth2_provider.views.base import RevokeTokenView, TokenView
 
 from apps.sso import endpoints, views
 
@@ -14,10 +13,8 @@ urlpatterns = [
         views.AuthorizationView.as_view(),
         name="oauth2_provider_authorize",
     ),
-    url(r"^o/token/$", views.TokenView.as_view(), name="oauth2_provider_token"),
+    url(r"^o/token/$", TokenView.as_view(), name="oauth2_provider_token"),
     url(
-        r"^o/revoke/$",
-        views.RevokeTokenView.as_view(),
-        name="oauth2_provider_revoke_token",
+        r"^o/revoke/$", RevokeTokenView.as_view(), name="oauth2_provider_revoke_token",
     ),
 ]

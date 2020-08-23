@@ -333,5 +333,5 @@ class WebshopOrderTests(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json().get("size"),
-            [f"Det er ikke flere varer igjen av dette produktet in denne størrelsen"],
+            ["Det er ikke flere varer igjen av dette produktet in denne størrelsen"],
         )

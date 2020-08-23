@@ -1,9 +1,9 @@
 import logging
 
-from onlineweb4.celery import app
 from PIL import Image
 
 from apps.gallery.util import ResponsiveImageHandler
+from onlineweb4.celery import app
 
 from .models import Photo
 

@@ -9,11 +9,10 @@ class AuthenticationConfig(AppConfig):
         super(AuthenticationConfig, self).ready()
         # The following stops pycharm from nagging about unused import statement
         # noinspection PyUnresolvedReferences
-        import apps.authentication.signals  # noqa: F401
-
         from reversion import revisions as reversion
         from watson import search as watson
 
+        import apps.authentication.signals  # noqa: F401
         from apps.authentication.models import OnlineUser, RegisterToken
 
         reversion.register(RegisterToken)

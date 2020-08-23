@@ -265,9 +265,9 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
     def bump_waitlist_for_x_users(self, extra_capacity=1):
         """Handle bumping of the x first users on the waitlist"""
-        from apps.events.utils import (
+        from apps.events.utils import (  # Imported here to avoid circular import
             handle_waitlist_bump,
-        )  # Imported here to avoid circular import
+        )
 
         if not self.waitlist_qs:
             return

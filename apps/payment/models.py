@@ -381,7 +381,7 @@ class PaymentTransaction(ReceiptMixin, StripeMixin, models.Model):
                 return self.shop_order_line.get_order_descriptions()
             else:
                 raise ValueError(
-                    f"Transaction for a shop purchase is not connected to an OrderLine"
+                    "Transaction for a shop purchase is not connected to an OrderLine"
                 )
 
     def get_receipt_from_email(self):

@@ -14,6 +14,7 @@ def autodiscover():
     """
 
     from importlib import import_module
+
     from django.conf import settings
     from django.utils.module_loading import module_has_submodule
 

@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from onlineweb4.permissions import ModelPermission
 from rest_framework import viewsets
 
 from apps.hobbygroups.models import Hobby
 from apps.hobbygroups.serializers import HobbySerializer
+from onlineweb4.permissions import ModelPermission
 
 
 # Index page
