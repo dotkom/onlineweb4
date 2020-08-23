@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy to develop
 on:
   push:
     branches:
@@ -10,9 +10,9 @@ jobs:
       - name: executing deploy script
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.DEPLOYMENT_HOST }}
-          username: ${{ secrets.DEPLOYMENT_USER }}
-          key: ${{ secrets.DEPLOYMENT_KEY }}
-          script: source ${{ secrets.DEPLOYMENT_SCRIPT_LOCATION }}
-          timeout: 300s
+          host: ${{ secrets.DEV_DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEV_DEPLOYMENT_USER }}
+          key: ${{ secrets.DEV_DEPLOYMENT_KEY }}
+          script: source ${{ secrets.DEV_DEPLOYMENT_SCRIPT_LOCATION }}
+          timeout: 600s
 
