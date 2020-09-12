@@ -49,7 +49,9 @@ class PaymentReminder(Task):
 
                 payment.active = False
                 payment.save()
-            elif deadline_diff < 259200:  # Remind them to pay 72 hours before the deadline
+            elif (
+                deadline_diff < 259200
+            ):  # Remind them to pay 72 hours before the deadline
                 if PaymentReminder.not_paid(payment):
                     PaymentReminder.send_reminder_mail(payment)
 
@@ -65,7 +67,7 @@ class PaymentReminder(Task):
                     tz("Europe/Oslo")
                 ).strftime("%-d %B %Y kl. %H:%M"),
                 "payment_url": settings.BASE_URL
-                               + payment.content_object.event.get_absolute_url(),
+                + payment.content_object.event.get_absolute_url(),
                 "payment_email": payment.responsible_mail(),
             },
         )
@@ -83,7 +85,7 @@ class PaymentReminder(Task):
             {
                 "payment_description": payment.description(),
                 "payment_url": settings.BASE_URL
-                               + payment.content_object.event.get_absolute_url(),
+                + payment.content_object.event.get_absolute_url(),
                 "payment_email": payment.responsible_mail(),
             },
         )
@@ -99,8 +101,8 @@ class PaymentReminder(Task):
         # were altered
         subject = _("Betalingsfrist utgått: ") + payment.description()
         message = (
-                _("Hei, du har ikke betalt for følgende arrangement: ")
-                + payment.description()
+            _("Hei, du har ikke betalt for følgende arrangement: ")
+            + payment.description()
         )
         message += _(
             "Fristen har gått ut, og du har mistet plassen din på arrangementet"
@@ -110,8 +112,8 @@ class PaymentReminder(Task):
             settings.BASE_URL + payment.content_object.event.get_absolute_url()
         )
         message += (
-                _("Dersom du har spørsmål kan du sende mail til ")
-                + payment.responsible_mail()
+            _("Dersom du har spørsmål kan du sende mail til ")
+            + payment.responsible_mail()
         )
         message += _("\n\nMvh\nLinjeforeningen Online")
 
@@ -202,8 +204,8 @@ class PaymentDelayHandler(Task):
 
         for payment_delay in payment_delays:
             unattend_deadline_passed = (
-                    payment_delay.payment.content_object.unattend_deadline
-                    < payment_delay.valid_to
+                payment_delay.payment.content_object.unattend_deadline
+                < payment_delay.valid_to
             )
             if payment_delay.valid_to < timezone.now():
                 PaymentDelayHandler.handle_deadline_passed(
@@ -290,7 +292,7 @@ class PaymentDelayHandler(Task):
                     "utf-8"
                 ),
                 "payment_url": settings.BASE_URL
-                               + payment.content_object.event.get_absolute_url(),
+                + payment.content_object.event.get_absolute_url(),
                 "payment_unattend_passed": unattend_deadline_passed,
                 "payment_email": payment.responsible_mail(),
             },
