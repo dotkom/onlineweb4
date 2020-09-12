@@ -38,7 +38,7 @@ class PaymentReminder(Task):
         for payment in event_payments:
 
             # Number of days until the deadline
-            deadline_diff = (payment.deadline.date() - today.date()).days
+            deadline_diff = (payment.deadline.date() - today.date()).days + 1
 
             if deadline_diff <= 0:
                 if PaymentReminder.not_paid(payment):
