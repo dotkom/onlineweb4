@@ -2,6 +2,7 @@ from typing import Iterable
 
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.transaction import on_commit
 
 from apps.authentication.models import OnlineGroup as Group
 from apps.authentication.models import OnlineUser as User
@@ -60,14 +61,10 @@ def send_message_to_users(
         )
 
         if has_push_permission:
-            dispatch_push_notification_task.apply_async(
-                kwargs={"notification_id": notification.id}, countdown=5
-            )  # Postgres needs to add notification, wait a bit since postgres is slower than celery.
+            on_commit(dispatch_push_notification_task.delay(notification_id=notification.id))
 
         if has_email_permission:
-            dispatch_email_notification_task.apply_async(
-                kwargs={"notification_id": notification.id}, countdown=5
-            )  # Postgres needs to add notification, wait a bit since postgres is slower than celery.
+            on_commit(lambda: dispatch_email_notification_task.delay(notification_id=notification.id))
 
 
 def send_message_to_group(
