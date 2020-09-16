@@ -3,7 +3,7 @@ import datetime
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
@@ -415,7 +415,7 @@ class AttendanceEventModelTest(TestCase):
         )
 
 
-class WaitlistAttendanceEventTest(TestCase):
+class WaitlistAttendanceEventTest(TransactionTestCase):
     def setUp(self):
         self.attendance_event = generate_attendance_event(max_capacity=2)
 
