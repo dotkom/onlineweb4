@@ -60,13 +60,13 @@ def send_message_to_users(
         )
 
         if has_push_permission:
-            dispatch_push_notification_task.delay(
-                notification_id=notification.id, countdown=5
+            dispatch_push_notification_task.apply_async(
+                kwargs={"notification_id": notification.id}, countdown=5
             )  # Postgres needs to add notification, wait a bit since postgres is slower than celery.
 
         if has_email_permission:
-            dispatch_email_notification_task.delay(
-                notification_id=notification.id, countdown=5
+            dispatch_email_notification_task.apply_async(
+                kwargs={"notification_id": notification.id}, countdown=5
             )  # Postgres needs to add notification, wait a bit since postgres is slower than celery.
 
 
