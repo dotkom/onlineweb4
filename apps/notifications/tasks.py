@@ -110,7 +110,11 @@ class NotificationDataSerializer(serializers.ModelSerializer):
         )
 
 
-@celery_app.task(bind=True)
+@celery_app.task(
+    bind=True,
+    autoretry_for=(ObjectDoesNotExist,),
+    retry_kwargs={"max_retries": 3, "countdown": 60},
+)
 def dispatch_push_notification_task(_, notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient
