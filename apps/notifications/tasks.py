@@ -2,6 +2,7 @@ import json
 import logging
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from pywebpush import WebPushException, webpush
 from rest_framework import serializers
@@ -109,7 +110,11 @@ class NotificationDataSerializer(serializers.ModelSerializer):
         )
 
 
-@celery_app.task(bind=True)
+@celery_app.task(
+    bind=True,
+    autoretry_for=(ObjectDoesNotExist,),
+    retry_kwargs={"max_retries": 3, "countdown": 60},
+)
 def dispatch_push_notification_task(_, notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient
@@ -126,7 +131,11 @@ def dispatch_push_notification_task(_, notification_id: int):
     notification.save()
 
 
-@celery_app.task(bind=True)
+@celery_app.task(
+    bind=True,
+    autoretry_for=(ObjectDoesNotExist,),
+    retry_kwargs={"max_retries": 3, "countdown": 60},
+)
 def dispatch_email_notification_task(_, notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient
