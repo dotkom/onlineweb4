@@ -62,12 +62,16 @@ def send_message_to_users(
 
         if has_push_permission:
             on_commit(
-                lambda: dispatch_push_notification_task.delay(notification_id=notification.id)
+                lambda: dispatch_push_notification_task.delay(
+                    notification_id=notification.id
+                )
             )
 
         if has_email_permission:
             on_commit(
-                lambda: dispatch_email_notification_task.delay(notification_id=notification.id)
+                lambda: dispatch_email_notification_task.delay(
+                    notification_id=notification.id
+                )
             )
 
 
