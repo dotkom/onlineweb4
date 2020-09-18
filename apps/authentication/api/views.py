@@ -33,8 +33,8 @@ from apps.permissions.drf_permissions import DjangoObjectPermissionOrAnonReadOnl
 
 from .filters import UserFilter
 from .permissions import IsSelfOrSuperUser
-from .serializers.user_data import UserDataSerializer
 from .serializers.empty_serializer import EmptySerializer
+from .serializers.user_data import UserDataSerializer
 
 
 class UserViewSet(
@@ -85,8 +85,11 @@ class UserViewSet(
         serializer = self.get_serializer(user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+
 class Logout(viewsets.GenericViewSet):
-    permission_classes = [AllowAny, ]
+    permission_classes = [
+        AllowAny,
+    ]
     serializer_class = EmptySerializer
 
     def get(self, request):
@@ -115,6 +118,7 @@ class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
 
 class PositionViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
