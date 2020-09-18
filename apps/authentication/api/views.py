@@ -1,3 +1,4 @@
+from django.contrib.auth import logout
 from django.contrib.auth.models import Group
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
@@ -82,6 +83,11 @@ class UserViewSet(
         user: User = self.get_object()
         serializer = self.get_serializer(user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["get"], url_path="logout")
+    def remote_logout(self, request):
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
 
 
 class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
