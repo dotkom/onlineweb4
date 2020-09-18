@@ -27,6 +27,7 @@ router.register(
     api_views.SpecialPositionViewSet,
     basename="user_special_positions",
 )
+router.register("user/logout", api_views.Logout, basename="logout")
 router.register("groups", api_views.GroupViewSet, basename="groups")
 router.register(
     "group/online-groups", api_views.OnlineGroupViewSet, basename="online_groups"

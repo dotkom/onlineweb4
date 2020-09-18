@@ -34,6 +34,7 @@ from apps.permissions.drf_permissions import DjangoObjectPermissionOrAnonReadOnl
 from .filters import UserFilter
 from .permissions import IsSelfOrSuperUser
 from .serializers.user_data import UserDataSerializer
+from .serializers.empty_serializer import EmptySerializer
 
 
 class UserViewSet(
@@ -84,8 +85,11 @@ class UserViewSet(
         serializer = self.get_serializer(user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["get"], url_path="logout")
-    def remote_logout(self, request):
+class Logout(viewsets.GenericViewSet):
+    permission_classes = [AllowAny, ]
+    serializer_class = EmptySerializer
+
+    def get(self, request):
         logout(request)
         return Response(status=status.HTTP_200_OK)
 
@@ -111,7 +115,6 @@ class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
 
 class PositionViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
