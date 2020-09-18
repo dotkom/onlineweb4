@@ -739,7 +739,7 @@ class Attendee(models.Model):
         )
 
         # Notify responsible group if someone is unattended after deadline
-        if timezone.now() >= self.event.unattend_deadline:
+        if timezone.now() >= self.event.unattend_deadline and not self.user_id == admin_user.id:
             subject = "[%s] %s har blitt avmeldt arrangementet av %s" % (
                 self.event,
                 self.user.get_full_name(),
