@@ -4,7 +4,7 @@ from datetime import timedelta
 
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
-from django.test import TestCase
+from django.test import TransactionTestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
@@ -17,7 +17,7 @@ from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRela
 from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
 
 
-class PaymentTest(TestCase):
+class PaymentTest(TransactionTestCase):
     def setUp(self):
         G(
             Permission,

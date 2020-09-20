@@ -38,7 +38,7 @@ class PaymentReminder(Task):
         for payment in event_payments:
 
             # Number of days until the deadline
-            deadline_diff = (payment.deadline.date() - today.date()).days
+            deadline_diff = (payment.deadline - today).seconds
 
             if deadline_diff <= 0:
                 if PaymentReminder.not_paid(payment):
@@ -49,7 +49,9 @@ class PaymentReminder(Task):
 
                 payment.active = False
                 payment.save()
-            elif deadline_diff < 3:
+            elif (
+                deadline_diff < 259200
+            ):  # Remind them to pay 72 hours before the deadline
                 if PaymentReminder.not_paid(payment):
                     PaymentReminder.send_reminder_mail(payment)
 
