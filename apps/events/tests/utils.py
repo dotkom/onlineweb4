@@ -1,5 +1,3 @@
-from apps.companyprofile.models import Company
-from apps.events.models.Attendance import CompanyEvent
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django_dynamic_fixture import G
@@ -7,6 +5,8 @@ from guardian.shortcuts import assign_perm, get_perms_for_model
 
 from apps.authentication.constants import GroupType
 from apps.authentication.models import Email, GroupMember, OnlineGroup, OnlineUser
+from apps.companyprofile.models import Company
+from apps.events.models.Attendance import CompanyEvent
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 
 from ..constants import EventType
@@ -28,9 +28,12 @@ def generate_company_event(
     event_type=EventType.BEDPRES, organizer: Group = None, attendance=True
 ) -> Event:
     onlinecorp: Company = G(Company, name="onlinecorp")
-    bedpress_with_onlinecorp = generate_event(event_type=event_type, organizer=organizer, attendance=attendance)
+    bedpress_with_onlinecorp = generate_event(
+        event_type=event_type, organizer=organizer, attendance=attendance
+    )
     G(CompanyEvent, company=onlinecorp, event=bedpress_with_onlinecorp)
     return bedpress_with_onlinecorp
+
 
 def generate_attendance_event(*args, **kwargs) -> AttendanceEvent:
     event = G(Event)
