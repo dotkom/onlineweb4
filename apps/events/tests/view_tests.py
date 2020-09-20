@@ -4,7 +4,7 @@ from unittest.mock import patch
 from captcha.client import RecaptchaResponse
 from django.contrib.auth.models import Group
 from django.core import mail
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
@@ -495,7 +495,7 @@ class EventsUnattend(EventsTestMixin, TestCase):
         self.assertEqual(PaymentDelay.objects.filter(id=payment_delay.id).count(), 0)
 
 
-class EventsUnattendWaitlist(TestCase):
+class EventsUnattendWaitlist(TransactionTestCase):
     def setUp(self):
         G(Permission, permission_type=PermissionType.WAIT_LIST_BUMP, force_email=True)
         self.event = G(Event, event_start=timezone.now() + timedelta(days=1))
