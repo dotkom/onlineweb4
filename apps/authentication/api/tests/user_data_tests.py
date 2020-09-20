@@ -342,4 +342,7 @@ class TestDumpData(OIDCTestCase):
 
         response = self.client.get(self.id_url(self.user.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.json().get("attendees")), 1)
+        self.assertEqual(
+            response.json().get("attendees")[0].get("companies"),
+            [{"name": "onlinecorp"}],
+        )
