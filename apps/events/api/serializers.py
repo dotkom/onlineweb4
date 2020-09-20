@@ -20,10 +20,12 @@ from ..models import (
 from .constants import ANONYMOUS_ATTENDEE_NAMES
 from .fields import SerializerUserMethodField
 
+
 class ExtrasSerializer(serializers.ModelSerializer):
     class Meta:
         model = Extras
         fields = ("id", "choice", "note")
+
 
 class EventSerializer(serializers.ModelSerializer):
     images = ResponsiveImageSerializer(many=True)
@@ -223,8 +225,6 @@ class PublicAttendeeSerializer(serializers.ModelSerializer):
             "year_of_study",
             "field_of_study",
         )
-
-
 
 
 class RuleBundleSerializer(serializers.ModelSerializer):
