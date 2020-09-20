@@ -1,3 +1,5 @@
+from apps.companyprofile.models import Company
+from apps.events.models.Attendance import CompanyEvent
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django_dynamic_fixture import G
@@ -21,6 +23,14 @@ def generate_event(
         G(AttendanceEvent, event=event)
     return event
 
+
+def generate_company_event(
+    event_type=EventType.BEDPRES, organizer: Group = None, attendance=True
+) -> Event:
+    onlinecorp: Company = G(Company, name="onlinecorp")
+    bedpress_with_onlinecorp = generate_event(event_type=event_type, organizer=organizer, attendance=attendance)
+    G(CompanyEvent, company=onlinecorp, event=bedpress_with_onlinecorp)
+    return bedpress_with_onlinecorp
 
 def generate_attendance_event(*args, **kwargs) -> AttendanceEvent:
     event = G(Event)
