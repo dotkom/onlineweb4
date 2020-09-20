@@ -6,10 +6,9 @@ from rest_framework import status
 
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Position, SpecialPosition
+from apps.authentication.models import Position
 from apps.events.tests.utils import (
     attend_user_to_event,
-    generate_attendee,
     generate_company_event,
     generate_event,
     generate_user,
