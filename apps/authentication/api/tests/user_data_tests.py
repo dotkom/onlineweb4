@@ -6,7 +6,7 @@ from rest_framework import status
 
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Position
+from apps.authentication.models import Position, SpecialPosition
 from apps.events.tests.utils import (
     attend_user_to_event,
     generate_company_event,
@@ -301,6 +301,7 @@ class SpecialPositionsTestCase(OIDCTestCase):
         response = self.client.get(
             self.id_url(self.other_special_position.id), **self.headers
         )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class TestDumpData(OIDCTestCase):
@@ -337,7 +338,7 @@ class TestDumpData(OIDCTestCase):
 
     def test_dump_data_contains_companies(self):
         self.event = generate_company_event()
-        self.attendee1 = attend_user_to_event(user=self.user, event=self.event)
+        attend_user_to_event(user=self.user, event=self.event)
 
         response = self.client.get(self.id_url(self.user.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
