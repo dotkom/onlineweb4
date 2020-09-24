@@ -181,6 +181,7 @@ INSTALLED_APPS = (
     "datetimewidget",
     "webpack_loader",
     "oidc_provider",
+    "drf_yasg",
     # Django apps
     "django.contrib.admin",
     "django.contrib.admindocs",
@@ -254,3 +255,10 @@ AUTH_PASSWORD_VALIDATORS = [
         "OPTIONS": {"min_length": 8},
     }
 ]
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+        'basic': {
+           'type': 'basic'
+        }
+    },
+ }
