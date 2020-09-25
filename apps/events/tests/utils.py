@@ -28,11 +28,11 @@ def generate_company_event(
     event_type=EventType.BEDPRES, organizer: Group = None, attendance=True
 ) -> Event:
     onlinecorp: Company = G(Company, name="onlinecorp")
-    bedpress_with_onlinecorp = generate_event(
+    bedpres_with_onlinecorp = generate_event(
         event_type=event_type, organizer=organizer, attendance=attendance
     )
-    G(CompanyEvent, company=onlinecorp, event=bedpress_with_onlinecorp)
-    return bedpress_with_onlinecorp
+    G(CompanyEvent, company=onlinecorp, event=bedpres_with_onlinecorp)
+    return bedpres_with_onlinecorp
 
 
 def generate_attendance_event(*args, **kwargs) -> AttendanceEvent:
