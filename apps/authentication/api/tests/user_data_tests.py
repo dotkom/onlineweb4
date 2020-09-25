@@ -7,7 +7,12 @@ from rest_framework import status
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
-from apps.events.tests.utils import generate_user
+from apps.events.tests.utils import (
+    attend_user_to_event,
+    generate_company_event,
+    generate_event,
+    generate_user,
+)
 from apps.online_oidc_provider.test import OIDCTestCase
 
 
@@ -200,7 +205,7 @@ class PositionsTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {**self.position_data, "period_end": str(date_before_period_start)},
-            **self.headers
+            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -217,7 +222,7 @@ class PositionsTestCase(OIDCTestCase):
                 "period_end": str(self.period_start),
                 "period_start": str(self.period_start),
             },
-            **self.headers
+            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -237,7 +242,7 @@ class PositionsTestCase(OIDCTestCase):
                 ),  # Both are currently required to make a change
                 "period_end": new_period_end,
             },
-            **self.headers
+            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -296,5 +301,48 @@ class SpecialPositionsTestCase(OIDCTestCase):
         response = self.client.get(
             self.id_url(self.other_special_position.id), **self.headers
         )
-
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestDumpData(OIDCTestCase):
+    def setUp(self):
+        self.user: User = generate_user(username="test_user")
+        self.other_user: User = generate_user(username="other_user")
+        self.token = self.generate_access_token(self.user)
+        self.headers = {**self.generate_headers(), **self.bare_headers}
+
+        self.id_url = lambda _id: f"/api/v1/users/{str(_id)}/dump-data/"
+
+        self.period_start = date(2017, 3, 1)
+        self.period_end = self.period_start + timedelta(days=366)
+        self.position: Position = G(Position, user=self.user)
+        self.position_data = {
+            "position": "medlem",
+            "period_start": str(self.period_start),
+            "period_end": str(self.period_end),
+            "committee": "hs",
+        }
+
+    def test_dump_data_contains_name(self):
+        response = self.client.get(self.id_url(self.user.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json().get("name"), self.user.get_full_name())
+
+    def test_dump_data_contains_attendees(self):
+        self.event = generate_event()
+        self.attendee1 = attend_user_to_event(user=self.user, event=self.event)
+
+        response = self.client.get(self.id_url(self.user.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json().get("attendees")), 1)
+
+    def test_dump_data_contains_companies(self):
+        self.event = generate_company_event()
+        attend_user_to_event(user=self.user, event=self.event)
+
+        response = self.client.get(self.id_url(self.user.id), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json().get("attendees")[0].get("companies"),
+            [{"name": "onlinecorp"}],
+        )
