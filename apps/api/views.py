@@ -17,4 +17,4 @@ class OpenAPISchemaView(SchemaView):
         description="Rest API for Onlineweb4 backend",
         version="1.0.0",
     )
-    public = True 
+    public = True
