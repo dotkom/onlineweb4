@@ -21,6 +21,12 @@ from .constants import ANONYMOUS_ATTENDEE_NAMES
 from .fields import SerializerUserMethodField
 
 
+class ExtrasSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Extras
+        fields = ("id", "choice", "note")
+
+
 class EventSerializer(serializers.ModelSerializer):
     images = ResponsiveImageSerializer(many=True)
     author = UserReadOnlySerializer()
@@ -60,6 +66,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class AttendanceEventSerializer(serializers.ModelSerializer):
+    extras = ExtrasSerializer(many=True)
     feedback = serializers.PrimaryKeyRelatedField(read_only=True, source="get_feedback")
     payment = serializers.PrimaryKeyRelatedField(read_only=True)
     has_postponed_registration = SerializerUserMethodField()
@@ -218,12 +225,6 @@ class PublicAttendeeSerializer(serializers.ModelSerializer):
             "year_of_study",
             "field_of_study",
         )
-
-
-class ExtrasSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Extras
-        fields = ("id", "choice", "note")
 
 
 class RuleBundleSerializer(serializers.ModelSerializer):
