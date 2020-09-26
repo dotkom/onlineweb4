@@ -1,7 +1,7 @@
 import logging
 
 from django.core import mail
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
@@ -83,7 +83,7 @@ class ApprovalTest(TestCase):
         self.assertEqual(self.approval.is_fos_application(), False)
 
 
-class EmailTest(TestCase):
+class EmailTest(TransactionTestCase):
     # Create an approval
     def setUp(self):
         self.applicant = G(

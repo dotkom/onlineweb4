@@ -63,7 +63,7 @@ class ExtrasSerializer(serializers.ModelSerializer):
 
 
 class CompaniesSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source="company.name")
+    name = serializers.CharField()
 
     class Meta:
         model = CompanyEvent
