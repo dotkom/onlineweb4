@@ -176,3 +176,9 @@ curl -v http://{url:port}/openid/token?
 
 This response will contain some basic information about the user, based on which scopes you requested, as well as an access token which can be added to the authorization header to request data from the API.  
 To use the access token, add `Authorization: Bearer {token}` to your requests to the API.
+
+As a last step, basic user information can be retrieved from the endpoint `/openid/userinfo`.  
+This endpoint requires the `Authorization`-header to be set as mentioned above and the `profile`-scope to have been requested.  
+More information, such as `email` can be retrieved if the `email`-scope have been requested.  
+The full set of scopes for userinfo are: [email, address, phone, offline_access].  
+More information about this endpoint can be found in the [spec](https://openid.net/specs/openid-connect-basic-1_0-28.html#userinfo)  
