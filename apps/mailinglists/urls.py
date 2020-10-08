@@ -11,5 +11,5 @@ router.register(
     "mailinglists/groups", views.MailGroupViewSet, basename="mailinglists_groups"
 )
 router.register(
-    "mailinglists/entities", views.MailEnitytViewSet, basename="mailinglists_entities"
+    "mailinglists/entities", views.MailEntityViewSet, basename="mailinglists_entities"
 )

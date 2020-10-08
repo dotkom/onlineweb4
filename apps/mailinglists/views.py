@@ -24,7 +24,7 @@ class MailGroupViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class MailEnitytViewSet(viewsets.ModelViewSet):
+class MailEntityViewSet(viewsets.ModelViewSet):
     """
     The individual mails we use on our mailingslist.
     """
