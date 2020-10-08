@@ -7,6 +7,5 @@ class PaymentConfig(AppConfig):
 
     def ready(self):
         super(PaymentConfig, self).ready()
-        # The following stops pycharm from nagging about unused import statement
-        # noinspection PyUnresolvedReferences
+
         import apps.payment.signals  # noqa: F401

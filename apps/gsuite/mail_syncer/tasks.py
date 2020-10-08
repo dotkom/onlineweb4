@@ -13,29 +13,21 @@ from .main import remove_g_suite_user_from_group
 User = get_user_model()
 
 
-def _get_error_message_from_httperror(err):
+def _get_error_message_from_httperror(err: HttpError) -> str:
     """
     Parses an HTTP Error from the Google API and returns the error message.
-    :param err: An error from the Google API.
-    :type err: HttpError
-    :return: The error message.
-    :rtype: str
     """
     json_error = json.loads(str(err.content.decode()))
     return json_error.get("error", {}).get("message", "")
 
 
-def insert_user_into_group_pass_if_already_member(domain, group, email):
+def insert_user_into_group_pass_if_already_member(
+    domain: str, group: str, email: str
+) -> None:
     """
-    Subscribes an email address to a mailing list. If the email address is already subscribed, silently pass.
-    :param domain: The G Suite domain in question.
-    :type domain: str
-    :param group: The group to add an email to.
-    :type group: str
-    :param email: The email address to add to the group.
-    :type email: str
-    :return: Nothing. Raises exception if failed.
-    :rtype None
+    Subscribes an email address to a mailing list.
+    If the email address is already subscribed, silently pass.
+    Raises exception if failed.
     """
     logger = logging.getLogger(__name__)
 
@@ -54,17 +46,13 @@ def insert_user_into_group_pass_if_already_member(domain, group, email):
             raise err
 
 
-def remove_user_from_group_pass_if_not_subscribed(domain, group, email):
+def remove_user_from_group_pass_if_not_subscribed(
+    domain: str, group: str, email: str
+) -> None:
     """
-    Unsubscribes an email address from a mailing list. If the email address is not already subscribed, silently pass.
-    :param domain: The G Suite domain in question.
-    :type domain: str
-    :param group: The group to add an email to.
-    :type group: str
-    :param email: The email address to add to the group.
-    :type email: str
-    :return: Nothing. Raises exception if failed.
-    :rtype None
+    Unsubscribes an email address from a mailing list.
+    If the email address is not already subscribed, silently pass.
+    Raises exception if failed.
     """
     logger = logging.getLogger(__name__)
 

@@ -7,5 +7,4 @@ class ApprovalConfig(AppConfig):
 
     def ready(self):
         super().ready()
-        # noinspection PyUnresolvedReferences
         import apps.approval.signals  # noqa: F401

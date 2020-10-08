@@ -11,11 +11,7 @@ class OfflineConfig(AppConfig):
         from chunks.models import Chunk
         from reversion import revisions as reversion
 
-        # The following stops pycharm from nagging about unused import statement
-        # noinspection PyUnresolvedReferences
         import apps.offline.signals  # noqa: F401
-
-        # noinspection PyUnresolvedReferences
         from apps.offline.models import Issue  # noqa: F401
 
         reversion.register(Chunk)

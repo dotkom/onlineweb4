@@ -50,9 +50,7 @@ class GSuiteSignalsTestCase(TestCase):
                 self.domain, group_name, user.primary_email
             )
             mocked_logger.assert_called_with(
-                'Email address "{email}" was already subscribed to mailing list "{list}"!'.format(
-                    email=email, list=group_name
-                )
+                f'Email address "{email}" was already subscribed to mailing list "{group_name}"!'
             )
 
     @patch("logging.Logger.warning")
@@ -80,7 +78,5 @@ class GSuiteSignalsTestCase(TestCase):
                 self.domain, group_name, user.primary_email
             )
             mocked_logger.assert_called_with(
-                'Email address "{email}" was not subscribed to mailing list "{list}"!'.format(
-                    email=email, list=group_name
-                )
+                f'Email address "{email}" was not subscribed to mailing list "{group_name}"!'
             )
