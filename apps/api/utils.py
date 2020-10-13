@@ -1,6 +1,7 @@
 from rest_framework.routers import DefaultRouter, SimpleRouter
 from rest_framework.schemas.openapi import AutoSchema
 
+
 class SharedAPIRootRouter(SimpleRouter):
     shared_router = DefaultRouter()
 
@@ -34,6 +35,7 @@ class PrefixRemovedAutoSchema(AutoSchema):
             return ["CommitteeApplication"]
 
     """
+
     def get_tags(self, path, method):
         pathTopic = path.split("/")[3]
         return [pathTopic.capitalize()]
