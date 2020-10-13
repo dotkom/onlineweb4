@@ -1,5 +1,6 @@
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.schemas.openapi import AutoSchema
 
 from apps.api.permissions import TokenHasScopeOrUserHasModelPermissionsOrWriteOnly
 
@@ -12,6 +13,7 @@ from .serializers import (
 
 
 class CommitteeApplicationPeriodViewSet(ModelViewSet):
+    schema = AutoSchema(tags=['Committee Application Period'])
     serializer_class = CommitteeApplicationPeriodSerializer
     queryset = CommitteeApplicationPeriod.objects.all()
     filterset_class = CommitteeApplicationPeriodFilter
@@ -24,6 +26,7 @@ class CommitteeApplicationViewSet(ModelViewSet):
     with the required scope.
     """
 
+    schema = AutoSchema(tags=['Committee Application'])
     serializer_class = CommitteeApplicationSerializer
     queryset = CommitteeApplication.objects.all()
     permission_classes = [TokenHasScopeOrUserHasModelPermissionsOrWriteOnly]
