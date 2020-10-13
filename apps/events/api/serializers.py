@@ -40,6 +40,7 @@ class EventSerializer(serializers.ModelSerializer):
     number_of_seats_taken = serializers.IntegerField(
         source="attendance_event.number_of_seats_taken"
     )
+    companies = serializers.StringRelatedField(many=True)
 
     class Meta:
         model = Event
