@@ -68,7 +68,7 @@ class RegisterStatus(IntegerChoices):
     # Blocked by rule (41x)
     BLOCKED_FOS_RULE = (
         410,
-        "Din studieretning er en annen enn de som har tilgang til dette arrangementet.",
+        "Din studieretning har ikke tilgang til dette arrangementet.",
     )
     BLOCKED_GRADE_RULE = (
         411,
@@ -76,14 +76,14 @@ class RegisterStatus(IntegerChoices):
     )
     BLOCKED_GROUP_RULE = (
         412,
-        "Dine brukergruppe har ikke tilgang til dette arrangementet.",
+        "Dine brukergrupper har ikke tilgang til dette arrangementet.",
     )
     BLOCKED_GENERIC_RULE = 413, "Du har ikke tilgang til å melde deg på arrangementet."
 
     # Blocked by postponed registration (42x)
     POSTPONED_FOS_RULE = 420, "Din studieretning har utsatt påmelding."
     POSTPONED_GRADE_RULE = 421, "Ditt klassetrinn har utsatt påmelding."
-    POSTPONED_GROUP_RULE = 422, "Dine Brukergrupper har utsatt påmelding."
+    POSTPONED_GROUP_RULE = 422, "Dine brukergrupper har utsatt påmelding."
     POSTPONED_GENERIC_RULE = 423, "Du har utsatt påmelding."
 
     # Error status codes
