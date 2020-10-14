@@ -22,7 +22,8 @@
         requestInterceptor: (request) => {
           request.headers['X-CSRFToken'] = "{{ csrf_token }}"
           return request;
-        }
+        },
+        tagsSorter: 'alpha',
       })
     </script>
   </body>
