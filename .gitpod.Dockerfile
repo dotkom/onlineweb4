@@ -6,5 +6,7 @@ RUN pyenv global 3.7.9
 
 RUN pip install poetry
 
+RUN poetry config virtualenvs.in-project true
+
 ENV WEBPACK_DEV_GITPOD=true
 ENV WEBPACK_DEV_HTTPS=true
