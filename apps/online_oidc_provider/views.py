@@ -3,6 +3,7 @@ from rest_framework import mixins, permissions, viewsets, status
 from rest_framework.decorators import action
 from apps.common.rest_framework.mixins import MultiSerializerMixin
 from rest_framework.response import Response
+from django.conf import settings
 
 from .serializers import (
     ClientCreateAndUpdateSerializer,
@@ -62,10 +63,9 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         This methods uses POST since HTTPS POST encrypts the transmission
         and this endpoints transmits sensitive data.
         """
-        """
-        if not request.is_secure():
+
+        if not request.is_secure() and not settings.DEBUG:
             return Response(data={"detail": "This endpoint requires HTTPS"}, status=status.HTTP_400_BAD_REQUEST)
-        """
         user = self.request.user
         clients = Client.objects.filter(owner=user).order_by("id")
         page = self.paginate_queryset(clients)
