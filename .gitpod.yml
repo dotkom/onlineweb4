@@ -8,10 +8,10 @@ ports:
     onOpen: ignore
 
 tasks:
-  - init: |
-      npm i && 
-      export WEBPACK_DEV_PUBLIC_IP=3000-$(echo ${GITPOD_WORKSPACE_URL} | cut -c 9-)
-    command: npm start
+  - init: npm i
+    command: |
+       export WEBPACK_DEV_PUBLIC_IP=3000-$(echo ${GITPOD_WORKSPACE_URL} | cut -c 9-)
+       npm start
   - init: |
       export PIP_USER=false &&
       poetry install &&
