@@ -1,7 +1,8 @@
 name: Deploy to production
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - develop
 jobs:
   deploy:
     runs-on: ubuntu-latest
