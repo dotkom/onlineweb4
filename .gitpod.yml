@@ -14,9 +14,13 @@ tasks:
     command: npm start
   - init: |
       export PIP_USER=false &&
+      python -m venv venv &&
+      poetry env use venv/bin/python &&
       poetry install &&
       poetry run python manage.py migrate
-    command: poetry run python manage.py runserver
+    command: |
+      poetry env use venv/bin/python &&
+      poetry run python manage.py runserver
 
 github:
   prebuilds:
