@@ -1,13 +1,18 @@
+image:
+  file: .gitpod.Dockerfile
+
 ports:
   - port: 8000
     onOpen: open-preview
-
+  - port: 3000
+    onOpen: ignore
 tasks:
   - init: |
-      pyenv install 3.7.9 && 
-      pyenv global 3.7.9 &&
+      npm i && 
+      export WEBPACK_DEV_PUBLIC_IP=3000-$(echo ${GITPOD_WORKSPACE_URL} | cut -c 9-)
+    command: npm start
+  - init: |
       pip install poetry &&
-      export PIP_USER=false &&
       poetry install &&
       poetry run python manage.py migrate
     command: poetry run python manage.py runserver
