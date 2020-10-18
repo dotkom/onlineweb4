@@ -1,0 +1,10 @@
+tasks:
+  - init: |
+      pyenv install 3.7.9 && 
+      pyenv global 3.7.9 &&
+      pip install poetry &&
+      export PIP_USER=false &&
+      poetry install &&
+      poetry shell &&
+      python manage.py migrate
+    command: python manage.py runserver
