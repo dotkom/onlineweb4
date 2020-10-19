@@ -84,6 +84,26 @@ class UserViewSet(
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
+class PermissionsViewSet(viewsets.ViewSet):
+    """
+    This endpoint returns a dictionary of permissions for the authenticated user.
+    This can be used to check whether a user should be able to perform a certain action related to an endpoint.
+    """
+
+    permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        permissions = request.user.get_user_permissions()
+        # Convert from one long list to dictionary.
+        permissions_dict = {}
+        for key, value in [perm.split(".") for perm in permissions]:
+            if key in permissions_dict:
+                permissions_dict[key].append(value)
+            else:
+                permissions_dict[key] = [value]
+        return Response(data=permissions_dict)
+
+
 class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_classes = {
