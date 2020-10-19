@@ -3,6 +3,7 @@ from rest_framework import mixins, permissions, viewsets, status
 from rest_framework.decorators import action
 from apps.common.rest_framework.mixins import MultiSerializerMixin
 from rest_framework.response import Response
+from oauth2_provider.contrib.rest_framework import TokenHasScope
 from django.conf import settings
 
 from .serializers import (
@@ -36,8 +37,11 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         "write": ClientCreateAndUpdateSerializer,
     }
     ordering = ("-date_created",)
+    required_scopes = ["oidc-admin"]
 
     def get_permissions(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return [super().get_permissions(), TokenHasScope]
         return super().get_permissions()
 
     def get_queryset(self):
@@ -54,7 +58,7 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     @action(
         detail=False,
         methods=["POST"],
-        permission_classes=[permissions.IsAuthenticated],
+        permission_classes=[permissions.IsAuthenticated, TokenHasScope],
         serializer_class=ClientReadOwnSerializer,
         url_path="get-own"
     )
