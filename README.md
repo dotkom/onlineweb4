@@ -51,10 +51,14 @@ A few packages are required to build our Python depedencies:
 - libjpeg-dev
 - ghostscript
 
-If these aren't already installed pip will likely fail to build the packages.
+If these aren't already installed poetry will likely fail to build the packages.
 
-If you are oldschool and like using python virtual envs, just activate your env,
-run `pip install -r requirements.txt`, then `python manage.py migrate`, before starting the dev server with `python manage.py runserver`.
+Onlineweb4 is setup to use the [Poetry](https://python-poetry.org/) for dependency mangement.
+
+To install dependencies run `poetry install`. If you're system doesn't have a compatible version of python, 3.7.x, 
+you can use pyenv.
+
+To start the server firstly run the database migrations with `python manage.py migrate`, and run the server with `python manage.py runserver`.
 
 Next, you need to fire up the front-end stuff, by running `npm install` followed by `npm start`.
 
@@ -103,6 +107,21 @@ To view output from onlineweb4, run `make logs`. To view output from a specific 
 OW4_MAKE_TARGET=django make logs # for django
 OW4_MAKE_TARGET=webpack make logs # for the frontend
 ```
+
+#### Creating migrations
+
+After doing changes to a model, you will need to make an migration for the database-scheme.
+You can automatically create those commands by running the following:
+
+```bash
+make makemigrations
+```
+
+Note: we run format-linting on our migration files. Luckily we have set up the `make makemigrations` command to also 
+automatically format the created files. So if you use our command you should not need to do anything more. If you 
+are oldschool and prefer running `./manage.py makemigrations` yourself, then you will need to either run `black`
+afterwards, or run `make lint-fix-backend` after creating the migrations, so that they are properly formatted. You
+could also look at the [Makefile](./Makefile) to see how we redirect the output if you want to do so yourself.
 
 ## CI/CD
 
