@@ -127,6 +127,7 @@ class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        return super().destroy(request, *args, **kwargs)
 
 
 class PositionViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
