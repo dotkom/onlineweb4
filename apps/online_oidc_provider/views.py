@@ -1,17 +1,18 @@
-from oidc_provider.models import Client, ResponseType, UserConsent
-from rest_framework import mixins, permissions, viewsets, status
-from rest_framework.decorators import action
-from apps.common.rest_framework.mixins import MultiSerializerMixin
-from rest_framework.response import Response
-from oauth2_provider.contrib.rest_framework import TokenHasScope
 from django.conf import settings
+from oauth2_provider.contrib.rest_framework import TokenHasScope
+from oidc_provider.models import Client, ResponseType, UserConsent
+from rest_framework import mixins, permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from apps.common.rest_framework.mixins import MultiSerializerMixin
 
 from .serializers import (
     ClientCreateAndUpdateSerializer,
     ClientReadOnlySerializer,
+    ClientReadOwnSerializer,
     ResponseTypeReadOnlySerializer,
     UserConsentReadOnlySerializer,
-    ClientReadOwnSerializer
 )
 
 
@@ -60,7 +61,7 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         methods=["POST"],
         permission_classes=[permissions.IsAuthenticated, TokenHasScope],
         serializer_class=ClientReadOwnSerializer,
-        url_path="get-own"
+        url_path="get-own",
     )
     def get_own(self, request):
         """
@@ -69,7 +70,10 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         """
 
         if not request.is_secure() and not settings.DEBUG:
-            return Response(data={"detail": "This endpoint requires HTTPS"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                data={"detail": "This endpoint requires HTTPS"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         user = self.request.user
         clients = Client.objects.filter(owner=user).order_by("id")
         page = self.paginate_queryset(clients)

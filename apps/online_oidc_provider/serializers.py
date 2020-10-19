@@ -1,8 +1,10 @@
+from hashlib import sha224
+from random import randint
+from uuid import uuid4
+
 from oidc_provider.models import Client, ResponseType, UserConsent
 from rest_framework import serializers
-from hashlib import sha224
-from uuid import uuid4
-from random import randint
+
 from apps.authentication.serializers import UserNameSerializer
 
 
@@ -42,7 +44,7 @@ class ClientReadOwnSerializer(serializers.ModelSerializer):
             "client_secret",
             "client_id",
             "client_type",
-            "redirect_uris"
+            "redirect_uris",
         )
 
 
@@ -66,25 +68,30 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
             "reuse_consent",
             "scope",
             "response_types",
-            "redirect_uris"
+            "redirect_uris",
         )
         read_only_fields = ("date_created", "reuse_consent", "require_consent", "scope")
 
     def create(self, validated_data):
         client_id = str(randint(1, 999999)).zfill(6)
         client_secret = ""
-        if validated_data.get('client_type') == 'confidential':
+        if validated_data.get("client_type") == "confidential":
             client_secret = sha224(uuid4().hex.encode()).hexdigest()
-        response_type = validated_data.pop('response_types')
-        client = Client.objects.create(**validated_data, client_id=client_id, client_secret=client_secret)
+        response_type = validated_data.pop("response_types")
+        client = Client.objects.create(
+            **validated_data, client_id=client_id, client_secret=client_secret
+        )
         client.response_types.set(response_type)
         client.save()
         return client
 
     def update(self, instance, validated_data):
-        if validated_data.get('client_type') == 'confidential' and not instance.client_secret:
+        if (
+            validated_data.get("client_type") == "confidential"
+            and not instance.client_secret
+        ):
             client_secret = sha224(uuid4().hex.encode()).hexdigest()
-        elif validated_data.get('client_type') == 'public' and instance.client_secret:
+        elif validated_data.get("client_type") == "public" and instance.client_secret:
             client_secret = ""
         data = {**validated_data, client_secret: client_secret}
         instance.update(data)
