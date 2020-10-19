@@ -88,6 +88,8 @@ class PermissionsViewSet(viewsets.ViewSet):
     """
     This endpoint returns a dictionary of permissions for the authenticated user.
     This can be used to check whether a user should be able to perform a certain action related to an endpoint.
+
+    The response is a dictionary of permission_name: [permissions]
     """
 
     permission_classes = (IsAuthenticated,)
