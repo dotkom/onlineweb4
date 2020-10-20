@@ -1,4 +1,4 @@
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -20,6 +20,7 @@ from apps.authentication.serializers import (
     OnlineGroupCreateOrUpdateSerializer,
     OnlineGroupReadOnlySerializer,
     PasswordUpdateSerializer,
+    PermissionReadOnlySerializer,
     PositionCreateAndUpdateSerializer,
     PositionReadOnlySerializer,
     SpecialPositionSerializer,
@@ -57,6 +58,7 @@ class UserViewSet(
         "change_password": PasswordUpdateSerializer,
         "anonymize_user": AnonymizeUserSerializer,
         "dump_data": UserDataSerializer,
+        "user_permissions": PermissionReadOnlySerializer,
     }
 
     @action(detail=True, methods=["put"])
@@ -83,27 +85,43 @@ class UserViewSet(
         serializer = self.get_serializer(user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=["get"], url_path="permissions")
+    def user_permissions(self, request, pk):
+        """
+        Returns all permissions for a given user.
+        Codename is "action_object", e.g. "delete_profile".
+        Content_type is ID of object type.
+        If you want to group permissions, you can group on object type and map the ID to the object from the codename string.
+        """
+        user = self.get_object()
+        permissions = (
+            Permission.objects.filter(group__user=user)
+            .order_by("content_type")
+            .distinct()
+        )
+        page = self.paginate_queryset(permissions)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(permissions, many=True)
+        return Response(data=serializer.data)
 
-class PermissionsViewSet(viewsets.ViewSet):
+
+class PermissionsViewSet(viewsets.ReadOnlyModelViewSet):
     """
     This endpoint returns a dictionary of permissions for the authenticated user.
     This can be used to check whether a user should be able to perform a certain action related to an endpoint.
-
-    The response is a dictionary of permission_name: [permissions]
     """
 
+    serializer_class = PermissionReadOnlySerializer
     permission_classes = (IsAuthenticated,)
 
-    def list(self, request):
-        permissions = request.user.get_user_permissions()
-        # Convert from one long list to dictionary.
-        permissions_dict = {}
-        for key, value in [perm.split(".") for perm in permissions]:
-            if key in permissions_dict:
-                permissions_dict[key].append(value)
-            else:
-                permissions_dict[key] = [value]
-        return Response(data=permissions_dict)
+    def get_queryset(self):
+        user = self.request.user
+        permissions = Permission.objects.filter(group__user=user).order_by(
+            "content_type"
+        )
+        return permissions
 
 
 class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):

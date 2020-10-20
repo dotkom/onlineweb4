@@ -2,7 +2,7 @@ import hashlib
 import random
 import string
 
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.password_validation import validate_password
 from django.utils.timezone import datetime
 from guardian.shortcuts import get_objects_for_user
@@ -239,6 +239,13 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "phone_number",
             "id",
         )
+
+
+class PermissionReadOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = ("content_type", "codename")
+        read_only = True
 
 
 class PositionReadOnlySerializer(serializers.ModelSerializer):
