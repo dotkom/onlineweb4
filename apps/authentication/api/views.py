@@ -94,15 +94,10 @@ class UserViewSet(
         If you want to group permissions, you can group on object type and map the ID to the object from the codename string.
         """
         user = self.get_object()
-        permissions = (
-            Permission.objects.filter(group__user=user)
-            .order_by("content_type")
-            .distinct()
-        )
-        page = self.paginate_queryset(permissions)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        permissions = Permission.objects.filter(
+            group__user=user
+        ) | Permission.objects.filter(user=user)
+        permissions.order_by("content_type").distinct()
         serializer = self.get_serializer(permissions, many=True)
         return Response(data=serializer.data)
 
@@ -118,9 +113,10 @@ class PermissionsViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        permissions = Permission.objects.filter(group__user=user).order_by(
-            "content_type"
-        )
+        permissions = Permission.objects.filter(
+            group__user=user
+        ) | Permission.objects.filter(user=user)
+        permissions.distinct().order_by("content_type")
         return permissions
 
 
