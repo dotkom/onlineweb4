@@ -178,7 +178,10 @@ class OnlineUser(AbstractUser):
         # New check for committee membership
         memberships = GroupMember.objects.filter(user=self)
         for membership in memberships:
-            if membership.group.group_type == GroupType.COMMITTEE:
+            if (
+                membership.group.group_type == GroupType.COMMITTEE
+                or membership.group.group_type == GroupType.NODE_COMMITTEE
+            ):
                 return True
 
         # Old check for committee membership for backwards compatibility

@@ -30,9 +30,7 @@ class GSuiteAPITestCase(TestCase):
             resp = insert_email_into_g_suite_group(self.domain, group_name, email)
             self.assertIsNone(resp)
             mocked_logger.assert_called_with(
-                'Skipping inserting email "{email}" since ENABLE_INSERT is False.'.format(
-                    email=email
-                )
+                f'Skipping inserting email "{email}" since ENABLE_INSERT is False.'
             )
 
     @patch("logging.Logger.debug")
@@ -47,9 +45,7 @@ class GSuiteAPITestCase(TestCase):
             resp = remove_g_suite_user_from_group(self.domain, group_name, email)
             self.assertIsNone(resp)
             mocked_logger.assert_called_with(
-                'Skipping removing user "{user}" since ENABLE_DELETE is False.'.format(
-                    user=email
-                )
+                f'Skipping removing user "{email}" since ENABLE_DELETE is False.'
             )
 
     @patch("logging.Logger.debug")
@@ -64,9 +60,7 @@ class GSuiteAPITestCase(TestCase):
             resp = remove_g_suite_user_from_group(self.domain, group_name, email)
             self.assertIsNone(resp)
             mocked_logger.assert_called_with(
-                'Skipping removing user "{user}" since (s)he should be on all lists.'.format(
-                    user=email
-                )
+                f'Skipping removing user "{email}" since (s)he should be on all lists.'
             )
 
     @patch("apps.gsuite.mail_syncer.utils.setup_g_suite_client", autospec=True)
@@ -139,9 +133,7 @@ class GSuiteAPITestCase(TestCase):
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             insert_ow4_user_into_g_suite_group(self.domain, group_name, user)
             mocked_logger.assert_called_with(
-                "OW4 User '{user}' ({user.pk}) missing Online email address! (current: '{user.online_mail}')".format(
-                    user=user
-                ),
+                f"OW4 User '{user}' ({user.pk}) missing Online email address! (current: '{user.online_mail}')",
                 extra={"user": user, "group": group_name},
             )
 
@@ -163,9 +155,7 @@ class GSuiteAPITestCase(TestCase):
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             resp = remove_g_suite_user_from_group(self.domain, group_name, email)
             self.assertIsNone(resp)
-            mocked_logger.assert_called_with(
-                "Removal of user response: {resp}".format(resp=resp)
-            )
+            mocked_logger.assert_called_with(f"Removal of user response: {resp}")
 
     @patch("logging.Logger.debug")
     @patch("apps.gsuite.mail_syncer.utils.setup_g_suite_client", autospec=True)
@@ -185,9 +175,7 @@ class GSuiteAPITestCase(TestCase):
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             resp = remove_g_suite_user_from_group(self.domain, group_name, email)
             self.assertIsNone(resp)
-            mocked_logger.assert_called_with(
-                "Removal of user response: {resp}".format(resp=resp)
-            )
+            mocked_logger.assert_called_with(f"Removal of user response: {resp}")
 
     @patch("logging.Logger.error")
     @patch("apps.gsuite.mail_syncer.utils.setup_g_suite_client", autospec=True)
@@ -214,8 +202,6 @@ class GSuiteAPITestCase(TestCase):
                 ),
             )
         mocked_logger.assert_called_with(
-            'HttpError when deleting user "{user}" from G Suite group: {err}'.format(
-                err=http_error, user=email
-            ),
+            f'HttpError when deleting user "{email}" from G Suite group: {http_error}',
             extra={"suppress_http_error": False},
         )
