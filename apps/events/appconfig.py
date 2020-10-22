@@ -8,8 +8,6 @@ class EventsConfig(AppConfig):
     def ready(self):
         super().ready()
 
-        # The following stops pycharm from nagging about unused import statement
-        # noinspection PyUnresolvedReferences
         from watson import search as watson
 
         import apps.events.signals  # noqa: F401

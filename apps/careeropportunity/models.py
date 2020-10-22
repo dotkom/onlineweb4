@@ -21,6 +21,7 @@ class CareerOpportunity(models.Model):
     ingress = models.CharField(_("ingress"), max_length=250)
     description = models.TextField(_("beskrivelse"))
     application_link = models.URLField(_("søknadslenke"), blank=True, null=True)
+    application_email = models.EmailField(_("søknadsepost"), blank=True, null=True)
     start = models.DateTimeField(_("aktiv fra"))
     end = models.DateTimeField(_("aktiv til"))
     featured = models.BooleanField(_("fremhevet"), default=False, blank=True)

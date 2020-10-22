@@ -14,7 +14,7 @@ MAILING_LIST_USER_FIELDS_TO_LIST_NAME = settings.MAILING_LIST_USER_FIELDS_TO_LIS
 logger = logging.getLogger(__name__)
 
 
-def get_updated_mailing_list_fields(user):
+def get_updated_mailing_list_fields(user: User):
     updated_mailing_lists = []
     try:
         # Get the current user and find out what's about to change
@@ -33,7 +33,7 @@ def get_updated_mailing_list_fields(user):
 
 
 @receiver(pre_save, sender=User)
-def toggle_mailing_lists(sender, instance, **kwargs):
+def toggle_mailing_lists(sender, instance: User, **kwargs):
     update_fields = get_updated_mailing_list_fields(instance)
 
     if update_fields:

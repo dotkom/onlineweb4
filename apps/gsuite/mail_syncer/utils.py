@@ -1,6 +1,9 @@
 import logging
+from typing import Dict, List, Optional, Union
 
 from django.conf import settings
+from django.db.models import QuerySet
+from googleapiclient.discovery import Resource
 from googleapiclient.errors import HttpError
 
 from apps.authentication.models import OnlineUser as User
@@ -17,12 +20,11 @@ scopes = [
 ]
 
 
-def setup_g_suite_client():
+def setup_g_suite_client() -> Optional[Resource]:
     """
     Sets up a working API client towards the Google Developers API.
     Requires various Django settings to be set to function properly.
     :return: Google API Client
-    :rtype: googleapiclient.discovery.Resource
     """
     if not settings.OW4_GSUITE_SYNC.get("ENABLED", False):
         logger.debug(
@@ -45,15 +47,12 @@ def setup_g_suite_client():
     return build_and_authenticate_g_suite_service("admin", "directory_v1", scopes)
 
 
-def get_group_key(domain, group_name):
+def get_group_key(domain: str, group_name: str) -> str:
     """
     Generates a group key to interact with the Google API.
     :param domain: Domain in which the group key should exist.
-    :type domain: str
     :param group_name: Name of the group on a given domain to generate a key for.
-    :type group_name: str
     :return: The group key (groupname@domain)
-    :rtype: str
     """
     if not domain or not group_name:
         logger.error(
@@ -64,21 +63,18 @@ def get_group_key(domain, group_name):
             "You need to pass a domain and a group when generating group key."
         )
 
-    email_domain = "@{domain}".format(domain=domain)
+    email_domain = f"@{domain}"
     if email_domain in group_name:
         return group_name
-    return "{group}@{domain}".format(group=group_name, domain=domain)
+    return f"{group_name}@{domain}"
 
 
-def get_user_key(domain, user):
+def get_user_key(domain: str, user: Union[User, str]) -> str:
     """
     Generates a user key to interact with the Google API.
     :param domain: Domain in which the user key should exist.
-    :type domain: str
-    :param group_name: Unique property (e.g. primary email) of the user on a given domain to generate a key for.
-    :type group_name: str
+    :param user: Unique property (e.g. primary email) of the user on a given domain to generate a key for.
     :return: The user key (email@domain)
-    :rtype: str
     """
     if isinstance(user, str):
         if "@" in user:
@@ -94,26 +90,20 @@ def get_user_key(domain, user):
             "You need to pass a domain and a user when generating user key."
         )
 
-    email_domain = "@{domain}".format(domain=domain)
+    email_domain = f"@{domain}"
     if email_domain in user:
         return user
-    return "{user_email}{email_domain}".format(
-        user_email=user, email_domain=email_domain
-    )
+    return f"{user}{email_domain}"
 
 
-def get_user(original_user, gsuite=False, ow4=False):
+def get_user(original_user: User, gsuite: bool = False, ow4: bool = False) -> User:
     """
     Returns the user of a given domain based on function parameters.
     Converts between OW4 users and G Suite users.
     :param original_user: The user to convert.
-    :type original_user: object
     :param gsuite: Set to True if you want a G Suite user returned.
-    :type gsuite: bool
     :param ow4: Set to True if you want an OW4 user returned.
-    :type ow4: bool
     :return: User account for the given domain.
-    :rtype object
     """
     if not (gsuite or ow4):
         raise ValueError(
@@ -130,44 +120,34 @@ def get_user(original_user, gsuite=False, ow4=False):
         gsuite_user = original_user
         try:
             ow4_user = User.objects.get(online_mail__iexact=original_user)
-        except User.DoesNotExist as e:
-            logger.warning(
-                'User "{user}" does not exist on OW4!'.format(user=original_user)
-            )
-            raise e
+        except User.DoesNotExist as err:
+            logger.warning(f'User "{original_user}" does not exist on OW4!')
+            raise err
 
     return ow4_user if ow4 else gsuite_user
 
 
 def insert_email_into_g_suite_group(
-    domain, group_name, email, suppress_http_errors=False
+    domain: str, group_name: str, email: str, suppress_http_errors: bool = False
 ):
     """
     Insert an email address into a G Suite group.
     :param domain: The domain in which to insert a user into.
-    :type domain: str
     :param group_name: The name of the group the user should be inserted into.
-    :type group_name: str
     :param email: The email in question.
-    :type email: str
     :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
-    :type suppress_http_errors: bool
     :return: The response of the execution.
     """
     group_key = get_group_key(domain, group_name)
 
     logger.info(
-        "Inserting '{email}' into G Suite group '{group}'.".format(
-            email=email, group=group_key
-        ),
+        f"Inserting '{email}' into G Suite group '{group_key}'.",
         extra={"email": email, "group": group_key},
     )
 
     if not settings.OW4_GSUITE_SYNC.get("ENABLE_INSERT", False):
         logger.debug(
-            'Skipping inserting email "{email}" since ENABLE_INSERT is False.'.format(
-                email=email
-            )
+            f'Skipping inserting email "{email}" since ENABLE_INSERT is False.'
         )
         return
 
@@ -184,29 +164,25 @@ def insert_email_into_g_suite_group(
         )
     except HttpError as err:
         logger.error(
-            "HttpError when inserting into G Suite group: {err}".format(err=err),
+            f"HttpError when inserting into G Suite group: {err}",
             extra={"suppress_http_error": suppress_http_errors},
         )
         if not suppress_http_errors:
             raise err
-    logger.debug("Inserting response: {resp}".format(resp=resp))
+    logger.debug(f"Inserting response: {resp}")
 
     return resp
 
 
 def insert_ow4_user_into_g_suite_group(
-    domain, group_name, ow4_user, suppress_http_errors=False
+    domain: str, group_name: str, ow4_user: User, suppress_http_errors: bool = False
 ):
     """
     Insert a given OW4 user into a group in G Suite.
     :param domain: The domain in which to insert a user into.
-    :type domain: str
     :param group_name: The name of the group the user should be inserted into.
-    :type group_name: str
     :param ow4_user: The OW4 user in question.
-    :type ow4_user: apps.authentication.models.OnlineUser
     :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
-    :type suppress_http_errors: bool
     :return: The response of the execution.
     """
     logger.info(
@@ -218,9 +194,7 @@ def insert_ow4_user_into_g_suite_group(
 
     if not ow4_user.online_mail:
         logger.error(
-            "OW4 User '{user}' ({user.pk}) missing Online email address! (current: '{user.online_mail}')".format(
-                user=ow4_user
-            ),
+            f"OW4 User '{ow4_user}' ({ow4_user.pk}) missing Online email address! (current: '{ow4_user.online_mail}')",
             extra={"user": ow4_user, "group": group_name},
         )
         return
@@ -234,41 +208,33 @@ def insert_ow4_user_into_g_suite_group(
 
 
 def remove_g_suite_user_from_group(
-    domain, group_name, g_suite_user, suppress_http_errors=False
+    domain: str,
+    group_name: str,
+    g_suite_user: Union[dict, str],
+    suppress_http_errors: bool = False,
 ):
     """
     Removes a user from a G Suite group.
     :param domain: The domain in which to remove a user from a group.
-    :type domain: str
     :param group_name: The name of the group the user should be removed from.
-    :type group_name: str
     :param g_suite_user: The G Suite user in question.
-    :type g_suite_user: dict
     :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
-    :type suppress_http_errors: bool
     :return: The response of the execution.
     """
     if isinstance(g_suite_user, str):
         user_key = get_user_key(domain, g_suite_user)
     else:
         user_key = g_suite_user.get("email")
-    if (
-        "leder@{domain}".format(domain=domain) == user_key
-        or "nestleder@{domain}".format(domain=domain) == user_key
-    ):
+    if f"leder@{domain}" == user_key or f"nestleder@{domain}" == user_key:
         # Not removing these guys from any lists.
         logger.debug(
-            'Skipping removing user "{user}" since (s)he should be on all lists.'.format(
-                user=user_key
-            )
+            f'Skipping removing user "{user_key}" since (s)he should be on all lists.'
         )
         return
 
     if not settings.OW4_GSUITE_SYNC.get("ENABLE_DELETE", False):
         logger.debug(
-            'Skipping removing user "{user}" since ENABLE_DELETE is False.'.format(
-                user=user_key
-            )
+            f'Skipping removing user "{user_key}" since ENABLE_DELETE is False.'
         )
         return
 
@@ -277,9 +243,7 @@ def remove_g_suite_user_from_group(
     directory = setup_g_suite_client()
 
     logger.info(
-        "Removing '{user}' from G Suite group '{group}'.".format(
-            user=user_key, group=group_key
-        ),
+        f"Removing '{user_key}' from G Suite group '{group_key}'.",
         extra={"user": user_key, "group": group_key},
     )
 
@@ -290,9 +254,7 @@ def remove_g_suite_user_from_group(
         )
     except HttpError as err:
         logger.error(
-            'HttpError when deleting user "{user}" from G Suite group: {err}'.format(
-                err=err, user=user_key
-            ),
+            f'HttpError when deleting user "{user_key}" from G Suite group: {err}',
             extra={"suppress_http_error": suppress_http_errors},
         )
         if not suppress_http_errors:
@@ -302,44 +264,43 @@ def remove_g_suite_user_from_group(
     return resp
 
 
-def get_g_suite_users_for_group(domain, group_name, suppress_http_errors=False):
+def get_g_suite_users_for_group(
+    domain: str, group_name: str, suppress_http_errors: bool = False
+):
     """
     Get the users in a given G Suite group.
     :param domain: The domain in which to find a groups user list.
-    :type domain: str
     :param group_name: The name of the group to get group members for.
-    :type group_name: str
     :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
-    :type suppress_http_errors: bool
     :return: The response of the execution.
     """
     # G Suite Group Key
     group_key = get_group_key(domain, group_name)
-    logger.debug("Getting G Suite member list for '{group}'.".format(group=group_key))
+    logger.debug(f"Getting G Suite member list for '{group_key}'.")
 
     directory = setup_g_suite_client()
 
     members = []
     try:
         members = directory.members().list(groupKey=group_key).execute().get("members")
-    except HttpError as e:
+    except HttpError as err:
         logger.error(
-            "HttpError when requesting user list: {err}".format(err=e),
+            f"HttpError when requesting user list: {err}",
             extra={"suppress_http_error": suppress_http_errors},
         )
         if not suppress_http_errors:
-            raise e
+            raise err
 
     return members or []
 
 
-def get_g_suite_groups_for_user(domain, _user, suppress_http_errors=False):
+def get_g_suite_groups_for_user(
+    domain: str, _user: User, suppress_http_errors: bool = False
+):
     """
     Get the group memberships for a given user.
     :param domain: The domain in which to find a users group memberships.
-    :type domain: str
     :param _user: The user to get group memberships for.
-    :type _user: object
     :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
     :type suppress_http_errors: bool
     :return: The response of the execution.
@@ -348,7 +309,7 @@ def get_g_suite_groups_for_user(domain, _user, suppress_http_errors=False):
 
     user_key = get_user_key(domain, user)
     logger.debug(
-        "Getting G Suite user membership list for '{user}'.".format(user=user_key),
+        f"Getting G Suite user membership list for '{user_key}'.",
         extra={"user": user_key},
     )
 
@@ -357,37 +318,32 @@ def get_g_suite_groups_for_user(domain, _user, suppress_http_errors=False):
     groups = []
     try:
         groups = directory.groups().list(userKey=user_key).execute().get("groups")
-    except HttpError as e:
+    except HttpError as err:
         logger.error(
-            "HttpError when requesting user group membership list: {err}".format(err=e),
+            f"HttpError when requesting user group membership list: {err}",
             extra={"suppress_http_error": suppress_http_errors},
         )
         if not suppress_http_errors:
-            raise e
+            raise err
 
     return groups or []
 
 
-def get_ow4_users_for_group(group_name):
+def get_ow4_users_for_group(group_name: str) -> QuerySet:
     """
     Get the OW4 group memberships for an OW4 user.
     :param group_name: The group name to match
-    :type group_name: str
     :return: A filtered QuerySet of Django groups the user is in.
-    :rtype: django.db.models.QuerySet
     """
     return User.objects.filter(groups__name__iexact=group_name)
 
 
-def get_appropriate_g_suite_group_names_for_user(domain, user):
+def get_appropriate_g_suite_group_names_for_user(domain: str, user: User) -> List[str]:
     """
     Get the G Suite groups a user should be in
     :param domain: The domain in which to get a users missing group memberships.
-    :type domain: str
     :param user: The user to get group memberships for.
-    :type user: apps.authentication.models.OnlineUser
     :return: A list of appropriate G Suite group names.
-    :rtype: list
     """
     g_suite_groups = settings.OW4_GSUITE_SYNC.get("GROUPS")
     user_groups = user.groups.all()
@@ -399,15 +355,12 @@ def get_appropriate_g_suite_group_names_for_user(domain, user):
     return g_suite_user_groups
 
 
-def get_missing_g_suite_group_names_for_user(domain, user):
+def get_missing_g_suite_group_names_for_user(domain: str, user: User) -> List[str]:
     """
     Generates a list of G Suite group names in which the user is not in, but should be.
     :param domain: The domain in which to get a users missing group memberships.
-    :type domain: str
     :param user: The user to get group memberships for.
-    :type user: apps.authentication.models.OnlineUser
     :return: A list of names of the groups in which the user is not in, but should be in.
-    :rtype: list
     """
     user_should_be_in_groups = get_appropriate_g_suite_group_names_for_user(
         domain, user
@@ -419,11 +372,7 @@ def get_missing_g_suite_group_names_for_user(domain, user):
     missing_groups = []
 
     logger.debug(
-        '"{user}" is currently in "{in_groups}", should be in "{should_be_in_groups}".'.format(
-            user=user,
-            in_groups=user_is_in_groups,
-            should_be_in_groups=user_should_be_in_groups,
-        ),
+        f'"{user}" is currently in "{user_is_in_groups}", should be in "{user_should_be_in_groups}".',
         extra={"user": user},
     )
 
@@ -434,15 +383,12 @@ def get_missing_g_suite_group_names_for_user(domain, user):
     return missing_groups
 
 
-def get_excess_groups_for_user(domain, user):
+def get_excess_groups_for_user(domain: str, user: User) -> List[str]:
     """
     Generates a list of excess groups for a given user.
     :param domain: The domain in which to get a users excess group memberships.
-    :type domain: str
     :param user: The user to get excess group memberships for.
-    :type user: apps.authentication.models.OnlineUser
     :return: A list of group names the user can be removed from.
-    :rtype: list
     """
     user_should_be_in_groups = get_appropriate_g_suite_group_names_for_user(
         domain, user
@@ -461,23 +407,19 @@ def get_excess_groups_for_user(domain, user):
         ):
             excess_groups.append(group.get("name"))
 
-    logger.info(
-        "{} should be removed from these groups: {}".format(user, excess_groups)
-    )
+    logger.info(f"{user} should be removed from these groups: {excess_groups}")
     return excess_groups
 
 
-def check_amount_of_members_ow4_g_suite(g_suite_members, ow4_users, quiet=False):
+def check_amount_of_members_ow4_g_suite(
+    g_suite_members: List[Dict[str, str]], ow4_users: QuerySet, quiet: bool = False
+) -> bool:
     """
     Compare the number of users in an OW4 group to a G Suite group.
     :param g_suite_members: The members of a G Suite group.
-    :type g_suite_members: list
     :param ow4_users: The members of an OW4 group.
-    :type ow4_users: django.db.models.QuerySet
     :param quiet: Whether to print debug log lines or not.
-    :type quiet: bool
     :return: Whether or not there are exactly the same amount of users in the two groups.
-    :rtype: bool
     """
     g_suite_count = len(g_suite_members)
     ow4_count = ow4_users.count()
@@ -486,31 +428,26 @@ def check_amount_of_members_ow4_g_suite(g_suite_members, ow4_users, quiet=False)
     elif g_suite_count > ow4_count:
         if not quiet:
             logger.debug(
-                "There are more users in G Suite ({g_suite_count}) than on OW4 ({ow4_count}). "
-                "Need to trim inactive users from G Suite.".format(
-                    g_suite_count=g_suite_count, ow4_count=ow4_count
-                )
+                f"There are more users in G Suite ({g_suite_count}) than on OW4 ({ow4_count}). "
+                "Need to trim inactive users from G Suite."
             )
     else:
         if not quiet:
             logger.debug(
-                "There are more users on OW4 ({ow4_count}) than in G Suite ({g_suite_count}). "
-                "Need to update G Suite with new members.".format(
-                    g_suite_count=g_suite_count, ow4_count=ow4_count
-                )
+                f"There are more users on OW4 ({ow4_count}) than in G Suite ({g_suite_count}). "
+                "Need to update G Suite with new members."
             )
     return False
 
 
-def check_emails_match_each_other(g_suite_users, ow4_users):
+def check_emails_match_each_other(
+    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet
+) -> bool:
     """
     Matches emails in two lists of users against each other.
     :param g_suite_users: The members of a G Suite group.
-    :type g_suite_users: list
     :param ow4_users: The members of an OW4 group.
-    :type ow4_users: django.db.models.QuerySet
     :return: Whether or not all emails in the two groups exactly match each other.
-    :rtype: bool
     """
     if not check_amount_of_members_ow4_g_suite(g_suite_users, ow4_users, quiet=True):
         return False
@@ -519,24 +456,20 @@ def check_emails_match_each_other(g_suite_users, ow4_users):
     for gsuite_user, ow4_user in zip(g_suite_users, ow4_users.order_by("first_name")):
         if ow4_user.online_mail != gsuite_user.get("email"):
             logger.debug(
-                "Emails do not match! '{ow4_user_email}' != '{g_suite_user_email}'".format(
-                    ow4_user_email=ow4_user.online_mail,
-                    g_suite_user_email=gsuite_user.get("email"),
-                )
+                f"Emails do not match! '{ow4_user.online_mail}' != '{gsuite_user.get('email')}'"
             )
             return False
     return True
 
 
-def get_excess_users_in_g_suite(g_suite_users, ow4_users):
+def get_excess_users_in_g_suite(
+    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet
+) -> List[Dict[str, str]]:
     """
     Finds excess users from lists of G Suite users and OW4 users.
     :param g_suite_users: The members of a G Suite group.
-    :type g_suite_users: list
     :param ow4_users: The members of an OW4 group.
-    :type ow4_users: django.db.models.QuerySet
     :return: A list of excess users.
-    :rtype: list
     """
     excess_users = []
 
@@ -546,21 +479,19 @@ def get_excess_users_in_g_suite(g_suite_users, ow4_users):
         except User.DoesNotExist:
             excess_users.append(user)
 
-    logger.debug(
-        "Excess users in G Suite: {excess_users}".format(excess_users=excess_users)
-    )
+    logger.debug(f"Excess users in G Suite: {excess_users}")
+
     return excess_users
 
 
-def _get_g_suite_user_from_g_suite_user_list(g_suite_users, g_suite_email):
+def _get_g_suite_user_from_g_suite_user_list(
+    g_suite_users: List[Dict[str, str]], g_suite_email: str
+) -> Optional[Dict[str, str]]:
     """
     Tries to find a user from a list of users, matching a given email address.
     :param g_suite_users: The members of a G Suite group.
-    :type g_suite_users: list
     :param g_suite_email: The email address to match.
-    :type g_suite_email: str
     :return: The user matching the email address, if any.
-    :rtype: object
     """
     for user in g_suite_users:
         if g_suite_email == user.get("email"):
@@ -578,15 +509,14 @@ def _get_g_suite_user_from_g_suite_user_list(g_suite_users, g_suite_email):
     return None
 
 
-def get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
+def get_missing_ow4_users_for_g_suite(
+    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet
+) -> List[Dict[str, str]]:
     """
     Find the OW4 users who are missing given a set of G Suite users.
     :param g_suite_users: The members of a G Suite group.
-    :type g_suite_users: list
     :param ow4_users: The members of an OW4 group.
-    :type ow4_users: django.db.models.QuerySet
     :return: A list of users missing from the given G Suite user set.
-    :rtype: list
     """
     missing_users = []
 
@@ -597,8 +527,6 @@ def get_missing_ow4_users_for_g_suite(g_suite_users, ow4_users):
             missing_users.append(ow4_user)
 
     logger.debug(
-        "OW4 users missing in G Suite ({missing_users_count}): {missing_users}".format(
-            missing_users_count=len(missing_users), missing_users=missing_users
-        )
+        f"OW4 users missing in G Suite ({len(missing_users)}): {missing_users}"
     )
     return missing_users

@@ -35,7 +35,10 @@ Object.keys(config.entry).forEach((entry) => {
 // Remove [hash] since webpack-dev-server stores all generated copies in memory based on filename
 config.output.filename = '[name].js';
 // Entries will be served from a seperate http server instead of from filesystem
-config.output.publicPath = `${PROTOCOL}://${PUBLIC_IP}:${PUBLIC_PORT}/static/`;
+config.output.publicPath = process.env.WEBPACK_DEV_GITPOD === 'true' ? `${PROTOCOL}://${PUBLIC_IP}/static/` :
+    `${PROTOCOL}://${PUBLIC_IP}:${PUBLIC_PORT}/static/`;
+
+console.log(config.output.publicPath)
 
 // Don't reload if there is an error
 config.plugins.unshift(new webpack.NoEmitOnErrorsPlugin());

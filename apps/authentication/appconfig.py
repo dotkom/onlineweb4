@@ -7,8 +7,7 @@ class AuthenticationConfig(AppConfig):
 
     def ready(self):
         super(AuthenticationConfig, self).ready()
-        # The following stops pycharm from nagging about unused import statement
-        # noinspection PyUnresolvedReferences
+
         from reversion import revisions as reversion
         from watson import search as watson
 

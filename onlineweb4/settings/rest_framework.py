@@ -1,7 +1,7 @@
 # Django REST framework
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "apps.api.utils.PrefixRemovedAutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",  # Allows users to be logged in to browsable API
         "apps.online_oidc_provider.authentication.OidcOauth2Auth",  # Allows user to be logged in with open-id
     ),
     "DEFAULT_FILTER_BACKENDS": (

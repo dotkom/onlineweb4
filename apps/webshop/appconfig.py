@@ -7,6 +7,5 @@ class WebshopConfig(AppConfig):
 
     def ready(self):
         super().ready()
-        # The following stops pycharm from nagging about unused import statement
-        # noinspection PyUnresolvedReferences
+
         import apps.webshop.signals  # noqa: F401
