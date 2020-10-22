@@ -20,11 +20,11 @@ class GSuiteUtilsTestCase(TestCase):
         self.assertRaises(ValueError, lambda: get_group_key("", self.group))
 
     def test_get_group_key(self):
-        expected = "{group}@{domain}".format(domain=self.domain, group=self.group)
+        expected = f"{self.group}@{self.domain}"
         self.assertEqual(expected, get_group_key(self.domain, self.group))
 
     def test_get_group_key_returns_same_if_email(self):
-        email = "{group}@{domain}".format(domain=self.domain, group=self.group)
+        email = f"{self.group}@{self.domain}"
         self.assertEqual(email, get_group_key(self.domain, email))
 
     def test_get_user_key_no_params(self):
@@ -33,11 +33,11 @@ class GSuiteUtilsTestCase(TestCase):
         self.assertRaises(ValueError, lambda: get_user_key("", self.user))
 
     def test_get_user_key(self):
-        expected = "{user}@{domain}".format(domain=self.domain, user=self.user)
+        expected = f"{self.user}@{self.domain}"
         self.assertEqual(expected, get_user_key(self.domain, self.user))
 
     def test_get_user_key_same_if_email(self):
-        email = "{user}@{domain}".format(domain=self.domain, user=self.user)
+        email = f"{self.user}@{self.domain}"
         self.assertEqual(email, get_user_key(self.domain, email))
 
     def test_get_user_no_params(self):
@@ -58,7 +58,7 @@ class GSuiteUtilsTestCase(TestCase):
 
     @patch("logging.Logger.warning")
     def test_get_onlineuser_not_exist(self, mocked_logger):
-        email = "{user}@{domain}".format(domain=self.domain, user=self.user)
+        email = f"{self.user}@{self.domain}"
         self.assertRaises(OnlineUser.DoesNotExist, lambda: get_user(email, ow4=True))
         mocked_logger.assert_called_with(
             'User "{user}" does not exist on OW4!'.format(user=email)

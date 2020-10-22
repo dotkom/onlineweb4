@@ -50,9 +50,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
             self.assertEqual(user.online_mail, resp.get("email"))
 
         mocked_logger.assert_called_with(
-            "Inserting '{user}' into G Suite group '{group}'.".format(
-                user=user.online_mail, group=group_email
-            ),
+            f"Inserting '{user.online_mail}' into G Suite group '{group_email}'.",
             extra={"email": user.online_mail, "group": group_email},
         )
 
@@ -61,8 +59,8 @@ class GSuiteAPIUtilsTestCase(TestCase):
         user = G(OnlineUser, online_mail=None)
         insert_ow4_user_into_g_suite_group(self.domain, self.group, user)
         mocked_logger.assert_called_with(
-            "OW4 User '{user}' ({user.pk}) missing Online email address! "
-            "(current: '{user.online_mail}')".format(user=user),
+            f"OW4 User '{user}' ({user.pk}) missing Online email address! "
+            f"(current: '{user.online_mail}')",
             extra={"user": user, "group": self.group},
         )
 
@@ -138,10 +136,8 @@ class GSuiteAPIUtilsTestCase(TestCase):
             )
         )
         mocked_logger.assert_called_with(
-            "There are more users on OW4 ({ow4_count}) than in G Suite ({g_suite_count}). "
-            "Need to update G Suite with new members.".format(
-                g_suite_count=len(g_suite_members), ow4_count=group.user_set.count()
-            )
+            f"There are more users on OW4 ({group.user_set.count()}) than in G Suite ({len(g_suite_members)}). "
+            "Need to update G Suite with new members."
         )
 
     @patch("logging.Logger.debug")
@@ -166,10 +162,8 @@ class GSuiteAPIUtilsTestCase(TestCase):
             )
         )
         mocked_logger.assert_called_with(
-            "There are more users in G Suite ({g_suite_count}) than on OW4 ({ow4_count}). "
-            "Need to trim inactive users from G Suite.".format(
-                g_suite_count=len(g_suite_members), ow4_count=group.user_set.count()
-            )
+            f"There are more users in G Suite ({len(g_suite_members)}) than on OW4 ({group.user_set.count()}). "
+            "Need to trim inactive users from G Suite."
         )
 
     def test_get_excess_users_in_gsuite(self):
