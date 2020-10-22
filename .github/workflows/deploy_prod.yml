@@ -1,11 +1,23 @@
 name: Deploy to production
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - develop
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          
+      - name: Bump version and push tag
+        uses: mathieudutour/github-tag-action@v4.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: develop
+
       - name: executing deploy script
         uses: appleboy/ssh-action@master
         with:
