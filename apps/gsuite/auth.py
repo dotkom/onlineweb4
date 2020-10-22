@@ -1,22 +1,25 @@
+from typing import List, Optional
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
+from google.auth.credentials import Credentials
 from google.oauth2 import service_account
-from googleapiclient.discovery import build
+from google.oauth2.service_account import Credentials as ServiceAccountCredentials
+from googleapiclient.discovery import Resource, build
 
 
 def generate_g_suite_credentials(
-    json_keyfile_name=settings.OW4_GSUITE_SYNC.get("CREDENTIALS"), scopes=list()
-):
+    json_keyfile_name: str = settings.OW4_GSUITE_SYNC.get("CREDENTIALS"),
+    scopes: List[str] = None,
+) -> ServiceAccountCredentials:
     """
     Creates the credentials required for building a Google API Client Resource.
     :param json_keyfile_name: Path to the JSON keyfile. Get this at
         https://console.developers.google.com/apis/credentials?project=ow4-gsuitesync
-    :type json_keyfile_name: str
     :param scopes: A list of scopes that the Service Account should be able to access.
-    :type scopes: list
     :return: Credentials
-    :rtype: ServiceAccountCredentials
     """
+
     credentials = service_account.Credentials.from_service_account_file(
         json_keyfile_name, scopes=scopes
     )
@@ -27,15 +30,14 @@ def generate_g_suite_credentials(
     return credentials
 
 
-def build_g_suite_service(service, version, credentials):
+def build_g_suite_service(
+    service: str, version: str, credentials: Optional[Credentials]
+) -> Resource:
     """
     Builds a Google API Resource Client.
     :param service: The service to get a client for.
-    :type service: str
     :param version: The version of the service to get a client for.
-    :type version: str
     :param credentials: The credentials used to gain access to the API Resource.
-    :type credentials: oauth2client.client.GoogleCredentials
     :return: A Google API Resource Client
     """
     if not credentials:
@@ -51,22 +53,18 @@ def build_g_suite_service(service, version, credentials):
 
 
 def build_and_authenticate_g_suite_service(
-    service,
-    version,
-    scopes,
-    json_keyfile_name=settings.OW4_GSUITE_SETTINGS.get("CREDENTIALS"),
-):
+    service: str,
+    version: str,
+    scopes: List[str],
+    json_keyfile_name: str = settings.OW4_GSUITE_SETTINGS.get("CREDENTIALS"),
+) -> Resource:
     """
     Method which combines building and authenticating a Client towards the Google API.
     :param service: The service to get a client for.
-    :type service: str
     :param version: The version of the service to get a client for.
-    :type version: str
     :param scopes: A list of scopes that the Service Account should be able to access.
-    :type scopes: list
     :param json_keyfile_name: Path to the JSON keyfile. Get this at
         https://console.developers.google.com/apis/credentials?project=ow4-gsuitesync
-    :type json_keyfile_name: str
     :return: A Google API Resource Client
     """
     credentials = generate_g_suite_credentials(

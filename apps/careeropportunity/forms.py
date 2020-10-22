@@ -31,6 +31,13 @@ class AddCareerOpportunityForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={"placeholder": "Søknadslenke"}),
     )
+    application_email = forms.EmailField(
+        label="Søknadsepost",
+        required=False,
+        widget=forms.TextInput(
+            attrs={"placeholder": "Søknadsepost - brukes kun om søknadslenke mangler"}
+        ),
+    )
     start = forms.DateTimeField(
         label="Start-tid",
         required=True,
@@ -55,6 +62,7 @@ class AddCareerOpportunityForm(forms.ModelForm):
             "ingress",
             "description",
             "application_link",
+            "application_email",
             "start",
             "end",
             "featured",
