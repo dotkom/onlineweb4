@@ -3,6 +3,7 @@ from oidc_provider.models import Client, ResponseType, UserConsent
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
 from apps.common.rest_framework.mixins import MultiSerializerMixin
 
 from .serializers import (
@@ -36,7 +37,7 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         "write": ClientCreateAndUpdateSerializer,
     }
     ordering = ("-date_created",)
-  #  required_scopes = ["oidcadmin"]
+    #  required_scopes = ["oidcadmin"]
 
     def get_permissions(self):
         if self.action in ["create", "update", "partial_update", "destroy"]:

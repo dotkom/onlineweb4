@@ -70,7 +70,7 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
             "scope",
             "response_types",
             "redirect_uris",
-            "client_type"
+            "client_type",
         )
         read_only_fields = ("date_created", "reuse_consent", "require_consent", "scope")
 
