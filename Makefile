@@ -3,7 +3,7 @@
 
 BACKEND_SERVICE_NAME = django
 BACKEND_LINT_FOLDERS = apps middleware scripts utils
-BACKEND_TEST_FOLDERS = apps
+BACKEND_TEST_FOLDERS ?= apps
 
 FRONTEND_SERVICE_NAME = webpack
 
