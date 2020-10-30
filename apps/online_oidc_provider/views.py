@@ -1,10 +1,8 @@
 from django.conf import settings
-from oauth2_provider.contrib.rest_framework import TokenHasScope
 from oidc_provider.models import Client, ResponseType, UserConsent
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from apps.common.rest_framework.mixins import MultiSerializerMixin
 
 from .serializers import (
@@ -38,11 +36,11 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         "write": ClientCreateAndUpdateSerializer,
     }
     ordering = ("-date_created",)
-    required_scopes = ["oidc-admin"]
+  #  required_scopes = ["oidcadmin"]
 
     def get_permissions(self):
         if self.action in ["create", "update", "partial_update", "destroy"]:
-            return [super().get_permissions(), TokenHasScope]
+            return [*super().get_permissions()]
         return super().get_permissions()
 
     def get_queryset(self):
@@ -59,8 +57,8 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     @action(
         detail=False,
         methods=["POST"],
-        permission_classes=[permissions.IsAuthenticated, TokenHasScope],
         serializer_class=ClientReadOwnSerializer,
+        permission_classes=[permissions.IsAuthenticated],
         url_path="get-own",
     )
     def get_own(self, request):
@@ -68,7 +66,6 @@ class ClientViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         This methods uses POST since HTTPS POST encrypts the transmission
         and this endpoints transmits sensitive data.
         """
-
         if not request.is_secure() and not settings.DEBUG:
             return Response(
                 data={"detail": "This endpoint requires HTTPS"},

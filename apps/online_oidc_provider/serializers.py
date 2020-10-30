@@ -52,6 +52,7 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
     require_consent = serializers.HiddenField(default=True)
     reuse_consent = serializers.HiddenField(default=True)
+    redirect_uris = serializers.ListField(child=serializers.CharField())
 
     class Meta:
         model = Client
@@ -69,6 +70,7 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
             "scope",
             "response_types",
             "redirect_uris",
+            "client_type"
         )
         read_only_fields = ("date_created", "reuse_consent", "require_consent", "scope")
 
@@ -86,6 +88,10 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
         return client
 
     def update(self, instance, validated_data):
+        client_secret = instance.client_secret
+        print("Received data:", validated_data, flush=True)
+        print("Instance", instance)
+        print("Self", self)
         if (
             validated_data.get("client_type") == "confidential"
             and not instance.client_secret
@@ -93,8 +99,10 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
             client_secret = sha224(uuid4().hex.encode()).hexdigest()
         elif validated_data.get("client_type") == "public" and instance.client_secret:
             client_secret = ""
-        data = {**validated_data, client_secret: client_secret}
-        instance.update(data)
+        data = {**validated_data, "client_secret": client_secret}
+        for key, value in data.items():
+            print("Setting ", key, "to value", value, flush=True)
+            setattr(instance, key, value)
         instance.save()
         return instance
 
