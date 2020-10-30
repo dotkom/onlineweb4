@@ -83,17 +83,18 @@ class ClientsTest(OIDCTestCase):
 
     def test_user_can_create_a_client(self):
         client_data = {
-            "client_type": CLIENT_TYPE_CHOICES[1],
-            "redirect_uris": "http://localhost",
+            "client_type": CLIENT_TYPE_CHOICES[1][0],
+            "redirect_uris": ["http://localhost"],
             "response_types": [self.response_type.id],
         }
         response = self.client.post(self.url, data=client_data, **self.headers)
+        print(response.data, flush=True)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_anonymous_user_cannot_create_a_client(self):
         client_data = {
-            "client_type": CLIENT_TYPE_CHOICES[1],
+            "client_type": CLIENT_TYPE_CHOICES[1][0],
             "redirect_uris": "http://localhost",
             "response_types": [self.response_type.id],
         }
