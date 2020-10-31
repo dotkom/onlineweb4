@@ -51,10 +51,14 @@ A few packages are required to build our Python depedencies:
 - libjpeg-dev
 - ghostscript
 
-If these aren't already installed pip will likely fail to build the packages.
+If these aren't already installed poetry will likely fail to build the packages.
 
-If you are oldschool and like using python virtual envs, just activate your env,
-run `pip install -r requirements.txt`, then `python manage.py migrate`, before starting the dev server with `python manage.py runserver`.
+Onlineweb4 is setup to use the [Poetry](https://python-poetry.org/) for dependency mangement.
+
+To install dependencies run `poetry install`. If you're system doesn't have a compatible version of python, 3.7.x, 
+you can use pyenv.
+
+To start the server firstly run the database migrations with `python manage.py migrate`, and run the server with `python manage.py runserver`.
 
 Next, you need to fire up the front-end stuff, by running `npm install` followed by `npm start`.
 

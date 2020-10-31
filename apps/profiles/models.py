@@ -16,10 +16,10 @@ class Privacy(models.Model):
     expose_phone_number = models.BooleanField(_("vis telefonnummer"), default=True)
     expose_address = models.BooleanField(_("vis addresse"), default=True)
     visible_as_attending_events = models.BooleanField(
-        _("vis på påmeldingsarrangement"), default=False
+        _("vis på påmeldingsarrangement"), default=None, null=True
     )
     allow_pictures = models.BooleanField(
-        _("greit å ta bilder på arrangement"), default=False
+        _("greit å ta bilder på arrangement"), default=None, null=True
     )
 
     user = models.OneToOneField(User, related_name="privacy", on_delete=models.CASCADE)
