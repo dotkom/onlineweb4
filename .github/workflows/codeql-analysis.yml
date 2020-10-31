@@ -29,8 +29,15 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+    
+    - name: Set up Python 3.7
+      if: matrix.language == 'python'
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
 
     - name: Add Requirements.txt 
+      if: matrix.language == 'python'
       env: 
         POETRY_VIRTUALENVS_CREATE: false
       run: |
