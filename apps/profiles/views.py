@@ -72,13 +72,13 @@ def index(request, active_tab="overview"):
 def _create_profile_context(request):
     groups = Group.objects.all()
 
-    privacy = request.user.privacy
+    user_privacy = request.user.privacy
     privacy_initial = {
-        "allow_pictures": privacy.allow_pictures
-        if privacy.allow_pictures is not None
+        "allow_pictures": user_privacy.allow_pictures
+        if user_privacy.allow_pictures is not None
         else False,
-        "visible_as_attending_events": privacy.visible_as_attending_events
-        if privacy.visible_as_attending_events is not None
+        "visible_as_attending_events": user_privacy.visible_as_attending_events
+        if user_privacy.visible_as_attending_events is not None
         else False,
     }
 
