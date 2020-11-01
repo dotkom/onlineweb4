@@ -2,7 +2,10 @@
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "apps.api.utils.PrefixRemovedAutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "apps.online_oidc_provider.authentication.OidcOauth2Auth",  # Allows user to be logged in with open-id
+        # Allows user to be logged in with open-id
+        "apps.online_oidc_provider.authentication.OidcOauth2Auth",
+        # Allows users to be logged in to browsable API
+        "rest_framework.authentication.SessionAuthentication",
     ),
     "DEFAULT_FILTER_BACKENDS": (
         "django_filters.rest_framework.DjangoFilterBackend",
