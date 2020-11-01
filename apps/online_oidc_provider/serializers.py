@@ -71,8 +71,10 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
             "response_types",
             "redirect_uris",
             "client_type",
+            "client_id",
+            "client_secret"
         )
-        read_only_fields = ("date_created", "reuse_consent", "require_consent", "scope")
+        read_only_fields = ("date_created", "reuse_consent", "require_consent", "scope", "client_id", "client_secret")
 
     def create(self, validated_data):
         client_id = str(randint(1, 999999)).zfill(6)
@@ -80,9 +82,9 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
         if validated_data.get("client_type") == "confidential":
             client_secret = sha224(uuid4().hex.encode()).hexdigest()
         response_type = validated_data.pop("response_types")
-        client = Client.objects.create(
-            **validated_data, client_id=client_id, client_secret=client_secret
-        )
+        data = {**validated_data, "client_id": client_id, "client_secret": client_secret}
+        print(data)
+        client = Client.objects.create(**data)
         client.response_types.set(response_type)
         client.save()
         return client

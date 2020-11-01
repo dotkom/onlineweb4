@@ -145,6 +145,24 @@ class ClientsTest(OIDCTestCase):
         self.assertEqual(response.json().get("name"), client_name_other)
         self.assertEqual(client.name, client_name_other)
 
+    def test_secret_is_set_on_creation_if_confidential(self):
+        client_data = {
+            "name": "test_secret",
+            "client_type": CLIENT_TYPE_CHOICES[0][0],
+            "redirect_uris": ["http://localhost:3000"],
+            "response_types": [self.response_type.id],
+        }
+
+        response = self.client.post(
+            self.url, data=client_data, **self.headers
+        )
+        print(response.data)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.json().get("name"), client_data["name"])
+        self.assertIsNotNone(response.json().get("client_secret"))
+        self.assertIsNot(response.json().get("client_secret"), "")
+
 
 class UserConsentTest(OIDCTestCase):
     def setUp(self):
