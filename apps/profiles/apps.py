@@ -11,6 +11,7 @@ class ProfilesConfig(AppConfig):
         from reversion import revisions as reversion
 
         from apps.profiles.models import Privacy
-        from .signals import create_privacy_profile # noqa
+
+        from .signals import create_privacy_profile  # noqa
 
         reversion.register(Privacy)

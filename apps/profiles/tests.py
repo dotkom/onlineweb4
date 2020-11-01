@@ -5,6 +5,7 @@ from rest_framework import status
 
 from apps.authentication.models import OnlineUser as User
 from apps.profiles.forms import ZIP_CODE_VALIDATION_ERROR, ProfileForm
+from apps.profiles.models import Privacy
 
 
 class ProfilesURLTestCase(TestCase):
@@ -17,6 +18,12 @@ class ProfilesURLTestCase(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ProfileInitTestCase(TestCase):
+    def test_privacy_profile_save(self):
+        user = G(User)
+        self.assertTrue(Privacy.objects.filter(user=user).exists())
 
 
 class ProfileViewEditTestCase(TestCase):

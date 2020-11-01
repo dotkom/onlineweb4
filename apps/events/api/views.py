@@ -141,7 +141,7 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     def public_attendees(self, request, pk=None):
         attendance_event: AttendanceEvent = self.get_object()
         attendees = (
-                attendance_event.attending_attendees_qs | attendance_event.waitlist_qs
+            attendance_event.attending_attendees_qs | attendance_event.waitlist_qs
         )
         attendees = attendees.order_by("-show_as_attending_event", "timestamp")
         serializer = self.get_serializer(attendees, many=True)
