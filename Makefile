@@ -31,8 +31,22 @@ logs:
 migrate:
 	@docker-compose run --rm $(BACKEND_SERVICE_NAME) python manage.py migrate
 
-makemigrations:
+# Reasoning for having two makemigrations:
+# the migration-files that Django output are not formatted according to Black code-style
+# there is no plan to add that as a feature to Django ref. https://code.djangoproject.com/ticket/24275
+# therefore we have modified the default one to also format _only_ the files that Django created
+# which is why we copy the output of the interactive `makemigrations`-command into a temporary file
+# and then search for the lines containing the paths to the migrations, and send them to Black with xargs
+# we also set the `pipefail` option, because we want the command to fail if makemigrations fails
+makemigrations-no-format:
 	@docker-compose run --rm $(BACKEND_SERVICE_NAME) python manage.py makemigrations $(OW4_MAKE_TARGET)
+
+makemigrations:
+	@docker-compose run --rm $(BACKEND_SERVICE_NAME) bash -c "set -o pipefail \
+&& python manage.py makemigrations $(OW4_MAKE_TARGET) 2>&1 \
+| tee /tmp/created_migrations.log \
+&& grep '^[ \t]*apps/' /tmp/created_migrations.log \
+| xargs black"
 
 restart: stop start
 

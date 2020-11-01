@@ -122,12 +122,14 @@ class RegisterSerializer(serializers.Serializer):
 class AttendeeSerializer(serializers.ModelSerializer):
     user = UserReadOnlySerializer(read_only=True)
     extras = serializers.PrimaryKeyRelatedField(
-        required=False, allow_null=True, write_only=True, queryset=Extras.objects.all()
+        required=False, allow_null=True, queryset=Extras.objects.all()
     )
 
-    def validate_extras(self, values):
+    def validate_extras(self, extra):
         if self.instance:
             attendance: AttendanceEvent = self.instance.event
+            allowedExtras = Extras.objects.filter(attendanceevent=attendance)
+
             if timezone.now() > attendance.registration_end:
                 raise serializers.ValidationError(
                     "Det er ikke mulig å endre ekstravalg etter påmeldingsfristen"
@@ -137,13 +139,12 @@ class AttendeeSerializer(serializers.ModelSerializer):
                     "Det er ikke mulig å endre ekstravalg etter avmeldingsfristen"
                 )
 
-            for extra in values:
-                if extra not in attendance.extras:
-                    raise serializers.ValidationError(
-                        "Enkelte av ekstravalgene er ikke gyldige for dette arrangementet"
-                    )
+            if extra and extra not in allowedExtras:
+                raise serializers.ValidationError(
+                    "Det er ikke mulig å velge ekstravalg som ikke er på event"
+                )
 
-        return values
+        return extra
 
     class Meta:
         model = Attendee

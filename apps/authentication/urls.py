@@ -21,6 +21,9 @@ urlpatterns = [
 router = SharedAPIRootRouter()
 router.register("users", api_views.UserViewSet, basename="users")
 router.register("user/emails", api_views.EmailViewSet, basename="user_emails")
+router.register(
+    "user/permissions", api_views.PermissionsViewSet, basename="user_permissions"
+)
 router.register("user/positions", api_views.PositionViewSet, basename="user_positions")
 router.register(
     "user/special-positions",
