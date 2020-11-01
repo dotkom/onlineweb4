@@ -72,12 +72,15 @@ def index(request, active_tab="overview"):
 def _create_profile_context(request):
     groups = Group.objects.all()
 
-    Privacy.objects.get_or_create(user=request.user)  # This is a hack
-    """
-    To make sure a privacy exists when visiting /profiles/privacy/.
-    Until now, it has been generated upon loading models.py, which is a bit hacky.
-    The code is refactored to use Django signals, so whenever a user is created, a privacy-property is set up.
-    """
+    privacy = request.user.privacy
+    privacy_initial = {
+        "allow_pictures": privacy.allow_pictures
+        if privacy.allow_pictures is not None
+        else False,
+        "visible_as_attending_events": privacy.visible_as_attending_events
+        if privacy.visible_as_attending_events is not None
+        else False,
+    }
 
     context = {
         # edit
@@ -86,7 +89,9 @@ def _create_profile_context(request):
         # positions
         "groups": groups,
         # privacy
-        "privacy_form": PrivacyForm(instance=request.user.privacy),
+        "privacy_form": PrivacyForm(
+            instance=request.user.privacy, initial=privacy_initial
+        ),
         # nibble information
         "transactions": PaymentTransaction.objects.filter(user=request.user),
         "orders": Order.objects.filter(order_line__user=request.user).order_by(
