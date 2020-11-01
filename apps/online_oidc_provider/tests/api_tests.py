@@ -11,6 +11,7 @@ from rest_framework import status
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.tests.utils import generate_user
+from apps.online_oidc_provider.serializers import ClientReadOwnSerializer
 from apps.online_oidc_provider.test import OIDCTestCase
 
 
@@ -83,8 +84,8 @@ class ClientsTest(OIDCTestCase):
 
     def test_user_can_create_a_client(self):
         client_data = {
-            "client_type": CLIENT_TYPE_CHOICES[1],
-            "redirect_uris": "http://localhost",
+            "client_type": CLIENT_TYPE_CHOICES[1][0],
+            "redirect_uris": ["http://localhost"],
             "response_types": [self.response_type.id],
         }
         response = self.client.post(self.url, data=client_data, **self.headers)
@@ -93,7 +94,7 @@ class ClientsTest(OIDCTestCase):
 
     def test_anonymous_user_cannot_create_a_client(self):
         client_data = {
-            "client_type": CLIENT_TYPE_CHOICES[1],
+            "client_type": CLIENT_TYPE_CHOICES[1][0],
             "redirect_uris": "http://localhost",
             "response_types": [self.response_type.id],
         }
@@ -143,6 +144,62 @@ class ClientsTest(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("name"), client_name_other)
         self.assertEqual(client.name, client_name_other)
+
+    def test_secret_is_set_on_creation_if_confidential(self):
+        client_data = {
+            "name": "test_secret",
+            "client_type": CLIENT_TYPE_CHOICES[0][0],
+            "redirect_uris": ["http://localhost:3000"],
+            "response_types": [self.response_type.id],
+        }
+
+        response = self.client.post(self.url, data=client_data, **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.json().get("name"), client_data["name"])
+        self.assertIsNotNone(response.json().get("client_secret"))
+        self.assertIsNot(response.json().get("client_secret"), "")
+
+    def test_secret_is_removed_on_public_clients(self):
+        client_name = "test_secret_removal"
+        client = G(
+            Client,
+            name=client_name,
+            owner=self.user,
+            client_type=CLIENT_TYPE_CHOICES[0][0],
+        )
+
+        self.assertIsNotNone(client.client_secret)
+        response = self.client.patch(
+            self.id_url(client.id),
+            data={"client_type": CLIENT_TYPE_CHOICES[1][0]},
+            **self.headers
+        )
+        self.assertEqual(response.json().get("client_secret"), "")
+
+    def test_secret_is_not_leaked(self):
+        response = self.client.get(self.url, **self.bare_headers)
+        clients = response.json()["results"]
+        for client in clients:
+            self.assertIsNone(client.get("client_secret", None))
+
+    def test_get_own_only_allows_https(self):
+        response = self.client.post(reverse("oidc_clients-get-own"), **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get_own_gets_only_own(self):
+        other_user = G(User)
+        client = G(Client, name="test", owner=self.user)
+        client_with_other_owner = G(
+            Client, name="test_should_not_be_shown", owner=other_user
+        )
+        response = self.client.post(
+            reverse("oidc_clients-get-own"), **self.headers, secure=True
+        )
+        clients = response.json()["results"]
+        serialized_client = ClientReadOwnSerializer(instance=client)
+        self.assertEqual(clients, [serialized_client.data])
+        self.assertNotIn(client_with_other_owner, clients)
 
 
 class UserConsentTest(OIDCTestCase):
