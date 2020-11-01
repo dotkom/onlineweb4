@@ -94,7 +94,6 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
             "client_id": client_id,
             "client_secret": client_secret,
         }
-        print(data)
         client = Client.objects.create(**data)
         client.response_types.set(response_type)
         client.save()
@@ -102,9 +101,6 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         client_secret = instance.client_secret
-        print("Received data:", validated_data, flush=True)
-        print("Instance", instance)
-        print("Self", self)
         if (
             validated_data.get("client_type") == "confidential"
             and not instance.client_secret
@@ -114,7 +110,6 @@ class ClientCreateAndUpdateSerializer(serializers.ModelSerializer):
             client_secret = ""
         data = {**validated_data, "client_secret": client_secret}
         for key, value in data.items():
-            print("Setting ", key, "to value", value, flush=True)
             setattr(instance, key, value)
         instance.save()
         return instance

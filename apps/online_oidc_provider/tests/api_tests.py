@@ -89,7 +89,6 @@ class ClientsTest(OIDCTestCase):
             "response_types": [self.response_type.id],
         }
         response = self.client.post(self.url, data=client_data, **self.headers)
-        print(response.data, flush=True)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -155,7 +154,6 @@ class ClientsTest(OIDCTestCase):
         }
 
         response = self.client.post(self.url, data=client_data, **self.headers)
-        print(response.data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.json().get("name"), client_data["name"])
