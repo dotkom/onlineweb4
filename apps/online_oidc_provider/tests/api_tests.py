@@ -187,7 +187,7 @@ class ClientsTest(OIDCTestCase):
 
     def test_get_own_only_allows_https(self):
         response = self.client.post(reverse("oidc_clients-get-own"), **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_own_gets_only_own(self):
         other_user = G(User)
