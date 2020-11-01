@@ -11,6 +11,7 @@ from rest_framework import status
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.tests.utils import generate_user
+from apps.online_oidc_provider.serializers import ClientReadOwnSerializer
 from apps.online_oidc_provider.test import OIDCTestCase
 
 
@@ -177,6 +178,26 @@ class ClientsTest(OIDCTestCase):
             **self.headers
         )
         self.assertEqual(response.json().get("client_secret"), "")
+
+    def test_secret_is_not_leaked(self):
+        response = self.client.get(self.url, **self.bare_headers)
+        clients = response.json()["results"]
+        for client in clients:
+            self.assertIsNone(client.get("client_secret", None))
+
+    def test_get_own_gets_only_own(self):
+        other_user = G(User)
+        client = G(Client, name="test", owner=self.user)
+        client_with_other_owner = G(
+            Client, name="test_should_not_be_shown", owner=other_user
+        )
+        response = self.client.post(
+            reverse("oidc_clients-get-own"), **self.headers, secure=True
+        )
+        clients = response.json()["results"]
+        serialized_client = ClientReadOwnSerializer(instance=client)
+        self.assertEqual(clients, [serialized_client.data])
+        self.assertNotIn(client_with_other_owner, clients)
 
 
 class UserConsentTest(OIDCTestCase):
