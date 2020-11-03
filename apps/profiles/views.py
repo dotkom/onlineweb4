@@ -503,12 +503,12 @@ def _send_verification_mail(request, email):
         _(
             """
     En ny epost har blitt registrert på din profil på online.ntnu.no.
-    
+
     For å kunne ta eposten i bruk kreves det at du verifiserer den. Du kan gjore dette
     ved å besøke lenken under.
-    
+
     http://%s/auth/verify/%s/
-    
+
     Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
     kan dette gjøres ved å klikke på knappen for verifisering på din profil.
     """

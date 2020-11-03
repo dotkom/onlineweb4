@@ -86,12 +86,11 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     )
     def register(self, request, pk=None):
         user = request.user
+        privacy = Privacy.objects.get(user=user)
         attendance_event: AttendanceEvent = self.get_object()
         # Check if the recaptcha and other request data is valid
         register_serializer = self.get_serializer(data=request.data)
         register_serializer.is_valid(raise_exception=True)
-
-        privacy = Privacy.objects.get(user=user)
         data = register_serializer.validated_data
         attending_visibility = data.get("show_as_attending_event")
         allow_pictures = data.get("allow_pictures")
