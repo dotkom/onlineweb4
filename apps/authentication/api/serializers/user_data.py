@@ -140,7 +140,7 @@ class WikiAttachmentRevisionSerializer(serializers.ModelSerializer):
 
 class WikiArticleSerializer(serializers.ModelSerializer):
     current_revision = WikiArticleRevisionSerializer()
-    group = serializers.CharField(source="group.name")
+    group = serializers.CharField(source="group.name_long")
 
     class Meta:
         model = WikiArticle
