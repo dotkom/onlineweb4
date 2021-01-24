@@ -21,5 +21,7 @@ router.register(
     basename="committee-application-periods",
 )
 router.register(
-    "membership-approval", MembershipApprovalViewSet, basename="membership-approval"
+    "membership-application",
+    MembershipApprovalViewSet,
+    basename="membership-application",
 )

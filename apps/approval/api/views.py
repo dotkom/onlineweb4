@@ -47,5 +47,6 @@ class CommitteeApplicationViewSet(ModelViewSet):
 class MembershipApprovalViewSet(ModelViewSet):
 
     permission_classes = (IsSelfOrSuperUser,)
+    schema = AutoSchema(tags=["Membership Applications"])
     serializer_class = MembershipApprovalSerializer
     queryset = MembershipApproval.objects.all().order_by("field_of_study")
