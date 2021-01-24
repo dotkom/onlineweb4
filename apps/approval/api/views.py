@@ -3,12 +3,18 @@ from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.viewsets import ModelViewSet
 
 from apps.api.permissions import TokenHasScopeOrUserHasModelPermissionsOrWriteOnly
+from apps.authentication.api.permissions import IsSelfOrSuperUser
 
-from ..models import CommitteeApplication, CommitteeApplicationPeriod
+from ..models import (
+    CommitteeApplication,
+    CommitteeApplicationPeriod,
+    MembershipApproval,
+)
 from .filters import CommitteeApplicationPeriodFilter
 from .serializers import (
     CommitteeApplicationPeriodSerializer,
     CommitteeApplicationSerializer,
+    MembershipApprovalSerializer,
 )
 
 
@@ -36,3 +42,10 @@ class CommitteeApplicationViewSet(ModelViewSet):
             serializer.save(applicant=self.request.user)
         else:
             serializer.save()
+
+
+class MembershipApprovalViewSet(ModelViewSet):
+
+    permission_classes = (IsSelfOrSuperUser,)
+    serializer_class = MembershipApprovalSerializer
+    queryset = MembershipApproval.objects.all().order_by("field_of_study")
