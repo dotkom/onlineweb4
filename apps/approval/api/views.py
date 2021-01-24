@@ -1,4 +1,8 @@
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import (
+    DjangoModelPermissionsOrAnonReadOnly,
+    IsAuthenticated,
+)
+from rest_framework.response import Response
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.viewsets import ModelViewSet
 
@@ -46,7 +50,14 @@ class CommitteeApplicationViewSet(ModelViewSet):
 
 class MembershipApprovalViewSet(ModelViewSet):
 
-    permission_classes = (IsSelfOrSuperUser,)
+    permission_classes = (IsAuthenticated,)
     schema = AutoSchema(tags=["Membership Applications"])
     serializer_class = MembershipApprovalSerializer
-    queryset = MembershipApproval.objects.all().order_by("field_of_study")
+
+    def get_queryset(self):
+        if not self.request.user:
+            queryset = MembershipApproval.objects.none()
+        else:
+            queryset = MembershipApproval.objects.filter(applicant=self.request.user.id)
+
+        return queryset

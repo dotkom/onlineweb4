@@ -14,6 +14,7 @@ from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
 from apps.online_oidc_provider.test import OIDCTestCase
 
+from .api.serializers import MembershipApprovalSerializer
 from .models import CommitteeApplication, CommitteeApplicationPeriod, MembershipApproval
 from .tasks import send_approval_status_update
 
@@ -412,3 +413,25 @@ class CommitteeApplicationTestCase(OIDCTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class MembershipApprovalTestCase(OIDCTestCase):
+    def get_list_url(self):
+        return reverse("membership-application-list")
+
+    def get_detail_url(self, _id: int):
+        return reverse("membership-application-detail", args=[_id])
+
+    def test_non_authenticated_user_cannot_get_applications(self):
+        response = self.client.get(self.get_list_url())
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_user_can_only_get_own_application(self):
+        application = G(MembershipApproval, applicant=self.user)
+        not_our_application = G(MembershipApproval)
+        response = self.client.get(self.get_list_url(), **self.headers)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        results = response.json().get("results")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results.pop(), MembershipApprovalSerializer(application).data)
