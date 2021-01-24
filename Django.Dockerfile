@@ -20,4 +20,6 @@ RUN poetry install --no-interaction --no-ansi -E prod
 
 ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
 
+ENV PYTHONUNBUFFERED 1
+
 CMD ["bash"]
