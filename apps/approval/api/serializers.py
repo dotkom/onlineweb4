@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from rest_framework import serializers
 
+from apps.authentication.constants import FieldOfStudyType
 from apps.authentication.models import OnlineGroup
 from apps.authentication.serializers import UserReadOnlySerializer
 
@@ -10,6 +11,7 @@ from ..models import (
     CommitteeApplicationPeriod,
     CommitteeApplicationPeriodParticipation,
     CommitteePriority,
+    MembershipApproval,
 )
 
 
@@ -165,3 +167,38 @@ class CommitteeApplicationSerializer(serializers.ModelSerializer):
             )
 
         return application
+
+
+class ChoiceField(serializers.ChoiceField):
+    def to_representation(self, obj):
+        if obj == "" and self.allow_blank:
+            return obj
+        return self._choices[obj]
+
+    def to_internal_value(self, data):
+        if data == "" and self.allow_blank:
+            return ""
+
+        for key, val in self._choices.items():
+            if val == data:
+                return key
+        self.fail("invalid_choice", input=data)
+
+
+class MembershipApprovalSerializer(serializers.ModelSerializer):
+
+    field_of_study = ChoiceField(choices=FieldOfStudyType.ALL_CHOICES)
+
+    class Meta:
+        model = MembershipApproval
+        fields = (
+            "id",
+            "field_of_study",
+            "created",
+            "processed",
+            "processed_date",
+            "approved",
+            "message",
+            "new_expiry_date",
+            "started_date",
+        )

@@ -1,14 +1,22 @@
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import (
+    DjangoModelPermissionsOrAnonReadOnly,
+    IsAuthenticated,
+)
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.viewsets import ModelViewSet
 
 from apps.api.permissions import TokenHasScopeOrUserHasModelPermissionsOrWriteOnly
 
-from ..models import CommitteeApplication, CommitteeApplicationPeriod
+from ..models import (
+    CommitteeApplication,
+    CommitteeApplicationPeriod,
+    MembershipApproval,
+)
 from .filters import CommitteeApplicationPeriodFilter
 from .serializers import (
     CommitteeApplicationPeriodSerializer,
     CommitteeApplicationSerializer,
+    MembershipApprovalSerializer,
 )
 
 
@@ -36,3 +44,18 @@ class CommitteeApplicationViewSet(ModelViewSet):
             serializer.save(applicant=self.request.user)
         else:
             serializer.save()
+
+
+class MembershipApprovalViewSet(ModelViewSet):
+
+    permission_classes = (IsAuthenticated,)
+    schema = AutoSchema(tags=["Membership Applications"])
+    serializer_class = MembershipApprovalSerializer
+
+    def get_queryset(self):
+        if not self.request.user:
+            queryset = MembershipApproval.objects.none()
+        else:
+            queryset = MembershipApproval.objects.filter(applicant=self.request.user.id)
+
+        return queryset
