@@ -435,3 +435,6 @@ class MembershipApprovalTestCase(OIDCTestCase):
         results = response.json().get("results")
         self.assertEqual(len(results), 1)
         self.assertEqual(results.pop(), MembershipApprovalSerializer(application).data)
+        self.assertNotIn(
+            MembershipApprovalSerializer(not_our_application).data, results
+        )
