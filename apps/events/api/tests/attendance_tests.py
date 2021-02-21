@@ -37,8 +37,8 @@ class AttendanceEventTestCase(OIDCTestCase):
 
         self.event = generate_event(organizer=self.committee)
         self.event.attendance_event.registration_start = timezone.now()
-        self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(
-            days=2
+        self.event.attendance_event.registration_end = (
+            timezone.now() + timezone.timedelta(days=2)
         )
         self.event.attendance_event.max_capacity = 20
         self.event.attendance_event.save()
@@ -221,8 +221,8 @@ class AttendanceEventTestCase(OIDCTestCase):
         )
 
     def test_user_can_unregister_before_deadline(self):
-        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(
-            days=2
+        self.event.attendance_event.unattend_deadline = (
+            timezone.now() + timezone.timedelta(days=2)
         )
         self.event.event_start = timezone.now() + timezone.timedelta(days=3)
         self.event.attendance_event.save()
@@ -237,8 +237,8 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.assertFalse(self.event.attendance_event.is_attendee(self.user))
 
     def test_user_cannot_unregister_after_deadline_has_passed(self):
-        self.event.attendance_event.unattend_deadline = timezone.now() - timezone.timedelta(
-            days=2
+        self.event.attendance_event.unattend_deadline = (
+            timezone.now() - timezone.timedelta(days=2)
         )
         self.event.attendance_event.save()
         attend_user_to_event(self.event, self.user)
@@ -255,8 +255,8 @@ class AttendanceEventTestCase(OIDCTestCase):
         )
 
     def test_user_cannot_unregister_after_event_has_started(self):
-        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(
-            days=2
+        self.event.attendance_event.unattend_deadline = (
+            timezone.now() + timezone.timedelta(days=2)
         )
         self.event.event_start = timezone.now() - timezone.timedelta(hours=1)
         self.event.attendance_event.save()
@@ -277,8 +277,8 @@ class AttendanceEventTestCase(OIDCTestCase):
     @mock_validate_recaptcha()
     def test_user_can_re_register_for_an_event_after_unregistering(self, _):
         attend_user_to_event(self.event, self.user)
-        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(
-            days=2
+        self.event.attendance_event.unattend_deadline = (
+            timezone.now() + timezone.timedelta(days=2)
         )
         self.event.attendance_event.guest_attendance = True
         self.event.event_start = timezone.now() + timezone.timedelta(days=3)

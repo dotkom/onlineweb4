@@ -163,5 +163,10 @@ class UserPermission(models.Model):
     class Meta:
         verbose_name = "Varseltillatelse for bruker"
         verbose_name_plural = "varseltillatelser for brukere"
-        unique_together = (("permission", "user",),)
+        unique_together = (
+            (
+                "permission",
+                "user",
+            ),
+        )
         ordering = ("permission", "user")

@@ -11,6 +11,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="notification", name="body", field=models.TextField(),
+            model_name="notification",
+            name="body",
+            field=models.TextField(),
         ),
     ]

@@ -89,8 +89,8 @@ class GSuiteAPITestCase(TestCase):
 
         error_reason = "Member already exists"
 
-        mocked_g_suite_client.return_value.members.return_value.insert.side_effect = create_http_error(
-            status=409, reason=error_reason, error=error_reason
+        mocked_g_suite_client.return_value.members.return_value.insert.side_effect = (
+            create_http_error(status=409, reason=error_reason, error=error_reason)
         )
 
         ow4_gsuite_sync = self.ow4_gsuite_sync

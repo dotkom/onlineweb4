@@ -15,6 +15,8 @@ urlpatterns = [
     ),
     url(r"^o/token/$", TokenView.as_view(), name="oauth2_provider_token"),
     url(
-        r"^o/revoke/$", RevokeTokenView.as_view(), name="oauth2_provider_revoke_token",
+        r"^o/revoke/$",
+        RevokeTokenView.as_view(),
+        name="oauth2_provider_revoke_token",
     ),
 ]
