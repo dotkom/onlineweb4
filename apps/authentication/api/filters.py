@@ -1,7 +1,7 @@
 import django_filters
 from watson import search as watson_search
 
-from ..models import OnlineUser
+from ..models import OnlineUser, OnlineGroup, GroupMember
 
 
 class UserFilter(django_filters.FilterSet):
@@ -15,3 +15,13 @@ class UserFilter(django_filters.FilterSet):
     class Meta:
         model = OnlineUser
         fields = ("first_name", "last_name", "rfid", "query")
+
+
+# This is a filter for finding which groups an user is a member of
+def filter_member_user(_, __, value):
+    members = GroupMember.objects.filter(user=value)
+    return OnlineGroup.objects.filter(members__in=members)
+
+
+class OnlineGroupFilter(django_filters.FilterSet):
+    members__user = django_filters.ModelChoiceFilter(queryset=OnlineUser.objects.all(), method=filter_member_user)
