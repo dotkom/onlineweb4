@@ -1,7 +1,7 @@
 import django_filters
 from watson import search as watson_search
 
-from ..models import OnlineUser, OnlineGroup, GroupMember
+from ..models import GroupMember, OnlineGroup, OnlineUser
 
 
 class UserFilter(django_filters.FilterSet):
@@ -24,4 +24,6 @@ def filter_member_user(_, __, value):
 
 
 class OnlineGroupFilter(django_filters.FilterSet):
-    members__user = django_filters.ModelChoiceFilter(queryset=OnlineUser.objects.all(), method=filter_member_user)
+    members__user = django_filters.ModelChoiceFilter(
+        queryset=OnlineUser.objects.all(), method=filter_member_user
+    )
