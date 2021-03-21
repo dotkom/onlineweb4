@@ -120,7 +120,7 @@ make makemigrations
 Note: we run format-linting on our migration files. Luckily we have set up the `make makemigrations` command to also 
 automatically format the created files. So if you use our command you should not need to do anything more. If you 
 are oldschool and prefer running `./manage.py makemigrations` yourself, then you will need to either run `black`
-afterwards, or run `make lint-fix-backend` after creating the migrations, so that they are properly formatted. You
+afterwards, or run `make lint-backend-fix` after creating the migrations, so that they are properly formatted. You
 could also look at the [Makefile](./Makefile) to see how we redirect the output if you want to do so yourself.
 
 ## CI/CD
