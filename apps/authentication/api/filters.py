@@ -1,7 +1,7 @@
 import django_filters
 from watson import search as watson_search
 
-from ..models import GroupMember, OnlineGroup, OnlineUser
+from ..models import OnlineGroup, OnlineUser
 
 
 class UserFilter(django_filters.FilterSet):
