@@ -18,8 +18,10 @@ class UserFilter(django_filters.FilterSet):
 
 
 class OnlineGroupFilter(django_filters.FilterSet):
-    members__user = django_filters.NumberFilter(field_name="members", lookup_expr="user_id")
-    
+    members__user = django_filters.NumberFilter(
+        field_name="members", lookup_expr="user_id"
+    )
+
     class Meta:
         model = OnlineGroup
         fields = ("name_short", "name_long", "parent_group", "group_type")
