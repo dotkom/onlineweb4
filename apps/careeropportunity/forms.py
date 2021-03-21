@@ -53,6 +53,10 @@ class AddCareerOpportunityForm(forms.ModelForm):
         required=False,
         widget=forms.TextInput(attrs={"placeholder": "Velg søknadsfrist"}),
     )
+    deadline_asap = forms.BooleanField(
+        label="Frist er snarest",
+        required=False,
+    )
 
     class Meta:
         model = CareerOpportunity
@@ -67,6 +71,7 @@ class AddCareerOpportunityForm(forms.ModelForm):
             "end",
             "featured",
             "deadline",
+            "deadline_asap",
             "employment",
             "location",
         )
