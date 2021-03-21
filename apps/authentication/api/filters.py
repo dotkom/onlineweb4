@@ -17,13 +17,9 @@ class UserFilter(django_filters.FilterSet):
         fields = ("first_name", "last_name", "rfid", "query")
 
 
-# This is a filter for finding which groups an user is a member of
-def filter_member_user(_, __, value):
-    members = GroupMember.objects.filter(user=value)
-    return OnlineGroup.objects.filter(members__in=members)
-
-
 class OnlineGroupFilter(django_filters.FilterSet):
-    members__user = django_filters.ModelChoiceFilter(
-        queryset=OnlineUser.objects.all(), method=filter_member_user
-    )
+    members__user = django_filters.NumberFilter(field_name="members", lookup_expr="user_id")
+    
+    class Meta:
+        model = OnlineGroup
+        fields = ("name_short", "name_long", "parent_group", "group_type")
