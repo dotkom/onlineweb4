@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install poetry
           poetry install --no-interaction --no-ansi -E prod
-  
+
       - name: Cache node modules
         uses: actions/cache@v1
         env:
@@ -41,7 +41,7 @@ jobs:
 
       - name: npm build
         run: npm run build:prod
-        
+
       - name: Python tests
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -62,7 +62,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-pip-
-  
+
   lint-python:
     runs-on: ubuntu-latest
     steps:
@@ -79,11 +79,11 @@ jobs:
 
       - name: Install python dependencies
         env:
-            POETRY_VIRTUALENVS_CREATE: false
+          POETRY_VIRTUALENVS_CREATE: false
         run: |
           pip install poetry
           poetry install --no-interaction --no-ansi
-  
+
       - name: Python linting
         run: tox -e flake8 -e isort -e black --recreate
 
@@ -160,24 +160,3 @@ jobs:
           poetry export -f requirements.txt > requirements.txt --dev -E prod -E docs --without-hashes
           branch=`echo ${{ github.ref }} | cut -d "/" -f 3- | sed "s/\//\./g"`
           requires.io update-branch -t $REQUIRES_TOKEN -r onlineweb4 -n $branch ./
-
-  superlint:
-    name: Lint everything
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
-      - name: Lint Code Base
-        uses: docker://github/super-linter:v3
-        env:
-          VALIDATE_ALL_CODEBASE: false
-          DEFAULT_BRANCH: main
-          VALIDATE_DOCKER: true
-          VALIDATE_ENV: true
-          VALIDATE_JSON: true
-          VALIDATE_MD: true
-          VALIDATE_BASH: true
-          VALIDATE_YAML: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
