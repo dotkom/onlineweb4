@@ -191,7 +191,7 @@ steps:
     when:
       event:
         - push
-      branch: develop
+      branch: main
     settings:
       host: nansen.online.ntnu.no
       port: 22
