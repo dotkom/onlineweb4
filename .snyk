@@ -1,0 +1,10 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.19.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  'npm:moment:20170905':
+    - eonasdan-bootstrap-datetimepicker > moment:
+        patched: '2021-03-25T15:57:57.979Z'
+    - eonasdan-bootstrap-datetimepicker > moment-timezone > moment:
+        patched: '2021-03-25T15:57:57.979Z'
