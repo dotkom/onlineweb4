@@ -6,6 +6,7 @@
 # SSO / OAuth2 settings
 OAUTH2_SCOPES = {
     "null": "Ingen datatilgang",
+    "openid": "OpenID Connect Scope",
     "read": "DRF Read",
     "write": "DRF Write",
     "authentication.onlineuser.username.read": "Brukernavn (Lesetilgang)",
