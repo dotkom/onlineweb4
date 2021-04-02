@@ -30,6 +30,7 @@ from apps.marks.serializers import (
     SuspensionSerializer,
 )
 from apps.online_oidc_provider.serializers import UserConsentReadOnlySerializer
+from apps.sso.serializers import Oauth2ApplicationConsentSerializer
 from apps.payment.models import (
     Payment,
     PaymentDelay,
@@ -400,6 +401,9 @@ class UserDataSerializer(serializers.ModelSerializer):
 
     # OpenID / Oauth
     user_consents = UserConsentReadOnlySerializer(many=True, source="userconsent_set")
+    application_consents = Oauth2ApplicationConsentSerializer(
+        many=True, source="applicationconsent_set"
+    )
 
     def get_name(self, user: OnlineUser):
         return user.get_full_name()
@@ -467,10 +471,11 @@ class UserDataSerializer(serializers.ModelSerializer):
             "marks",
             "suspensions",
             # OpenID / Oauth
-            "oauth2_provider_grant",
+            "oauth2_provider_grant",  # Oauth2_provider_grant is oauth login attempts
             "oidc_clients_set",
             "sso_client",
             "user_consents",
+            "application_consents",
             # Wiki
             "wiki_attachment_revisions",
             "wiki_article_revisions",

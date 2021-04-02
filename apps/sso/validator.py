@@ -1,8 +1,6 @@
 from oauth2_provider.oauth2_validators import OAuth2Validator
 from .userinfo import Onlineweb4Userinfo
 
-import json
-
 
 class Validator(OAuth2Validator):
     """
