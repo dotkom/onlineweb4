@@ -21,7 +21,7 @@ celery = "~4.4"
 PyMuPDF = "~1.17"
 django-filebrowser = "~3.13"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
-django-crispy-forms = "^1.9"
+django-crispy-forms = "^1.11"
 django-extensions = "^3.0"
 django-dynamic-fixture = "^3.1"
 django-recaptcha = "~2.0"           # Google ReCaptcha
