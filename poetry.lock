@@ -445,7 +445,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "django-filebrowser"
-version = "3.13.1"
+version = "3.13.2"
 description = "Media-Management with Grappelli"
 category = "main"
 optional = false
@@ -2037,7 +2037,8 @@ django-extensions = [
     {file = "django_extensions-3.0.9-py3-none-any.whl", hash = "sha256:dc663652ac9460fd06580a973576820430c6d428720e874ae46b041fa63e0efa"},
 ]
 django-filebrowser = [
-    {file = "django-filebrowser-3.13.1.tar.gz", hash = "sha256:7f14582759bd3d802841468fcb79c1b9c81ea24d55dbf4fdfc42829539dd9060"},
+    {file = "django-filebrowser-3.13.2.tar.gz", hash = "sha256:beeaff08daff2f740bfc1d628a61c655f09fba4c20714eeb0b4cff1e3c4403de"},
+    {file = "django_filebrowser-3.13.2-py2.py3-none-any.whl", hash = "sha256:0e825534b21294fb4cd842773dfbe48cd8f1d4d92b156196cd034c73204cf464"},
 ]
 django-filter = [
     {file = "django-filter-2.3.0.tar.gz", hash = "sha256:11e63dd759835d9ba7a763926ffb2662cf8a6dcb4c7971a95064de34dbc7e5af"},
