@@ -136,27 +136,3 @@ jobs:
 
       - name: less linting
         run: npm run lint-less
-
-  update-requires-io:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.7
-
-      - name: Update Requires.io
-        env:
-          POETRY_VIRTUALENVS_CREATE: false
-          REQUIRES_TOKEN: ${{ secrets.REQUIRES_IO_TOKEN }}
-        # {{ github.ref }} looks like this: "refs/heads/BRANCH_NAME", so we cut of refs/heads/
-        # with the cut-command
-        # requires.io does not support "/" in the branch names, so we replace them with "." using sed
-        run: |
-          pip install poetry requires.io
-          poetry export -f requirements.txt > requirements.txt --dev -E prod -E docs --without-hashes
-          branch=`echo ${{ github.ref }} | cut -d "/" -f 3- | sed "s/\//\./g"`
-          requires.io update-branch -t $REQUIRES_TOKEN -r onlineweb4 -n $branch ./
