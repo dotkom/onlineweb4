@@ -50,6 +50,9 @@ def study(request):
     request.session["dataporten_study_state"] = state
     request.session["dataporten_study_nonce"] = nonce
 
+    # Save referer to see if the request should redirect to old or OWF on callback.
+    request.session["dataporten_study_referer"] = request.META["HTTP_REFERER"]
+
     args = {
         "client_id": DATAPORTEN_CLIENT_ID,
         "response_type": "code",
@@ -80,7 +83,6 @@ def study_callback(request):
         "Fetching study programme for user {}".format(request.user),
         extra={"user": request.user},
     )
-
     client = client_setup(DATAPORTEN_CLIENT_ID, DATAPORTEN_CLIENT_SECRET)
 
     queryparams = request.GET.urlencode()
@@ -189,5 +191,11 @@ def study_callback(request):
             "Det ser ikke ut som du tar informatikkfag. Dersom du mener dette er galt kan du sende inn en søknad "
             "manuelt. Ta gjerne kontakt med dotkom slik at vi kan feilsøke prosessen.",
         )
+
+    # If the request came from OWF, redirect there.
+    if request.session["dataporten_study_referer"] and request.session[
+        "dataporten_study_referer"
+    ].startswith("https://online.ntnu.no"):
+        return redirect("https://online.ntnu.no/profile/settings/membership")
 
     return redirect("profiles_active", active_tab="membership")
