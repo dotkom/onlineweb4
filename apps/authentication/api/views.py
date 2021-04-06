@@ -31,7 +31,7 @@ from apps.authentication.serializers import (
 from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.permissions.drf_permissions import DjangoObjectPermissionOrAnonReadOnly
 
-from .filters import UserFilter
+from .filters import OnlineGroupFilter, UserFilter
 from .permissions import IsSelfOrSuperUser
 from .serializers.user_data import UserDataSerializer
 
@@ -181,6 +181,7 @@ class GroupViewSet(viewsets.ReadOnlyModelViewSet):
 class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     permission_classes = (DjangoObjectPermissionOrAnonReadOnly,)
     queryset = OnlineGroup.objects.all()
+    filterset_class = OnlineGroupFilter
     serializer_classes = {
         "write": OnlineGroupCreateOrUpdateSerializer,
         "read": OnlineGroupReadOnlySerializer,

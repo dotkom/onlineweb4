@@ -49,7 +49,7 @@ Ny karrieremulighet
                                     </a>
                                 </span>
                             </div>
-                        {% elif field.name == 'featured' %}
+                        {% elif field.name == 'featured' or field.name == 'deadline_asap' %}
                             {{ field }}
                         {% else %}
                             {{ field|addclass:"form-control"}}
