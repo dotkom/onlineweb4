@@ -78,7 +78,7 @@ pywebpush = "^1.11.0"
 
 [tool.poetry.dev-dependencies]
 # Testing
-pytest = "~6.0"
+pytest = "~6.2"
 pytest-cov = "~2.10"
 pytest-django = "~4.1"
 factory-boy = "~3.0"
