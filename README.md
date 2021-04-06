@@ -1,5 +1,5 @@
 # Onlineweb 4
-[![Build Status](https://cloud.drone.io/api/badges/dotkom/onlineweb4/status.svg)](https://cloud.drone.io/dotkom/onlineweb4) [![Requirements Status](https://requires.io/enterprise/dotkom/onlineweb4/requirements.svg?branch=develop)](https://requires.io/enterprise/dotkom/onlineweb4/requirements/?branch=develop) [![codecov](https://codecov.io/gh/dotkom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotkom/onlineweb4) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Build Status](https://cloud.drone.io/api/badges/dotkom/onlineweb4/status.svg)](https://cloud.drone.io/dotkom/onlineweb4) [![Requirements Status](https://requires.io/enterprise/dotkom/onlineweb4/requirements.svg?branch=develop)](https://requires.io/enterprise/dotkom/onlineweb4/requirements/?branch=develop) [![codecov](https://codecov.io/gh/dotkom/onlineweb4/branch/develop/graph/badge.svg)](https://codecov.io/gh/dotkom/onlineweb4) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) [![Total alerts](https://img.shields.io/lgtm/alerts/g/dotkom/onlineweb4.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dotkom/onlineweb4/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/dotkom/onlineweb4.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dotkom/onlineweb4/context:python) 
 
 
 ## Frameworks
@@ -120,7 +120,7 @@ make makemigrations
 Note: we run format-linting on our migration files. Luckily we have set up the `make makemigrations` command to also 
 automatically format the created files. So if you use our command you should not need to do anything more. If you 
 are oldschool and prefer running `./manage.py makemigrations` yourself, then you will need to either run `black`
-afterwards, or run `make lint-fix-backend` after creating the migrations, so that they are properly formatted. You
+afterwards, or run `make lint-backend-fix` after creating the migrations, so that they are properly formatted. You
 could also look at the [Makefile](./Makefile) to see how we redirect the output if you want to do so yourself.
 
 ## CI/CD
