@@ -437,11 +437,14 @@ six = "*"
 
 [[package]]
 name = "django-extensions"
-version = "3.0.9"
+version = "3.1.2"
 description = "Extensions for Django"
 category = "main"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
+
+[package.dependencies]
+Django = ">=2.2"
 
 [[package]]
 name = "django-filebrowser"
@@ -1815,7 +1818,7 @@ prod = ["psycopg2-binary", "uwsgi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "cf394ca88e9aee3d6ad402ba8044d05fbbfdfd2d73c751324c01c106e744c3e6"
+content-hash = "28a659bbba1a044de032722660a751647faea02c97f6f248d0427cb5e450a158"
 
 [metadata.files]
 alabaster = [
@@ -2033,8 +2036,8 @@ django-dynamic-fixture = [
     {file = "django-dynamic-fixture-3.1.0.tar.gz", hash = "sha256:e772102ba40f70c2e66470cae85f3874aa992e6b22a0d0c360450f2949b0728d"},
 ]
 django-extensions = [
-    {file = "django-extensions-3.0.9.tar.gz", hash = "sha256:6809c89ca952f0e08d4e0766bc0101dfaf508d7649aced1180c091d737046ea7"},
-    {file = "django_extensions-3.0.9-py3-none-any.whl", hash = "sha256:dc663652ac9460fd06580a973576820430c6d428720e874ae46b041fa63e0efa"},
+    {file = "django-extensions-3.1.2.tar.gz", hash = "sha256:081828e985485662f62a22340c1506e37989d14b927652079a5b7cd84a82368b"},
+    {file = "django_extensions-3.1.2-py3-none-any.whl", hash = "sha256:17f85f4dcdd5eea09b8c4f0bad8f0370bf2db6d03e61b431fa7103fee29888de"},
 ]
 django-filebrowser = [
     {file = "django-filebrowser-3.13.2.tar.gz", hash = "sha256:beeaff08daff2f740bfc1d628a61c655f09fba4c20714eeb0b4cff1e3c4403de"},
