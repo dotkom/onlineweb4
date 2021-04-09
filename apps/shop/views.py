@@ -51,7 +51,7 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
                             status=status.HTTP_400_BAD_REQUEST)
         user = get_object_or_404(User, pk=pk)
         orders = OrderLine.objects.filter(user=user)
-        serializer = UserOrderLineSerializer(orders)
+        serializer = UserOrderLineSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
