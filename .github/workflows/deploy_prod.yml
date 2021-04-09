@@ -2,7 +2,7 @@ name: Deploy to production
 on:
   push:
     branches:
-      - develop
+      - main
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -13,10 +13,10 @@ jobs:
           fetch-depth: 0
           
       - name: Bump version and push tag
-        uses: mathieudutour/github-tag-action@v4.5
+        uses: mathieudutour/github-tag-action@v5.4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_branches: develop
+          release_branches: main
 
       - name: executing deploy script
         uses: appleboy/ssh-action@master
