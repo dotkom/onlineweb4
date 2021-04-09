@@ -184,7 +184,9 @@ class ShopOrderLinesTestCase(OAuth2TestCase):
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
         # request with token
-        response = self.client.get(self.get_user_orders_url() + f"?pk={pk}", **self.generate_headers())
+        response = self.client.get(
+            self.get_user_orders_url() + f"?pk={pk}", **self.generate_headers()
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
