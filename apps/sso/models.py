@@ -16,6 +16,10 @@ class Client(AbstractApplication):
     """
 
     scopes = models.TextField(verbose_name=_("Tilganger"), blank=True)
+    website_url = models.TextField(blank=True)
+    terms_url = models.TextField(blank=True)
+    logo = model.ImageField()
+    contact_email = model.TextField(blank=True)
 
     def get_scopes(self):
         """
