@@ -2,6 +2,7 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from rest_framework import mixins
 from oauth2_provider.views.base import AuthorizationView as DefaultAuthorizationView
 
 from apps.sso.serializers import (
@@ -19,6 +20,8 @@ from oauth2_provider.models import (
     get_grant_model,
 )
 from apps.sso.models import ApplicationConsent
+
+from apps.sso.permissions import IsOwnerOrSuperUser
 
 _log = logging.getLogger("SSO")
 
@@ -47,7 +50,7 @@ class Oauth2ClientViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class Oauth2AccessViewSet(viewsets.ModelViewSet):
+class Oauth2AccessViewSet(viewsets.ReadOnlyModelViewSet):
     """
     An `Access Token` is issued on successfull login and grants access to our API endpoints.
     """
@@ -57,7 +60,7 @@ class Oauth2AccessViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class Oauth2RefreshTokenViewSet(viewsets.ModelViewSet):
+class Oauth2RefreshTokenViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A `Refresh Token` is an issued token which can be used 
     for generating new access tokens without asking the user to consent again.
@@ -68,7 +71,7 @@ class Oauth2RefreshTokenViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class Oauth2GrantViewSet(viewsets.ModelViewSet):
+class Oauth2GrantViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A `Grant` represents a login attempt, where "application" is the client which was tried to log into.
     """
@@ -78,7 +81,14 @@ class Oauth2GrantViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class Oauth2ConsentViewSet(viewsets.ModelViewSet):
+class Oauth2ConsentViewSet(
+    mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
+):
     serializer_class = Oauth2ApplicationConsentSerializer
-    queryset = ApplicationConsent.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsOwnerOrSuperUser]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            return ApplicationConsent.objects.all()
+        return ApplicationConsent.objects.filter(user=user)
