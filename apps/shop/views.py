@@ -48,7 +48,7 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
         pk = self.request.query_params.get("pk")
         if not pk:
             return Response(
-                "Request must include a 'pk' query parameter where pk is a the users user id",
+                "Request must include a 'pk' query parameter where 'pk' is the users user id",
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user = get_object_or_404(User, pk=pk)
