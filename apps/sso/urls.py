@@ -17,6 +17,9 @@ urlpatterns = [
 
 
 router = SharedAPIRootRouter()
+router.register(
+    "sso/admin/clients", views.Oauth2ClientAdminViewSet, basename="sso_admin-clients"
+)
 router.register("sso/clients", views.Oauth2ClientViewSet, basename="sso_clients")
 router.register("sso/access", views.Oauth2AccessViewSet, basename="sso_access")
 router.register(
