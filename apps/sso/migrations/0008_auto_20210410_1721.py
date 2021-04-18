@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sso', '0007_auto_20210410_1718'),
+        ("sso", "0007_auto_20210410_1718"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='client',
-            name='logo',
-            field=models.ImageField(blank=True, default='', upload_to='oauth2_provider/clients'),
+            model_name="client",
+            name="logo",
+            field=models.ImageField(
+                blank=True, default="", upload_to="oauth2_provider/clients"
+            ),
         ),
     ]

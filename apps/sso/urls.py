@@ -1,6 +1,7 @@
-from django.conf.urls import url, include
-from apps.sso import endpoints, views
+from django.conf.urls import include, url
+
 from apps.api.utils import SharedAPIRootRouter
+from apps.sso import endpoints, views
 
 app_name = "sso"
 

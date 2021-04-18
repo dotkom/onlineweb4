@@ -2,30 +2,28 @@ import logging
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from rest_framework import mixins, status
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from oauth2_provider.views.base import AuthorizationView as DefaultAuthorizationView
-
-from apps.common.rest_framework.mixins import MultiSerializerMixin
-from apps.sso.serializers import (
-    Oauth2ClientSerializer,
-    Oauth2AccessReadOwnSerializer,
-    Oauth2ClientNonSensitiveSerializer,
-    Oauth2RefreshTokenSerializer,
-    Oauth2GrantSerializer,
-    Oauth2ApplicationConsentSerializer,
-)
-from rest_framework import viewsets
 from oauth2_provider.models import (
     get_access_token_model,
     get_application_model,
-    get_refresh_token_model,
     get_grant_model,
+    get_refresh_token_model,
 )
-from apps.sso.models import ApplicationConsent
+from oauth2_provider.views.base import AuthorizationView as DefaultAuthorizationView
+from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
+from apps.common.rest_framework.mixins import MultiSerializerMixin
+from apps.sso.models import ApplicationConsent
 from apps.sso.permissions import TokenHasScopeOrSuperUser
+from apps.sso.serializers import (
+    Oauth2AccessReadOwnSerializer,
+    Oauth2ApplicationConsentSerializer,
+    Oauth2ClientNonSensitiveSerializer,
+    Oauth2ClientSerializer,
+    Oauth2GrantSerializer,
+    Oauth2RefreshTokenSerializer,
+)
 
 _log = logging.getLogger("SSO")
 

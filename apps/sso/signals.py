@@ -1,5 +1,6 @@
-from apps.sso.models import ApplicationConsent
 from oauth2_provider.signals import app_authorized
+
+from apps.sso.models import ApplicationConsent
 
 
 def handle_app_authorized(sender, request, token, **kwargs):

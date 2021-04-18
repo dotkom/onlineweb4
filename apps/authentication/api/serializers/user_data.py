@@ -30,7 +30,6 @@ from apps.marks.serializers import (
     SuspensionSerializer,
 )
 from apps.online_oidc_provider.serializers import UserConsentReadOnlySerializer
-from apps.sso.serializers import Oauth2ApplicationConsentSerializer
 from apps.payment.models import (
     Payment,
     PaymentDelay,
@@ -41,6 +40,7 @@ from apps.payment.models import (
 from apps.profiles.serializers import PrivacySerializer
 from apps.shop.models import Order as ShopOrder
 from apps.shop.models import OrderLine as ShopOrderLine
+from apps.sso.serializers import Oauth2ApplicationConsentSerializer
 from apps.webshop.models import Order as WebshopOrder
 from apps.webshop.models import OrderLine as WebshopOrderLine
 from apps.webshop.models import Product as WebshopProduct

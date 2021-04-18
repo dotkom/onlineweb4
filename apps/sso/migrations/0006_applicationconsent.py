@@ -9,21 +9,46 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('sso', '0005_auto_20210321_1621'),
+        ("sso", "0005_auto_20210321_1621"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ApplicationConsent',
+            name="ApplicationConsent",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_given', models.DateTimeField(auto_now_add=True, verbose_name='Date Given')),
-                ('approved_scopes', models.TextField(blank=True, verbose_name='Tilganger')),
-                ('client', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.OAUTH2_PROVIDER_APPLICATION_MODEL)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Bruker')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "date_given",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Date Given"),
+                ),
+                (
+                    "approved_scopes",
+                    models.TextField(blank=True, verbose_name="Tilganger"),
+                ),
+                (
+                    "client",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Bruker",
+                    ),
+                ),
             ],
-            options={
-                'unique_together': {('user', 'client')},
-            },
+            options={"unique_together": {("user", "client")},},
         ),
     ]

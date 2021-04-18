@@ -6,28 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sso', '0006_applicationconsent'),
+        ("sso", "0006_applicationconsent"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='client',
-            name='contact_email',
+            model_name="client",
+            name="contact_email",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='client',
-            name='logo',
-            field=models.ImageField(blank=True, default='', upload_to='oidc_provider/clients'),
+            model_name="client",
+            name="logo",
+            field=models.ImageField(
+                blank=True, default="", upload_to="oidc_provider/clients"
+            ),
         ),
         migrations.AddField(
-            model_name='client',
-            name='terms_url',
-            field=models.TextField(blank=True),
+            model_name="client", name="terms_url", field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='client',
-            name='website_url',
-            field=models.TextField(blank=True),
+            model_name="client", name="website_url", field=models.TextField(blank=True),
         ),
     ]

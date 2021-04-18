@@ -2,9 +2,9 @@
 #
 # Created by 'myth' on 6/25/15
 
+from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext as _
-from django.conf import settings
 from oauth2_provider.models import AbstractApplication
 
 

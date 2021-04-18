@@ -1,5 +1,5 @@
-from rest_framework import permissions
 from oauth2_provider.contrib.rest_framework import TokenHasScope
+from rest_framework import permissions
 
 
 class IsOwnerOrSuperUser(permissions.BasePermission):

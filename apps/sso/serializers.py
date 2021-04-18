@@ -1,12 +1,13 @@
-from rest_framework import serializers
-from oauth2_provider.models import (
-    get_application_model,
-    get_access_token_model,
-    get_refresh_token_model,
-    get_grant_model,
-)
-from apps.sso.models import ApplicationConsent
 from oauth2_provider.generators import generate_client_secret
+from oauth2_provider.models import (
+    get_access_token_model,
+    get_application_model,
+    get_grant_model,
+    get_refresh_token_model,
+)
+from rest_framework import serializers
+
+from apps.sso.models import ApplicationConsent
 
 # TODO:
 # Remove oauth2 from names, find a better naming
