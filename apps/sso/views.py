@@ -7,9 +7,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from oauth2_provider.views.base import AuthorizationView as DefaultAuthorizationView
 
+from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.sso.serializers import (
     Oauth2ClientReadOwnSerializer,
     Oauth2AccessReadOwnSerializer,
+    Oauth2ClientNonSensitiveSerializer,
     Oauth2RefreshTokenSerializer,
     Oauth2GrantSerializer,
     Oauth2ApplicationConsentSerializer,
@@ -47,7 +49,9 @@ class AuthorizationView(DefaultAuthorizationView):
 
 
 class Oauth2ClientViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = Oauth2ClientReadOwnSerializer
+    serializer_class = Oauth2ClientNonSensitiveSerializer
+    queryset = get_application_model().objects.all()
+    required_scopes = ["authentication:admin"]
 
     @action(detail=True, methods=["DELETE"])
     def revoke(self, request, pk=None):
@@ -59,16 +63,17 @@ class Oauth2ClientViewSet(viewsets.ReadOnlyModelViewSet):
             refresh_token.revoke()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-class Oauth2ClientAdminViewSet(viewsets.ModelViewSet):
-    """
-    These endpoints require the scope `authentication:admin` that is reserved for client-administration applications.
-    """
-
-    serializer_class = Oauth2ClientReadOwnSerializer
-    queryset = get_application_model().objects.all()
-    permission_classes = [TokenHasScopeOrSuperUser]
-    required_scopes = ["authentication:admin"]
+    @action(
+        detail=True, methods=["POST"], permission_classes=[TokenHasScopeOrSuperUser],
+    )
+    def confidential(self, request, pk=None):
+        """
+        Reserved for Client Admin apps, restricted by the `authentication:admin`-scope.
+        This scope is given per-request basis as it is considered sensitive security information.
+        """
+        queryset = get_application_model().objects.get(pk=pk)
+        serializer = Oauth2ClientReadOwnSerializer(queryset)
+        return Response(serializer.data)
 
 
 class Oauth2AccessViewSet(viewsets.ReadOnlyModelViewSet):

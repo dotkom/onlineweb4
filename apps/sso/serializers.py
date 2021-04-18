@@ -11,6 +11,28 @@ from apps.sso.models import ApplicationConsent
 # Remove oauth2 from names, find a better naming
 
 
+class Oauth2ClientNonSensitiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_application_model()
+        fields = [
+            "id",
+            "client_id",
+            "client_type",
+            "authorization_grant_type",
+            "name",
+            "skip_authorization",
+            "created",
+            "updated",
+            "algorithm",
+            "scopes",
+            "website_url",
+            "terms_url",
+            "logo",
+            "contact_email",
+            "user",
+        ]
+
+
 class Oauth2ClientReadOwnSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_application_model()  # Allows for swappable application model
