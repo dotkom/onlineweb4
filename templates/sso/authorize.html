@@ -46,7 +46,9 @@
                 </div>
             </form>
             <section id="sso-app-display">
+                {% if application.logo %}
                 <img src="{{ application.logo.url }}"/>
+                {% endif %}
                 <h4>{{ application.name }} </h4>
             </section>
         </div>
