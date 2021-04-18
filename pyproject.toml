@@ -35,7 +35,7 @@ APScheduler = "~3.6"                # Scheduler
 redwine = { git = "https://github.com/dotkom/redwine.git", rev = "1.3.2" }
 reportlab = "~3.5"
 pdfdocument = "~4.0"
-Unidecode = "~1.1"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
+Unidecode = "~1.2"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux = "~1.0"
 django-cors-headers = "~3.4"        # Enable CORS for Nibble
 django-datetime-widget = { git = "https://github.com/oleast/django-datetime-widget.git", rev = "95a5ba4738853d1ed4081e1e33e1600cba984aad" }
