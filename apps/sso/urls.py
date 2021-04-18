@@ -17,7 +17,13 @@ urlpatterns = [
 
 
 router = SharedAPIRootRouter()
-router.register("sso/clients", views.Oauth2ClientViewSet, basename="sso_clients")
+router.register("sso/public", views.Oauth2ClientPublicViewSet, basename="sso_public")
+router.register("sso/clients", views.Oauth2ClientOwnViewSet, basename="sso_clients")
+router.register(
+    "sso/confidential",
+    views.Oauth2ClientConfidentialViewSet,
+    basename="sso_clients_confidential",
+)
 router.register("sso/access", views.Oauth2AccessViewSet, basename="sso_access")
 router.register(
     "sso/refresh-tokens", views.Oauth2RefreshTokenViewSet, basename="sso_refresh-tokens"

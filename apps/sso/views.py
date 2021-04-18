@@ -9,7 +9,7 @@ from oauth2_provider.views.base import AuthorizationView as DefaultAuthorization
 
 from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.sso.serializers import (
-    Oauth2ClientReadOwnSerializer,
+    Oauth2ClientSerializer,
     Oauth2AccessReadOwnSerializer,
     Oauth2ClientNonSensitiveSerializer,
     Oauth2RefreshTokenSerializer,
@@ -48,10 +48,30 @@ class AuthorizationView(DefaultAuthorizationView):
 # API Views
 
 
-class Oauth2ClientViewSet(viewsets.ReadOnlyModelViewSet):
+class Oauth2ClientPublicViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Basic information regarding our clients are considered public information.
+    """
+
     serializer_class = Oauth2ClientNonSensitiveSerializer
     queryset = get_application_model().objects.all()
-    required_scopes = ["authentication:admin"]
+
+
+class Oauth2ClientOwnViewSet(
+    viewsets.GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+):
+    """
+    Methods for editing own clients, does not require any scopes, but only the owner can edit.
+    """
+
+    serializer_class = Oauth2ClientNonSensitiveSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return get_application_model().objects.filter(user=user)
 
     @action(detail=True, methods=["DELETE"])
     def revoke(self, request, pk=None):
@@ -63,17 +83,20 @@ class Oauth2ClientViewSet(viewsets.ReadOnlyModelViewSet):
             refresh_token.revoke()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        detail=True, methods=["POST"], permission_classes=[TokenHasScopeOrSuperUser],
-    )
-    def confidential(self, request, pk=None):
-        """
-        Reserved for Client Admin apps, restricted by the `authentication:admin`-scope.
-        This scope is given per-request basis as it is considered sensitive security information.
-        """
-        queryset = get_application_model().objects.get(pk=pk)
-        serializer = Oauth2ClientReadOwnSerializer(queryset)
-        return Response(serializer.data)
+
+class Oauth2ClientConfidentialViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    These endpoints are reserved for the `authentication:admin`-scopes which is given per-request basis.
+    They are intended for apps able to transmit sensitive information only.
+    """
+
+    serializer_class = Oauth2ClientSerializer
+    permission_classes = [TokenHasScopeOrSuperUser]
+    required_scopes = ["authentication:admin"]
+
+    def get_queryset(self):
+        user = self.request.user
+        return get_application_model().objects.filter(user=user)
 
 
 class Oauth2AccessViewSet(viewsets.ReadOnlyModelViewSet):
@@ -116,13 +139,16 @@ class Oauth2GrantViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False, methods=["GET"])
     def get_own(self, request):
-        return get_grant_model().objects.filter(user=request.user)
+        queryset = get_grant_model().objects.filter(user=request.user)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class Oauth2ConsentViewSet(
     mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
 ):
     serializer_class = Oauth2ApplicationConsentSerializer
+    queryset = ApplicationConsent.objects.all()
     permission_classes = [TokenHasScopeOrSuperUser]
 
     @action(detail=False, methods=["GET"])

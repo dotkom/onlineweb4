@@ -14,6 +14,7 @@ OAUTH2_SCOPES = {
     "email": "Din registrerte e-post.",
     "phone": "Ditt registrerte telefonnummer.",
     "online": "Informasjon vedrørende ditt medlemskap i Linjeforeningen Online.",
+    "authentication:admin": "Administrasjon av dine klienter",
     "authentication.onlineuser.username.read": "Brukernavn (Lesetilgang)",
     "authentication.onlineuser.first_name.read": "Fornavn (Lesetilgang)",
     "authentication.onlineuser.last_name.read": "Etternavn (Lesetilgang)",
