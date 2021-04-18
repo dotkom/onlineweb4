@@ -6,4 +6,5 @@ class SsoConfig(AppConfig):
     verbose_name = "Sso"
 
     def ready(self):
-        from apps.sso.signals import handle_app_authorized
+        # Is attached just by importations, thus ignored flake-rule
+        from apps.sso.signals import handle_app_authorized  # noqa: F401

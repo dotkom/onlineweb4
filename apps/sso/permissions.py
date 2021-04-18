@@ -1,4 +1,3 @@
-from oauth2_provider.contrib.rest_framework import TokenHasScope
 from rest_framework import permissions
 
 

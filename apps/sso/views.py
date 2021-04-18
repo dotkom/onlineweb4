@@ -13,7 +13,6 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.sso.models import ApplicationConsent
 from apps.sso.permissions import TokenHasScopeOrSuperUser
 from apps.sso.serializers import (
