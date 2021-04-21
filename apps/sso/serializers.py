@@ -85,7 +85,25 @@ class Oauth2ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_application_model()  # Allows for swappable application model
-        fields = "__all__"
+        fields = [
+            "id",
+            "redirect_uris",
+            "client_id",
+            "client_type",
+            "authorization_grant_type",
+            "client_secret",
+            "name",
+            "skip_authorization",
+            "created",
+            "updated",
+            "algorithm",
+            "scopes",
+            "website_url",
+            "terms_url",
+            "logo",
+            "contact_email",
+            "user"
+        ]
 
     def get_redirect_uris(self, obj):
         redirect_uris_string = obj.redirect_uris
@@ -97,24 +115,61 @@ class Oauth2ClientSerializer(serializers.ModelSerializer):
 
 
 class Oauth2AccessReadOwnSerializer(serializers.ModelSerializer):
+    """
+    This should only be given to the owner or a superuser.
+    Used for getting non-sensitive information to be able to see if an application can currently get data on your behalf.
+    """
     class Meta:
         model = get_access_token_model()
-        fields = "__all__"
+        fields = [
+            "id",
+            "scope",
+            "application",
+            "created",
+            "expired",
+            "user"
+        ]
 
 
 class Oauth2RefreshTokenSerializer(serializers.ModelSerializer):
+    """
+    This should only be given to the owner or a superuser.
+    Used for getting information to be able to see if an application can keep querying for access tokens on your behalf.
+    """
     class Meta:
         model = get_refresh_token_model()
-        fields = "__all__"
+        fields = [
+            "id",
+            "created",
+            "updated",
+            "revoked",
+            "user",
+            "application"
+        ]
 
 
 class Oauth2GrantSerializer(serializers.ModelSerializer):
+    """
+    This should only be given to the owner or a superuser.
+    It represents a login attempt, but contains no information regarding whether it was successful or not.
+    """
     class Meta:
         model = get_grant_model()
-        fields = "__all__"
+        fields = [
+            "id",
+            "user",
+            "application",
+            "created"
+        ]
 
 
 class Oauth2ApplicationConsentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationConsent
-        fields = "__all__"
+        fields = [
+            "id",
+            "date_given",
+            "approved_scopes",
+            "user",
+            "client"
+        ]
