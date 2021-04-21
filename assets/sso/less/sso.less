@@ -5,7 +5,8 @@
 
 body,
 html {
-  height: 100%;
+  min-height: 100%;
+  background-color: white;
 }
 
 #sso-panel {
@@ -43,7 +44,8 @@ html {
     height: 50%;
     width: 100%;
     border-radius: 15px 15px 0 0;
-    box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.15),
+    box-shadow:
+      0 6px 10px 0 rgba(0, 0, 0, 0.15),
       0 6px 10px 0 rgba(0, 0, 0, 0.11);
   }
 }
@@ -73,7 +75,7 @@ html {
     text-align: center;
     font-size: 16px;
 
-    &:after {
+    &::after {
       content: ' ';
       display: block;
       margin: 10px auto;
