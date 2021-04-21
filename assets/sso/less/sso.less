@@ -25,6 +25,7 @@ html {
   justify-content: center;
   position: relative;
   height: 110px;
+
   img {
     background-color: #004b80;
     border-radius: 50% 50%;
@@ -33,6 +34,7 @@ html {
     padding: 10px;
     z-index: 1; // To stay on top of the empty div with blue background named blue-header-top
   }
+
   #sso-blue-header-top {
     position: absolute;
     bottom: 0;
@@ -51,10 +53,11 @@ html {
   z-index: 1; // For staying on top of the shadow from the header
   box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.15), 0 6px 10px 0 rgba(0, 0, 0, 0.11);
   background-color: #eee;
-  padding: 20px 20px 0px 20px;
+  padding: 20px 20px 0 20px;
   border: 4px #004b80 solid;
   border-top: none;
   border-radius: 0 0 15px 15px;
+
   & > h4 {
     text-align: center;
     margin-top: 5px;
@@ -69,6 +72,7 @@ html {
   & > section > p {
     text-align: center;
     font-size: 16px;
+
     &:after {
       content: ' ';
       display: block;
@@ -77,6 +81,7 @@ html {
       border-bottom: 1px #636363 solid;
     }
   }
+
   .sso-permissions {
     background-color: #fff;
     padding: 15px;
@@ -96,7 +101,7 @@ html {
 }
 
 #sso-app-display {
-  padding: 20px 0px 5px;
+  padding: 20px 0 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
