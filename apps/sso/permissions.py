@@ -10,7 +10,6 @@ class IsOwnerOrSuperUser(permissions.BasePermission):
 
 class TokenHasScopeOrSuperUser(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
-        print("user: ", request.user)
         token = request.auth
         user = request.user
         if user.is_authenticated and user.is_superuser:
