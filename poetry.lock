@@ -143,7 +143,7 @@ d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
 name = "bleach"
-version = "3.1.5"
+version = "3.3.0"
 description = "An easy safelist-based HTML-sanitizing tool."
 category = "main"
 optional = false
@@ -533,14 +533,14 @@ django-js-asset = "*"
 
 [[package]]
 name = "django-nyt"
-version = "1.1.5"
+version = "1.2"
 description = "A pluggable notification system written for the Django framework."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-django = ">=1.11,<3.1"
+django = ">=2.2,<3.3"
 
 [[package]]
 name = "django-oauth-toolkit"
@@ -1777,26 +1777,26 @@ python-versions = "*"
 
 [[package]]
 name = "wiki"
-version = "0.6b1"
+version = "0.7.5"
 description = "A wiki system written for the Django framework."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-bleach = ">=3.1.0,<3.2"
-Django = ">=2.1,<3.1"
+bleach = ">=3.3.0,<3.4"
+Django = ">=2.1,<3.3"
 django-mptt = ">=0.11,<0.12"
-django-nyt = ">=1.1.5,<1.2"
+django-nyt = ">=1.2,<1.3"
 django-sekizai = ">=0.10"
-Markdown = ">=3.1,<3.2.0"
+Markdown = ">=3.1,<3.3"
 Pillow = "*"
 sorl-thumbnail = ">=12.6.2,<13"
 
 [package.extras]
-devel = ["django-functest (>=1.0.3,<1.1)", "pytest (>=5.3,<5.4)", "pytest-django", "pytest-cov", "pytest-pythonpath", "flake8 (>=3.7,<3.8)", "flake8-isort", "pre-commit"]
-test = ["django-functest (>=1.0.3,<1.1)", "pytest (>=5.3,<5.4)", "pytest-django", "pytest-cov", "pytest-pythonpath"]
-testlint = ["flake8 (>=3.7,<3.8)", "flake8-isort"]
+devel = ["django-functest (>=1.0.3,<1.1)", "pytest (>=5.3,<5.4)", "pytest-django", "pytest-cov", "coverage", "codecov", "pytest-pythonpath", "flake8 (>=3.7,<3.8)", "black (>=20.8b1,<20.9)", "pre-commit"]
+test = ["django-functest (>=1.0.3,<1.1)", "pytest (>=5.3,<5.4)", "pytest-django", "pytest-cov", "coverage", "codecov", "pytest-pythonpath"]
+testlint = ["flake8 (>=3.7,<3.8)", "black (>=20.8b1,<20.9)", "pre-commit"]
 transifex = ["transifex-client"]
 
 [[package]]
@@ -1818,7 +1818,7 @@ prod = ["psycopg2-binary", "uwsgi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "c542af816ac897cdf387f8793e5207fed54b85caa6db664a546f4bffb2e0917b"
+content-hash = "82fbab6c4acb9462a507732cbbf19ac5ef300e53b70192383cb4e003f0776027"
 
 [metadata.files]
 alabaster = [
@@ -1865,8 +1865,8 @@ black = [
     {file = "black-19.10b0.tar.gz", hash = "sha256:c2edb73a08e9e0e6f65a0e6af18b059b8b1cdd5bef997d7a0b181df93dc81539"},
 ]
 bleach = [
-    {file = "bleach-3.1.5-py2.py3-none-any.whl", hash = "sha256:2bce3d8fab545a6528c8fa5d9f9ae8ebc85a56da365c7f85180bfe96a35ef22f"},
-    {file = "bleach-3.1.5.tar.gz", hash = "sha256:3c4c520fdb9db59ef139915a5db79f8b51bc2a7257ea0389f30c846883430a4b"},
+    {file = "bleach-3.3.0-py2.py3-none-any.whl", hash = "sha256:6123ddc1052673e52bab52cdc955bcb57a015264a1c57d37bea2f6b817af0125"},
+    {file = "bleach-3.3.0.tar.gz", hash = "sha256:98b3170739e5e83dd9dc19633f074727ad848cbedb6026708c8ac2d3b697a433"},
 ]
 cachetools = [
     {file = "cachetools-4.1.1-py3-none-any.whl", hash = "sha256:513d4ff98dd27f85743a8dc0e92f55ddb1b49e060c2d5961512855cda2c01a98"},
@@ -2071,8 +2071,8 @@ django-mptt = [
     {file = "django_mptt-0.11.0-py2.py3-none-any.whl", hash = "sha256:90eb236eb4f1a92124bd7c37852bbe09c0d21158477cc237556d59842a91c509"},
 ]
 django-nyt = [
-    {file = "django-nyt-1.1.5.tar.gz", hash = "sha256:b16bffcfcb468f7b5c70f61de79294a88b7df63859675721d3417507e3440d15"},
-    {file = "django_nyt-1.1.5-py3-none-any.whl", hash = "sha256:a696a52a0b729465c062b4808d2ad8c43b439561b2f9654328040c646abb3732"},
+    {file = "django-nyt-1.2.tar.gz", hash = "sha256:bca34c913626505b5093536aaba423a33b1123dc355151097f2428db075d2c70"},
+    {file = "django_nyt-1.2-py3-none-any.whl", hash = "sha256:6b183a416aef29507d5442331206cc421a0b73e0405cb7283a762b90439a5d3c"},
 ]
 django-oauth-toolkit = [
     {file = "django-oauth-toolkit-1.3.2.tar.gz", hash = "sha256:28508f83385ab4313936ddedfb310eaa8a1dcb737153d2956383ce47e75c2fab"},
@@ -2788,8 +2788,8 @@ webencodings = [
     {file = "webencodings-0.5.1.tar.gz", hash = "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"},
 ]
 wiki = [
-    {file = "wiki-0.6b1-py3-none-any.whl", hash = "sha256:3cc563d098cfcd7046f0ecbf4c085735e2600e3b93d26100e8015ef65959983e"},
-    {file = "wiki-0.6b1.tar.gz", hash = "sha256:275304dbcc8e8087d88a7cd43fb933c58623984d57e42327fc9a10ee15a219e7"},
+    {file = "wiki-0.7.5-py3-none-any.whl", hash = "sha256:a84cd2ddb9a7e3fed1767b04c7fdc99e7a70792326b360afcdaa83467d42deaa"},
+    {file = "wiki-0.7.5.tar.gz", hash = "sha256:bf1482a369009947106ca2bb32c899412363e1838962bc4d8b832c86609b739c"},
 ]
 zipp = [
     {file = "zipp-3.3.0-py3-none-any.whl", hash = "sha256:eed8ec0b8d1416b2ca33516a37a08892442f3954dee131e92cfd92d8fe3e7066"},
