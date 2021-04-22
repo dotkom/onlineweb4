@@ -426,7 +426,7 @@ resolved_reference = "95a5ba4738853d1ed4081e1e33e1600cba984aad"
 
 [[package]]
 name = "django-dynamic-fixture"
-version = "3.1.0"
+version = "3.1.1"
 description = "A full library to create dynamic model instances for testing purposes."
 category = "main"
 optional = false
@@ -2033,7 +2033,7 @@ django-crispy-forms = [
 ]
 django-datetime-widget = []
 django-dynamic-fixture = [
-    {file = "django-dynamic-fixture-3.1.0.tar.gz", hash = "sha256:e772102ba40f70c2e66470cae85f3874aa992e6b22a0d0c360450f2949b0728d"},
+    {file = "django-dynamic-fixture-3.1.1.tar.gz", hash = "sha256:90d9d68ec373dce97a4a9ba3ec6a39cf10918e9c222fdf231074cfb668d14ea2"},
 ]
 django-extensions = [
     {file = "django-extensions-3.1.2.tar.gz", hash = "sha256:081828e985485662f62a22340c1506e37989d14b927652079a5b7cd84a82368b"},
