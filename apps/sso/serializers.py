@@ -11,11 +11,13 @@ from apps.sso.models import ApplicationConsent
 
 # Custom fields
 
+
 class ListOrStringListField(serializers.Field):
     """
     Accepts either a list, space-separated string or new-line separated string.
     Returns a list for retrieve/list methods.
     """
+
     def to_representation(self, value):
         return value.split()
 
@@ -27,7 +29,9 @@ class ListOrStringListField(serializers.Field):
         else:
             raise ValidationError("Incorrect format")
 
+
 # Serializers
+
 
 class SSOClientNonSensitiveSerializer(serializers.ModelSerializer):
     """
@@ -53,11 +57,7 @@ class SSOClientNonSensitiveSerializer(serializers.ModelSerializer):
             "contact_email",
             "user",
         ]
-        read_only_fields = [
-            "algorithm"
-            "scopes",
-            "user"
-        ]
+        read_only_fields = ["algorithm" "scopes", "user"]
 
     def create(self, validated_data):
         client_secret = ""
@@ -72,12 +72,11 @@ class SSOClientNonSensitiveSerializer(serializers.ModelSerializer):
         return client
 
 
-
 class SSOClientConfidentialSerializer(serializers.ModelSerializer):
     redirect_uris = ListOrStringListField()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     client_type = serializers.ChoiceField(
-        choices=["public", "confidential"], allow_blank=True, default="public" 
+        choices=["public", "confidential"], allow_blank=True, default="public"
     )
 
     class Meta:
@@ -99,9 +98,8 @@ class SSOClientConfidentialSerializer(serializers.ModelSerializer):
             "terms_url",
             "logo",
             "contact_email",
-            "user"
+            "user",
         ]
-
 
     def create(self, validated_data):
         client_secret = ""
@@ -110,7 +108,7 @@ class SSOClientConfidentialSerializer(serializers.ModelSerializer):
         data = {
             **validated_data,
             "client_secret": client_secret,
-            "redirect_uris": redirect_uris
+            "redirect_uris": redirect_uris,
         }
         client = get_application_model().objects.create(**data)
         client.save()
@@ -125,10 +123,10 @@ class SSOClientConfidentialSerializer(serializers.ModelSerializer):
             and "openid" in validated_data.get("scopes")
         )
         algorithm = "RS256" if had_oidc_enabled or will_enable_oidc else ""
-        
+
         redirect_uris = validated_data.get("redirect_uris")
         print("Redirect uris: ", redirect_uris)
-        
+
         if (
             validated_data.get("client_type") == "confidential"
             and not instance.client_secret
@@ -153,16 +151,10 @@ class SSOAccessReadOwnSerializer(serializers.ModelSerializer):
     This should only be given to the owner or a superuser.
     Used for getting non-sensitive information to be able to see if an application can currently get data on your behalf.
     """
+
     class Meta:
         model = get_access_token_model()
-        fields = [
-            "id",
-            "scope",
-            "application",
-            "created",
-            "expires",
-            "user"
-        ]
+        fields = ["id", "scope", "application", "created", "expires", "user"]
 
 
 class SSORefreshTokenSerializer(serializers.ModelSerializer):
@@ -170,16 +162,10 @@ class SSORefreshTokenSerializer(serializers.ModelSerializer):
     This should only be given to the owner or a superuser.
     Used for getting information to be able to see if an application can keep querying for access tokens on your behalf.
     """
+
     class Meta:
         model = get_refresh_token_model()
-        fields = [
-            "id",
-            "created",
-            "updated",
-            "revoked",
-            "user",
-            "application"
-        ]
+        fields = ["id", "created", "updated", "revoked", "user", "application"]
 
 
 class SSOGrantSerializer(serializers.ModelSerializer):
@@ -187,29 +173,13 @@ class SSOGrantSerializer(serializers.ModelSerializer):
     This should only be given to the owner or a superuser.
     It represents a login attempt, but contains no information regarding whether it was successful or not.
     """
+
     class Meta:
         model = get_grant_model()
-        fields = [
-            "id",
-            "user",
-            "application",
-            "created"
-        ]
+        fields = ["id", "user", "application", "created"]
 
 
 class SSOApplicationConsentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationConsent
-        fields = [
-            "id",
-            "date_given",
-            "approved_scopes",
-            "user",
-            "client"
-        ]
-
-
-    
-
-
-    
+        fields = ["id", "date_given", "approved_scopes", "user", "client"]

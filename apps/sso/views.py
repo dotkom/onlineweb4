@@ -11,16 +11,16 @@ from oauth2_provider.models import (
 from oauth2_provider.views.base import AuthorizationView as DefaultAuthorizationView
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from apps.sso.models import ApplicationConsent
 from apps.sso.permissions import TokenHasScopeOrSuperUser
 from apps.sso.serializers import (
     SSOAccessReadOwnSerializer,
     SSOApplicationConsentSerializer,
-    SSOClientNonSensitiveSerializer,
     SSOClientConfidentialSerializer,
+    SSOClientNonSensitiveSerializer,
     SSOGrantSerializer,
     SSORefreshTokenSerializer,
 )
@@ -96,7 +96,6 @@ class SSOClientConfidentialViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return get_application_model().objects.filter(user=user)
-
 
 
 class SSOAccessViewSet(viewsets.ReadOnlyModelViewSet):

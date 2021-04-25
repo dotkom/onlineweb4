@@ -39,7 +39,6 @@ class Client(AbstractApplication):
 
         self.scopes = " ".join(scopes)
 
-
     class Meta:
         permissions = (("view_client", "View Client"),)
         default_permissions = ("add", "change", "delete")
