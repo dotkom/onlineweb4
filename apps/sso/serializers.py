@@ -15,7 +15,7 @@ class SSOAppNonSensitiveSerializer(serializers.ModelSerializer):
         choices=["public", "confidential"], allow_blank=True, default="public"
     )
     algorithm = serializers.HiddenField(default="")
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault()) # Read_only means that it can only be set by default
 
     class Meta:
         model = get_application_model()
@@ -79,6 +79,7 @@ class SSOAppNonSensitiveSerializer(serializers.ModelSerializer):
 
 class SSOAppConfidentialSerializer(serializers.ModelSerializer):
     redirect_uris = serializers.SerializerMethodField()
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = get_application_model()  # Allows for swappable application model
