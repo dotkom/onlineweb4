@@ -12,16 +12,17 @@ from oauth2_provider.views.base import AuthorizationView as DefaultAuthorization
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from apps.sso.models import ApplicationConsent
 from apps.sso.permissions import TokenHasScopeOrSuperUser
 from apps.sso.serializers import (
-    Oauth2AccessReadOwnSerializer,
-    Oauth2ApplicationConsentSerializer,
-    Oauth2ClientNonSensitiveSerializer,
-    Oauth2ClientSerializer,
-    Oauth2GrantSerializer,
-    Oauth2RefreshTokenSerializer,
+    SSOAccessReadOwnSerializer,
+    SSOApplicationConsentSerializer,
+    SSOClientNonSensitiveSerializer,
+    SSOClientConfidentialSerializer,
+    SSOGrantSerializer,
+    SSORefreshTokenSerializer,
 )
 
 _log = logging.getLogger("SSO")
@@ -50,7 +51,7 @@ class Oauth2ClientPublicViewSet(viewsets.ReadOnlyModelViewSet):
     Basic information regarding our clients are considered public information.
     """
 
-    serializer_class = Oauth2ClientNonSensitiveSerializer
+    serializer_class = SSOClientNonSensitiveSerializer
     queryset = get_application_model().objects.all()
 
 
@@ -64,7 +65,7 @@ class Oauth2ClientOwnViewSet(
     Methods for editing own clients, does not require any scopes, but only the owner can edit.
     """
 
-    serializer_class = Oauth2ClientNonSensitiveSerializer
+    serializer_class = SSOClientNonSensitiveSerializer
 
     def get_queryset(self):
         user = self.request.user
@@ -87,8 +88,8 @@ class Oauth2ClientConfidentialViewSet(viewsets.ReadOnlyModelViewSet):
     They are intended for apps able to transmit sensitive information only.
     """
 
-    serializer_class = Oauth2ClientSerializer
-    permission_classes = [TokenHasScopeOrSuperUser]
+    serializer_class = SSOClientConfidentialSerializer
+    permission_classes = [IsAuthenticated, TokenHasScopeOrSuperUser]
     required_scopes = ["authentication:admin"]
 
     def get_queryset(self):
@@ -101,7 +102,7 @@ class Oauth2AccessViewSet(viewsets.ReadOnlyModelViewSet):
     An `Access Token` is issued on successfull login and grants access to our API endpoints.
     """
 
-    serializer_class = Oauth2AccessReadOwnSerializer
+    serializer_class = SSOAccessReadOwnSerializer
     queryset = get_access_token_model().objects.all()
     permission_classes = [TokenHasScopeOrSuperUser]
 
@@ -116,7 +117,7 @@ class Oauth2RefreshTokenViewSet(viewsets.ReadOnlyModelViewSet):
     for generating new access tokens without asking the user to consent again.
     """
 
-    serializer_class = Oauth2RefreshTokenSerializer
+    serializer_class = SSORefreshTokenSerializer
     queryset = get_refresh_token_model().objects.all()
     permission_classes = [TokenHasScopeOrSuperUser]
 
@@ -130,7 +131,7 @@ class Oauth2GrantViewSet(viewsets.ReadOnlyModelViewSet):
     A `Grant` represents a login attempt, where "application" is the client which was tried to log into.
     """
 
-    serializer_class = Oauth2GrantSerializer
+    serializer_class = SSOGrantSerializer
     queryset = get_grant_model().objects.all()
     permission_classes = [TokenHasScopeOrSuperUser]
 
@@ -144,7 +145,7 @@ class Oauth2GrantViewSet(viewsets.ReadOnlyModelViewSet):
 class Oauth2ConsentViewSet(
     mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
 ):
-    serializer_class = Oauth2ApplicationConsentSerializer
+    serializer_class = SSOApplicationConsentSerializer
     queryset = ApplicationConsent.objects.all()
     permission_classes = [TokenHasScopeOrSuperUser]
 

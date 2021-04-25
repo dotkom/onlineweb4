@@ -10,7 +10,7 @@ from rest_framework import serializers
 from apps.sso.models import ApplicationConsent
 
 
-class SSOAppNonSensitiveSerializer(serializers.ModelSerializer):
+class SSOClientNonSensitiveSerializer(serializers.ModelSerializer):
     client_type = serializers.ChoiceField(
         choices=["public", "confidential"], allow_blank=True, default="public"
     )
@@ -77,7 +77,7 @@ class SSOAppNonSensitiveSerializer(serializers.ModelSerializer):
         return instance
 
 
-class SSOAppConfidentialSerializer(serializers.ModelSerializer):
+class SSOClientConfidentialSerializer(serializers.ModelSerializer):
     redirect_uris = serializers.SerializerMethodField()
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
