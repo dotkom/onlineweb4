@@ -39,13 +39,6 @@ class Client(AbstractApplication):
 
         self.scopes = " ".join(scopes)
 
-    def get_redirect_uris(self):
-        """
-        Retrieves the redirect URIs associated with this client
-        :return: A list of URIs as strings
-        """
-
-        return self.redirect_uris.split()
 
     class Meta:
         permissions = (("view_client", "View Client"),)
