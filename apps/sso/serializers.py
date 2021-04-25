@@ -58,7 +58,7 @@ class SSOClientNonSensitiveSerializer(serializers.ModelSerializer):
             "contact_email",
             "user",
         ]
-        read_only_fields = ["algorithm" "scopes", "user"]
+        read_only_fields = ["algorithm", "scopes", "user"]
 
     def create(self, validated_data):
         client_secret = ""
