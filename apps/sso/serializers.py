@@ -9,11 +9,8 @@ from rest_framework import serializers
 
 from apps.sso.models import ApplicationConsent
 
-# TODO:
-# Remove oauth2 from names, find a better naming
 
-
-class Oauth2ClientNonSensitiveSerializer(serializers.ModelSerializer):
+class SSOAppNonSensitiveSerializer(serializers.ModelSerializer):
     client_type = serializers.ChoiceField(
         choices=["public", "confidential"], allow_blank=True, default="public"
     )
@@ -80,7 +77,7 @@ class Oauth2ClientNonSensitiveSerializer(serializers.ModelSerializer):
         return instance
 
 
-class Oauth2ClientSerializer(serializers.ModelSerializer):
+class SSOAppConfidentialSerializer(serializers.ModelSerializer):
     redirect_uris = serializers.SerializerMethodField()
 
     class Meta:
@@ -114,7 +111,7 @@ class Oauth2ClientSerializer(serializers.ModelSerializer):
         return with_split_on_newline
 
 
-class Oauth2AccessReadOwnSerializer(serializers.ModelSerializer):
+class SSOAccessReadOwnSerializer(serializers.ModelSerializer):
     """
     This should only be given to the owner or a superuser.
     Used for getting non-sensitive information to be able to see if an application can currently get data on your behalf.
@@ -131,7 +128,7 @@ class Oauth2AccessReadOwnSerializer(serializers.ModelSerializer):
         ]
 
 
-class Oauth2RefreshTokenSerializer(serializers.ModelSerializer):
+class SSORefreshTokenSerializer(serializers.ModelSerializer):
     """
     This should only be given to the owner or a superuser.
     Used for getting information to be able to see if an application can keep querying for access tokens on your behalf.
@@ -148,7 +145,7 @@ class Oauth2RefreshTokenSerializer(serializers.ModelSerializer):
         ]
 
 
-class Oauth2GrantSerializer(serializers.ModelSerializer):
+class SSOGrantSerializer(serializers.ModelSerializer):
     """
     This should only be given to the owner or a superuser.
     It represents a login attempt, but contains no information regarding whether it was successful or not.
@@ -163,7 +160,7 @@ class Oauth2GrantSerializer(serializers.ModelSerializer):
         ]
 
 
-class Oauth2ApplicationConsentSerializer(serializers.ModelSerializer):
+class SSOApplicationConsentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ApplicationConsent
         fields = [
