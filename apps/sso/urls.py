@@ -18,16 +18,16 @@ urlpatterns = [
 
 
 router = SharedAPIRootRouter()
-router.register("sso/public", views.Oauth2ClientPublicViewSet, basename="sso_public")
-router.register("sso/clients", views.Oauth2ClientOwnViewSet, basename="sso_clients")
+router.register("sso/public", views.SSOClientPublicViewSet, basename="sso_public")
+router.register("sso/clients", views.SSOClientOwnViewSet, basename="sso_clients")
 router.register(
     "sso/confidential",
-    views.Oauth2ClientConfidentialViewSet,
+    views.SSOClientConfidentialViewSet,
     basename="sso_clients_confidential",
 )
-router.register("sso/access", views.Oauth2AccessViewSet, basename="sso_access")
+router.register("sso/access", views.SSOAccessViewSet, basename="sso_access")
 router.register(
-    "sso/refresh-tokens", views.Oauth2RefreshTokenViewSet, basename="sso_refresh-tokens"
+    "sso/refresh-tokens", views.SSORefreshTokenViewSet, basename="sso_refresh-tokens"
 )
-router.register("sso/grants", views.Oauth2GrantViewSet, basename="sso_grants")
-router.register("sso/consents", views.Oauth2ConsentViewSet, basename="sso_consents")
+router.register("sso/grants", views.SSOGrantViewSet, basename="sso_grants")
+router.register("sso/consents", views.SSOConsentViewSet, basename="sso_consents")

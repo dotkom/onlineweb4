@@ -46,7 +46,7 @@ class AuthorizationView(DefaultAuthorizationView):
 # API Views
 
 
-class Oauth2ClientPublicViewSet(viewsets.ReadOnlyModelViewSet):
+class SSOClientPublicViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Basic information regarding our clients are considered public information.
     """
@@ -55,7 +55,7 @@ class Oauth2ClientPublicViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = get_application_model().objects.all()
 
 
-class Oauth2ClientOwnViewSet(
+class SSOClientOwnViewSet(
     viewsets.GenericViewSet,
     mixins.CreateModelMixin,
     mixins.DestroyModelMixin,
@@ -63,6 +63,7 @@ class Oauth2ClientOwnViewSet(
 ):
     """
     Methods for editing own clients, does not require any scopes, but only the owner can edit.
+    Non-sensitive, but personal.
     """
 
     serializer_class = SSOClientNonSensitiveSerializer
@@ -82,7 +83,7 @@ class Oauth2ClientOwnViewSet(
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class Oauth2ClientConfidentialViewSet(viewsets.ReadOnlyModelViewSet):
+class SSOClientConfidentialViewSet(viewsets.ReadOnlyModelViewSet):
     """
     These endpoints are reserved for the `authentication:admin`-scopes which is given per-request basis.
     They are intended for apps able to transmit sensitive information only.
@@ -97,7 +98,7 @@ class Oauth2ClientConfidentialViewSet(viewsets.ReadOnlyModelViewSet):
         return get_application_model().objects.filter(user=user)
 
 
-class Oauth2AccessViewSet(viewsets.ReadOnlyModelViewSet):
+class SSOAccessViewSet(viewsets.ReadOnlyModelViewSet):
     """
     An `Access Token` is issued on successfull login and grants access to our API endpoints.
     """
@@ -111,7 +112,7 @@ class Oauth2AccessViewSet(viewsets.ReadOnlyModelViewSet):
         return get_access_token_model().objects.filter(user=request.user)
 
 
-class Oauth2RefreshTokenViewSet(viewsets.ReadOnlyModelViewSet):
+class SSORefreshTokenViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A `Refresh Token` is an issued token which can be used
     for generating new access tokens without asking the user to consent again.
@@ -126,7 +127,7 @@ class Oauth2RefreshTokenViewSet(viewsets.ReadOnlyModelViewSet):
         return get_refresh_token_model().objects.filter(user=request.user)
 
 
-class Oauth2GrantViewSet(viewsets.ReadOnlyModelViewSet):
+class SSOGrantViewSet(viewsets.ReadOnlyModelViewSet):
     """
     A `Grant` represents a login attempt, where "application" is the client which was tried to log into.
     """
@@ -142,7 +143,7 @@ class Oauth2GrantViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
-class Oauth2ConsentViewSet(
+class SSOConsentViewSet(
     mixins.ListModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet
 ):
     serializer_class = SSOApplicationConsentSerializer
