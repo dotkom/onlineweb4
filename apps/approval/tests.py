@@ -301,7 +301,7 @@ class CommitteeApplicationTestCase(OIDCTestCase):
 
     def test_non_authenticated_user_cannot_get_applications(self):
         response = self.client.get(self.get_list_url())
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_without_perms_cannot_get_applications(self):
         response = self.client.get(self.get_list_url(), **self.headers)
@@ -424,7 +424,7 @@ class MembershipApprovalTestCase(OIDCTestCase):
 
     def test_non_authenticated_user_cannot_get_applications(self):
         response = self.client.get(self.get_list_url())
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_only_get_own_application(self):
         application = G(MembershipApproval, applicant=self.user)

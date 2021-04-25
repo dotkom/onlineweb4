@@ -349,7 +349,7 @@ class AttendanceEventTestCase(OIDCTestCase):
             self.get_public_attendees_url(self.event.id), **self.bare_headers
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_attendance_payment_info_works_when_event_has_payment(self):
         generate_payment(
@@ -376,7 +376,7 @@ class AttendanceEventTestCase(OIDCTestCase):
             self.get_payment_url(self.event.id), **self.bare_headers
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_can_get_extras(self):
         self.event.attendance_event.extras.add(G(Extras))
@@ -393,4 +393,4 @@ class AttendanceEventTestCase(OIDCTestCase):
             self.get_extras_url(self.event.id), **self.bare_headers
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
