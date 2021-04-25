@@ -6,6 +6,7 @@ from oauth2_provider.models import (
     get_refresh_token_model,
 )
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from apps.sso.models import ApplicationConsent
 
@@ -108,7 +109,6 @@ class SSOClientConfidentialSerializer(serializers.ModelSerializer):
         data = {
             **validated_data,
             "client_secret": client_secret,
-            "redirect_uris": redirect_uris,
         }
         client = get_application_model().objects.create(**data)
         client.save()
