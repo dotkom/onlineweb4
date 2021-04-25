@@ -23,10 +23,10 @@ class SubscriptionTestCase(NotificationTestMixin, OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_un_authenticated_user_gets_403(self):
+    def test_un_authenticated_user_gets_401(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_subscriptions(self):
         response = self.client.get(
@@ -70,10 +70,10 @@ class NotificationTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_un_authenticated_user_gets_403(self):
+    def test_un_authenticated_user_gets_401(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_notifications(self):
         response = self.client.get(
@@ -120,10 +120,10 @@ class UserPermissionTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_un_authenticated_user_gets_403(self):
+    def test_un_authenticated_user_gets_401(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_permission(self):
         user_permission: UserPermission = G(

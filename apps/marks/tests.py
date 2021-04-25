@@ -168,10 +168,10 @@ class MarkRuleAcceptanceAPITest(OIDCTestCase):
             RuleAcceptance, user=self.user, rule_set=self.rule_set
         )
 
-    def test_marks_rule_acceptance_api_returns_forbidden_without_auth(self):
+    def test_marks_rule_acceptance_api_returns_unauthorized_without_auth(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_marks_rule_acceptance_api_returns_ok_with_auth(self):
         response = self.client.get(self.url, **self.headers)
