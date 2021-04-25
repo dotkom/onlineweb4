@@ -83,7 +83,7 @@ class SSOClientOwnViewSet(
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class SSOClientConfidentialViewSet(viewsets.ReadOnlyModelViewSet):
+class SSOClientConfidentialViewSet(viewsets.ModelViewSet):
     """
     These endpoints are reserved for the `authentication:admin`-scopes which is given per-request basis.
     They are intended for apps able to transmit sensitive information only.
@@ -96,6 +96,7 @@ class SSOClientConfidentialViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         user = self.request.user
         return get_application_model().objects.filter(user=user)
+
 
 
 class SSOAccessViewSet(viewsets.ReadOnlyModelViewSet):
