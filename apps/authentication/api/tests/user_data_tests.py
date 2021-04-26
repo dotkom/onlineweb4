@@ -37,7 +37,7 @@ class EmailTestCase(OIDCTestCase):
     def test_un_authenticated_user_gets_401(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_emails(self):
         response = self.client.get(self.id_url(self.email.id), **self.headers)
@@ -171,7 +171,7 @@ class PositionsTestCase(OIDCTestCase):
     def test_un_authenticated_user_gets_401(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_positions(self):
         response = self.client.get(self.id_url(self.position.id), **self.headers)
@@ -287,7 +287,7 @@ class SpecialPositionsTestCase(OIDCTestCase):
     def test_un_authenticated_user_gets_401(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_special_positions(self):
         response = self.client.get(

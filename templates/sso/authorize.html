@@ -1,8 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'sso/sso_base.html' %}
 
-{% load chunks %}
+<!--{% load chunks %}-->
+{% load zip_lists %}
 
-{% load render_bundle from webpack_loader %}
+<!--{% load render_bundle from webpack_loader %}-->
 
 {% block styles %}
   {{ block.super }}
@@ -19,10 +20,11 @@
     <div id="sso-panel">
     {% if not error %}
         <div id="sso-panel-header">
-            <h3>Ekstern autentisering</h3>
+            <img src="{{ STATIC_URL }}img/online_o.svg" alt="Online">
+            <div id="sso-blue-header-top"></div>
         </div>
         <div id="sso-panel-body">
-            <h4>Tjenesten {{ application.name }} ønsker innloggingsinformasjon.</h4>
+            <h4>Appens tilganger</h4>
             <form id="sso-authorization-form" method="post">
                 {% csrf_token %}
                 {% for field in form %}
@@ -30,19 +32,26 @@
                         {{ field }}
                     {% endif %}
                 {% endfor %}
-                <p>Tjenesten behøver følgende tilganger:</p>
-                <ul class="sso-permissions">
-                    {% for scope in scopes_descriptions %}
-                        <li>{{ scope }}</li>
-                    {% endfor %}
-                </ul>
+                <section class="sso-permissions">
+                    <p>Denne appen vil ha tilgang til</p>
+                    <ul>
+                        {% for scope, scope_name in scopes_descriptions|zip_lists:scopes %}
+                            <li><span style="font-weight: bold;">{{scope_name|title}}</span> - {{ scope }}</li>
+                        {% endfor %}
+                    </ul>
+                </section>
                 <div id="sso-control-buttons">
                     <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
-                    <input type="submit" class="btn btn-large btn-danger pull-right" value="Avslå" />
+                    <input type="submit" class="btn btn-large btn-danger" value="Avslå" />
                 </div>
             </form>
+            <section id="sso-app-display">
+                {% if application.logo %}
+                <img src="{{ application.logo.url }}"/>
+                {% endif %}
+                <h4>{{ application.name }} </h4>
+            </section>
         </div>
-        <p class="text-center"><small><i class="fa fa-lock"></i> Ekstern autentisering benytter OAuth 2.0 gjennom TLS</small></p>
     {% else %}
         <div id="sso-panel-header">
             <h3>En feil skjedde</h3>
@@ -52,6 +61,5 @@
         </div>
     {% endif %}
     </div>
-    <p class="text-center">Les mer om bruken av <i><a href="/wiki/">Ekstern Autentisering</a></i> på wikien.</p>
 </section>
 {% endblock %}

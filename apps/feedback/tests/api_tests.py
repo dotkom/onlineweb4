@@ -85,9 +85,9 @@ class FeedbackRelationTest(FeedbackAPITestCase):
     def get_submit_url(self, relation: FeedbackRelation):
         return reverse(f"{self.url_basename}-submit", args=[relation.id])
 
-    def test_url_returns_403_without_login(self):
+    def test_url_returns_401_without_login(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_url_returns_ok_with_login(self):
         response = self.client.get(self.get_list_url(), **self.headers)
@@ -313,7 +313,7 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
 
     def test_cannot_view_without_login(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_cannot_view_without_permission(self):
         response = self.client.get(self.get_list_url(), **self.headers)
@@ -390,7 +390,7 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
 
     def test_cannot_view_without_login(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_admin_can_list_questions(self):
         self.group.user_set.add(self.user)
@@ -482,7 +482,7 @@ class GenericSurveyTestCase(OIDCTestCase):
 
     def test_cannot_view_without_login(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_cannot_view_without_permission(self):
         response = self.client.get(self.get_list_url(), **self.headers)

@@ -100,7 +100,7 @@ class ClientsTest(OIDCTestCase):
         }
         response = self.client.post(self.url, data=client_data, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_delete_their_own_client(self):
         client: Client = G(Client, owner=self.user)
@@ -129,7 +129,7 @@ class ClientsTest(OIDCTestCase):
 
         response = self.client.delete(self.id_url(client.id), **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_update_client(self):
         client_name = "test_client"
@@ -224,7 +224,7 @@ class UserConsentTest(OIDCTestCase):
     def test_un_authenticated_user_gets_403(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_get_user_consent_by_id(self):
         response = self.client.get(self.id_url(self.user_consent.id), **self.headers)

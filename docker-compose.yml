@@ -1,4 +1,4 @@
-version: '2.1'
+version: "2.1"
 services:
   dbdata:
     image: postgres:latest
@@ -67,6 +67,7 @@ services:
       - OW4_WEB_PUSH_PRIVATE_KEY
       - OW4_WEB_PUSH_ENABLED
       - OW4_SENTRY_DSN
+      - OW4_OIDC_RSA_PRIVATE_KEY
   webpack:
     build:
       context: .
