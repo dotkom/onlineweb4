@@ -3,11 +3,16 @@
   margin: 0 auto;
 }
 
+body,
+html {
+  min-height: 100%;
+  background-color: white;
+}
+
 #sso-panel {
-  border: 1px solid #004b80;
-  background-color: #eee;
+  //border: 1px solid #004b80;
   margin: 60px 0 32px;
-  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.15), 0 6px 10px 0 rgba(0, 0, 0, 0.11);
+  padding-bottom: 10px;
 
   @media screen and (max-width: 767px) {
     margin: 16px;
@@ -15,43 +20,101 @@
 }
 
 #sso-panel-header {
-  background-color: #004b80;
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  height: 110px;
 
-  @media screen and (max-width: 767px) {
-    padding: 16px;
+  img {
+    background-color: #004b80;
+    border-radius: 50% 50%;
+    max-height: 90px;
+    max-width: 90px;
+    padding: 10px;
+    z-index: 1; // To stay on top of the empty div with blue background named blue-header-top
   }
 
-  h3 {
-    line-height: 30px;
-    font-size: 30px;
-    vertical-align: middle;
-    color: #fff;
-    margin-top: 0;
-    padding: 0;
-    margin-bottom: 0;
-
-    @media screen and (max-width: 767px) {
-      font-size: 24px;
-      line-height: 24px;
-    }
+  #sso-blue-header-top {
+    position: absolute;
+    bottom: 0;
+    background-color: #004b80;
+    min-height: 50px;
+    height: 50%;
+    width: 100%;
+    border-radius: 15px 15px 0 0;
+    box-shadow:
+      0 6px 10px 0 rgba(0, 0, 0, 0.15),
+      0 6px 10px 0 rgba(0, 0, 0, 0.11);
   }
 }
 
 #sso-panel-body {
-  h4 {
+  position: relative;
+  z-index: 1; // For staying on top of the shadow from the header
+  box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.15), 0 6px 10px 0 rgba(0, 0, 0, 0.11);
+  background-color: #eee;
+  padding: 20px 20px 0 20px;
+  border: 4px #004b80 solid;
+  border-top: none;
+  border-radius: 0 0 15px 15px;
+
+  & > h4 {
+    text-align: center;
     margin-top: 5px;
     margin-bottom: 20px;
-    font-size: 16px;
+    font-size: 20px;
+    font-weight: bold;
     line-height: 16px;
   }
-
-  padding: 20px 20px 15px 20px;
 }
 
 #sso-authorization-form {
-  background-color: #fff;
-  padding: 15px;
-  border: 1px solid #aaa;
+  & > section > p {
+    text-align: center;
+    font-size: 16px;
+
+    &::after {
+      content: ' ';
+      display: block;
+      margin: 10px auto;
+      width: 30%;
+      border-bottom: 1px #636363 solid;
+    }
+  }
+
+  .sso-permissions {
+    background-color: #fff;
+    padding: 15px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+
+    li {
+      padding: 5px 0;
+    }
+  }
 }
 
+#sso-control-buttons {
+  display: flex;
+  margin: 10px 0;
+  justify-content: space-around;
+}
+
+#sso-app-display {
+  padding: 20px 0 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0;
+
+  & h4 {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  & img {
+    max-width: 130px;
+  }
+}

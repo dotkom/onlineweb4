@@ -225,6 +225,9 @@ if "apps.sso" in settings.INSTALLED_APPS:
     urlpatterns += [
         url(r"^sso/", include("apps.sso.urls")),
         url(
+            r"^sso/", include("oauth2_provider.urls", namespace="oauth2_provider")
+        ),  # Shadow URL path to allow overrides in apps.sso.urls.
+        url(
             r"^dashboard/auth/sso/",
             include("apps.sso.dashboard.urls", namespace="dashboard"),
         ),

@@ -180,7 +180,7 @@ class PaymentRelationTestCase(OIDCTestCase):
     def test_unauthenticated_client_cannot_access_payments(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
             response.json().get("detail"), "Manglende autentiseringsinformasjon."
         )
@@ -520,7 +520,7 @@ class PaymentTransactionTestCase(OIDCTestCase):
     def test_unauthenticated_clients_cannot_access_transactions(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
             response.json().get("detail"), "Manglende autentiseringsinformasjon."
         )
@@ -702,7 +702,7 @@ class PaymentDelayTestCase(OIDCTestCase):
     def test_unauthenticated_clients_cannot_access_payment_delays(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
             response.json().get("detail"), "Manglende autentiseringsinformasjon."
         )
@@ -725,7 +725,7 @@ class PaymentPriceTestCase(OIDCTestCase):
     def test_unauthenticated_clients_cannot_access_payment_delays(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
             response.json().get("detail"), "Manglende autentiseringsinformasjon."
         )

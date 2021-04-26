@@ -72,7 +72,7 @@ class WebshopOrderLineTests(OIDCTestCase):
     def test_unauthenticated_user_is_denied_access(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_can_view_order_line_list(self):
         response = self.client.get(self.url, **self.headers)
@@ -168,7 +168,7 @@ class WebshopOrderTests(OIDCTestCase):
     def test_unauthenticated_user_is_denied_access(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_can_view_order_list(self):
         response = self.client.get(self.url, **self.headers)
