@@ -8,6 +8,8 @@ def handle_app_authorized(sender, request, token, **kwargs):
         pk=token.application.pk, user=token.user
     ).exists():
         return
+    if not token.user:
+        return
     ApplicationConsent.objects.create(
         user=token.user, client=token.application, approved_scopes=token.scopes
     )
