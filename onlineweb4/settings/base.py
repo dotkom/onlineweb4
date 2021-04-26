@@ -64,12 +64,22 @@ SLACK_INVITER = {
 }
 
 # SSO / OAuth2 settings
+
+OIDC_RSA_PRIVATE_KEY = "" # Default case
+if not os.path.isfile("oidc.key"):
+    print("Failed to locate OIDC RSA Private key file during setup.")
+else:
+    with open("oidc.key", "r") as f:
+        OIDC_RSA_PRIVATE_KEY = f.read()
+
+print("KEY: ", OIDC_RSA_PRIVATE_KEY)
+
 OAUTH2_PROVIDER_APPLICATION_MODEL = "sso.Client"
 OAUTH2_PROVIDER = {
     "OAUTH2_VALIDATOR_CLASS": "apps.sso.validator.Validator",
     "OIDC_ENABLED": True,
     "PKCE": True,
-    "OIDC_RSA_PRIVATE_KEY": config("OW4_OIDC_RSA_PRIVATE_KEY", default=""),
+    "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
     "SCOPES": OAUTH2_SCOPES,
     "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
     "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
