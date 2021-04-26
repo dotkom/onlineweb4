@@ -6,8 +6,15 @@
 # SSO / OAuth2 settings
 OAUTH2_SCOPES = {
     "null": "Ingen datatilgang",
+    "openid": "OpenID Connect Scope - Autentisering av hvilken bruker du er.",
     "read": "DRF Read",
     "write": "DRF Write",
+    "profile": "Informasjon vedrørende din profil",
+    "address": "Din registrerte adresse.",
+    "email": "Din registrerte e-post.",
+    "phone": "Ditt registrerte telefonnummer.",
+    "online": "Informasjon vedrørende ditt medlemskap i Linjeforeningen Online.",
+    "authentication:admin": "Administrasjon av dine klienter",
     "authentication.onlineuser.username.read": "Brukernavn (Lesetilgang)",
     "authentication.onlineuser.first_name.read": "Fornavn (Lesetilgang)",
     "authentication.onlineuser.last_name.read": "Etternavn (Lesetilgang)",
