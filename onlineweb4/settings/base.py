@@ -72,8 +72,6 @@ else:
     with open("oidc.key", "r") as f:
         OIDC_RSA_PRIVATE_KEY = f.read()
 
-print("KEY: ", OIDC_RSA_PRIVATE_KEY)
-
 OAUTH2_PROVIDER_APPLICATION_MODEL = "sso.Client"
 OAUTH2_PROVIDER = {
     "OAUTH2_VALIDATOR_CLASS": "apps.sso.validator.Validator",
