@@ -391,14 +391,14 @@ django = ">=2.2"
 
 [[package]]
 name = "django-cors-headers"
-version = "3.4.0"
+version = "3.7.0"
 description = "django-cors-headers is a Django application for handling the server headers required for Cross-Origin Resource Sharing (CORS)."
 category = "main"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.6"
 
 [package.dependencies]
-Django = ">=2.0"
+Django = ">=2.2"
 
 [[package]]
 name = "django-crispy-forms"
@@ -1843,7 +1843,7 @@ prod = ["psycopg2-binary", "uwsgi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "23588072165ea3a2130e2dc5d84e89d142044156b05c2f5f091a53bcd5cb9e7b"
+content-hash = "2819bd7bd36a614e0cb0e880844e82586e712ff62db6b57fad2b12e7b29da381"
 
 [metadata.files]
 alabaster = [
@@ -2058,8 +2058,8 @@ django-classy-tags = [
     {file = "django_classy_tags-2.0.0-py3-none-any.whl", hash = "sha256:25eb4f95afee396148683bfb4811b83b3f5729218d73ad0a3399271a6f9fcc49"},
 ]
 django-cors-headers = [
-    {file = "django-cors-headers-3.4.0.tar.gz", hash = "sha256:f5218f2f0bb1210563ff87687afbf10786e080d8494a248e705507ebd92d7153"},
-    {file = "django_cors_headers-3.4.0-py3-none-any.whl", hash = "sha256:5240062ef0b16668ce8a5f43324c388d65f5439e1a30e22c38684d5ddaff0d15"},
+    {file = "django-cors-headers-3.7.0.tar.gz", hash = "sha256:96069c4aaacace786a34ee7894ff680780ec2644e4268b31181044410fecd12e"},
+    {file = "django_cors_headers-3.7.0-py3-none-any.whl", hash = "sha256:1ac2b1213de75a251e2ba04448da15f99bcfcbe164288ae6b5ff929dc49b372f"},
 ]
 django-crispy-forms = [
     {file = "django-crispy-forms-1.11.2.tar.gz", hash = "sha256:88efa857ce6111bd696cc4f74057539a3456102fe9c3a3ece8868e1e4579e70a"},
