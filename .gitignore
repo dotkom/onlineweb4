@@ -46,3 +46,4 @@ webpack-stats-test.json
 .drone-secrets.yml*
 jest/
 venv/
+oidc.key
