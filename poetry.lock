@@ -1350,7 +1350,7 @@ six = ">=1.4.0"
 
 [[package]]
 name = "pytz"
-version = "2020.5"
+version = "2021.1"
 description = "World timezone definitions, modern and historical"
 category = "main"
 optional = false
@@ -1843,7 +1843,7 @@ prod = ["psycopg2-binary", "uwsgi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "2819bd7bd36a614e0cb0e880844e82586e712ff62db6b57fad2b12e7b29da381"
+content-hash = "d47c603cd9f2a02a42eda614846775c6a409f5af56a808361b596e8f138af2da"
 
 [metadata.files]
 alabaster = [
@@ -2567,8 +2567,8 @@ python-memcached = [
     {file = "python_memcached-1.59-py2.py3-none-any.whl", hash = "sha256:4dac64916871bd3550263323fc2ce18e1e439080a2d5670c594cf3118d99b594"},
 ]
 pytz = [
-    {file = "pytz-2020.5-py2.py3-none-any.whl", hash = "sha256:16962c5fb8db4a8f63a26646d8886e9d769b6c511543557bc84e9569fb9a9cb4"},
-    {file = "pytz-2020.5.tar.gz", hash = "sha256:180befebb1927b16f6b57101720075a984c019ac16b1b7575673bea42c6c3da5"},
+    {file = "pytz-2021.1-py2.py3-none-any.whl", hash = "sha256:eb10ce3e7736052ed3623d49975ce333bcd712c7bb19a58b9e2089d4057d0798"},
+    {file = "pytz-2021.1.tar.gz", hash = "sha256:83a4a90894bf38e243cf052c8b58f381bfe9a7a483f6a9cab140bc7f702ac4da"},
 ]
 pywebpush = [
     {file = "pywebpush-1.13.0.tar.gz", hash = "sha256:97ef000a685cd1f63d9d3553568508508904bfe419485df2b83b025d94e9ae54"},
