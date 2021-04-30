@@ -129,8 +129,8 @@ class Calendar(object):
 class EventCalendar(Calendar):
     def user(self, user):
         """
-            Personalized calendar
-            This calendar is publicly available, but the url is not guessable so data should not be leaked to everyone
+        Personalized calendar
+        This calendar is publicly available, but the url is not guessable so data should not be leaked to everyone
         """
         signer = Signer()
         try:
