@@ -1,14 +1,14 @@
 import pytest
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django_dynamic_fixture import G
-from settings import STRIPE_PUBLIC_KEYS
 
 from apps.events.models import AttendanceEvent
 from apps.payment.models import Payment, PaymentPrice
 
 # Skip tests that require API-keys if the API-keys are not present
 stripe_test = pytest.mark.skipif(
-    STRIPE_PUBLIC_KEYS["trikom"] == "pk_test_replace_this",
+    settings.STRIPE_PUBLIC_KEYS["trikom"] == "pk_test_replace_this",
     reason="Stripe Test-API Keys not configured",
 )
 
