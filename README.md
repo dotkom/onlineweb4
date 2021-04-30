@@ -123,11 +123,15 @@ are oldschool and prefer running `./manage.py makemigrations` yourself, then you
 afterwards, or run `make lint-backend-fix` after creating the migrations, so that they are properly formatted. You
 could also look at the [Makefile](./Makefile) to see how we redirect the output if you want to do so yourself.
 
-## CI/CD
+## Continuous Integration and Continuous Delivery
 
 Pushes made to the `main` branch will trigger a redeployment of the application on [dev.online.ntnu.no](https://dev.online.ntnu.no).
 
-Pull requests trigger containerized builds that perform code style checks and tests. You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
+Pull requests trigger containerized builds that perform code style checks and tests. 
+You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
+
+> **Important:** We have integration tests with Stripe that require valid test-API-keys, those tests are **not**
+> run by default locally, or when creating a PR from a fork of this repository.
 
 ## Tools
 
