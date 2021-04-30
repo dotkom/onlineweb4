@@ -31,9 +31,9 @@ def notify_membership_applicant_handler(
     sender, instance: Approval, created=False, **kwargs
 ):
     """
-   :param sender: The sending model.
-   :param instance: The Approval instance
-   :param created: True or False, whether this instance is new or not.
+    :param sender: The sending model.
+    :param instance: The Approval instance
+    :param created: True or False, whether this instance is new or not.
     """
 
     if not created and instance.processed and instance.applicant.primary_email:

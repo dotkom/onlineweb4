@@ -53,7 +53,7 @@ def get_course_finish_date(course):
 
 def get_add_years(course):
     """Add years back for more recent courses.
-        If course is 2nd grade, the user started one more year before."""
+    If course is 2nd grade, the user started one more year before."""
     # Add 1 year if verification happens during fall, 0 if during spring.
     add_years = 1 if timezone.now().month >= 7 else 0
 
