@@ -36,7 +36,7 @@
     "postcss-loader": "^2.0.6",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
-    "react-bootstrap": "0.32.4",
+    "react-bootstrap": "0.33.1",
     "react-dom": "^16.8.6",
     "react-markdown": "^2.5.0",
     "react-router": "^5.0.0",
