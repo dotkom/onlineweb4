@@ -16,7 +16,7 @@
     "classnames": "^2.2.5",
     "corejs-typeahead": "^1.1.0",
     "cropperjs": "^1.5.11",
-    "cssnano": "^3.10.0",
+    "cssnano": "^4.0.0",
     "dropzone": "^4.3.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "eonasdan-bootstrap-datetimepicker": "^4.17.43",
