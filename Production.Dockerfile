@@ -15,7 +15,7 @@ RUN yarn --non-interactive --no-progress --pure-lockfile && \
     yarn build:prod
 
 
-FROM python:3.7-slim-buster
+FROM python:3.9.5-slim-buster
 LABEL maintainer="dotkom@online.ntnu.no"
 ENV DJANGO_SETTINGS_MODULE=onlineweb4.settings POETRY_VIRTUALENVS_CREATE=false
 
