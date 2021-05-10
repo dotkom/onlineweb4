@@ -23,9 +23,13 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AddField(
-            model_name="client", name="terms_url", field=models.TextField(blank=True),
+            model_name="client",
+            name="terms_url",
+            field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name="client", name="website_url", field=models.TextField(blank=True),
+            model_name="client",
+            name="website_url",
+            field=models.TextField(blank=True),
         ),
     ]

@@ -32,8 +32,8 @@ class EventsAPITestCase(OIDCTestCase):
 
         self.event = generate_event(organizer=self.committee)
         self.event.attendance_event.registration_start = timezone.now()
-        self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(
-            days=2
+        self.event.attendance_event.registration_end = (
+            timezone.now() + timezone.timedelta(days=2)
         )
         self.event.attendance_event.max_capacity = 20
         self.event.attendance_event.save()

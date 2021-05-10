@@ -173,7 +173,7 @@ class Event(models.Model):
     feedback = GenericRelation(FeedbackRelation)
 
     def is_attendance_event(self):
-        """ Returns true if the event is an attendance event """
+        """Returns true if the event is an attendance event"""
         return hasattr(self, "attendance_event")
 
     # TODO move payment and feedback stuff to attendance event when dasboard is done

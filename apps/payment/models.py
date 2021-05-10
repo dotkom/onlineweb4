@@ -434,7 +434,7 @@ class PaymentReceipt(models.Model):
         to_users: List[User],
         from_mail: str,
     ):
-        """ Send confirmation email with receipt """
+        """Send confirmation email with receipt"""
 
         # Calculate total item price and ensure correct input to template.
         receipt_items = []

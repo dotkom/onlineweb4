@@ -43,7 +43,7 @@ def create_payment_for_order_line(
     There should only be a single payment connected to each Webshop Order Line, with a single price.
     """
     if not instance.payment and created:
-        """ Webshop Payments are always made to Prokom, and always require immediate payment """
+        """Webshop Payments are always made to Prokom, and always require immediate payment"""
         Payment.objects.create(
             stripe_key="prokom", payment_type=1, content_object=instance, active=True
         )

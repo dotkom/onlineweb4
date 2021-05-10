@@ -33,7 +33,7 @@ class UnregisterPermission(permissions.IsAuthenticated):
 
     @staticmethod
     def _has_deadline_passed(attendance_event: AttendanceEvent, user: User) -> bool:
-        """ User can only be unattended before the deadline, or if they are on the wait list. """
+        """User can only be unattended before the deadline, or if they are on the wait list."""
         now = timezone.now()
         return (
             now > attendance_event.unattend_deadline

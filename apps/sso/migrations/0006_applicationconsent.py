@@ -49,6 +49,8 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"unique_together": {("user", "client")},},
+            options={
+                "unique_together": {("user", "client")},
+            },
         ),
     ]
