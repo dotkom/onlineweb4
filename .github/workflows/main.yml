@@ -82,8 +82,16 @@ jobs:
   lint-python:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: checkout-if-pr
         uses: actions/checkout@v2
+        if: ${{ github.event_name == 'pull_request_target' }}
+        with:
+          # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: checkout-if-push
+        uses: actions/checkout@v2
+        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Set up Python 3.7
         uses: actions/setup-python@v2.2.2
