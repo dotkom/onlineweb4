@@ -44,8 +44,10 @@ def contact_submit(request):
                     )
                 )
 
-            subject = "[Kontakt] {name} har kontaktet dere gjennom online.ntnu.no".format(
-                name=name
+            subject = (
+                "[Kontakt] {name} har kontaktet dere gjennom online.ntnu.no".format(
+                    name=name
+                )
             )
 
             EmailMessage(subject, content, from_email, to_email).send()

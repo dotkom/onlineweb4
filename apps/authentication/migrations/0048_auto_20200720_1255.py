@@ -10,7 +10,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameModel(old_name="AllowedUsername", new_name="Membership",),
+        migrations.RenameModel(
+            old_name="AllowedUsername",
+            new_name="Membership",
+        ),
         migrations.AlterModelOptions(
             name="membership",
             options={

@@ -312,7 +312,7 @@ class OnlineUser(AbstractUser):
         return self.get_image_url(240)
 
     def get_visible_as_attending_events(self):
-        """ Returns the default value of visible_as_attending_events set in privacy/personvern """
+        """Returns the default value of visible_as_attending_events set in privacy/personvern"""
         if hasattr(self, "privacy"):
             return self.privacy.visible_as_attending_events
         return False
@@ -556,7 +556,7 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
 
     @property
     def id(self):
-        """ Proxy primary key/id from group object """
+        """Proxy primary key/id from group object"""
         return self.group.id
 
     def get_members_with_role(self, role: str):
@@ -583,7 +583,7 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         return self.name_short
 
     def _get_admin_members_query(self):
-        """ Gather a single query for getting permitted member users from this group and parent groups. """
+        """Gather a single query for getting permitted member users from this group and parent groups."""
         query = models.Q(group=self, roles__in=self.admin_roles.all())
         if self.parent_group:
             query |= self.parent_group._get_admin_members_query()

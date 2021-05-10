@@ -74,11 +74,11 @@ class PaymentRelationTestCase(OIDCTestCase):
         self.event = generate_event(organizer=self.committee)
         self.event.event_end = timezone.now() + timezone.timedelta(days=3)
         self.event.event_start = timezone.now() + timezone.timedelta(days=2)
-        self.event.attendance_event.registration_end = timezone.now() + timezone.timedelta(
-            days=1
+        self.event.attendance_event.registration_end = (
+            timezone.now() + timezone.timedelta(days=1)
         )
-        self.event.attendance_event.unattend_deadline = timezone.now() + timezone.timedelta(
-            days=1
+        self.event.attendance_event.unattend_deadline = (
+            timezone.now() + timezone.timedelta(days=1)
         )
         self.event.save()
         self.event.attendance_event.save()
@@ -437,8 +437,8 @@ class PaymentRelationTestCase(OIDCTestCase):
         )
 
     def test_user_cannot_refund_after_unattend_deadline(self):
-        self.event.attendance_event.unattend_deadline = timezone.now() - timezone.timedelta(
-            hours=1
+        self.event.attendance_event.unattend_deadline = (
+            timezone.now() - timezone.timedelta(hours=1)
         )
         self.event.attendance_event.save()
 

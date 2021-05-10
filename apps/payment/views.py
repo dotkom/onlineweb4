@@ -69,7 +69,7 @@ class PaymentRelationViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
             )
 
         try:
-            """ Handle the actual refund with the stripe API """
+            """Handle the actual refund with the stripe API"""
             stripe.api_key = payment_relation.payment.stripe_private_key
             intent = stripe.PaymentIntent.retrieve(payment_relation.stripe_id)
 

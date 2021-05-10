@@ -69,7 +69,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
     @property
     def id(self):
-        """ Proxy Event id """
+        """Proxy Event id"""
         return self.event_id
 
     @property
@@ -85,7 +85,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
     @property
     def has_reservation(self):
-        """Returns whether this event has an attached reservation """
+        """Returns whether this event has an attached reservation"""
         return hasattr(self, "reserved_seats")
 
     @property
@@ -94,7 +94,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
     @property
     def attending_attendees_qs(self):
-        """Queryset with all attendees not on waiting list """
+        """Queryset with all attendees not on waiting list"""
         return self.attendees.all()[: self.number_of_attendee_seats]
 
     def not_attended(self):
@@ -103,12 +103,12 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
     @property
     def waitlist_qs(self):
-        """Queryset with all attendees on waiting list """
+        """Queryset with all attendees on waiting list"""
         return self.attendees.all()[self.number_of_attendee_seats :]
 
     @property
     def reservees_qs(self):
-        """Queryset with all reserved seats which have been filled """
+        """Queryset with all reserved seats which have been filled"""
         if self.has_reservation:
             return self.reserved_seats.reservees.all()
         return []
@@ -120,13 +120,13 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
     @property
     def number_of_attendees(self):
-        """ Count of all attendees not in waiting list """
+        """Count of all attendees not in waiting list"""
         # We need to use len() instead of .count() here, because of the prefetched event archive
         return len(self.attending_attendees_qs)
 
     @property
     def number_on_waitlist(self):
-        """ Count of all attendees on waiting list """
+        """Count of all attendees on waiting list"""
         # We need to use len() instead of .count() here, because of the prefetched event archive
         return len(self.waitlist_qs)
 
@@ -173,7 +173,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
     @property
     def visible_attending_attendees(self):
-        """ List with all attendees whom want to be displayed as attending else return a anonymous name """
+        """List with all attendees whom want to be displayed as attending else return a anonymous name"""
         dyr = [
             "piggsvin",
             "kjøttmeis",

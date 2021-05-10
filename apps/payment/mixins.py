@@ -28,7 +28,7 @@ class PaymentMixin:
 
     @abstractmethod
     def is_user_allowed_to_pay(self, user: User) -> bool:
-        """ There are no rules prohibiting user from paying for other types of payments """
+        """There are no rules prohibiting user from paying for other types of payments"""
         return True
 
     @abstractmethod

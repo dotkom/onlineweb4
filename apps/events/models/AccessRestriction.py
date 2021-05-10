@@ -37,7 +37,7 @@ class Rule(models.Model):
         return True
 
     def satisfied(self, user: User, registration_start: timezone.datetime):
-        """ Override method """
+        """Override method"""
 
         if self.satisfies_constraint(user):
             offset_datetime = self.get_offset_time(registration_start)

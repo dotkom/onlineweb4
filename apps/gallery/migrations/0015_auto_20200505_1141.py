@@ -11,6 +11,8 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RenameField(
-            model_name="responsiveimage", old_name="format", new_name="preset",
+            model_name="responsiveimage",
+            old_name="format",
+            new_name="preset",
         ),
     ]

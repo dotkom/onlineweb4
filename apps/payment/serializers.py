@@ -135,7 +135,7 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
             f"price: {payment_price.price} kr"
         )
         try:
-            """ Validate and make the Intent with the Stripe payment method """
+            """Validate and make the Intent with the Stripe payment method"""
             intent = stripe.PaymentIntent.create(
                 payment_method=payment_method_id,
                 amount=payment_price.price
@@ -324,7 +324,7 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
         )
 
         try:
-            """ Use Trikom key for additions to user saldo """
+            """Use Trikom key for additions to user saldo"""
             stripe_private_key = settings.STRIPE_PRIVATE_KEYS["trikom"]
 
             intent = stripe.PaymentIntent.create(
@@ -406,7 +406,7 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
         payment_intent_id = validated_data.pop("payment_intent_id")
 
         try:
-            """ Use Trikom key for additions to user saldo """
+            """Use Trikom key for additions to user saldo"""
             stripe.api_key = settings.STRIPE_PRIVATE_KEYS["trikom"]
 
             intent = stripe.PaymentIntent.confirm(payment_intent_id)
