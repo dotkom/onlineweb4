@@ -10,6 +10,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import FormView
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
 from rest_framework import mixins, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -37,6 +38,23 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     authentication_classes = [OAuth2Authentication]
     permission_classes = [TokenHasScope]
     required_scopes = ["shop.readwrite"]
+
+    @action(detail=False, url_path="userorders")
+    def user_orders(self, request):
+        """
+        Endpoint for fetching a users orders history
+        Intended for the nibble kiosk
+        """
+        pk = self.request.query_params.get("pk")
+        if not pk:
+            return Response(
+                "Request must include a 'pk' query parameter where 'pk' is the users user id",
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        user = get_object_or_404(User, pk=pk)
+        orders = OrderLine.objects.filter(user=user)
+        serializer = UserOrderLineSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):

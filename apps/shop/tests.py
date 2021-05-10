@@ -60,6 +60,9 @@ class ShopOrderLinesTestCase(OAuth2TestCase):
     def get_detail_url(self, _id):
         return reverse(f"{self.basename}-detail", args=(_id,))
 
+    def get_user_orders_url(self):
+        return reverse(f"{self.basename}-user-orders")
+
     def _add_saldo_to_user(self, amount: int):
         return G(
             PaymentTransaction,
@@ -172,6 +175,19 @@ class ShopOrderLinesTestCase(OAuth2TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(len(mail.outbox), 2)
+
+    def test_get_user_orders(self):
+        pk = self.user.pk
+
+        # request without token
+        response = self.client.get(self.get_user_orders_url() + f"?pk={pk}")
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        # request with token
+        response = self.client.get(
+            self.get_user_orders_url() + f"?pk={pk}", **self.generate_headers()
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class ShopSetRFIDTestCase(OAuth2TestCase):
