@@ -454,14 +454,14 @@ Django = ">=2.2"
 
 [[package]]
 name = "django-filebrowser"
-version = "3.13.3"
+version = "3.14.1"
 description = "Media-Management with Grappelli"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-django-grappelli = ">=2.14,<2.15"
+django-grappelli = ">=2.15,<2.16"
 pillow = "*"
 six = "*"
 
@@ -478,7 +478,7 @@ Django = ">=2.2"
 
 [[package]]
 name = "django-grappelli"
-version = "2.14.4"
+version = "2.15.1"
 description = "A jazzy skin for the Django Admin-Interface."
 category = "main"
 optional = false
@@ -1855,7 +1855,7 @@ prod = ["psycopg2-binary", "uwsgi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "54b76aee76c246928e5da5b9326054396a0249489703984214d90c25858102b4"
+content-hash = "d7ef225e727afc1fca7dda0d6af9976a8cee0573be3255148fb6361333e5bd5e"
 
 [metadata.files]
 alabaster = [
@@ -2086,15 +2086,16 @@ django-extensions = [
     {file = "django_extensions-3.1.3-py3-none-any.whl", hash = "sha256:50de8977794a66a91575dd40f87d5053608f679561731845edbd325ceeb387e3"},
 ]
 django-filebrowser = [
-    {file = "django-filebrowser-3.13.3.tar.gz", hash = "sha256:ee0ea7fff552d22b7c49989040428577a4aad0f275acc1048218083d962bc590"},
+    {file = "django-filebrowser-3.14.1.tar.gz", hash = "sha256:d527df538e34e0eade8e7c7f61ff667554a703ed73163776df3b15a5a2ee412f"},
+    {file = "django_filebrowser-3.14.1-py3-none-any.whl", hash = "sha256:82e17eef98033eb182b0ca2d4599539e68a03934a48660fa70ad41f667f7a141"},
 ]
 django-filter = [
     {file = "django-filter-2.4.0.tar.gz", hash = "sha256:84e9d5bb93f237e451db814ed422a3a625751cbc9968b484ecc74964a8696b06"},
     {file = "django_filter-2.4.0-py3-none-any.whl", hash = "sha256:e00d32cebdb3d54273c48f4f878f898dced8d5dfaad009438fe61ebdf535ace1"},
 ]
 django-grappelli = [
-    {file = "django-grappelli-2.14.4.tar.gz", hash = "sha256:cb5763854ff59b6c0b3032aa0ac09ba39f14bd577d7612fd678f37ad37bd809c"},
-    {file = "django_grappelli-2.14.4-py2.py3-none-any.whl", hash = "sha256:8042824c57602685ae6335ff6efa5f13323e1c9993fc622c1d8470a70dfad95e"},
+    {file = "django-grappelli-2.15.1.tar.gz", hash = "sha256:bc38e7c2585c20b6c8c6a4d984beb4c0fe62ae13421d1fe6614d04dda2096014"},
+    {file = "django_grappelli-2.15.1-py2.py3-none-any.whl", hash = "sha256:b9aa386d63a95c37f3741aac98bd545c70ff51cf9104a1419dd6568d2e2cf2ea"},
 ]
 django-guardian = [
     {file = "django-guardian-2.3.0.tar.gz", hash = "sha256:ed2de26e4defb800919c5749fb1bbe370d72829fbd72895b6cf4f7f1a7607e1b"},

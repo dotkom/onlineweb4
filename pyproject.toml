@@ -19,7 +19,7 @@ icalendar = "~4.0"
 google-api-python-client = "~1.10"
 celery = "~4.4"
 PyMuPDF = "~1.18"
-django-filebrowser = "~3.13"
+django-filebrowser = "~3.14"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
 django-crispy-forms = "^1.11"
 django-extensions = "^3.1"
