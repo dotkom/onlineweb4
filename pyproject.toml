@@ -88,7 +88,7 @@ tox = "~3.23"
 
 # Linting
 flake8 = "~3.8"
-isort = "~5.4"
+isort = "~5.8"
 pycodestyle = "~2.6"
 black = "21.5b1"
 
