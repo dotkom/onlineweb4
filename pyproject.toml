@@ -80,7 +80,7 @@ pywebpush = "^1.11.0"
 # Testing
 pytest = "~6.2"
 pytest-cov = "~2.11"
-pytest-django = "~4.2"
+pytest-django = "~4.3"
 factory-boy = "~3.2"
 freezegun = "~1.1"
 mock = "~4.0"
