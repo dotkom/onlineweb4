@@ -90,7 +90,7 @@ tox = "~3.23"
 flake8 = "~3.8"
 isort = "~5.8"
 pycodestyle = "~2.6"
-black = "21.5b1"
+black = "21.5b2"
 
 [tool.poetry.extras]
 prod = ["psycopg2-binary", "uwsgi"]
