@@ -645,7 +645,7 @@ python-versions = "*"
 
 [[package]]
 name = "django-webpack-loader"
-version = "0.7.0"
+version = "1.0.0"
 description = "Transparently use webpack with django"
 category = "main"
 optional = false
@@ -1859,7 +1859,7 @@ prod = ["psycopg2-binary", "uwsgi"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "9dac26459bec86e361a2f39d61e34e41f26f6959d9d79e02b9bd1089f4c79f21"
+content-hash = "4e4658a40ef6990d6328602a917c6e07ac87f1a2dee02d67a8c6ac68f736b426"
 
 [metadata.files]
 alabaster = [
@@ -2165,8 +2165,8 @@ django-watson = [
     {file = "django-watson-1.5.5.tar.gz", hash = "sha256:456123d1601f275ef222d9ccbb3b73e7dcb70f1370e4d45651aa2d359ee6e0e3"},
 ]
 django-webpack-loader = [
-    {file = "django-webpack-loader-0.7.0.tar.gz", hash = "sha256:7a3c88201aa54481f9399465615cbe7b9aece8081496a6d0287b7cb8e232f447"},
-    {file = "django_webpack_loader-0.7.0-py2.py3-none-any.whl", hash = "sha256:d28a276ed3d89e97a313b74967e373693f8b86afe629f4c91eea91c5b4f2ec20"},
+    {file = "django-webpack-loader-1.0.0.tar.gz", hash = "sha256:2cee0ff147bd0f34e046c23835720d7e3eabddcba3bfab1853d9c4fd0df12565"},
+    {file = "django_webpack_loader-1.0.0-py2.py3-none-any.whl", hash = "sha256:9a768b03f33d0a6977aceb67ddd02eba7a9e3763ae30004ee512d90628ed5713"},
 ]
 djangorestframework = [
     {file = "djangorestframework-3.12.4-py3-none-any.whl", hash = "sha256:6d1d59f623a5ad0509fe0d6bfe93cbdfe17b8116ebc8eda86d45f6e16e819aaf"},
