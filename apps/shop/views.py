@@ -52,7 +52,9 @@ class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         user = get_object_or_404(User, pk=pk)
-        orders = OrderLine.objects.filter(user=user)
+        # Only include the latest purchases
+        amount = 50
+        orders = OrderLine.objects.filter(user=user).order_by("-datetime")[:amount]
         serializer = UserOrderLineSerializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
