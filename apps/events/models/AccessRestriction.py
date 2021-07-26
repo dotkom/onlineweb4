@@ -38,23 +38,17 @@ class Rule(models.Model):
             offset_datetime = self.get_offset_time(registration_start)
             # If the offset is in the past, it means you can attend even with the offset
             if offset_datetime < timezone.now():
-                return AttendanceResult(True, "", self.SUCCESS)
+                return AttendanceResult(True, self.SUCCESS)
             # If there is no offset, the signup just hasn't started yet
             elif self.offset == 0:
-                status = StatusCode.SIGNUP_NOT_OPENED_YET
                 return AttendanceResult(
                     False,
-                    status.message(),
-                    status,
+                    StatusCode.SIGNUP_NOT_OPENED_YET,
                 )
             # In the last case there is a delayed signup
             else:
-                status = self.DELAYED_SIGNUP
-                return AttendanceResult(
-                    False, status.message(), status, offset_datetime
-                )
-        status = self.NOT_SATISFIED
-        return AttendanceResult(False, status.message(), status)
+                return AttendanceResult(False, self.DELAYED_SIGNUP, offset_datetime)
+        return AttendanceResult(False, self.NOT_SATISFIED)
 
     def __str__(self):
         return "Rule"

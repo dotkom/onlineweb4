@@ -18,7 +18,7 @@ from apps.notifications.models import Permission
 from apps.payment.models import PaymentDelay, PaymentPrice
 
 from ..constants import EventType
-from ..models import AttendanceEvent, Event, Extras, GroupRestriction
+from ..models import AttendanceEvent, Event, Extras, GroupRestriction, StatusCode
 from .utils import (
     add_payment_delay,
     add_to_group,
@@ -359,7 +359,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         response = self.client.post(url, form_params, follow=True)
 
         self.assertRedirects(response, event.get_absolute_url())
-        self.assertInMessages("Du er allerede meldt på dette arrangementet.", response)
+        self.assertInMessages(StatusCode.ALREADY_SIGNED_UP.message, response)
 
     @patch("captcha.fields.client.submit")
     def test_attend_with_payment_creates_paymentdelay(self, mocked_submit):

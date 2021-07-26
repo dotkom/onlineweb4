@@ -87,9 +87,10 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
 
     def get_is_eligible_for_signup(self, attendance_event: AttendanceEvent):
         user = self.context["request"].user
-        return AttendanceResultSerializer(
-            attendance_event.is_eligible_for_signup(user)
-        ).data
+        if user.is_authenticated:
+            return AttendanceResultSerializer(
+                attendance_event.is_eligible_for_signup(user)
+            ).data
 
     class Meta:
         model = AttendanceEvent

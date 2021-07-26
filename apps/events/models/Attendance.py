@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from enum import IntEnum, unique
 from random import choice as random_choice
 from typing import List, Optional
 
@@ -25,8 +24,7 @@ from .Event import User, logger
 from .Extras import Extras
 
 
-@unique
-class StatusCode(IntEnum):
+class StatusCode(models.IntegerChoices):
     """
     These codes follow the HTTP standard in terms of overlying scheme.
     2XX = successful
@@ -37,65 +35,61 @@ class StatusCode(IntEnum):
     """
 
     # Event has no rulebundles
-    SUCCESS_MEMBER = 200
-    SUCCESS_GUEST_SIGNUP = 201
+    SUCCESS_MEMBER = 200, _("Du kan melde deg på.")
+    SUCCESS_GUEST_SIGNUP = 201, _("Du kan melde deg på.")
 
-    SUCCESS_FIELD_OF_STUDY = 210
-    SUCCESS_GRADE = 211
-    SUCCESS_USER_GROUP = 212
-    SUCCESS_UNKNOWN = 213
+    SUCCESS_FIELD_OF_STUDY = 210, _("Du kan melde deg på.")
+    SUCCESS_GRADE = 211, _("Du kan melde deg på.")
+    SUCCESS_USER_GROUP = 212, _("Du kan melde deg på.")
+    SUCCESS_UNKNOWN = 213, _("Du kan melde deg på.")
 
-    NOT_SATISFIED = 500
-    SIGNUP_NOT_OPENED_YET = 501
-    SIGNUP_CLOSED = 502
-    NO_SEATS_LEFT = 503
+    NOT_SATISFIED = 500, _("Du oppfyller ikke reglene for å melde deg på.")
+    SIGNUP_NOT_OPENED_YET = 501, _("Påmeldingen har ikke åpnet enda.")
+    SIGNUP_CLOSED = 502, _("Påmeldingen er ikke lenger åpen.")
+    NO_SEATS_LEFT = 503, _("Det er ikke flere plasser igjen.")
 
-    NOT_A_MEMBER = 400
-    DELAYED_SIGNUP_MARKS = 401
-    DELAYED_ACCESS = 402
-    ACCESS_DENIED = 403
-    ALREADY_SIGNED_UP = 404
-    SUSPENDED = 405
+    NOT_A_MEMBER = 400, _("Arrangementet er kun åpnet for medlemmer av Online.")
+    DELAYED_SIGNUP_MARKS = 401, _("Din påmelding er utsatt grunnet prikker.")
+    DELAYED_ACCESS = 402, _("Din påmelding er utsatt.")
+    ACCESS_DENIED = 403, _("Du har ikke adgang til dette arrangementet.")
+    ALREADY_SIGNED_UP = 404, _("Du er allerede påmeldt.")
+    SUSPENDED = 405, _("Du er suspendert, og kan derfor ikke melde deg på.")
 
-    DELAYED_SIGNUP_FIELD_OF_STUDY = 420
-    DELAYED_SIGNUP_GRADE = 421
-    DELAYED_SIGNUP_USER_GROUP = 422
-    DELAYED_SIGNUP_UNKNOWN = 423
+    DELAYED_SIGNUP_FIELD_OF_STUDY = 420, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_GRADE = 421, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_USER_GROUP = 422, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_UNKNOWN = 423, _("Din påmelding er utsatt.")
 
-    NOT_SATISFIED_FIELD_OF_STUDY = 410
-    NOT_SATISFIED_GRADE = 411
-    NOT_SATISFIED_USER_GROUP = 412
-    NOT_SATISFIED_UNKNOWN = 413
+    NOT_SATISFIED_FIELD_OF_STUDY = 410, _(
+        "Din studieretning har ikke adgang til dette arrangementet."
+    )
+    NOT_SATISFIED_GRADE = 411, _(
+        "Din studieretning har ikke adgang til dette arrangementet."
+    )
+    NOT_SATISFIED_USER_GROUP = 412, _(
+        "Din studieretning har ikke adgang til dette arrangementet."
+    )
+    NOT_SATISFIED_UNKNOWN = 413, _(
+        "Din studieretning har ikke adgang til dette arrangementet."
+    )
 
-    def message(self) -> str:
-        if self.is_success():
-            return _("Du har utsatt påmelding")
-        elif self.is_not_satisfied():
-            return _("Din studieretning har ikke adgang til dette arrangementet.")
-        elif self.SIGNUP_NOT_OPENED_YET:
-            return _("Påmeldingen har ikke åpnet enda.")
-        else:
-            raise NotImplementedError()
-
-    def is_success(self) -> bool:
-        return self in range(200, 300)
-
-    def is_delayed_signup(self) -> bool:
-        return self in range(420, 430)
-
-    def is_not_satisfied(self) -> bool:
-        return self in range(410, 420)
+    @property
+    def message(self):
+        return self.label
 
 
 @dataclass
 class AttendanceResult:
     # eligibility or wheter the user has signed up
     status: bool
-    # User-facing message
-    message: str
     status_code: StatusCode
     # If the attendee has delayed admission, this is the delay
     offset: Optional[datetime] = None
+
+    @property
+    def message(self) -> str:
+        """User-facing message"""
+        return self.status_code.message
 
 
 class AttendanceEvent(PaymentMixin, models.Model):
@@ -363,33 +357,27 @@ class AttendanceEvent(PaymentMixin, models.Model):
         if self.attendees.filter(user=user).exists():
             return AttendanceResult(
                 False,
-                "Du er allerede meldt på dette arrangementet.",
                 StatusCode.ALREADY_SIGNED_UP,
             )
 
         if timezone.now() > self.registration_end:
-            return AttendanceResult(
-                False, _("Påmeldingen er ikke lenger åpen."), StatusCode.SIGNUP_CLOSED
-            )
+            return AttendanceResult(False, StatusCode.SIGNUP_CLOSED)
 
         if timezone.now() < self.registration_start:
             return AttendanceResult(
                 False,
-                _("Påmeldingen har ikke åpnet enda."),
                 StatusCode.SIGNUP_NOT_OPENED_YET,
             )
 
         if not self.room_on_event:
             return AttendanceResult(
                 False,
-                _("Det er ikke mer plass på dette arrangementet."),
                 StatusCode.NO_SEATS_LEFT,
             )
 
         if self.is_suspended(user):
             return AttendanceResult(
                 False,
-                _("Du er suspendert og kan ikke melde deg på."),
                 StatusCode.SUSPENDED,
             )
 
@@ -397,7 +385,6 @@ class AttendanceEvent(PaymentMixin, models.Model):
         if not self.event.can_display(user):
             return AttendanceResult(
                 False,
-                _("Du har ikke tilgang til å melde deg på dette arrangementet."),
                 StatusCode.ACCESS_DENIED,
             )
 
@@ -448,7 +435,6 @@ class AttendanceEvent(PaymentMixin, models.Model):
                 ):
                     response = AttendanceResult(
                         False,
-                        _("Din påmelding er utsatt grunnet prikker."),
                         StatusCode.DELAYED_SIGNUP_MARKS,
                         postponed_registration_start,
                     )
@@ -491,20 +477,19 @@ class AttendanceEvent(PaymentMixin, models.Model):
         """
         # If the event has guest attendance, allow absolutely anyone
         if self.guest_attendance:
-            return AttendanceResult(True, "", StatusCode.SUCCESS_GUEST_SIGNUP)
+            return AttendanceResult(True, StatusCode.SUCCESS_GUEST_SIGNUP)
 
         # If the user is not a member, return False right away
         # TODO check for guest list
         if not user.is_member:
             return AttendanceResult(
                 False,
-                _("Dette arrangementet er kun åpent for medlemmer."),
                 StatusCode.NOT_A_MEMBER,
             )
 
         # If there are no rule_bundles on this object, all members of Online are allowed.
         if not self.rule_bundles.exists() and user.is_member:
-            return AttendanceResult(True, "", StatusCode.SUCCESS_MEMBER)
+            return AttendanceResult(True, StatusCode.SUCCESS_MEMBER)
 
         # Check all rule bundles
         responses = []
