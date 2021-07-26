@@ -320,6 +320,16 @@ class AttendanceEvent(PaymentMixin, models.Model):
         if postponed_registration_start > timezone.now() and before_expiry:
             return postponed_registration_start
 
+    def is_suspended(self, user):
+        for suspension in user.get_active_suspensions():
+            if (
+                not suspension.expiration_date
+                or suspension.expiration_date > timezone.now().date()
+            ):
+                return True
+
+        return False
+
     @property
     def will_i_be_on_wait_list(self):
         return True if self.free_seats == 0 and self.waitlist else False
@@ -348,7 +358,6 @@ class AttendanceEvent(PaymentMixin, models.Model):
         - Rules
         - Marks
         - Suspension
-        See ``
         """
         # User is already an attendee
         if self.attendees.filter(user=user).exists():
@@ -377,7 +386,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
                 StatusCode.NO_SEATS_LEFT,
             )
 
-        if user.is_suspended:
+        if self.is_suspended(user):
             return AttendanceResult(
                 False,
                 _("Du er suspendert og kan ikke melde deg på."),

@@ -323,16 +323,6 @@ class OnlineUser(AbstractUser):
 
         return MarkRuleSet.has_user_accepted_mark_rules(user=self)
 
-    @property
-    def is_suspended(self) -> bool:
-        for suspension in self.get_active_suspensions():
-            if (
-                not suspension.expiration_date
-                or suspension.expiration_date > timezone.now().date()
-            ):
-                return True
-        return False
-
     class Meta:
         ordering = ["first_name", "last_name"]
         verbose_name = _("brukerprofil")

@@ -2,7 +2,6 @@ from random import choice as random_choice
 
 from django.utils import timezone
 from rest_framework import fields, serializers
-from rest_framework.fields import SerializerMethodField
 
 from apps.authentication.serializers import UserReadOnlySerializer
 from apps.gallery.serializers import ResponsiveImageSerializer
@@ -80,8 +79,8 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
     payment = serializers.PrimaryKeyRelatedField(read_only=True)
     has_postponed_registration = SerializerUserMethodField()
     is_marked = SerializerUserMethodField()
-    is_suspended = SerializerMethodField()
-    is_eligible_for_signup = SerializerMethodField()
+    is_suspended = SerializerUserMethodField()
+    is_eligible_for_signup = fields.SerializerMethodField()
     is_attendee = SerializerUserMethodField()
     is_on_waitlist = SerializerUserMethodField()
     what_place_is_user_on_wait_list = SerializerUserMethodField()
@@ -91,10 +90,6 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
         return AttendanceResultSerializer(
             attendance_event.is_eligible_for_signup(user)
         ).data
-
-    def get_is_suspended(self, _obj):
-        user = self.context["request"].user
-        return user.is_suspended
 
     class Meta:
         model = AttendanceEvent
