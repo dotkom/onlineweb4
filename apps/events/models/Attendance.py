@@ -74,17 +74,24 @@ class StatusCode(models.IntegerChoices):
     )
 
     @property
+    def is_success(self):
+        return 200 <= self < 300
+
+    @property
     def message(self):
         return self.label
 
 
 @dataclass
 class AttendanceResult:
-    # eligibility or wheter the user has signed up
-    status: bool
     status_code: StatusCode
     # If the attendee has delayed admission, this is the delay
     offset: Optional[datetime] = None
+
+    @property
+    def status(self) -> bool:
+        """eligibility or wheter the user has signed up"""
+        return self.status_code.is_success
 
     @property
     def message(self) -> str:
@@ -355,38 +362,23 @@ class AttendanceEvent(PaymentMixin, models.Model):
         """
         # User is already an attendee
         if self.attendees.filter(user=user).exists():
-            return AttendanceResult(
-                False,
-                StatusCode.ALREADY_SIGNED_UP,
-            )
+            return AttendanceResult(StatusCode.ALREADY_SIGNED_UP)
 
         if timezone.now() > self.registration_end:
-            return AttendanceResult(False, StatusCode.SIGNUP_CLOSED)
+            return AttendanceResult(StatusCode.SIGNUP_CLOSED)
 
         if timezone.now() < self.registration_start:
-            return AttendanceResult(
-                False,
-                StatusCode.SIGNUP_NOT_OPENED_YET,
-            )
+            return AttendanceResult(StatusCode.SIGNUP_NOT_OPENED_YET)
 
         if not self.room_on_event:
-            return AttendanceResult(
-                False,
-                StatusCode.NO_SEATS_LEFT,
-            )
+            return AttendanceResult(StatusCode.NO_SEATS_LEFT)
 
         if self.is_suspended(user):
-            return AttendanceResult(
-                False,
-                StatusCode.SUSPENDED,
-            )
+            return AttendanceResult(StatusCode.SUSPENDED)
 
         # Checks if the event is group restricted and if the user is in the right group
         if not self.event.can_display(user):
-            return AttendanceResult(
-                False,
-                StatusCode.ACCESS_DENIED,
-            )
+            return AttendanceResult(StatusCode.ACCESS_DENIED)
 
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
@@ -434,7 +426,6 @@ class AttendanceEvent(PaymentMixin, models.Model):
                     or response.offset is None
                 ):
                     response = AttendanceResult(
-                        False,
                         StatusCode.DELAYED_SIGNUP_MARKS,
                         postponed_registration_start,
                     )
@@ -477,19 +468,16 @@ class AttendanceEvent(PaymentMixin, models.Model):
         """
         # If the event has guest attendance, allow absolutely anyone
         if self.guest_attendance:
-            return AttendanceResult(True, StatusCode.SUCCESS_GUEST_SIGNUP)
+            return AttendanceResult(StatusCode.SUCCESS_GUEST_SIGNUP)
 
         # If the user is not a member, return False right away
         # TODO check for guest list
         if not user.is_member:
-            return AttendanceResult(
-                False,
-                StatusCode.NOT_A_MEMBER,
-            )
+            return AttendanceResult(StatusCode.NOT_A_MEMBER)
 
         # If there are no rule_bundles on this object, all members of Online are allowed.
         if not self.rule_bundles.exists() and user.is_member:
-            return AttendanceResult(True, StatusCode.SUCCESS_MEMBER)
+            return AttendanceResult(StatusCode.SUCCESS_MEMBER)
 
         # Check all rule bundles
         responses = []
