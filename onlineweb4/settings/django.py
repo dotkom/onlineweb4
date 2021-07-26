@@ -176,7 +176,6 @@ INSTALLED_APPS = (
     "rest_framework",
     "django_filters",
     "taggit",
-    "taggit_serializer",
     "corsheaders",
     "datetimewidget",
     "webpack_loader",
