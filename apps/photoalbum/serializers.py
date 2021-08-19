@@ -1,7 +1,7 @@
 import logging
 
 from rest_framework import serializers
-from taggit_serializer.serializers import TagListSerializerField
+from taggit.serializers import TagListSerializerField
 
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.serializers import UserNameSerializer

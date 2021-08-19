@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from taggit_serializer.serializers import TaggitSerializer
+from taggit.serializers import TaggitSerializer
 
 from apps.careeropportunity.models import CareerOpportunity
 from apps.companyprofile.serializers import CompanySerializer
