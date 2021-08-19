@@ -21,6 +21,10 @@ ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*")
 ADMINS = (("dotkom", "dotkom@online.ntnu.no"),)
 MANAGERS = ADMINS
 
+# Added due to breaking change in django-revision 4.0, see https://django-reversion.readthedocs.io/en/stable/changelog.html
+# might be 100% safe to remove, but keep it safe
+ATMOIC_REQUESTS = True
+
 DATABASES = {
     # Set this using the environment variable "DATABASE_URL"
     "default": dj_database_url.config(
