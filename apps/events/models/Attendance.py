@@ -43,22 +43,12 @@ class StatusCode(models.IntegerChoices):
     SUCCESS_USER_GROUP = 212, _("Du kan melde deg på.")
     SUCCESS_UNKNOWN = 213, _("Du kan melde deg på.")
 
-    NOT_SATISFIED = 500, _("Du oppfyller ikke reglene for å melde deg på.")
-    SIGNUP_NOT_OPENED_YET = 501, _("Påmeldingen har ikke åpnet enda.")
-    SIGNUP_CLOSED = 502, _("Påmeldingen er ikke lenger åpen.")
-    NO_SEATS_LEFT = 503, _("Det er ikke flere plasser igjen.")
-
     NOT_A_MEMBER = 400, _("Arrangementet er kun åpnet for medlemmer av Online.")
     DELAYED_SIGNUP_MARKS = 401, _("Din påmelding er utsatt grunnet prikker.")
     DELAYED_ACCESS = 402, _("Din påmelding er utsatt.")
     ACCESS_DENIED = 403, _("Du har ikke adgang til dette arrangementet.")
     ALREADY_SIGNED_UP = 404, _("Du er allerede påmeldt.")
     SUSPENDED = 405, _("Du er suspendert, og kan derfor ikke melde deg på.")
-
-    DELAYED_SIGNUP_FIELD_OF_STUDY = 420, _("Din påmelding er utsatt.")
-    DELAYED_SIGNUP_GRADE = 421, _("Din påmelding er utsatt.")
-    DELAYED_SIGNUP_USER_GROUP = 422, _("Din påmelding er utsatt.")
-    DELAYED_SIGNUP_UNKNOWN = 423, _("Din påmelding er utsatt.")
 
     NOT_SATISFIED_FIELD_OF_STUDY = 410, _(
         "Din studieretning har ikke adgang til dette arrangementet."
@@ -73,6 +63,16 @@ class StatusCode(models.IntegerChoices):
         "Din studieretning har ikke adgang til dette arrangementet."
     )
 
+    DELAYED_SIGNUP_FIELD_OF_STUDY = 420, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_GRADE = 421, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_USER_GROUP = 422, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_UNKNOWN = 423, _("Din påmelding er utsatt.")
+
+    NOT_SATISFIED = 500, _("Du oppfyller ikke reglene for å melde deg på.")
+    SIGNUP_NOT_OPENED_YET = 501, _("Påmeldingen har ikke åpnet enda.")
+    SIGNUP_CLOSED = 502, _("Påmeldingen er ikke lenger åpen.")
+    NO_SEATS_LEFT = 503, _("Det er ikke flere plasser igjen.")
+
     @property
     def is_success(self):
         return 200 <= self < 300
@@ -85,8 +85,8 @@ class StatusCode(models.IntegerChoices):
 @dataclass
 class AttendanceResult:
     status_code: StatusCode
-    # If the attendee has delayed admission, this is the delay
-    offset: Optional[datetime] = None
+    # If the attendee has a postponed admission, this is the delay
+    offset: Optional[timezone.datetime] = None
 
     @property
     def status(self) -> bool:
@@ -431,41 +431,13 @@ class AttendanceEvent(PaymentMixin, models.Model):
                     )
         return response
 
-    def _process_rulebundle_satisfaction_responses(
-        self, responses: List[AttendanceResult]
-    ):
-        # avoid circular imports
-        from .AccessRestriction import StatusCode
-
-        # Put the smallest offset faaar into the future.
-        smallest_offset = timezone.now() + timedelta(days=365)
-        offset_response = {}
-        future_response = {}
-        errors = []
-
-        for response in responses:
-            if response.status:
-                return response
-            elif response.offset is not None:
-                if response.offset < smallest_offset:
-                    smallest_offset = response.offset
-                    offset_response = response
-            elif response.status_code == StatusCode.SIGNUP_NOT_OPENED_YET:
-                future_response = response
-            else:
-                errors.append(response)
-
-        if future_response:
-            return future_response
-        if smallest_offset > timezone.now() and offset_response:
-            return offset_response
-        if errors:
-            return errors[0]
-
     def rules_satisfied(self, user: User) -> AttendanceResult:
         """
         Checks a user against rules applied to an attendance event
         """
+        # avoid circular import
+        from .AccessRestriction import reduce_attendance_results
+
         # If the event has guest attendance, allow absolutely anyone
         if self.guest_attendance:
             return AttendanceResult(StatusCode.SUCCESS_GUEST_SIGNUP)
@@ -486,7 +458,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
         for rule_bundle in self.rule_bundles.all():
             responses.extend(rule_bundle.satisfied(user, self.registration_start))
 
-        return self._process_rulebundle_satisfaction_responses(responses)
+        return reduce_attendance_results(responses)
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user).exists()
