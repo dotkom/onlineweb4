@@ -117,7 +117,7 @@ def attend_event(request, event_id):
 
     response = event.attendance_event.is_eligible_for_signup(request.user)
 
-    if response["status"]:
+    if response.status:
         attendee = Attendee(event=attendance_event, user=request.user)
         if "note" in form.cleaned_data:
             attendee.note = form.cleaned_data["note"]
@@ -132,7 +132,7 @@ def attend_event(request, event_id):
 
         return redirect(event)
     else:
-        messages.error(request, response["message"])
+        messages.error(request, response.message)
         return redirect(event)
 
 

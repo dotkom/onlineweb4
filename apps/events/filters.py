@@ -65,7 +65,7 @@ class EventFilter(django_filters.FilterSet):
             user_attendable_event_pks = []
             for event in events_with_attendance:
                 response = event.attendance_event.rules_satisfied(self.request.user)
-                can_attend = response.get("status", None)
+                can_attend = response.status
                 if can_attend:
                     user_attendable_event_pks.append(event.id)
 

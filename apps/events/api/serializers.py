@@ -1,7 +1,7 @@
 from random import choice as random_choice
 
 from django.utils import timezone
-from rest_framework import serializers
+from rest_framework import fields, serializers
 
 from apps.authentication.serializers import UserReadOnlySerializer
 from apps.gallery.serializers import ResponsiveImageSerializer
@@ -66,6 +66,13 @@ class EventSerializer(serializers.ModelSerializer):
         )
 
 
+class AttendanceResultSerializer(serializers.Serializer):
+    status = fields.BooleanField()
+    message = fields.CharField()
+    status_code = fields.IntegerField()
+    offset = fields.DateTimeField(allow_null=True)
+
+
 class AttendanceEventSerializer(serializers.ModelSerializer):
     extras = ExtrasSerializer(many=True)
     feedback = serializers.PrimaryKeyRelatedField(read_only=True, source="get_feedback")
@@ -73,10 +80,17 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
     has_postponed_registration = SerializerUserMethodField()
     is_marked = SerializerUserMethodField()
     is_suspended = SerializerUserMethodField()
-    is_eligible_for_signup = SerializerUserMethodField()
+    is_eligible_for_signup = fields.SerializerMethodField()
     is_attendee = SerializerUserMethodField()
     is_on_waitlist = SerializerUserMethodField()
     what_place_is_user_on_wait_list = SerializerUserMethodField()
+
+    def get_is_eligible_for_signup(self, attendance_event: AttendanceEvent):
+        user = self.context["request"].user
+        if user.is_authenticated:
+            return AttendanceResultSerializer(
+                attendance_event.is_eligible_for_signup(user)
+            ).data
 
     class Meta:
         model = AttendanceEvent
