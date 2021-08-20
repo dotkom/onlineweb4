@@ -1,6 +1,7 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from random import choice as random_choice
-from typing import List
+from typing import List, Optional
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -21,6 +22,81 @@ from apps.payment.mixins import PaymentMixin
 
 from .Event import User, logger
 from .Extras import Extras
+
+
+class StatusCode(models.IntegerChoices):
+    """
+    These codes follow the HTTP standard in terms of overlying scheme.
+    2XX = successful
+    4XX = client error (user related)
+    5XX = server error (event related)
+    These codes are meant as a debugging tool only. The eligibility checking is quite
+    extensive, and tracking where it's going wrong is much needed.
+    """
+
+    # Event has no rulebundles
+    SUCCESS_MEMBER = 200, _("Du kan melde deg på.")
+    SUCCESS_GUEST_SIGNUP = 201, _("Du kan melde deg på.")
+
+    SUCCESS_FIELD_OF_STUDY = 210, _("Du kan melde deg på.")
+    SUCCESS_GRADE = 211, _("Du kan melde deg på.")
+    SUCCESS_USER_GROUP = 212, _("Du kan melde deg på.")
+    SUCCESS_UNKNOWN = 213, _("Du kan melde deg på.")
+
+    NOT_A_MEMBER = 400, _("Arrangementet er kun åpnet for medlemmer av Online.")
+    DELAYED_SIGNUP_MARKS = 401, _("Din påmelding er utsatt grunnet prikker.")
+    DELAYED_ACCESS = 402, _("Din påmelding er utsatt.")
+    ACCESS_DENIED = 403, _("Du har ikke adgang til dette arrangementet.")
+    ALREADY_SIGNED_UP = 404, _("Du er allerede påmeldt.")
+    SUSPENDED = 405, _("Du er suspendert, og kan derfor ikke melde deg på.")
+
+    NOT_SATISFIED_FIELD_OF_STUDY = 410, _(
+        "Din studieretning har ikke adgang til dette arrangementet."
+    )
+    NOT_SATISFIED_GRADE = 411, _(
+        "Din studieretning har ikke adgang til dette arrangementet."
+    )
+    NOT_SATISFIED_USER_GROUP = 412, _(
+        "Din studieretning har ikke adgang til dette arrangementet."
+    )
+    NOT_SATISFIED_UNKNOWN = 413, _(
+        "Din studieretning har ikke adgang til dette arrangementet."
+    )
+
+    DELAYED_SIGNUP_FIELD_OF_STUDY = 420, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_GRADE = 421, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_USER_GROUP = 422, _("Din påmelding er utsatt.")
+    DELAYED_SIGNUP_UNKNOWN = 423, _("Din påmelding er utsatt.")
+
+    NOT_SATISFIED = 500, _("Du oppfyller ikke reglene for å melde deg på.")
+    SIGNUP_NOT_OPENED_YET = 501, _("Påmeldingen har ikke åpnet enda.")
+    SIGNUP_CLOSED = 502, _("Påmeldingen er ikke lenger åpen.")
+    NO_SEATS_LEFT = 503, _("Det er ikke flere plasser igjen.")
+
+    @property
+    def is_success(self):
+        return 200 <= self < 300
+
+    @property
+    def message(self):
+        return self.label
+
+
+@dataclass
+class AttendanceResult:
+    status_code: StatusCode
+    # If the attendee has a postponed admission, this is the delay
+    offset: Optional[timezone.datetime] = None
+
+    @property
+    def status(self) -> bool:
+        """eligibility or wheter the user has signed up"""
+        return self.status_code.is_success
+
+    @property
+    def message(self) -> str:
+        """User-facing message"""
+        return self.status_code.message
 
 
 class AttendanceEvent(PaymentMixin, models.Model):
@@ -265,16 +341,15 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
     def bump_waitlist_for_x_users(self, extra_capacity=1):
         """Handle bumping of the x first users on the waitlist"""
-        from apps.events.utils import (  # Imported here to avoid circular import
-            handle_waitlist_bump,
-        )
+        # Imported here to avoid circular import
+        from apps.events.utils import handle_waitlist_bump
 
         if not self.waitlist_qs:
             return
         bumped_attendees = self.waitlist_qs[:extra_capacity]
         handle_waitlist_bump(self.event, bumped_attendees, self.payment())
 
-    def is_eligible_for_signup(self, user):
+    def is_eligible_for_signup(self, user: User) -> AttendanceResult:
         """
         Checks if a user can attend a specific event
         This method checks for:
@@ -284,86 +359,42 @@ class AttendanceEvent(PaymentMixin, models.Model):
         - Rules
         - Marks
         - Suspension
-        @param User object
-        The returned dict contains a key called 'status_code'. These codes follow the HTTP
-        standard in terms of overlying scheme.
-        2XX = successful
-        4XX = client error (user related)
-        5XX = server error (event related)
-        These codes are meant as a debugging tool only. The eligibility checking is quite
-        extensive, and tracking where it's going wrong is much needed.
         """
-
-        response = {"status": False, "message": "", "status_code": None}
-
         # User is already an attendee
         if self.attendees.filter(user=user).exists():
-            response["message"] = "Du er allerede meldt på dette arrangementet."
-            response["status_code"] = 404
-            return response
+            return AttendanceResult(StatusCode.ALREADY_SIGNED_UP)
 
-        # Registration closed
         if timezone.now() > self.registration_end:
-            response["message"] = _("Påmeldingen er ikke lenger åpen.")
-            response["status_code"] = 502
-            return response
+            return AttendanceResult(StatusCode.SIGNUP_CLOSED)
 
-        # Room for me on the event?
+        if timezone.now() < self.registration_start:
+            return AttendanceResult(StatusCode.SIGNUP_NOT_OPENED_YET)
+
         if not self.room_on_event:
-            response["message"] = _("Det er ikke mer plass på dette arrangementet.")
-            response["status_code"] = 503
-            return response
+            return AttendanceResult(StatusCode.NO_SEATS_LEFT)
 
-        #
-        # Offset calculations.
-        #
+        if self.is_suspended(user):
+            return AttendanceResult(StatusCode.SUSPENDED)
+
+        # Checks if the event is group restricted and if the user is in the right group
+        if not self.event.can_display(user):
+            return AttendanceResult(StatusCode.ACCESS_DENIED)
 
         # Are there any rules preventing me from attending?
         # This should be checked last of the offsets, because it can completely deny you access.
         response = self.rules_satisfied(user)
 
-        if not response["status"]:
-            if "offset" not in response:
-                return response
+        if not response.status and response.offset is None:
+            # FIXME: what if offest is something?
+            return response
 
         # Do I have any marks that postpone my registration date?
         response = self._check_marks(response, user)
 
         # Return response if offset was set.
-        if "offset" in response and response["offset"] > timezone.now():
+        if response.offset is not None and response.offset > timezone.now():
             return response
-
-        #
-        # Offset calculations end
-        #
-
-        # Registration not open
-        if timezone.now() < self.registration_start:
-            response["status"] = False
-            response["message"] = _("Påmeldingen har ikke åpnet enda.")
-            response["status_code"] = 501
-            return response
-
-        # Is suspended
-        if self.is_suspended(user):
-            response["status"] = False
-            response["message"] = _("Du er suspendert og kan ikke melde deg på.")
-            response["status_code"] = 402
-
-            return response
-
-        # Checks if the event is group restricted and if the user is in the right group
-        if not self.event.can_display(user):
-            response["status"] = False
-            response["message"] = _(
-                "Du har ikke tilgang til å melde deg på dette arrangementet."
-            )
-            response["status_code"] = 403
-
-            return response
-
-        # No objections, set eligible.
-        response["status"] = True
+        # user should be good to go
         return response
 
     def get_minimum_rule_offset_for_user(self, user: User):
@@ -376,7 +407,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
         offsets_deltas.sort()
         return offsets_deltas[0]
 
-    def _check_marks(self, response: dict, user: User):
+    def _check_marks(self, response: AttendanceResult, user: User) -> AttendanceResult:
         expiry_date = get_expiration_date(user)
         if expiry_date and expiry_date > timezone.now().date():
             # Offset is currently 1 day if you have marks, regardless of amount.
@@ -390,62 +421,35 @@ class AttendanceEvent(PaymentMixin, models.Model):
 
             if postponed_registration_start > timezone.now() and before_expiry:
                 if (
-                    "offset" in response
-                    and response["offset"] < postponed_registration_start
-                    or "offset" not in response
+                    response.offset is not None
+                    and response.offset < postponed_registration_start
+                    or response.offset is None
                 ):
-                    response["status"] = False
-                    response["status_code"] = 401
-                    response["message"] = _("Din påmelding er utsatt grunnet prikker.")
-                    response["offset"] = postponed_registration_start
+                    response = AttendanceResult(
+                        StatusCode.DELAYED_SIGNUP_MARKS,
+                        postponed_registration_start,
+                    )
         return response
 
-    def _process_rulebundle_satisfaction_responses(self, responses):
-        # Put the smallest offset faaar into the future.
-        smallest_offset = timezone.now() + timedelta(days=365)
-        offset_response = {}
-        future_response = {}
-        errors = []
-
-        for response in responses:
-            if response["status"]:
-                return response
-            elif "offset" in response:
-                if response["offset"] < smallest_offset:
-                    smallest_offset = response["offset"]
-                    offset_response = response
-            elif response["status_code"] == 402:
-                future_response = response
-            else:
-                errors.append(response)
-
-        if future_response:
-            return future_response
-        if smallest_offset > timezone.now() and offset_response:
-            return offset_response
-        if errors:
-            return errors[0]
-
-    def rules_satisfied(self, user):
+    def rules_satisfied(self, user: User) -> AttendanceResult:
         """
         Checks a user against rules applied to an attendance event
         """
+        # avoid circular import
+        from .AccessRestriction import reduce_attendance_results
+
         # If the event has guest attendance, allow absolutely anyone
         if self.guest_attendance:
-            return {"status": True, "status_code": 201}
+            return AttendanceResult(StatusCode.SUCCESS_GUEST_SIGNUP)
 
         # If the user is not a member, return False right away
         # TODO check for guest list
         if not user.is_member:
-            return {
-                "status": False,
-                "message": _("Dette arrangementet er kun åpent for medlemmer."),
-                "status_code": 400,
-            }
+            return AttendanceResult(StatusCode.NOT_A_MEMBER)
 
         # If there are no rule_bundles on this object, all members of Online are allowed.
         if not self.rule_bundles.exists() and user.is_member:
-            return {"status": True, "status_code": 200}
+            return AttendanceResult(StatusCode.SUCCESS_MEMBER)
 
         # Check all rule bundles
         responses = []
@@ -454,7 +458,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
         for rule_bundle in self.rule_bundles.all():
             responses.extend(rule_bundle.satisfied(user, self.registration_start))
 
-        return self._process_rulebundle_satisfaction_responses(responses)
+        return reduce_attendance_results(responses)
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user).exists()
@@ -662,7 +666,7 @@ class Attendee(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
-    def delete(self):
+    def delete(self, **kwargs):
         # Importing here to prevent circular dependencies
         from apps.payment.models import PaymentDelay
 
@@ -672,12 +676,12 @@ class Attendee(models.Model):
             ).delete()
         except PaymentDelay.DoesNotExist:
             # Do nothing
-            False
+            pass
 
         if not self.is_on_waitlist():
             self.event.bump_waitlist_for_x_users()
 
-        super(Attendee, self).delete()
+        super(Attendee, self).delete(**kwargs)
 
     @property
     def payment_relations(self):
@@ -734,8 +738,7 @@ class Attendee(models.Model):
     # Unattend user from event
     def unattend(self, admin_user):
         logger.info(
-            'User %s was removed from event "%s" by %s on %s'
-            % (self.user.get_full_name(), self.event, admin_user, datetime.now())
+            f'User {self.user.get_full_name()} was removed from event "{self.event}" by {admin_user} on {datetime.now()}'
         )
 
         # Notify responsible group if someone is unattended after deadline

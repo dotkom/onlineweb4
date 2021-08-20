@@ -14,7 +14,7 @@ from apps.online_oidc_provider.test import OIDCTestCase
 from apps.profiles.models import Privacy
 from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 
-from ...models import Extras
+from ...models import Extras, StatusCode
 from .utils import generate_attendee
 
 
@@ -183,7 +183,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
             response.json().get("detail"),
-            "Du er allerede meldt på dette arrangementet.",
+            StatusCode.ALREADY_SIGNED_UP.message,
         )
         self.assertEqual(len(attendance.attendees.all()), initial_attendees + 1)
 
@@ -200,7 +200,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
             response.json().get("detail"),
-            "Dette arrangementet er kun åpent for medlemmer.",
+            StatusCode.NOT_A_MEMBER.message,
         )
 
     @mock_validate_recaptcha()

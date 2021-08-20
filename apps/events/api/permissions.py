@@ -15,8 +15,8 @@ class RegisterPermission(permissions.IsAuthenticated):
 
     def has_object_permission(self, request, view, obj: AttendanceEvent):
         attend_response = obj.is_eligible_for_signup(request.user)
-        can_attend = attend_response.get("status")
-        self.message = attend_response.get("message")
+        can_attend = attend_response.status
+        self.message = attend_response.message
         return can_attend
 
 

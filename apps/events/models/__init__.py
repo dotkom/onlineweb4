@@ -12,6 +12,7 @@ from .Attendance import (
     GroupRestriction,
     Reservation,
     Reservee,
+    StatusCode,
 )
 from .Event import Event, EventOrderedByRegistration
 from .Extras import Extras

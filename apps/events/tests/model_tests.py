@@ -21,6 +21,7 @@ from apps.events.models import (
     Reservation,
     Reservee,
     RuleBundle,
+    StatusCode,
     UserGroupRule,
 )
 from apps.feedback.models import Feedback, FeedbackRelation
@@ -192,16 +193,16 @@ class AttendanceEventModelTest(TestCase):
     def test_sign_up_with_no_rules_no_marks(self):
         # The user should be able to attend now, since the event has no rule bundles.
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertTrue(response["status"])
-        self.assertEqual(200, response["status_code"])
+        self.assertTrue(response.status)
+        self.assertEqual(StatusCode.SUCCESS_MEMBER, response.status_code)
 
     def test_sign_up_with_no_rules_no_marks_no_membership(self):
         self.allowed_username.delete()
         # The user should not be able to attend, since the event has no rule bundles
         # and they are not a member.
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(400, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.NOT_A_MEMBER, response.status_code)
 
     def test_sign_up_with_no_rules_and_a_mark(self):
         # Giving the user a mark to see if the status goes to False.
@@ -213,8 +214,8 @@ class AttendanceEventModelTest(TestCase):
             expiration_date=self.now + datetime.timedelta(days=DURATION),
         )
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(401, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.DELAYED_SIGNUP_MARKS, response.status_code)
 
     def test_field_of_study_rule(self):
         # Create the rule and rule_bundles
@@ -229,22 +230,22 @@ class AttendanceEventModelTest(TestCase):
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(410, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.NOT_SATISFIED_FIELD_OF_STUDY, response.status_code)
 
         # Make the user a bachelor and try again. Should get message about offset.
         self.user.field_of_study = 1
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(420, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.DELAYED_SIGNUP_FIELD_OF_STUDY, response.status_code)
 
         # Add a new grade rule with no offset and see if signup works
         self.fos_rule2 = G(FieldOfStudyRule, field_of_study=1, offset=0)
         self.rule_bundle.field_of_study_rules.add(self.fos_rule2)
 
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertTrue(response["status"])
-        self.assertEqual(210, response["status_code"])
+        self.assertTrue(response.status)
+        self.assertEqual(StatusCode.SUCCESS_FIELD_OF_STUDY, response.status_code)
 
     def test_grade_rule(self):
         # Create the rule and rule_bundles
@@ -259,23 +260,23 @@ class AttendanceEventModelTest(TestCase):
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(411, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.NOT_SATISFIED_GRADE, response.status_code)
 
         # Make the user a grade 1 and try again. Should get message about offset.
         self.user.field_of_study = 1
         self.user.started_date = self.now.date()
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(421, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.DELAYED_SIGNUP_GRADE, response.status_code)
 
         # Add a new grade rule with no offset and see if signup works
         self.graderule2 = G(GradeRule, grade=1, offset=0)
         self.rule_bundle.grade_rules.add(self.graderule2)
 
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertTrue(response["status"])
-        self.assertEqual(211, response["status_code"])
+        self.assertTrue(response.status)
+        self.assertEqual(StatusCode.SUCCESS_GRADE, response.status_code)
 
     def test_user_group_rule(self):
         # Create the rule and rule_bundles
@@ -291,22 +292,22 @@ class AttendanceEventModelTest(TestCase):
 
         # Status should be negative, and indicate that the restriction is a grade rule
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(412, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.NOT_SATISFIED_USER_GROUP, response.status_code)
 
         # Make the user a grade 1 and try again. Should get message about offset
         self.user.groups.add(self.group)
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(422, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.DELAYED_SIGNUP_USER_GROUP, response.status_code)
 
         # Add a new grade rule with no offset and see if signup works
         self.grouprule2 = G(UserGroupRule, group=self.group, offset=0)
         self.rule_bundle.user_group_rules.add(self.grouprule2)
 
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertTrue(response["status"])
-        self.assertEqual(212, response["status_code"])
+        self.assertTrue(response.status)
+        self.assertEqual(StatusCode.SUCCESS_USER_GROUP, response.status_code)
 
     def test_rule_offset_and_mark_offset(self):
         group: Group = G(Group, name="Testgroup")
@@ -322,8 +323,8 @@ class AttendanceEventModelTest(TestCase):
         # User should not be able to register because of the group rule offset
         self.user.groups.add(group)
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(422, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.DELAYED_SIGNUP_USER_GROUP, response.status_code)
 
         # Simulate a day passing for the offset to not have an effect anymore
         self.attendance_event.registration_start -= timezone.timedelta(hours=24)
@@ -331,8 +332,8 @@ class AttendanceEventModelTest(TestCase):
 
         # User should be able to register for event since offset has passed
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertTrue(response["status"])
-        self.assertEqual(212, response["status_code"])
+        self.assertTrue(response.status)
+        self.assertEqual(StatusCode.SUCCESS_USER_GROUP, response.status_code)
 
         mark: Mark = G(Mark, title="Test mark")
         G(
@@ -344,16 +345,16 @@ class AttendanceEventModelTest(TestCase):
 
         # User should not be eligible for signup anymore because they have a mark
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(401, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.DELAYED_SIGNUP_MARKS, response.status_code)
 
         # Set registration to be as far into the past as both the offset from the rule and the mark
         self.attendance_event.registration_start -= timezone.timedelta(hours=24)
         self.attendance_event.save()
 
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertTrue(response["status"])
-        self.assertEqual(212, response["status_code"])
+        self.assertTrue(response.status)
+        self.assertEqual(StatusCode.SUCCESS_USER_GROUP, response.status_code)
 
     def test_future_access_trumps_offset(self):
         # Create two different rules, and verify that the response is false, but without offset
@@ -375,8 +376,8 @@ class AttendanceEventModelTest(TestCase):
             hours=1
         )
         response = self.attendance_event.is_eligible_for_signup(self.user)
-        self.assertFalse(response["status"])
-        self.assertEqual(402, response["status_code"])
+        self.assertFalse(response.status)
+        self.assertEqual(StatusCode.SIGNUP_NOT_OPENED_YET, response.status_code)
 
     def test_restricted_events(self):
         allowed_groups = [G(Group), G(Group)]
