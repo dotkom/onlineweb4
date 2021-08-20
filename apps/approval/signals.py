@@ -46,6 +46,6 @@ def notify_new_committee_application(sender, instance, created, **kwargs):
     if created:
         send_committee_application_notification_to_admins(instance)
         if settings.APPROVAL_SETTINGS.get(
-            "SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL", False
+            "SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL", True
         ):
             send_committee_application_notification_to_applicant(instance)
