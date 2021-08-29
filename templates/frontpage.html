@@ -5,7 +5,7 @@
 
 
 {% block styles %}
-    {{ block.super }}
+    {{block.super }}
     {% render_bundle 'frontpage' 'css' %}
 {% endblock %}
 
@@ -52,9 +52,6 @@
                     <a data-section="events" class="active" href="{% url 'events-link' %}">Arrangementer</a>
                 </li>
                 <li class="top-menu-link">
-                    <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
-                </li>
-                <li class="top-menu-link">
                     <a data-section="offline" href="{% url 'offline-link' %}">Offline</a>
                 </li>
                 <li class="top-menu-link">
@@ -77,7 +74,16 @@
 
     <section id="articles">
         <div class="container">
-            <div id='article-items'></div>
+            <div id='article-items'>
+                <div class="page-header clearfix">
+                    <div class="row">
+                        <div class="col-md-8 col-xs-6">
+                            <h1 id="articles-heading">Artikler</h1>
+                        </div>
+                    </div>
+                </div>
+                <p>Artikler har blitt flyttet til vår nye side <a href="https://dotkom.github.io/articles/" rel="noreferrer">dotkom.github.io/articles/</a>!</p>
+            </div>
         </div>
     </section>
 

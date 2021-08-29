@@ -45,27 +45,6 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'article.view_article' in user_permissions %}
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-file-text-o blue"></i>
-                            <span>Artikler</span>
-                            <i class="fa fa-angle-down pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li>
-                                <a href="{% url 'dashboard_article_create' %}">
-                                    <i class="fa fa-angle-double-right orange"></i> Ny artikkel
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'dashboard_article_index' %}">
-                                    <i class="fa fa-angle-double-right orange"></i> Oversikt
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    {% endif %}
                     {% if 'authentication.view_onlineuser' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
