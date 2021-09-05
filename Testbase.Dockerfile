@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.8.10
 LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
 
 ENV POETRY_VIRTUALENVS_CREATE=false
