@@ -11,7 +11,7 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
 
-from apps.authentication.constants import GroupType, RoleType, FieldOfStudyType
+from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.models import (
     Email,
     GroupRole,
