@@ -64,7 +64,7 @@ def get_length_of_field_of_study(field_of_study):
     # dont return a bachelor student as 4th or 5th grade
     elif field_of_study == FieldOfStudyType.BACHELOR:
         return 3
-    elif field_of_study in FieldOfStudyType.ALL_MASTERS:
+    elif field_of_study in FieldOfStudyType.ALL_MASTERS():
         return 2
     elif field_of_study == FieldOfStudyType.PHD:
         return 99
@@ -94,7 +94,7 @@ def get_start_of_field_of_study(field_of_study):
         return 0
     elif field_of_study == FieldOfStudyType.BACHELOR:
         return 0
-    elif field_of_study in FieldOfStudyType.ALL_MASTERS:
+    elif field_of_study in FieldOfStudyType.ALL_MASTERS():
         return 3
     elif field_of_study == FieldOfStudyType.PHD:
         return 5
@@ -113,7 +113,7 @@ class OnlineUser(AbstractUser):
     # Online related fields
     field_of_study = models.SmallIntegerField(
         _("studieretning"),
-        choices=FieldOfStudyType.ALL_CHOICES,
+        choices=FieldOfStudyType.choices,
         default=FieldOfStudyType.GUEST,
     )
     started_date = models.DateField(_("startet studie"), default=datetime.date.today)
@@ -526,7 +526,7 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
     created = models.DateTimeField(_("Oprettelsesdato"), default=timezone.now)
     group_type = models.CharField(
         verbose_name=_("Gruppetype"),
-        choices=GroupType.ALL_CHOICES,
+        choices=GroupType.choices,
         default=GroupType.COMMITTEE,
         max_length=256,
         null=False,
@@ -559,12 +559,11 @@ class OnlineGroup(ObjectPermissionModel, models.Model):
         """Proxy primary key/id from group object"""
         return self.group.id
 
-    def get_members_with_role(self, role: str):
+    def get_members_with_role(self, role: RoleType):
         # Get role first instead of querying directly because the role may not exist yet
-        role = GroupRole.get_for_type(role)
         return self.members.filter(roles=role)
 
-    def get_users_with_role(self, role: str):
+    def get_users_with_role(self, role: RoleType):
         return OnlineUser.objects.filter(
             group_memberships__in=self.get_members_with_role(role)
         )
@@ -656,7 +655,7 @@ class GroupRole(models.Model):
     )
     role_type = models.CharField(
         verbose_name="Rolle",
-        choices=RoleType.ALL_CHOICES,
+        choices=RoleType.choices,
         max_length=256,
         null=False,
         blank=False,
@@ -664,8 +663,8 @@ class GroupRole(models.Model):
     )
 
     @classmethod
-    def get_for_type(cls, role_type: str):
-        if role_type not in RoleType.ALL_TYPES:
+    def get_for_type(cls, role_type: RoleType):
+        if role_type not in RoleType.values:
             raise ValueError(f"'{role_type}' is not a legal role_type")
         role, created = cls.objects.get_or_create(role_type=role_type)
         return role

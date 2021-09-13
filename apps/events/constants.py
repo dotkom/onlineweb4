@@ -1,3 +1,6 @@
+from django.db import models
+
+
 class AttendStatus:
     REGISTER_SUCCESS = "10"
 
@@ -18,23 +21,12 @@ class AttendStatus:
     EVENT_DOES_NOT_EXIST = "62"
 
 
-class EventType:
-    SOSIALT = 1
-    BEDPRES = 2
-    KURS = 3
-    UTFLUKT = 4
-    EKSKURSJON = 5
-    INTERNT = 6
-    ANNET = 7
-    KJELLEREN = 8
-
-    ALL_CHOICES = (
-        (SOSIALT, "Sosialt"),
-        (BEDPRES, "Bedriftspresentasjon"),
-        (KURS, "Kurs"),
-        (UTFLUKT, "Utflukt"),
-        (EKSKURSJON, "Ekskursjon"),
-        (INTERNT, "Internt"),
-        (ANNET, "Annet"),
-        (KJELLEREN, "Realfagskjelleren"),
-    )
+class EventType(models.IntegerChoices):
+    SOSIALT = 1, "Sosialt"
+    BEDPRES = 2, "Bedriftspresentasjon"
+    KURS = 3, "Kurs"
+    UTFLUKT = 4, "Utflukt"
+    EKSKURSJON = 5, "Ekskursjon"
+    INTERNT = 6, "Internt"
+    ANNET = 7, "Annet"
+    KJELLEREN = 8, "Realfagskjelleren"

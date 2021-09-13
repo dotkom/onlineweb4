@@ -49,7 +49,7 @@ class GroupRoleTestCase(OIDCTestCase):
 class OnlineGroupTestCase(OIDCTestCase):
     @staticmethod
     def create_group_roles():
-        for role_type in RoleType.ALL_TYPES:
+        for role_type in RoleType.values:
             GroupRole.objects.create(role_type=role_type)
 
     @staticmethod
@@ -185,14 +185,14 @@ class OnlineGroupTestCase(OIDCTestCase):
 class GroupMemberTestCase(OIDCTestCase):
     @staticmethod
     def create_group_roles():
-        for role_type in RoleType.ALL_TYPES:
+        for role_type in RoleType.values:
             GroupRole.objects.create(role_type=role_type)
 
     @staticmethod
     def get_group_role(role_type: str) -> GroupRole:
         return GroupRole.objects.get(role_type=role_type)
 
-    def get_role(self, role: str):
+    def get_role(self, role: RoleType):
         return GroupRole.get_for_type(role)
 
     def _create_group(self, **kwargs) -> OnlineGroup:
