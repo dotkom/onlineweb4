@@ -47,3 +47,4 @@ webpack-stats-test.json
 jest/
 venv/
 oidc.key
+data

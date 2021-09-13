@@ -1,16 +1,59 @@
-version: "2.1"
+version: "3.9"
 services:
-  dbdata:
-    image: postgres:latest
-    volumes:
-      - /var/lib/postgresql
-    command: /bin/true
   db:
-    image: aidanlister/postgres-hstore
-    volumes_from:
-      - dbdata
+    build:
+     context: .
+     dockerfile: Db.Dockerfile
+    environment:
+      POSTGRES_PASSWORD: eple-er-hemmeligheten
+      POSTGRES_USER: dotkom-user
+      POSTGRES_DB: onlineweb4
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      # persist local testing data
+      - ./data/postgresql:/var/lib/postgresql/data
     ports:
-      - "5432"
+      - "5432:5432"
+    networks:
+      - online-nett
+  redis:
+    # see: https://docs.celeryproject.org/en/stable/getting-started/backends-and-brokers/redis.html#broker-redis
+    image: redis:6.2-alpine
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    command: redis-server --requirepass bananen-er-nokkelen --bind 0.0.0.0 --port 6379
+    volumes:
+      - ./data/redis:/data
+    # ports:
+    #   - "6379:6379"
+    networks:
+      - online-nett
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Celery.Dockerfile
+    volumes:
+      - ./log/celery:/var/log/celery
+    command: celery worker -A onlineweb4.celery --loglevel=${LOG_LEVEL:-INFO} --concurrency=8 --logfile=/var/log/celery/w1%I.log
+    environment:
+      OW4_CELERY_BROKER_URL: "redis://:bananen-er-nokkelen@redis:6379/0"
+    depends_on:
+      - redis
+    networks:
+      - online-nett
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Celery.Dockerfile
+    volumes:
+      - ./log/celery:/var/log/celery
+    command: celery beat -A onlineweb4.celery --loglevel=${LOG_LEVEL:-INFO} --logfile=/var/log/celery/beat.log
+    environment:
+      OW4_CELERY_BROKER_URL: "redis://:bananen-er-nokkelen@redis:6379/0"
+    depends_on:
+      - redis
+    networks:
+      - online-nett
   django:
     build:
       context: .
@@ -22,52 +65,12 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    links:
-      - db
-    environment:
-      - DATABASE_URL
-      - DJANGO_SETTINGS_MODULE=onlineweb4.settings
-      - OW4_PYTHON_DONT_WRITE_BYTECODE
-      - OW4_DJANGO_TEST_RUNNER
-      - OW4_DJANGO_DEBUG
-      - OW4_DJANGO_ALLOWED_HOSTS
-      - OW4_DJANGO_EMAIL_BACKEND
-      - OW4_DJANGO_SECRET_KEY
-      - OW4_DJANGO_BASE_URL
-      - OW4_DJANGO_MEDIA_ROOT
-      - OW4_DJANGO_STATIC_ROOT
-      - OW4_DJANGO_SLACK_INVITER_TEAM_NAME
-      - OW4_DJANGO_SLACK_INVITER_TOKEN
-      - OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL
-      - OW4_DJANGO_DEVELOPMENT_HTTPS
-      - OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM
-      - OW4_DJANGO_STRIPE_PUBLIC_KEY_PROKOM
-      - OW4_DJANGO_STRIPE_PUBLIC_KEY_TRIKOM
-      - OW4_DJANGO_STRIPE_PRIVATE_KEY_ARRKOM
-      - OW4_DJANGO_STRIPE_PRIVATE_KEY_PROKOM
-      - OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM
-      - OW4_DJANGO_RECAPTCHA_PUBLIC_KEY
-      - OW4_DJANGO_RECAPTCHA_PRIVATE_KEY
-      - OW4_DJANGO_NOCAPTCHA
-      - OW4_DJANGO_RECAPTCHA_USE_SSL
-      - OW4_SETTINGS
-      - OW4_EVENTS_ENABLE_RECAPTCHA
-      - OW4_EVENTS_FEATURED_DAYS_FUTURE
-      - OW4_EVENTS_FEATURED_DAYS_PAST
-      - OW4_GSUITE_CREDENTIALS_FILENAME
-      - OW4_GSUITE_CREDENTIALS_PATH
-      - OW4_GSUITE_DELEGATED_ACCOUNT
-      - OW4_GSUITE_ENABLED
-      - OW4_GSUITE_ACCOUNTS_ENABLED
-      - OW4_GSUITE_ACCOUNTS_ENABLE_INSERT
-      - OW4_GSUITE_SYNC_ENABLED
-      - OW4_GSUITE_SYNC_ENABLE_INSERT
-      - OW4_GSUITE_SYNC_ENABLE_DELETE
-      - OW4_VIMEO_API_TOKEN
-      - OW4_WEB_PUSH_PRIVATE_KEY
-      - OW4_WEB_PUSH_ENABLED
-      - OW4_SENTRY_DSN
-      - OW4_OIDC_RSA_PRIVATE_KEY
+      - celery-beat
+      - celery-worker
+    env_file:
+      - config/ow4.dev.env
+    networks:
+      - online-nett
   webpack:
     build:
       context: .
@@ -85,3 +88,8 @@ services:
       - WEBPACK_DEV_PUBLIC_IP=${WEBPACK_DEV_PUBLIC_IP:-localhost}
       - WEBPACK_DEV_PUBLIC_PORT
       - WEBPACK_DEV_HTTPS
+    networks:
+      - online-nett
+
+networks:
+  online-nett:

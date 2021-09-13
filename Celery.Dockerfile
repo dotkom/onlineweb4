@@ -16,6 +16,8 @@ RUN pip install poetry
 
 RUN poetry install --no-interaction --no-ansi -E prod
 
+COPY . .
+
 ENV PYTHONUNBUFFERED 1
 
 CMD ["bash"]

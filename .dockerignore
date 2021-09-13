@@ -1,2 +1,4 @@
 node_modules
 .tox
+*.Dockerfile
+docker-compose.yml
