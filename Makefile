@@ -1,4 +1,4 @@
-.PHONY: all bash-backend build clean docs down logs restart shell start status stop \
+.PHONY: all bash-backend build clean down logs restart shell start status stop \
 	drone lint-only test-only lint-backend lint-frontend test-backend test-frontend
 
 BACKEND_SERVICE_NAME = django
@@ -18,9 +18,6 @@ build:
 clean: down
 	@docker-compose rm --force
 	@docker volume prune --force
-
-docs:
-	cd docs; make html
 
 down:
 	@docker-compose down --volumes
