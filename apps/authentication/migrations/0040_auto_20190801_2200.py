@@ -9,7 +9,7 @@ from apps.authentication.constants import GroupType, RoleType
 def load_data(apps, schema_editor):
     GroupRole = apps.get_model("authentication", "GroupRole")
 
-    for role_type in RoleType.ALL_TYPES:
+    for role_type in RoleType.values:
         GroupRole.objects.create(role_type=role_type)
 
 

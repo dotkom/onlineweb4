@@ -55,7 +55,7 @@ class FieldOfStudyRule(Rule):
     NOT_SATISFIED = StatusCode.NOT_SATISFIED_FIELD_OF_STUDY
 
     field_of_study = models.SmallIntegerField(
-        _("studieretning"), choices=FieldOfStudyType.ALL_CHOICES
+        _("studieretning"), choices=FieldOfStudyType.choices
     )
 
     def satisfies_constraint(self, user: User) -> bool:

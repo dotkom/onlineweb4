@@ -11,7 +11,7 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
 
-from apps.authentication.constants import GroupType, RoleType
+from apps.authentication.constants import GroupType, RoleType, FieldOfStudyType
 from apps.authentication.models import (
     Email,
     GroupRole,
@@ -44,67 +44,67 @@ class AuthenticationTest(TestCase):
 
     def test_year_one_bachelor(self):
         self.user.started_date = self.now.date()
-        self.user.field_of_study = 1
+        self.user.field_of_study = FieldOfStudyType.BACHELOR
         self.assertEqual(1, self.user.year)
 
     def test_year_two_bachelor(self):
         self.user.started_date = self.now.date() - timedelta(days=365)
-        self.user.field_of_study = 1
+        self.user.field_of_study = FieldOfStudyType.BACHELOR
         self.assertEqual(2, self.user.year)
 
     def test_year_three_bachelor(self):
         self.user.started_date = self.now.date() - timedelta(days=365 * 2)
-        self.user.field_of_study = 1
+        self.user.field_of_study = FieldOfStudyType.BACHELOR
         self.assertEqual(3, self.user.year)
 
     def test_year_four_bachelor_should_not_be_possible(self):
         self.user.started_date = self.now.date() - timedelta(days=365 * 3)
-        self.user.field_of_study = 1
+        self.user.field_of_study = FieldOfStudyType.BACHELOR
         self.assertEqual(3, self.user.year)
 
     def test_year_four_master(self):
         self.user.started_date = self.now.date()
-        self.user.field_of_study = 10
+        self.user.field_of_study = FieldOfStudyType.SOFTWARE_ENGINEERING
         self.assertEqual(4, self.user.year)
 
     def test_year_five_master(self):
         self.user.started_date = self.now.date() - timedelta(days=365)
-        self.user.field_of_study = 10
+        self.user.field_of_study = FieldOfStudyType.SOFTWARE_ENGINEERING
         self.assertEqual(5, self.user.year)
 
     def test_year_six_master_should_not_be_possible(self):
         self.user.started_date = self.now.date() - timedelta(days=365 * 2)
-        self.user.field_of_study = 10
+        self.user.field_of_study = FieldOfStudyType.SOFTWARE_ENGINEERING
         self.assertEqual(5, self.user.year)
 
     def test_field_of_study_30_is_also_master(self):
         self.user.started_date = self.now.date()
-        self.user.field_of_study = 30
+        self.user.field_of_study = FieldOfStudyType.OTHER_MASTERS
         self.assertEqual(4, self.user.year)
 
     def test_phd(self):
         self.user.started_date = self.now.date()
-        self.user.field_of_study = 80
+        self.user.field_of_study = FieldOfStudyType.PHD
         self.assertEqual(6, self.user.year)
 
     def test_phd_year_could_be_infinite(self):
         self.user.started_date = self.now.date() - timedelta(days=365 * 5)
-        self.user.field_of_study = 80
+        self.user.field_of_study = FieldOfStudyType.PHD
         self.assertEqual(11, self.user.year)
 
     def test_international(self):
         self.user.started_date = self.now.date()
-        self.user.field_of_study = 90
+        self.user.field_of_study = FieldOfStudyType.INTERNATIONAL
         self.assertEqual(1, self.user.year)
 
     def test_social(self):
         self.user.started_date = self.now.date()
-        self.user.field_of_study = 40
+        self.user.field_of_study = FieldOfStudyType.SOCIAL_MEMBER
         self.assertEqual(0, self.user.year)
 
     def test_social_year_increment_should_not_be_possible(self):
         self.user.started_date = self.now.date() - timedelta(days=365)
-        self.user.field_of_study = 40
+        self.user.field_of_study = FieldOfStudyType.SOCIAL_MEMBER
         self.assertEqual(0, self.user.year)
 
     def test_email_primary_on_creation(self):
@@ -191,7 +191,7 @@ class RfidValidatorTestCase(TestCase):
 
 
 class GroupPermissionTestCase(TestCase):
-    def get_role(self, role: str):
+    def get_role(self, role: RoleType):
         return GroupRole.get_for_type(role)
 
     def create_group(self, **kwargs) -> OnlineGroup:

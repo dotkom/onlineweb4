@@ -345,7 +345,7 @@ class FieldOfStudyAnswer(models.Model):
         on_delete=models.CASCADE,
     )
     answer = models.SmallIntegerField(
-        _("Studieretning"), choices=FieldOfStudyType.ALL_CHOICES
+        _("Studieretning"), choices=FieldOfStudyType.choices
     )
 
     def __str__(self):

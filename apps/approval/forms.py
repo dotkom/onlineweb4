@@ -9,7 +9,7 @@ from apps.authentication.constants import FieldOfStudyType
 SEMESTER_CHOICES = [("h", _("Høst")), ("v", _("Vår"))]
 
 VALID_FIELD_OF_STUDY_CHOICES = filter(
-    lambda choice: choice[0] != FieldOfStudyType.GUEST, FieldOfStudyType.ALL_CHOICES
+    lambda choice: choice[0] != FieldOfStudyType.GUEST, FieldOfStudyType.choices
 )
 
 
