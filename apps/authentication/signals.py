@@ -16,8 +16,8 @@ from django.dispatch import receiver
 
 from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
 from apps.authentication.tasks import (
-    SynchronizeGroups,
     assign_permission_from_group_admins,
+    synchronize_groups,
 )
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
 from apps.gsuite.mail_syncer.tasks import update_mailing_list
@@ -34,7 +34,7 @@ def run_group_syncer(user: User) -> None:
     Tasks to run after User is changed.
     :param user: The user instance to sync groups for.
     """
-    SynchronizeGroups.run()
+    synchronize_groups.delay()
     if settings.OW4_GSUITE_SYNC.get("ENABLED", False):
         ow4_gsuite_domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
         if isinstance(user, User):

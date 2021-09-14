@@ -1,0 +1,128 @@
+import locale
+import logging
+
+from celery.schedules import crontab
+from django.core.mail import EmailMessage
+from django.utils import timezone
+
+from apps.events.models import AttendanceEvent
+from apps.marks.models import Mark, MarkUser
+from onlineweb4.celery import app
+
+
+@app.on_after_configure.connect
+def setup_periodic_tasks(sender, **_kwargs):
+    # Executes every Monday morning at 7:30 a.m.
+    sender.add_periodic_task(
+        crontab(hour=8, minute=5),
+        set_event_marks.s(),
+    )
+
+
+@app.task
+def set_event_marks():
+    logger = logging.getLogger()
+    logger.info("Attendance mark setting started")
+    locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
+
+    # Gets all active attendance events thats suposed to give automatic marks
+    attendance_events = active_events()
+
+    for attendance_event in attendance_events:
+        set_marks(attendance_event, logger)
+        message = generate_message(attendance_event)
+
+        if message.send:
+            EmailMessage(
+                message.subject,
+                str(message),
+                message.committee_mail,
+                [],
+                message.not_attended_mails,
+            ).send()
+            logger.info("Emails sent to: " + str(message.not_attended_mails))
+        else:
+            logger.info("Everyone met. No mails sent to users")
+
+        if message.committee_message:
+            EmailMessage(
+                message.subject,
+                message.committee_message,
+                "online@online.ntnu.no",
+                [message.committee_mail],
+            ).send()
+            logger.info("Email sent to: " + message.committee_mail)
+
+
+def set_marks(attendance_event, logger=logging.getLogger()):
+    event = attendance_event.event
+    logger.info(f'Proccessing "{event.title}"')
+    mark = Mark()
+    mark.title = f"Manglende oppmøte på {event.title}"
+    mark.category = event.event_type
+    mark.description = (
+        f"Du har fått en prikk på grunn av manglende oppmøte på {event.title}."
+    )
+    mark.save()
+
+    for user in attendance_event.not_attended():
+        user_entry = MarkUser()
+        user_entry.user = user
+        user_entry.mark = mark
+        user_entry.save()
+        logger.info(f"Mark given to: f{user_entry.user}")
+
+    attendance_event.marks_has_been_set = True
+    attendance_event.save()
+
+
+def generate_message(attendance_event):
+    message = Message()
+
+    not_attended = attendance_event.not_attended()
+    event = attendance_event.event
+    title = str(event.title)
+
+    # return if everyone attended
+    if not not_attended:
+        return message
+
+    message.not_attended_mails = [user.email for user in not_attended]
+
+    message.committee_mail = event.feedback_mail()
+    not_attended_string = "\n".join([user.get_full_name() for user in not_attended])
+
+    message.subject = title
+    message.intro = (
+        f'Hei\n\nPå grunn av manglende oppmøte på "{title}" har du fått en prikk'
+    )
+    message.contact = f"\n\nEventuelle spørsmål sendes til {message.committee_mail} "
+    message.send = True
+    message.committee_message = f'På grunn av manglende oppmøte på "{event.title}" har følgende brukere fått en prikk:\n'
+    message.committee_message += not_attended_string
+    return message
+
+
+def active_events():
+    return AttendanceEvent.objects.filter(
+        automatically_set_marks=True,
+        marks_has_been_set=False,
+        event__event_end__lt=timezone.now(),
+    )
+
+
+class Message:
+    subject = ""
+    intro = ""
+    contact = ""
+    not_attended_mails = ""
+    send = False
+    end = "\n\nMvh\nLinjeforeningen Online"
+    results_message = False
+
+    committee_mail = ""
+    committee_message = False
+
+    def __str__(self):
+        message = f"{self.intro} {self.contact} {self.end}"
+        return message

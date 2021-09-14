@@ -157,7 +157,7 @@ ROOT_URLCONF = "onlineweb4.urls"
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = "onlineweb4.wsgi.application"
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     # Third party dependencies
     "django.contrib.humanize",
     "django_js_reverse",
@@ -168,7 +168,6 @@ INSTALLED_APPS = (
     "chunks",
     "crispy_forms",
     "django_extensions",
-    "django_dynamic_fixture",
     "oauth2_provider",
     "captcha",
     "pdfdocument",
@@ -184,6 +183,7 @@ INSTALLED_APPS = (
     "datetimewidget",
     "webpack_loader",
     "oidc_provider",
+    "django_celery_beat",
     # Django apps
     "django.contrib.admin",
     "django.contrib.admindocs",
@@ -212,7 +212,6 @@ INSTALLED_APPS = (
     "apps.marks",
     "apps.offline",
     "apps.feedback",
-    "apps.mommy",
     "apps.profiles",
     "apps.resourcecenter",
     "apps.mailinglists",
@@ -240,7 +239,10 @@ INSTALLED_APPS = (
     "wiki.plugins.help",
     "wiki.plugins.links",
     "wiki.plugins.globalhistory",
-)
+]
+
+if DEBUG:
+    INSTALLED_APPS = INSTALLED_APPS + ["django_dynamic_fixture"]
 
 # Make Django messages use bootstrap alert classes
 MESSAGE_TAGS = {

@@ -14,7 +14,7 @@ from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
-from apps.payment.mommy import PaymentDelayHandler, PaymentReminder
+from apps.payment.tasks import handle_deadline_passed, not_paid
 
 
 class PaymentTest(TransactionTestCase):
@@ -173,7 +173,7 @@ class PaymentTest(TransactionTestCase):
         self.assertTrue(payment_relation.refunded)
         self.assertEqual(set([]), set(attendees))
 
-    # Mommy
+    # Scheuduled tasks
 
     def test_event_mommy_not_paid(self):
         user1 = G(User)
@@ -182,9 +182,9 @@ class PaymentTest(TransactionTestCase):
         G(Attendee, event=self.attendance_event, user=user2)
         self.simulate_user_payment(user1)
 
-        not_paid = PaymentReminder.not_paid(self.event_payment)
+        not_paid_users = not_paid(self.event_payment)
 
-        self.assertEqual([user2], not_paid)
+        self.assertEqual([user2], not_paid_users)
 
     def test_event_mommy_paid(self):
         user1 = G(User)
@@ -194,9 +194,9 @@ class PaymentTest(TransactionTestCase):
         self.simulate_user_payment(user1)
         self.simulate_user_payment(user2)
 
-        not_paid = PaymentReminder.not_paid(self.event_payment)
+        not_paid_users = not_paid(self.event_payment)
 
-        self.assertFalse(not_paid)
+        self.assertFalse(not_paid_users)
 
     def test_event_mommy_paid_with_delays(self):
         user1 = G(User)
@@ -213,15 +213,9 @@ class PaymentTest(TransactionTestCase):
         )
         self.simulate_user_payment(user3)
 
-        not_paid = PaymentReminder.not_paid(self.event_payment)
+        not_paid_users = not_paid(self.event_payment)
 
-        self.assertEqual([user1], not_paid)
-
-    def test_event_mommy_not_paid_mail_address(self):
-        G(Attendee, event=self.attendance_event, user=self.user)
-        not_paid_email = PaymentReminder.not_paid_mail_addresses(self.event_payment)
-
-        self.assertEqual([self.user.email], not_paid_email)
+        self.assertEqual([user1], not_paid_users)
 
     def test_mommy_payment_delay(self):
         G(Attendee, event=self.attendance_event, user=self.user)
@@ -234,15 +228,15 @@ class PaymentTest(TransactionTestCase):
 
         self.assertTrue(payment_delay.active)
 
-        PaymentDelayHandler.handle_deadline_passed(payment_delay, False)
+        handle_deadline_passed(payment_delay, False)
 
         self.assertFalse(payment_delay.active)
 
     def test_mommy_payment_delay_excluding(self):
         G(Attendee, event=self.attendance_event, user=self.user)
-        not_paid = PaymentReminder.not_paid(self.event_payment)
+        not_paid_users = not_paid(self.event_payment)
 
-        self.assertEqual([self.user], not_paid)
+        self.assertEqual([self.user], not_paid_users)
 
         G(
             PaymentDelay,
@@ -251,8 +245,8 @@ class PaymentTest(TransactionTestCase):
             valid_to=timezone.now() + timedelta(days=1),
         )
 
-        not_paid = PaymentReminder.not_paid(self.event_payment)
+        not_paid_users = not_paid(self.event_payment)
 
-        self.assertFalse(not_paid)
+        self.assertFalse(not_paid_users)
 
     # TODO Test waislist bump

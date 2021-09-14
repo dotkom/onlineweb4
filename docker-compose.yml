@@ -31,9 +31,10 @@ services:
       target: Full
     volumes:
       - ./log/celery:/var/log/celery
-    command: celery worker -A onlineweb4.celery --loglevel=${LOG_LEVEL:-INFO} --concurrency=8 --logfile=/var/log/celery/w1%I.log
+    command: celery -A onlineweb4.celery worker --loglevel=${LOG_LEVEL:-INFO} --concurrency=8 --logfile=/var/log/celery/w1%I.log
     env_file:
       - config/ow4.dev.env
+      - config/local.env
     depends_on:
       - redis
     networks:
@@ -45,25 +46,12 @@ services:
       target: Full
     volumes:
       - ./log/celery:/var/log/celery
-    command: celery beat -A onlineweb4.celery --loglevel=${LOG_LEVEL:-INFO} --logfile=/var/log/celery/beat.log
+    command: celery -A onlineweb4.celery beat --loglevel=${LOG_LEVEL:-INFO} --logfile=/var/log/celery/beat.log --scheduler django_celery_beat.schedulers:DatabaseScheduler
     env_file:
       - config/ow4.dev.env
+      - config/local.env
     depends_on:
       - redis
-    networks:
-      - online-nett
-  mommy:
-    build:
-      context: .
-      dockerfile: Django.Dockerfile
-      target: Full
-    command: python manage.py mommy
-    depends_on:
-      - db
-      - celery-beat
-      - celery-worker
-    env_file:
-      - config/ow4.dev.env
     networks:
       - online-nett
   django:
@@ -83,6 +71,7 @@ services:
       - celery-worker
     env_file:
       - config/ow4.dev.env
+      - config/local.env
     networks:
       - online-nett
   webpack:
