@@ -19,8 +19,6 @@ services:
   redis:
     # see: https://docs.celeryproject.org/en/stable/getting-started/backends-and-brokers/redis.html#broker-redis
     image: redis:6.2-alpine
-    environment:
-      - REDIS_REPLICATION_MODE=master
     command: redis-server --requirepass bananen-er-nokkelen --bind 0.0.0.0 --port 6379
     volumes:
       - ./data/redis:/data
