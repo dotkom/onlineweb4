@@ -41,9 +41,9 @@ class Approval(models.Model):
 
 class MembershipApproval(Approval):
     new_expiry_date = models.DateField(_("ny utløpsdato"), blank=True, null=True)
-    field_of_study = models.SmallIntegerField(
+    field_of_study = models.IntegerField(
         _("studieretning"),
-        choices=FieldOfStudyType.ALL_CHOICES,
+        choices=FieldOfStudyType.choices,
         default=FieldOfStudyType.GUEST,
     )
     started_date = models.DateField(_("startet dato"), blank=True, null=True)

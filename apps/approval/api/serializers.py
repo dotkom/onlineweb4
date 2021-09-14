@@ -187,7 +187,7 @@ class ChoiceField(serializers.ChoiceField):
 
 class MembershipApprovalSerializer(serializers.ModelSerializer):
 
-    field_of_study = ChoiceField(choices=FieldOfStudyType.ALL_CHOICES)
+    field_of_study = ChoiceField(choices=FieldOfStudyType.choices)
 
     class Meta:
         model = MembershipApproval

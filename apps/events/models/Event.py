@@ -151,7 +151,7 @@ class Event(models.Model):
     )
     """Event image"""
     event_type = models.SmallIntegerField(
-        _("type"), choices=EventType.ALL_CHOICES, null=False
+        _("type"), choices=EventType.choices, null=False
     )
     """Event type. Used mainly for filtering"""
     organizer = models.ForeignKey(
