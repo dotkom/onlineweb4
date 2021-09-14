@@ -24,8 +24,6 @@ services:
     command: redis-server --requirepass bananen-er-nokkelen --bind 0.0.0.0 --port 6379
     volumes:
       - ./data/redis:/data
-    # ports:
-    #   - "6379:6379"
     networks:
       - online-nett
   celery-worker:
@@ -35,8 +33,8 @@ services:
     volumes:
       - ./log/celery:/var/log/celery
     command: celery worker -A onlineweb4.celery --loglevel=${LOG_LEVEL:-INFO} --concurrency=8 --logfile=/var/log/celery/w1%I.log
-    environment:
-      OW4_CELERY_BROKER_URL: "redis://:bananen-er-nokkelen@redis:6379/0"
+    env_file:
+      - config/ow4.dev.env
     depends_on:
       - redis
     networks:
@@ -48,10 +46,23 @@ services:
     volumes:
       - ./log/celery:/var/log/celery
     command: celery beat -A onlineweb4.celery --loglevel=${LOG_LEVEL:-INFO} --logfile=/var/log/celery/beat.log
-    environment:
-      OW4_CELERY_BROKER_URL: "redis://:bananen-er-nokkelen@redis:6379/0"
+    env_file:
+      - config/ow4.dev.env
     depends_on:
       - redis
+    networks:
+      - online-nett
+  mommy:
+    build:
+      context: .
+      dockerfile: Celery.Dockerfile
+    command: python manage.py mommy
+    depends_on:
+      - db
+      - celery-beat
+      - celery-worker
+    env_file:
+      - config/ow4.dev.env
     networks:
       - online-nett
   django:
