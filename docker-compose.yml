@@ -29,7 +29,8 @@ services:
   celery-worker:
     build:
       context: .
-      dockerfile: Celery.Dockerfile
+      dockerfile: Django.Dockerfile
+      target: Full
     volumes:
       - ./log/celery:/var/log/celery
     command: celery worker -A onlineweb4.celery --loglevel=${LOG_LEVEL:-INFO} --concurrency=8 --logfile=/var/log/celery/w1%I.log
@@ -42,7 +43,8 @@ services:
   celery-beat:
     build:
       context: .
-      dockerfile: Celery.Dockerfile
+      dockerfile: Django.Dockerfile
+      target: Full
     volumes:
       - ./log/celery:/var/log/celery
     command: celery beat -A onlineweb4.celery --loglevel=${LOG_LEVEL:-INFO} --logfile=/var/log/celery/beat.log
@@ -55,7 +57,8 @@ services:
   mommy:
     build:
       context: .
-      dockerfile: Celery.Dockerfile
+      dockerfile: Django.Dockerfile
+      target: Full
     command: python manage.py mommy
     depends_on:
       - db
@@ -69,6 +72,8 @@ services:
     build:
       context: .
       dockerfile: Django.Dockerfile
+      # base due to mounting home dir for "hot-reload"
+      target: base
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/srv/app
