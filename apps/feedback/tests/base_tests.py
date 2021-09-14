@@ -227,7 +227,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
 
     def test_void_date(self):
         feedback_relation = self.create_void_feedback_relation()
-        self.assertIsNone(feedback_relation.content_end_date())
+        self.assertFalse(feedback_relation.content_end_date())
 
     def test_mark_setting(self):
         users = [User.objects.get(username="user1")]
