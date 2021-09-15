@@ -37,6 +37,7 @@ services:
       - config/local.env
     depends_on:
       - redis
+      - django
     networks:
       - online-nett
   celery-beat:
@@ -52,6 +53,7 @@ services:
       - config/local.env
     depends_on:
       - redis
+      - django
     networks:
       - online-nett
   django:
@@ -67,8 +69,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
-      - celery-beat
-      - celery-worker
     env_file:
       - config/ow4.dev.env
       - config/local.env
