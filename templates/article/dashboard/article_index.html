@@ -1,0 +1,32 @@
+{% extends "dashboard_base.html" %}
+{% load render_bundle from webpack_loader %}
+
+{% block title %}
+    Artikler - Online Dashboard
+{% endblock title %}
+
+{% block page-header %}
+    Artikler
+{% endblock %}
+
+{% block js %}
+    {{ block.super }}
+    {% render_bundle 'dashboardArticle' 'js' %}
+{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    {% render_bundle 'dashboardArticle' 'css' %}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <li>Artikler</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <p>Artikler har nå blitt flyttet til å håndteres via et Git-repo. Du finner det <a href="https://github.com/dotkom/articles" rel="noreferrer">her</a>.</p>
+        </div>
+    </div>
+{% endblock content %}
