@@ -161,7 +161,7 @@ class FeedbackRelation(models.Model):
 
     def content_email(self):
         if hasattr(self.content_object, "feedback_mail"):
-            return self.content_object.feedback_mail()
+            return self.content_object.event_feedback_handler()
         else:
             return "missing mail"
 

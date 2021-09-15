@@ -13,15 +13,14 @@ from onlineweb4.celery import app
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **_kwargs):
-    # Executes every Monday morning at 7:30 a.m.
     sender.add_periodic_task(
         crontab(hour=8, minute=0),
-        feedback_mail.s(),
+        event_feedback_handler.s(),
     )
 
 
 @app.task
-def feedback_mail():
+def event_feedback_handler():
     logger = logging.getLogger("feedback")
     logger.info("Feedback job started")
     locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")

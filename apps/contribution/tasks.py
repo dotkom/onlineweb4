@@ -13,15 +13,14 @@ git_domain = "https://api.github.com"
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **_kwargs):
-    # Executes every Monday morning at 7:30 a.m.
     sender.add_periodic_task(
         crontab(hour=6, minute=0),
-        run.s(),
+        update_repositories.s(),
     )
 
 
 @app.task
-def run():
+def update_repositories():
     # Load new data
     fresh = get_git_repositories()
     localtz = tz("Europe/Oslo")

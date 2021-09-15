@@ -12,7 +12,6 @@ from onlineweb4.celery import app
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **_kwargs):
-    # Executes every Monday morning at 7:30 a.m.
     sender.add_periodic_task(
         crontab(hour=8, minute=5),
         set_event_marks.s(),
@@ -89,7 +88,7 @@ def generate_message(attendance_event):
 
     message.not_attended_mails = [user.email for user in not_attended]
 
-    message.committee_mail = event.feedback_mail()
+    message.committee_mail = event.event_feedback_handler()
     not_attended_string = "\n".join([user.get_full_name() for user in not_attended])
 
     message.subject = title
