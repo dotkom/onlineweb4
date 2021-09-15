@@ -88,7 +88,7 @@ def generate_message(attendance_event):
 
     message.not_attended_mails = [user.email for user in not_attended]
 
-    message.committee_mail = event.event_feedback_handler()
+    message.committee_mail = event.feedback_mail()
     not_attended_string = "\n".join([user.get_full_name() for user in not_attended])
 
     message.subject = title
