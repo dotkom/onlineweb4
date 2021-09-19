@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 User = settings.AUTH_USER_MODEL
 
+
 # Managers
 
 
@@ -47,8 +48,8 @@ class EventOrderedByRegistration(models.Manager):
 
         return (
             super(EventOrderedByRegistration, self)
-            .get_queryset()
-            .annotate(
+                .get_queryset()
+                .annotate(
                 registration_filtered=Case(
                     When(
                         Q(event_end__gte=now)
@@ -62,14 +63,14 @@ class EventOrderedByRegistration(models.Manager):
                     output_field=models.DateTimeField(),
                 )
             )
-            .annotate(
+                .annotate(
                 is_today=Case(
                     When(event_end__date=now.date(), then=Value(1)),
                     default=Value(0),
                     output_field=models.IntegerField(),
                 )
             )
-            .order_by("-is_today", "registration_filtered")
+                .order_by("-is_today", "registration_filtered")
         )
 
     def get_queryset_for_user(self, user: User):
@@ -83,8 +84,8 @@ class EventOrderedByRegistration(models.Manager):
         )
         is_attending_query = (
             (
-                Q(attendance_event__isnull=False)
-                & Q(attendance_event__attendees__user=user)
+                    Q(attendance_event__isnull=False)
+                    & Q(attendance_event__attendees__user=user)
             )
             if not user.is_anonymous
             else Q()
@@ -92,8 +93,8 @@ class EventOrderedByRegistration(models.Manager):
         is_visible_query = Q(visible=True)
         return (
             self.get_queryset()
-            .filter(group_restriction_query & is_visible_query | is_attending_query)
-            .distinct()
+                .filter(group_restriction_query & is_visible_query | is_attending_query)
+                .distinct()
         )
 
 
@@ -212,6 +213,14 @@ class Event(models.Model):
         return images.distinct()
 
     @property
+    def calendar(self):
+        data = {
+            "google": "foo",
+            "ical": "bar"
+        }
+        return data
+
+    @property
     def company_event(self):
         from .Attendance import CompanyEvent
 
@@ -238,9 +247,9 @@ class Event(models.Model):
 
         restriction = GroupRestriction.objects.filter(event=self).first()
         if (
-            not user.is_anonymous
-            and self.is_attendance_event()
-            and self.attendance_event.is_attendee(user)
+                not user.is_anonymous
+                and self.is_attendance_event()
+                and self.attendance_event.is_attendee(user)
         ):
             return True
         if not self.visible:
@@ -265,7 +274,7 @@ class Event(models.Model):
             raise ValidationError({"organizer": ["Arrangementet krever en arrangør."]})
 
     def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
+            self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         super().save(
             force_insert=force_insert,
