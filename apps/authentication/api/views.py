@@ -185,19 +185,15 @@ class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     serializer_classes = {
         "write": OnlineGroupCreateOrUpdateSerializer,
         "read": OnlineGroupReadOnlySerializer,
-        "user_members": UserReadOnlySerializer
+        "user_members": UserReadOnlySerializer,
     }
 
     @action(detail=True, methods=["get"], url_path="user_members")
     def user_members(self, request, pk: int = None):
         group: OnlineGroup = self.get_object()
-        users = []
-        for member in group.members.all():
-            users.append(member.user)
+        users = [group.member for group in group.members]
         serializer = self.get_serializer(users, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-
 
 
 class GroupMemberViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
