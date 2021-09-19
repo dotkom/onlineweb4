@@ -216,7 +216,7 @@ class OnlineUser(AbstractUser):
         email_object = self.email_object
         if email_object:
             return email_object.email
-        return None
+        raise RuntimeError("User has been modified to not have a primary email.")
 
     @property
     def email_object(self) -> "Email":

@@ -1,10 +1,11 @@
 from django.utils.translation import gettext as _
 from oidc_provider.lib.claims import ScopeClaims
 
+from apps.authentication.models import OnlineUser as User
 from apps.sso.userinfo import Onlineweb4Userinfo
 
 
-def userinfo(claims, user):
+def userinfo(claims, user: User):
     """
     Default userinfo view for OpenID Connect.
     Adds full name and picture from Django and OW4.
