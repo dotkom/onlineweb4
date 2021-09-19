@@ -2,7 +2,6 @@ import os
 import sys
 
 from decouple import config
-
 from apps.sso.settings import OAUTH2_SCOPES
 
 # Directory that contains this file.
@@ -143,3 +142,4 @@ SECURE_PROXY_SSL_HEADER = (
 )
 
 VIMEO_API_TOKEN = config("OW4_VIMEO_API_TOKEN", default=None)
+

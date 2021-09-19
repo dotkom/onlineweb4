@@ -1,46 +1,30 @@
-FROM node:lts as webpack
-LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
-
-WORKDIR /srv/app/webpack
-
-COPY assets assets
-COPY webpack.server.js .
-COPY webpack.production.config.js .
-COPY webpack.config.js .
-COPY package.json .
-COPY .babelrc .
-COPY postcss.config.js .
-
-RUN yarn --non-interactive --no-progress --pure-lockfile && \
-    yarn build:prod
-
-
 FROM python:3.7-slim-buster
 LABEL maintainer="dotkom@online.ntnu.no"
 ENV DJANGO_SETTINGS_MODULE=onlineweb4.settings POETRY_VIRTUALENVS_CREATE=false
 
 WORKDIR /srv/app
+COPY pyproject.toml poetry.lock ./
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   gcc \
   curl \
   mime-support \
-  && rm -rf /var/lib/apt/lists/*
+  && rm -rf /var/lib/apt/lists/* \
+  && pip install poetry \
+  && poetry install --no-interaction --no-ansi --no-dev -E prod
 
-COPY pyproject.toml poetry.lock ./
 
-RUN pip install poetry
-
-RUN poetry install --no-interaction --no-ansi --no-dev -E prod -E docs
-
-COPY --from=webpack /srv/app/webpack/bundles bundles
-COPY --from=webpack /srv/app/webpack/webpack-stats.json webpack-stats.json
-COPY . .
-
-RUN python manage.py collectstatic --noinput && \
-    chmod +x entrypoint.sh
+COPY log/.gitkeep log/.gitkeep
+COPY middleware middleware
+COPY scripts scripts
+COPY utils utils
+COPY templates templates
+COPY onlineweb4 onlineweb4
+COPY apps apps
+COPY manage.py manage.py
+COPY webpack-stats.json webpack-stats.json
 
 EXPOSE 8000
 
-ENTRYPOINT ["./entrypoint.sh" ]
+ENTRYPOINT ["gunicorn", "onlineweb4.wsgi"]

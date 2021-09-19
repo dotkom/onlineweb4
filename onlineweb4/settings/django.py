@@ -4,6 +4,8 @@ import sys
 
 import dj_database_url
 from decouple import config
+from storages.backends.s3boto3 import S3Boto3Storage
+
 from django.contrib.messages import constants as messages
 
 from .base import PROJECT_ROOT_DIRECTORY, PROJECT_SETTINGS_DIRECTORY
@@ -257,3 +259,15 @@ AUTH_PASSWORD_VALIDATORS = [
         "OPTIONS": {"min_length": 8},
     }
 ]
+
+if config("OW4_USE_S3_STORAGE_BACKEND", cast=bool, default=False):
+    StaticRootS3BotoStorage = lambda: S3Boto3Storage(location='static')
+    MediaRootS3BotoStorage  = lambda: S3Boto3Storage(location='media')
+    STATICFILES_STORAGE = "onlineweb4.settings.django.StaticRootS3BotoStorage"
+    DEFAULT_FILE_STORAGE = "onlineweb4.settings.django.MediaRootS3BotoStorage"
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_STORAGE_BUCKET_NAME = config("OW4_S3_BUCKET_NAME", default="onlineweb4")
+    AWS_REGION_NAME = "eu-north-1"
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
