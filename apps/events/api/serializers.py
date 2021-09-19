@@ -27,6 +27,15 @@ class ExtrasSerializer(serializers.ModelSerializer):
         fields = ("id", "choice", "note")
 
 
+class CalendarSerializer(serializers.Serializer):
+    # "calendar": {
+    #   "google": "api_path",
+    #   "ical": ".ics file as pure string"
+    # }
+    google = serializers.StringRelatedField()
+    ical = serializers.StringRelatedField()
+
+
 class EventSerializer(serializers.ModelSerializer):
     images = ResponsiveImageSerializer(many=True)
     author = UserReadOnlySerializer()
@@ -41,6 +50,7 @@ class EventSerializer(serializers.ModelSerializer):
         source="attendance_event.number_of_seats_taken"
     )
     companies = serializers.StringRelatedField(many=True)
+    calendar = CalendarSerializer()
 
     class Meta:
         model = Event
@@ -63,6 +73,7 @@ class EventSerializer(serializers.ModelSerializer):
             "is_attendance_event",
             "max_capacity",
             "number_of_seats_taken",
+            "calendar",
         )
 
 
