@@ -162,7 +162,7 @@ class EventCalendar(Calendar):
         )
         self.filename = "events"
 
-    def add_event(self, event):
+    def add_event(self, event: Event):
         cal_event = icalendar.Event()
 
         cal_event.add("dtstart", event.event_start)

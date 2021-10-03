@@ -173,6 +173,13 @@ class Event(models.Model):
 
     feedback = GenericRelation(FeedbackRelation)
 
+    def get_calendar_response(self):
+        from apps.events.utils import EventCalendar
+
+        event_calendar = EventCalendar()
+        event_calendar.add_event(self)
+        return event_calendar.response()
+
     def is_attendance_event(self):
         """Returns true if the event is an attendance event"""
         return hasattr(self, "attendance_event")
@@ -211,14 +218,6 @@ class Event(models.Model):
         company_image_ids = self.companies.values_list("image")
         images |= ResponsiveImage.objects.filter(pk__in=company_image_ids)
         return images.distinct()
-
-    @property
-    def calendar(self):
-        data = {
-            "google": "foo",
-            "ical": "bar"
-        }
-        return data
 
     @property
     def company_event(self):
