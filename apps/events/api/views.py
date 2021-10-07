@@ -4,7 +4,29 @@ from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+
 from apps.payment.serializers import PaymentReadOnlySerializer
+
+from ..constants import AttendStatus
+from ..filters import (
+    EventFilter,
+    ExtrasFilter,
+    FieldOfStudyRuleFilter,
+    GradeRuleFilter,
+    RuleBundleFilter,
+    UserGroupRuleFilter,
+)
+from ..models import (
+    AttendanceEvent,
+    Attendee,
+    Event,
+    Extras,
+    FieldOfStudyRule,
+    GradeRule,
+    RuleBundle,
+    UserGroupRule,
+)
+from ..utils import handle_attend_event_payment
 from .permissions import (
     ChangeAttendeePermission,
     RegisterPermission,
@@ -23,27 +45,8 @@ from .serializers import (
     PublicAttendeeSerializer,
     RegisterSerializer,
     RuleBundleSerializer,
-    UserGroupRuleSerializer)
-from ..constants import AttendStatus
-from ..filters import (
-    EventFilter,
-    ExtrasFilter,
-    FieldOfStudyRuleFilter,
-    GradeRuleFilter,
-    RuleBundleFilter,
-    UserGroupRuleFilter
+    UserGroupRuleSerializer,
 )
-from ..models import (
-    AttendanceEvent,
-    Attendee,
-    Event,
-    Extras,
-    FieldOfStudyRule,
-    GradeRule,
-    RuleBundle,
-    UserGroupRule,
-)
-from ..utils import handle_attend_event_payment
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -59,7 +62,7 @@ class EventViewSet(viewsets.ModelViewSet):
     )
     ordering = ("-is_today", "registration_filtered", "id")
 
-    @action(detail=True, methods=["GET"], url_path='calendar')
+    @action(detail=True, methods=["GET"], url_path="calendar")
     def calendar(self, request, pk: int or None = None):
         """
         The /calendar endpoint for an event.
@@ -136,7 +139,7 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     def public_attendees(self, request, pk=None):
         attendance_event: AttendanceEvent = self.get_object()
         attendees = (
-                attendance_event.attending_attendees_qs | attendance_event.waitlist_qs
+            attendance_event.attending_attendees_qs | attendance_event.waitlist_qs
         )
         attendees = attendees.order_by("-show_as_attending_event", "timestamp")
         serializer = self.get_serializer(attendees, many=True)
