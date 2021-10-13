@@ -13,8 +13,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   && rm -rf /var/lib/apt/lists/* \
   && pip install poetry \
   && poetry install --no-interaction --no-ansi --no-dev -E prod
-
-
 COPY log/.gitkeep log/.gitkeep
 COPY middleware middleware
 COPY scripts scripts
