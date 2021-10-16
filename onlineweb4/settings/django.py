@@ -133,7 +133,7 @@ TEMPLATES = [
     }
 ]
 
-MIDDLEWARE = (
+MIDDLEWARE = [
     'django_opentracing.OpenTracingMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -147,7 +147,7 @@ MIDDLEWARE = (
     "oidc_provider.middleware.SessionManagementMiddleware",
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+]
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",  # this is default
@@ -160,8 +160,10 @@ ROOT_URLCONF = "onlineweb4.urls"
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = "onlineweb4.wsgi.application"
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     # Third party dependencies
+    "health_check",
+    "health_check.db",
     "django.contrib.humanize",
     "django_js_reverse",
     "django_nyt",  # Wiki
@@ -243,7 +245,7 @@ INSTALLED_APPS = (
     "wiki.plugins.help",
     "wiki.plugins.links",
     "wiki.plugins.globalhistory",
-)
+]
 
 # Make Django messages use bootstrap alert classes
 MESSAGE_TAGS = {
