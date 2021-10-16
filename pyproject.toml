@@ -76,6 +76,8 @@ gunicorn = {version = "^20.1.0", optional = true}
 boto3 = {version = "^1.18.60", optional = true}
 jaeger-client = {version = "^4.8.0", optional = true}
 django-opentracing = {version = "^1.1.0", optional = true }
+django-prometheus = {version = "^2.1.0", optional = true}
+django-health-check = "^3.16.4"
 
 
 [tool.poetry.dev-dependencies]
@@ -95,7 +97,7 @@ pycodestyle = "~2.7"
 black = "21.7b0"
 
 [tool.poetry.extras]
-prod = ["psycopg2-binary", "gunicorn", "django-storages", "boto3"]
+prod = ["psycopg2-binary", "gunicorn", "django-storages", "boto3", "django-opentracing", "jaeger-client", "django-prometheus"]
 
 [tool.tox]
 legacy_tox_ini = """
