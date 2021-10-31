@@ -10,7 +10,7 @@
 
 {% block breadcrumbs %}
 <li><a href="{% url 'user_list' %}">Brukerprofiler</a></li>
-<li>{{ user }}</li>
+<li>{{ user }}</li>
 {% endblock %}
 
 {% block styles %}
@@ -41,9 +41,9 @@
                 <div class="col-md-8">{% if user.get_email %}<a href="mailto:{{ user.get_email.email }}">{{ user.get_email.email }}</a> (primær){% else %}-{% endif %}</div>
                 <div class="col-md-4">Nettside</div>
                 <div class="col-md-8">
-                    {% if user.website %}<a href="{{ user.website }}" target="_blank">{{ user.website }}</a>{% else %}-{% endif %}
-                    {% if user.github %}<a href="{{ user.github }}" target="_blank"><i class="fa fa-lg fa-github"></i></a>{% endif %}
-                    {% if user.linkedin %}<a href="{{ user.linkedin }}" target="_blank"><i class="fa fa-lg fa-linkedin"></i></a>{% endif %}
+                    {% if user.website %}<a href="{{ user.website }}" rel="noopener" target="_blank">{{ user.website }}</a>{% else %}-{% endif %}
+                    {% if user.github %}<a href="{{ user.github }}" rel="noopener" target="_blank"><i class="fa fa-lg fa-github"></i></a>{% endif %}
+                    {% if user.linkedin %}<a href="{{ user.linkedin }}" rel="noopener" target="_blank"><i class="fa fa-lg fa-linkedin"></i></a>{% endif %}
                 </div>
                 <br>
             </div>
