@@ -1,62 +1,24 @@
-{% extends 'base.html' %}
+{% extends "wiki/base_site.html" %}
 
 {% load static %}
-{% load i18n wiki_tags %}
-{% load render_bundle from webpack_loader %}
 
-{% block title %}
-{% block wiki_pagetitle %}{% endblock %}
-{% endblock title %}
+{% block wiki_site_title %} - Wiki{% endblock %}
 
-{% block js %}
-    {{ block.super }}
-    <script src="{% static "wiki/js/jquery.min.js" %}"></script>
-    <script src="{% static "wiki/js/core.js" %}"></script>
-    <script src="{% static "wiki/bootstrap/js/bootstrap.min.js" %}"></script>
-    {% render_bundle 'wiki' 'js' %}
+{% block wiki_header_branding %}
+    <div>
+    <a href="{% url 'home' %}">
+        <img src="{% static "img/online_logo.svg" %}" style="width: 140px; padding: 0 13px 0 0" alt="Online" class="online-logo">
+    </a>
+    </div>
 {% endblock %}
 
-{% block styles %}
-    {{ block.super }}
-     <link href="{{ STATIC_URL }}wiki/bootstrap/css/wiki-bootstrap.min.css" rel="stylesheet">
-    {% render_bundle 'wiki' 'css' %}
-{% endblock %}
-
-{% block content %}
-    <section id="wiki">
-        {% block wiki_body %}
-            <div class="container">
-                <div class="row" id="topbar">
-                    <div class="col-xs-8">
-                        {% block wiki_breadcrumbs %}{% endblock %}
-                    </div>
-                    <div class="col-xs-4">
-                      <form method="GET" action="{% spaceless %}
-                        {% if article or urlpath %}
-                            {% url 'wiki:search' article_id=article.id path=urlpath.path %}
-                        {% else %}
-                            {% url 'wiki:search' %}
-                        {% endif %}
-                        {% endspaceless %}">
-                        <div class="input-group">
-                            <input type="text" class="form-control" name="q" placeholder="{% spaceless %}
-                            {% if article or urlpath %}
-                            {% trans " Search from current article... " %}
-                            {% else %}
-                            {% trans "Search whole wiki... " %}
-                            {% endif %}
-                            {% endspaceless %}" />
-                            <span class="input-group-btn">
-                              <button class="btn btn-default" type="submit">
-                                <span class="fa fa-search"></span>
-                              </button>
-                            </span>
-                        </div>
-                      </form>
-                    </div>
-                </div>
-                {% block wiki_contents %}{% endblock %}
-            </div>
-        {% endblock %}
-    </section>
+{% block wiki_header_navlinks %}
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'events_index' %}">Arkiv</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'careeropportunity_index' %}">Karriere</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'resourcecenter_index' %}">Ressurser</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'hobbygroups_index' %}" class="hidden-sm">Interessegrupper</a></li>
+        <li class="nav-item"><a class="nav-link" href="/wiki/">Wiki</a></li>
+        <li class="nav-item"><a class="nav-link" href="/webshop/">Webshop</a></li>
+    </ul>
 {% endblock %}

@@ -57,12 +57,6 @@ urlpatterns = [
     # Wiki
     url(r"^notify/", include("django_nyt.urls")),
     url(r"^wiki/", include("wiki.urls")),
-    url(
-        r"^wiki-tree/",
-        views.WikiTreeView.as_view(),
-        name="wiki-tree",
-        kwargs={"path": ""},
-    ),
 ]
 
 
