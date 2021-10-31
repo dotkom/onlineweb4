@@ -118,9 +118,6 @@ const webpackConfig = {
     webshop: [
       './assets/webshop/index',
     ],
-    wiki: [
-      './assets/wiki/index',
-    ],
   },
   resolve: {
     modules: [
