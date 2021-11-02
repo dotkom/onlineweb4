@@ -245,6 +245,8 @@ INSTALLED_APPS = [
     "wiki.plugins.help",
     "wiki.plugins.links",
     "wiki.plugins.globalhistory",
+    "django_apscheduler",
+    'django_celery_results'
 ]
 
 # Make Django messages use bootstrap alert classes

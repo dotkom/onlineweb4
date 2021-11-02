@@ -17,7 +17,7 @@ python-memcached = "~1.59"
 stripe = "~2.60"
 icalendar = "~4.0"
 google-api-python-client = "~1.10"
-celery = "~4.4"
+celery = "^5.1.2"
 PyMuPDF = "~1.18"
 django-filebrowser = "~3.14"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
@@ -71,13 +71,15 @@ redis = "~3.5"
 
 pyyaml = "^5.3.1"
 pywebpush = "^1.11.0"
-django-storages = {version = "^1.12.1", optional = true}
+django-storages = "^1.12.1"
 gunicorn = {version = "^20.1.0", optional = true}
-boto3 = {version = "^1.18.60", optional = true}
-jaeger-client = {version = "^4.8.0", optional = true}
-django-opentracing = {version = "^1.1.0", optional = true }
-django-prometheus = {version = "^2.1.0", optional = true}
+boto3 = "^1.18.60"
+jaeger-client = "^4.8.0"
+django-opentracing = "^1.1.0"
+django-prometheus = "^2.1.0"
 django-health-check = "^3.16.4"
+django-apscheduler = "^0.6.0"
+django-celery-results = "^2.2.0"
 
 
 [tool.poetry.dev-dependencies]

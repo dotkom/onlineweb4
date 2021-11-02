@@ -23,13 +23,9 @@ db.db
 Django.Dockerfile
 docker-compose.yml
 Makefile
-package.json
 postcss.config.js
 setup.cfg
-webpack.config.js
 Webpack.Dockerfile
-webpack.production.js
-webpack.server.js
 webpack.test.config.js
 yarn.error.log
 yarn.lock
