@@ -17,7 +17,7 @@ python-memcached = "~1.59"
 stripe = "~2.60"
 icalendar = "~4.0"
 google-api-python-client = "~2.28"
-celery = "~4.4"
+celery = "~5.1"
 PyMuPDF = "~1.18"
 django-filebrowser = "~3.14"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
