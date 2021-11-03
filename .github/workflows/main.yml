@@ -12,7 +12,11 @@ jobs:
   test-python:
     runs-on: ubuntu-latest
     # Run if the repo is not a fork, or if it is a fork with the label 'safe to test', or if it is dependabot
-    if: github.event.pull_request.head.repo.full_name == github.repository || contains(github.event.pull_request.labels.*.name, 'safe to test') || github.actor == 'dependabot[bot]'
+    if: |
+        github.event.pull_request.head.repo.full_name == github.repository
+        || contains(github.event.pull_request.labels.*.name, 'safe to test')
+        || github.actor == 'dependabot[bot]'
+        || github.ref == 'refs/heads/main'
     steps:
       - name: checkout-if-pr
         uses: actions/checkout@v2
