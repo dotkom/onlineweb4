@@ -1,3 +1,16 @@
+# ------- STATIC BUILDER --------
+FROM node:lts as node-builder
+WORKDIR /build
+COPY package.json \
+  yarn.lock \
+  webpack.production.config.js \
+  webpack.config.js \
+  .babelrc \
+  ./
+COPY assets assets
+RUN yarn --non-interactive --no-progress --pure-lockfile && yarn build:prod
+
+# ------- PYTHON BUILDER --------
 FROM python:3.7-slim as builder
 WORKDIR /build
 COPY pyproject.toml poetry.lock ./
@@ -7,8 +20,22 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   && pip install --upgrade pip \
   && pip install poetry \
   && poetry export --without-hashes -E prod -f requirements.txt --output requirements.txt \
-  && pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt
+  && pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requirements.txt \
+  && pip install -r requirements.txt
 
+WORKDIR /app
+COPY . .
+COPY --from=node-builder /build/bundles bundles
+
+RUN python manage.py collectstatic --noinput
+
+# ------- NGINX ---------
+FROM nginx:alpine as static-server
+ENV OW4_DIR=/opt/ow4/
+COPY static-files.conf.template /etc/nginx/templates/
+COPY --from=builder /app/static ${OW4_DIR}/static
+
+# ----------- ONLINEWEB4 SERVER-----------
 FROM python:3.7-slim
 
 LABEL maintainer="dotkom@online.ntnu.no"
@@ -26,10 +53,11 @@ RUN addgroup --system onlineweb4 && adduser --system --group onlineweb4 \
   && pip install --upgrade pip \
   && pip install --no-cache /wheels/*
 
-COPY . $APP_HOME
-RUN chown -R onlineweb4:onlineweb4 $APP_HOME
-
 WORKDIR $APP_HOME
-EXPOSE 8000
+COPY . .
+COPY --from=static-builder /build/webpack-stats.json .
+
 USER onlineweb4
+
 CMD = ["gunicorn", "onlineweb4.wsgi"]
+

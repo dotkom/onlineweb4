@@ -1,0 +1,18 @@
+server {
+    listen ${NGINX_PORT};
+    server_name ${NGINX_SERVER_NAME};
+
+    location /static {
+        expires 7d;
+        add_header Vary Accept-Encoding;
+        root ${OW4_DIR};
+        autoindex off;
+    }
+
+    location /media {
+        expires 7d;
+        add_header Vary Accept-Encoding;
+        root ${OW4_DIR};
+        autoindex off;
+    }
+}

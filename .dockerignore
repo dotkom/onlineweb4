@@ -1,13 +1,8 @@
 node_modules
 .tox
 .github
-assets
 bundles
-files
-log
-static
 uploaded_media
-.babelrc
 .coveragerc
 .dockerignore
 .eslintrc.js
@@ -23,9 +18,8 @@ db.db
 Django.Dockerfile
 docker-compose.yml
 Makefile
-postcss.config.js
 setup.cfg
 Webpack.Dockerfile
 webpack.test.config.js
 yarn.error.log
-yarn.lock
+webpack-stats.json
