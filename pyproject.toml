@@ -79,7 +79,6 @@ django-health-check = "^3.16.4"
 django-apscheduler = "^0.6.0"
 django-celery-results = "^2.2.0"
 
-
 [tool.poetry.dev-dependencies]
 # Testing
 pytest = "~6.2"
@@ -97,7 +96,7 @@ pycodestyle = "~2.7"
 black = "21.7b0"
 
 [tool.poetry.extras]
-prod = ["psycopg2-binary", "gunicorn", "django-storages", "boto3", "django-opentracing", "jaeger-client", "django-prometheus"]
+prod = ["psycopg2-binary", "gunicorn"]
 
 [tool.tox]
 legacy_tox_ini = """

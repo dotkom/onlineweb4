@@ -30,13 +30,13 @@ COPY --from=node-builder /build/bundles bundles
 RUN python manage.py collectstatic --noinput
 
 # ------- NGINX ---------
-FROM nginx:alpine as static-server
+FROM nginx:alpine as onlinweb4-nginx
 ENV OW4_DIR=/opt/ow4/
 COPY static-files.conf.template /etc/nginx/templates/
 COPY --from=builder /app/static ${OW4_DIR}/static
 
 # ----------- ONLINEWEB4 SERVER-----------
-FROM python:3.7-slim
+FROM python:3.7-slim as onlineweb4
 
 LABEL maintainer="dotkom@online.ntnu.no"
 
