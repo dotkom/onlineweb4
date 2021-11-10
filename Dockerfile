@@ -17,6 +17,7 @@ COPY pyproject.toml poetry.lock ./
 RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   gcc \
+  python3-dev \
   && pip install --upgrade pip \
   && pip install poetry \
   && poetry export --without-hashes -E prod -f requirements.txt --output requirements.txt \
@@ -32,8 +33,13 @@ RUN python manage.py collectstatic --noinput
 # ------- NGINX ---------
 FROM nginx:alpine as onlinweb4-nginx
 ENV OW4_DIR=/opt/ow4/
-COPY static-files.conf.template /etc/nginx/templates/
+ENV NGINX_DJANGO_UPSTREAM=127.0.0.1:8001
+ENV NGINX_PORT=8000
+ENV NGINX_SERVER_NAME=localhost
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=builder /app/static ${OW4_DIR}/static
+
+EXPOSE 8000
 
 # ----------- ONLINEWEB4 SERVER-----------
 FROM python:3.7-slim as onlineweb4
@@ -55,9 +61,9 @@ RUN addgroup --system onlineweb4 && adduser --system --group onlineweb4 \
 
 WORKDIR $APP_HOME
 COPY . .
-COPY --from=static-builder /build/webpack-stats.json .
-
+COPY --from=node-builder /build/webpack-stats.json .
+RUN chown -R onlineweb4:onlineweb4 .
+EXPOSE 8001
 USER onlineweb4
 
-CMD = ["gunicorn", "onlineweb4.wsgi"]
-
+ENTRYPOINT ["uwsgi", "--socket", "127.0.0.1:8001", "--master", "--enable-threads", "--wsgi-file", "onlineweb4/wsgi.py"]

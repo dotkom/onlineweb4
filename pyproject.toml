@@ -71,14 +71,14 @@ redis = "~3.5"
 
 pyyaml = "^5.3.1"
 pywebpush = "^1.11.0"
-gunicorn = {version = "^20.1.0", optional = true}
 jaeger-client = "^4.8.0"
 django-opentracing = "^1.1.0"
 django-prometheus = "^2.1.0"
 django-health-check = "^3.16.4"
 django-apscheduler = "^0.6.0"
 django-celery-results = "^2.2.0"
-flower = "^1.0.0"
+flower = { version = "^1.0.0", optional = true }
+uWSGI = { version = "^2.0.20", optional = true }
 
 [tool.poetry.dev-dependencies]
 # Testing
@@ -97,7 +97,7 @@ pycodestyle = "~2.7"
 black = "21.7b0"
 
 [tool.poetry.extras]
-prod = ["psycopg2-binary", "gunicorn"]
+prod = ["psycopg2-binary", "uWSGI", "flower"]
 
 [tool.tox]
 legacy_tox_ini = """
