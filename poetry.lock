@@ -676,7 +676,7 @@ name = "django-opentracing"
 version = "1.1.0"
 description = "OpenTracing support for Django applications"
 category = "main"
-optional = false
+optional = true
 python-versions = "*"
 
 [package.dependencies]
@@ -1050,7 +1050,7 @@ name = "jaeger-client"
 version = "4.8.0"
 description = "Jaeger Python OpenTracing Tracer implementation"
 category = "main"
-optional = false
+optional = true
 python-versions = ">=3.7"
 
 [package.dependencies]
@@ -1232,7 +1232,7 @@ name = "opentracing"
 version = "2.4.0"
 description = "OpenTracing API for Python. See documentation at http://opentracing.io"
 category = "main"
-optional = false
+optional = true
 python-versions = "*"
 
 [package.extras]
@@ -1729,7 +1729,7 @@ name = "threadloop"
 version = "1.0.2"
 description = "Tornado IOLoop Backed Concurrent Futures"
 category = "main"
-optional = false
+optional = true
 python-versions = "*"
 
 [package.dependencies]
@@ -1740,7 +1740,7 @@ name = "thrift"
 version = "0.15.0"
 description = "Python bindings for the Apache Thrift RPC system"
 category = "main"
-optional = false
+optional = true
 python-versions = "*"
 
 [package.dependencies]
@@ -1772,7 +1772,7 @@ name = "tornado"
 version = "6.1"
 description = "Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed."
 category = "main"
-optional = false
+optional = true
 python-versions = ">= 3.5"
 
 [[package]]
