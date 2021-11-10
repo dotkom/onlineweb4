@@ -78,6 +78,7 @@ django-prometheus = "^2.1.0"
 django-health-check = "^3.16.4"
 django-apscheduler = "^0.6.0"
 django-celery-results = "^2.2.0"
+flower = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 # Testing
