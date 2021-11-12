@@ -21,6 +21,7 @@ from apps.authentication.tasks import (
 )
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
 from apps.gsuite.mail_syncer.tasks import update_mailing_list
+from utils.disable_for_loaddata import disable_for_loaddata
 
 User = get_user_model()
 logger = logging.getLogger("syncer.%s" % __name__)
@@ -49,6 +50,7 @@ def run_group_syncer(user: User) -> None:
 
 
 @receiver(post_save, sender=Group)
+@disable_for_loaddata
 def trigger_group_syncer(sender, instance: Group, created=False, **kwargs):
     """
     :param sender: The model that triggered this hook
@@ -94,6 +96,7 @@ m2m_changed.connect(
 
 
 @receiver(post_save, sender=GroupMember)
+@disable_for_loaddata
 def add_online_group_member_to_django_group(
     sender, instance: GroupMember, created=False, **kwargs
 ):
@@ -117,6 +120,7 @@ def remove_online_group_members_from_django_group(
 
 @receiver(post_delete, sender=GroupMember)
 @receiver(post_save, sender=GroupMember)
+@disable_for_loaddata
 def set_staff_status(sender, instance: GroupMember, created=False, **kwargs):
     """
     Set the staff status of the user whenever one of their group member relations are updated.
@@ -131,6 +135,7 @@ def set_staff_status(sender, instance: GroupMember, created=False, **kwargs):
 
 
 @receiver(pre_save, sender=Email)
+@disable_for_loaddata
 def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
     user: User = instance.user
     jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
@@ -151,7 +156,7 @@ def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
             if user.infomail:
                 update_mailing_list.delay(infomail, email=instance.email, added=False)
 
-
+@disable_for_loaddata
 def assign_group_perms(sender, instance, created=False, **kwargs):
     if isinstance(instance, GroupMember):
         assign_permission_from_group_admins.delay(group_id=instance.group.id)
