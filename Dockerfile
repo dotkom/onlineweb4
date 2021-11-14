@@ -11,7 +11,7 @@ COPY assets assets
 RUN yarn --non-interactive --no-progress --pure-lockfile && yarn build:prod
 
 # ------- PYTHON BUILDER --------
-FROM python:3.7-slim as builder
+FROM python:3.10.0-slim as builder
 WORKDIR /build
 COPY pyproject.toml poetry.lock ./
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -41,7 +41,7 @@ COPY --from=builder /app/static ${OW4_DIR}/static
 EXPOSE 8000
 
 # ----------- ONLINEWEB4 SERVER-----------
-FROM python:3.7-slim as onlineweb4
+FROM python:3.10.0-slim as onlineweb4
 
 LABEL maintainer="dotkom@online.ntnu.no"
 
