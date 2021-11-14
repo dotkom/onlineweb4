@@ -139,7 +139,7 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "bleach"
-version = "3.1.5"
+version = "3.3.1"
 description = "An easy safelist-based HTML-sanitizing tool."
 category = "main"
 optional = false
@@ -155,7 +155,7 @@ name = "boto3"
 version = "1.20.5"
 description = "The AWS SDK for Python"
 category = "main"
-optional = false
+optional = true
 python-versions = ">= 3.6"
 
 [package.dependencies]
@@ -171,7 +171,7 @@ name = "botocore"
 version = "1.23.5"
 description = "Low-level, data-driven core of boto 3."
 category = "main"
-optional = false
+optional = true
 python-versions = ">= 3.6"
 
 [package.dependencies]
@@ -661,14 +661,14 @@ django-js-asset = "*"
 
 [[package]]
 name = "django-nyt"
-version = "1.1.6"
+version = "1.2"
 description = "A pluggable notification system written for the Django framework."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-django = ">=1.11,<3.2"
+django = ">=2.2,<3.3"
 
 [[package]]
 name = "django-oauth-toolkit"
@@ -762,7 +762,7 @@ name = "django-ses"
 version = "2.3.0"
 description = "A Django email backend for Amazon's Simple Email Service"
 category = "main"
-optional = false
+optional = true
 python-versions = ">=3.5"
 
 [package.dependencies]
@@ -1138,7 +1138,7 @@ name = "jmespath"
 version = "0.10.0"
 description = "JSON Matching Expressions"
 category = "main"
-optional = false
+optional = true
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
@@ -1720,7 +1720,7 @@ name = "s3transfer"
 version = "0.5.0"
 description = "An Amazon S3 Transfer Manager"
 category = "main"
-optional = false
+optional = true
 python-versions = ">= 3.6"
 
 [package.dependencies]
@@ -1987,26 +1987,26 @@ python-versions = "*"
 
 [[package]]
 name = "wiki"
-version = "0.6b1"
+version = "0.7.8"
 description = "A wiki system written for the Django framework."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-bleach = ">=3.1.0,<3.2"
-Django = ">=2.1,<3.1"
+bleach = ">=3.3.0,<3.4"
+Django = ">=2.1,<3.3"
 django-mptt = ">=0.11,<0.12"
-django-nyt = ">=1.1.5,<1.2"
+django-nyt = ">=1.2,<1.3"
 django-sekizai = ">=0.10"
-Markdown = ">=3.1,<3.2.0"
+Markdown = ">=3.1,<3.3"
 Pillow = "*"
 sorl-thumbnail = ">=12.6.2,<13"
 
 [package.extras]
-devel = ["django-functest (>=1.0.3,<1.1)", "pytest (>=5.3,<5.4)", "pytest-django", "pytest-cov", "pytest-pythonpath", "flake8 (>=3.7,<3.8)", "flake8-isort", "pre-commit"]
-test = ["django-functest (>=1.0.3,<1.1)", "pytest (>=5.3,<5.4)", "pytest-django", "pytest-cov", "pytest-pythonpath"]
-testlint = ["flake8 (>=3.7,<3.8)", "flake8-isort"]
+devel = ["django-functest (>=1.0.3,<1.1)", "pytest (>=5.3,<5.4)", "pytest-django", "pytest-cov", "coverage", "codecov", "ddt", "pytest-pythonpath", "flake8 (>=3.7,<3.8)", "black (>=20.8b1,<20.9)", "pre-commit"]
+test = ["django-functest (>=1.0.3,<1.1)", "pytest (>=5.3,<5.4)", "pytest-django", "pytest-cov", "coverage", "codecov", "ddt", "pytest-pythonpath"]
+testlint = ["flake8 (>=3.7,<3.8)", "black (>=20.8b1,<20.9)", "pre-commit"]
 transifex = ["transifex-client"]
 
 [[package]]
@@ -2030,12 +2030,12 @@ docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [extras]
-prod = ["psycopg2-binary", "uWSGI", "flower"]
+prod = ["psycopg2-binary", "uWSGI", "flower", "boto3", "django-ses"]
 
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "1bdd1c43317a6f2ab0bdf2138798271d72e60cd45e6fbd18ac987a939dc81993"
+content-hash = "f502de228888ff7680c0b02b02715440a8047ad5c5d7d5ef5350be150e4bf4d8"
 
 [metadata.files]
 amqp = [
@@ -2074,8 +2074,8 @@ black = [
     {file = "black-21.10b0.tar.gz", hash = "sha256:a9952229092e325fe5f3dae56d81f639b23f7131eb840781947e4b2886030f33"},
 ]
 bleach = [
-    {file = "bleach-3.1.5-py2.py3-none-any.whl", hash = "sha256:2bce3d8fab545a6528c8fa5d9f9ae8ebc85a56da365c7f85180bfe96a35ef22f"},
-    {file = "bleach-3.1.5.tar.gz", hash = "sha256:3c4c520fdb9db59ef139915a5db79f8b51bc2a7257ea0389f30c846883430a4b"},
+    {file = "bleach-3.3.1-py2.py3-none-any.whl", hash = "sha256:ae976d7174bba988c0b632def82fdc94235756edfb14e6558a9c5be555c9fb78"},
+    {file = "bleach-3.3.1.tar.gz", hash = "sha256:306483a5a9795474160ad57fce3ddd1b50551e981eed8e15a582d34cef28aafa"},
 ]
 boto3 = [
     {file = "boto3-1.20.5-py3-none-any.whl", hash = "sha256:81ca80fbb3d551819c35c809cb159fd0bec6701d3d8f0e5906a22da7558d098e"},
@@ -2331,8 +2331,8 @@ django-mptt = [
     {file = "django_mptt-0.11.0-py2.py3-none-any.whl", hash = "sha256:90eb236eb4f1a92124bd7c37852bbe09c0d21158477cc237556d59842a91c509"},
 ]
 django-nyt = [
-    {file = "django-nyt-1.1.6.tar.gz", hash = "sha256:a0d9b14c06507af17774a47a461c44c9da683fa1fc23425f9d14f2fc842e07fb"},
-    {file = "django_nyt-1.1.6-py3-none-any.whl", hash = "sha256:235c6132325b9d1fc15e64303a15552857f13f9bf94f0ae6b6fed75581a696f0"},
+    {file = "django-nyt-1.2.tar.gz", hash = "sha256:bca34c913626505b5093536aaba423a33b1123dc355151097f2428db075d2c70"},
+    {file = "django_nyt-1.2-py3-none-any.whl", hash = "sha256:6b183a416aef29507d5442331206cc421a0b73e0405cb7283a762b90439a5d3c"},
 ]
 django-oauth-toolkit = [
     {file = "django-oauth-toolkit-1.5.0.tar.gz", hash = "sha256:650e5ef2244d1d8db8f507137e0d1e8b8aad1f4086a4a610526e8851f9a38308"},
@@ -3185,8 +3185,8 @@ webencodings = [
     {file = "webencodings-0.5.1.tar.gz", hash = "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"},
 ]
 wiki = [
-    {file = "wiki-0.6b1-py3-none-any.whl", hash = "sha256:3cc563d098cfcd7046f0ecbf4c085735e2600e3b93d26100e8015ef65959983e"},
-    {file = "wiki-0.6b1.tar.gz", hash = "sha256:275304dbcc8e8087d88a7cd43fb933c58623984d57e42327fc9a10ee15a219e7"},
+    {file = "wiki-0.7.8-py3-none-any.whl", hash = "sha256:466d6aa3db45a28e484cdac01274e8ed943b80feca35d57ac6a1613df64ccc30"},
+    {file = "wiki-0.7.8.tar.gz", hash = "sha256:f96c0ee4abefbfbfb5b6a3f2d26c4d61a9c78558bc21e7999bc3b550d6645339"},
 ]
 wrapt = [
     {file = "wrapt-1.13.2-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:3de7b4d3066cc610054e7aa2c005645e308df2f92be730aae3a47d42e910566a"},

@@ -49,7 +49,7 @@ python-dateutil = "~2.8"            # Simplify date parsing
 coreapi = "~2.3"                    # API Documentation
 requests = { version = "~2.26", extras = [ "security" ] }
 # Wiki
-wiki = "0.6b1"
+wiki = "0.7.8"
 
 # Django 1.9 support
 django-appconf = "~1.0"
