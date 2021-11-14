@@ -3,7 +3,6 @@ from django.dispatch import receiver
 
 from utils.disable_for_loaddata import disable_for_loaddata
 
-
 from .models import MailEntity, MailGroup
 
 

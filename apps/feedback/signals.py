@@ -5,7 +5,6 @@ from guardian.shortcuts import assign_perm
 
 from utils.disable_for_loaddata import disable_for_loaddata
 
-
 from .models import FeedbackRelation, GenericSurvey, RegisterToken
 
 

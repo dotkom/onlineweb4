@@ -2,7 +2,7 @@
 import logging
 
 from .registry import Schedule
-    
+
 logger = logging.getLogger(__name__)
 default_app_config = "apps.mommy.appconfig.MommyConfig"
 schedule = Schedule()
@@ -28,12 +28,14 @@ def autodiscover():
             if module_has_submodule(mod, "mommy"):
                 raise
 
+
 def run(**kwargs):
     """
     imports appscheduler, registers scheduled jobs, runs the scheduler
     """
     from apscheduler.schedulers.blocking import BlockingScheduler
     from django_apscheduler.jobstores import DjangoJobStore
+
     sched = BlockingScheduler(**kwargs)
     sched.add_jobstore(DjangoJobStore(), "default")
 

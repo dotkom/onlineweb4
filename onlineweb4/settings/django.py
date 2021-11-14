@@ -133,7 +133,7 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE = [
-    'django_opentracing.OpenTracingMiddleware',
+    "django_opentracing.OpenTracingMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -245,7 +245,7 @@ INSTALLED_APPS = [
     "wiki.plugins.links",
     "wiki.plugins.globalhistory",
     "django_apscheduler",
-    'django_celery_results'
+    "django_celery_results",
 ]
 
 # Make Django messages use bootstrap alert classes

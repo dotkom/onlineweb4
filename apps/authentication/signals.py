@@ -156,6 +156,7 @@ def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
             if user.infomail:
                 update_mailing_list.delay(infomail, email=instance.email, added=False)
 
+
 @disable_for_loaddata
 def assign_group_perms(sender, instance, created=False, **kwargs):
     if isinstance(instance, GroupMember):

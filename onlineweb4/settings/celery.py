@@ -1,7 +1,7 @@
 from decouple import config
 
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_CACHE_BACKEND = 'default'
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_CACHE_BACKEND = "default"
 
 # Runs task sync instead of async. Good for development when the broker isn't running
 CELERY_TASK_ALWAYS_EAGER = config(

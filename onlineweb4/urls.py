@@ -63,7 +63,7 @@ urlpatterns = [
         name="wiki-tree",
         kwargs={"path": ""},
     ),
-    url(r'^health/', include('health_check.urls')),
+    url(r"^health/", include("health_check.urls")),
 ]
 
 
@@ -276,4 +276,4 @@ handler500 = "onlineweb4.views.handler500"
 
 # if prometheus is installed
 if "django_prometheus" in settings.INSTALLED_APPS:
-    urlpatterns += [url('', include('django_prometheus.urls'))]
+    urlpatterns += [url("", include("django_prometheus.urls"))]

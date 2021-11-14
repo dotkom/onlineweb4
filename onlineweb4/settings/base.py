@@ -142,4 +142,3 @@ SECURE_PROXY_SSL_HEADER = (
 )
 
 VIMEO_API_TOKEN = config("OW4_VIMEO_API_TOKEN", default=None)
-
