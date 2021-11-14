@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
+
 from django.core.exceptions import ObjectDoesNotExist
+
 from apps.gallery.util import create_responsive_image_from_file
 from onlineweb4.celery import app
 
