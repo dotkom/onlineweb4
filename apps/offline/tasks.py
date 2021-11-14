@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-
+from django.core.exceptions import ObjectDoesNotExist
 from apps.gallery.util import create_responsive_image_from_file
 from onlineweb4.celery import app
 
@@ -23,7 +23,7 @@ def create_thumbnail(offline_issue: Issue):
     offline_issue.save()
 
 
-@app.task(bind=True)
+@app.task(bind=True, autoretry_for=(ObjectDoesNotExist,), default_retry_delay=5)
 def create_thumbnail_task(_, issue_id: int):
     offline_issue = Issue.objects.get(pk=issue_id)
     create_thumbnail(offline_issue)
