@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
+from utils.disable_for_loaddata import disable_for_loaddata
+
 from . import status
 from .models import PaymentReceipt, PaymentRelation, PaymentTransaction
 
@@ -38,6 +40,7 @@ def handle_payment_transaction_status_change(
 
 @receiver(signal=post_save, sender=PaymentRelation)
 @receiver(signal=post_save, sender=PaymentTransaction)
+@disable_for_loaddata
 def send_receipt_after_payment(
     sender, instance: Union[PaymentRelation, PaymentTransaction], **kwargs
 ):

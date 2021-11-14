@@ -16,8 +16,8 @@ pytz = "^2021.1"
 python-memcached = "~1.59"
 stripe = "~2.60"
 icalendar = "~4.0"
+celery = "^5.1.2"
 google-api-python-client = "~2.28"
-celery = "~4.4"
 PyMuPDF = "~1.18"
 django-filebrowser = "~3.14"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
@@ -67,12 +67,18 @@ django-js-reverse = "~0.9"
 # downgraded from 2.9 due to https://github.com/psycopg/psycopg2/issues/1293,
 # can probably upgrade when we bump to Django 3.1
 psycopg2-binary = { version = "~2.8.6", optional = true }
-uwsgi = { version = "~2.0", optional = true }
 redis = "~3.5"
 
 pyyaml = "^6.0"
 pywebpush = "^1.11.0"
-
+jaeger-client = "^4.8.0"
+django-opentracing = "^1.1.0"
+django-prometheus = "^2.1.0"
+django-health-check = "^3.16.4"
+django-apscheduler = "^0.6.0"
+django-celery-results = "^2.2.0"
+flower = { version = "^1.0.0", optional = true }
+uWSGI = { version = "^2.0.20", optional = true }
 
 [tool.poetry.dev-dependencies]
 # Testing
@@ -91,7 +97,7 @@ pycodestyle = "~2.7"
 black = "21.10b0"
 
 [tool.poetry.extras]
-prod = ["psycopg2-binary", "uwsgi"]
+prod = ["psycopg2-binary", "uWSGI", "flower"]
 
 [tool.tox]
 legacy_tox_ini = """

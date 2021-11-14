@@ -2,7 +2,6 @@ import os
 import sys
 
 from decouple import config
-
 from apps.sso.settings import OAUTH2_SCOPES
 
 # Directory that contains this file.

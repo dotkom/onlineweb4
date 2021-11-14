@@ -34,8 +34,10 @@ def run(**kwargs):
     imports appscheduler, registers scheduled jobs, runs the scheduler
     """
     from apscheduler.schedulers.blocking import BlockingScheduler
+    from django_apscheduler.jobstores import DjangoJobStore
 
     sched = BlockingScheduler(**kwargs)
+    sched.add_jobstore(DjangoJobStore(), "default")
 
     for task, kwargs in schedule.tasks.items():
         sched.add_job(task.run, trigger="cron", name=task.__name__, **kwargs)
