@@ -54,7 +54,7 @@ COPY --from=builder /build/requirements.txt .
 
 RUN addgroup --system onlineweb4 && adduser --system --group onlineweb4 \
   && chown -R onlineweb4:onlineweb4 $HOME \
-  && apt-get update && apt-get install --no-install-recommends -y mime-support \
+  && apt-get update && apt-get install --no-install-recommends -y mime-support locales \
   && pip install --upgrade pip \
   && pip install --no-cache /wheels/*
 
