@@ -31,12 +31,11 @@ COPY --from=node-builder /build/bundles bundles
 RUN python manage.py collectstatic --noinput
 
 # ------- NGINX ---------
-FROM nginx:alpine as onlinweb4-nginx
+FROM nginx:alpine as onlineweb4-nginx
 ENV OW4_DIR=/opt/ow4/
 ENV NGINX_DJANGO_UPSTREAM=127.0.0.1:8001
 ENV NGINX_PORT=8000
 ENV NGINX_SERVER_NAME=localhost
-COPY nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=builder /app/static ${OW4_DIR}/static
 
 EXPOSE 8000
