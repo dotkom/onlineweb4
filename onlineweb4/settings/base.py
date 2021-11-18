@@ -7,7 +7,7 @@ from apps.sso.settings import OAUTH2_SCOPES
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()["__file__"])
 # Root directory. Contains manage.py
-PROJECT_ROOT_DIRECTORY = os.path.join(PROJECT_SETTINGS_DIRECTORY, "..", "..")
+PROJECT_ROOT_DIRECTORY = os.path.dirname(os.path.dirname(PROJECT_SETTINGS_DIRECTORY))
 
 sys.dont_write_bytecode = config(
     "OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, default=True

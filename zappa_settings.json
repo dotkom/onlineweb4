@@ -13,6 +13,7 @@
         "log_level": "WARNING",
         "debug": false,
         "cors": true,
+        "timeout_seconds": 120,
         "certificate_arn": "arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc",
         "events": [
             {
@@ -51,6 +52,7 @@
         "log_level": "WARNING",
         "debug": false,
         "cors": true,
+        "timeout_seconds": 120,
         "certificate_arn": "arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc"
     }
 }
