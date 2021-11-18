@@ -9,10 +9,12 @@ import uuid
 from django.conf import settings as django_settings
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from PIL import Image, ImageOps
-
+from django.core.files.storage import default_storage
 from apps.gallery import settings as gallery_settings
 from apps.gallery.models import ResponsiveImage, UnhandledImage
-
+from django.core.files import File
+from django.core.files.storage import default_storage
+from io import BytesIO
 logger = logging.getLogger(__name__)
 
 
@@ -120,7 +122,6 @@ class BaseImageHandler(object):
                 gallery_settings.UNHANDLED_THUMBNAIL_PATH,
                 filename,
             )
-            thumbnail_path = os.path.abspath(thumbnail_path)
 
             # Generate the full path to the origin image
             original_path = os.path.join(
@@ -128,7 +129,6 @@ class BaseImageHandler(object):
                 gallery_settings.UNHANDLED_IMAGES_PATH,
                 filename,
             )
-            original_path = os.path.abspath(original_path)
 
             # Generate the thumbnail and return the result
             result = self._generate_thumbnail_from_source(
@@ -148,7 +148,6 @@ class BaseImageHandler(object):
                 gallery_settings.UNHANDLED_THUMBNAIL_PATH,
                 filename,
             )
-            thumbnail_source = os.path.abspath(thumbnail_source)
 
             # Generate the full thumbnail path for the unhandled image
             thumbnail_dest = os.path.join(
@@ -156,7 +155,6 @@ class BaseImageHandler(object):
                 gallery_settings.RESPONSIVE_THUMBNAIL_PATH,
                 filename,
             )
-            thumbnail_dest = os.path.abspath(thumbnail_dest)
 
             return self._copy_file(thumbnail_source, thumbnail_dest)
         else:
@@ -179,8 +177,9 @@ class BaseImageHandler(object):
         _log = logging.getLogger(__name__)
         _log.debug("Copying image %s to %s" % (from_path, to_path))
         try:
-            shutil.copy2(from_path, to_path)
-            return GalleryStatus(True, "sucess", to_path)
+            file = default_storage.open(from_path)
+            default_storage.save(to_path, file)
+            file.close()
         except OSError as os_error:
             _log("An OSError occurred: %s" % os_error)
             return GalleryStatus(
@@ -189,6 +188,8 @@ class BaseImageHandler(object):
                 % (from_path, to_path, os_error),
                 os_error,
             )
+        return GalleryStatus(True, "sucess", to_path)
+
 
     @staticmethod
     def _open_image(source):
@@ -204,7 +205,8 @@ class BaseImageHandler(object):
             return GalleryStatus(False, "File must have an extension", source)
 
         try:
-            img = Image.open(source)
+            file = default_storage.open(source)
+            img = Image.open(file)
         except IOError as e:
             return GalleryStatus(
                 False, "IOError: File was not an image file, or could not be found.", e
@@ -244,12 +246,17 @@ class BaseImageHandler(object):
             return GalleryStatus(False, "Image is truncated.", e)
 
         # Save the image to file
+        memfile = BytesIO()
         img.save(
-            dest,
+            memfile,
             file_extension.replace(".", ""),
             quality=gallery_settings.THUMBNAIL_QUALITY,
             optimize=True,
         )
+
+        default_storage.save(dest, memfile)
+        memfile.close()
+        img.close()
 
         return GalleryStatus(True, "success", source)
 
@@ -318,7 +325,7 @@ class UploadImageHandler(BaseImageHandler):
             return
 
         # Save the path to where the image was stored
-        self.image = os.path.abspath(original.data)
+        self.image = original.data
         self._log.debug('Unhandled file was saved at: "%s"' % self.image)
 
         # Generate a thumbnail image or break early on failure
@@ -355,7 +362,6 @@ class UploadImageHandler(BaseImageHandler):
             gallery_settings.UNHANDLED_IMAGES_PATH,
             "%s%s" % (uuid.uuid4(), extension.lower()),
         )
-        filepath = os.path.abspath(filepath)
 
         self._log.debug(
             "_save_temp_uploaded_file_data: Attempting to store uploaded image at %s"
@@ -363,9 +369,7 @@ class UploadImageHandler(BaseImageHandler):
         )
         # Open a file pointer in binary mode and write the image data chunks from memory
         try:
-            with open(filepath, "wb+") as destination:
-                for chunk in memory_object.chunks():
-                    destination.write(chunk)
+            default_storage.save(filepath, memory_object.file)
         except IOError as e:
             self._log.error(
                 '_save_temp_uploaded_file_data: Failed to save uploaded image! "%s"'
@@ -485,12 +489,16 @@ class ResponsiveImageHandler(BaseImageHandler):
         # All is OK, let PIL crop the image
         quality = gallery_settings.RESPONSIVE_IMAGE_QUALITY
         image = image.crop((crop_x, crop_y, crop_x + crop_width, crop_y + crop_height))
+        memfile = BytesIO()
         image.save(
-            destination_path,
+            memfile,
             file_extension.replace(".", ""),
             quality=quality,
             optimize=True,
         )
+
+        default_storage.save(destination_path, memfile)
+        memfile.close()
 
         self._log.debug(
             "_crop_image: successfully cropped %s"
@@ -539,13 +547,17 @@ class ResponsiveImageHandler(BaseImageHandler):
             )
 
         quality = gallery_settings.RESPONSIVE_IMAGE_QUALITY
+        memfile = BytesIO()
         try:
             image.save(
-                destination_path,
+                memfile,
                 file_extension.replace(".", ""),
                 quality=quality,
                 optimize=True,
             )
+            default_storage.save(destination_path, memfile)
+            memfile.close()
+            image.close()
             self._log.debug(
                 "Successsfully resized %s to %s"
                 % (filename, (target_width, target_height))
@@ -799,13 +811,10 @@ def get_absolute_path_to_original(image):
 
     path = django_settings.MEDIA_ROOT
     if isinstance(image, UnhandledImage):
-        path = os.path.abspath(
-            os.path.join(django_settings.MEDIA_ROOT, image.image.name)
-        )
+        path = os.path.join(django_settings.MEDIA_ROOT, image.image.name)
     elif isinstance(image, ResponsiveImage):
-        path = os.path.abspath(
-            os.path.join(django_settings.MEDIA_ROOT, image.image_original.name)
-        )
+        path = os.path.join(django_settings.MEDIA_ROOT, image.image_original.name)
+
 
     return path
 
