@@ -2,9 +2,9 @@
 import logging
 
 from django.core.exceptions import ObjectDoesNotExist
+from zappa.asynchronous import task
 
 from apps.gallery.util import create_responsive_image_from_file
-from zappa.asynchronous import task
 
 from .models import Issue
 from .utils import pdf_page_to_png

@@ -10,6 +10,7 @@ from django.utils import timezone
 from apps.feedback.models import FeedbackRelation
 from apps.marks.models import Mark, MarkUser
 
+
 def feedback_mail():
     logger = logging.getLogger("feedback")
     logger.info("Feedback job started")
@@ -38,6 +39,7 @@ def feedback_mail():
                     [message.committee_mail],
                 ).send()
                 logger.info("Results mail sent to :" + message.committee_mail)
+
 
 def generate_message(feedback, logger):
     logger.info('Processing: "' + feedback.content_title() + '"')
@@ -79,9 +81,7 @@ def generate_message(feedback, logger):
     message.subject = "Feedback: " + title
     message.intro = 'Hei, vi ønsker tilbakemelding på "' + title + '"'
     message.mark = mark_message(feedback)
-    message.contact = (
-        "\n\nEventuelle spørsmål sendes til %s " % message.committee_mail
-    )
+    message.contact = "\n\nEventuelle spørsmål sendes til %s " % message.committee_mail
     message.date = date_message(end_date)
 
     if deadline_diff < 0:  # Deadline passed
@@ -141,6 +141,7 @@ def generate_message(feedback, logger):
         message.status = "No message generated"
     return message
 
+
 def end_date(feedback):
     end_date = feedback.content_end_date()
 
@@ -148,6 +149,7 @@ def end_date(feedback):
         return end_date.date()
     else:
         return False
+
 
 def date_message(date):
     # If the object(event) doesnt have start date it will send
@@ -160,20 +162,26 @@ def date_message(date):
 
     return message_date
 
+
 def get_users(feedback):
     return feedback.not_answered()
+
 
 def get_user_mails(not_responded):
     return [user.email for user in not_responded]
 
+
 def get_link(feedback):
     return str(settings.BASE_URL + feedback.get_absolute_url())
+
 
 def get_title(feedback):
     return str(feedback.content_title())
 
+
 def get_committee_email(feedback):
     return feedback.content_email()
+
 
 def mark_message(feedback):
     if feedback.gives_mark:
@@ -184,13 +192,12 @@ def mark_message(feedback):
     else:
         return ""
 
+
 def set_marks(title, not_responded):
     mark = Mark()
     mark.title = "Manglende tilbakemelding på %s" % title
     mark.category = 4  # Missed feedback
-    mark.description = (
-        "Du har fått en prikk fordi du ikke har levert tilbakemelding."
-    )
+    mark.description = "Du har fått en prikk fordi du ikke har levert tilbakemelding."
     mark.save()
 
     for user in not_responded:

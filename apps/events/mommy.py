@@ -8,6 +8,7 @@ from django.utils import timezone
 from apps.events.models import AttendanceEvent
 from apps.marks.models import Mark, MarkUser
 
+
 def set_event_marks():
     logger = logging.getLogger()
     logger.info("Attendance mark setting started")
@@ -41,14 +42,15 @@ def set_event_marks():
             ).send()
             logger.info("Email sent to: " + message.committee_mail)
 
+
 def set_marks(attendance_event, logger=logging.getLogger()):
     event = attendance_event.event
     logger.info('Proccessing "' + event.title + '"')
     mark = Mark()
     mark.title = "Manglende oppmøte på %s" % (event.title)
     mark.category = event.event_type
-    mark.description = (
-        "Du har fått en prikk på grunn av manglende oppmøte på %s." % (event.title)
+    mark.description = "Du har fått en prikk på grunn av manglende oppmøte på %s." % (
+        event.title
     )
     mark.save()
 
@@ -61,6 +63,7 @@ def set_marks(attendance_event, logger=logging.getLogger()):
 
     attendance_event.marks_has_been_set = True
     attendance_event.save()
+
 
 def generate_message(attendance_event):
     message = Message()
@@ -80,8 +83,7 @@ def generate_message(attendance_event):
 
     message.subject = title
     message.intro = (
-        'Hei\n\nPå grunn av manglende oppmøte på "%s" har du fått en prikk'
-        % (title)
+        'Hei\n\nPå grunn av manglende oppmøte på "%s" har du fått en prikk' % (title)
     )
     message.contact = "\n\nEventuelle spørsmål sendes til %s " % (
         message.committee_mail
@@ -93,6 +95,7 @@ def generate_message(attendance_event):
     )
     message.committee_message += not_attended_string
     return message
+
 
 def active_events():
     return AttendanceEvent.objects.filter(

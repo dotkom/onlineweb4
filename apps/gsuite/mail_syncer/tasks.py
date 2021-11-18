@@ -1,10 +1,10 @@
 import json
 import logging
 
-from zappa.asynchronous import task
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from googleapiclient.errors import HttpError
+from zappa.asynchronous import task
 
 from apps.gsuite.mail_syncer.utils import insert_email_into_g_suite_group
 

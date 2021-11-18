@@ -3,13 +3,13 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from zappa.asynchronous import task
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
-from zappa.asynchronous import task
 
 
-class SynchronizeGroups():
+class SynchronizeGroups:
     @staticmethod
     def run():
         logger = logging.getLogger("syncer.%s" % __name__)

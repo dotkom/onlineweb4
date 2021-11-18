@@ -182,9 +182,8 @@ if "apps.shop" in settings.INSTALLED_APPS:
 
 if "apps.offline" in settings.INSTALLED_APPS:
     urlpatterns += [
-        url(r"^dashboard/offline/", include("apps.offline.dashboard.urls")),
-        url(r"^offline/", include("apps.offline.urls"))
-        ]
+        url(r"^offline/", include("apps.offline.urls")),
+    ]
 
 if "apps.posters" in settings.INSTALLED_APPS:
     urlpatterns += [url(r"^dashboard/posters/", include("apps.posters.dashboard.urls"))]

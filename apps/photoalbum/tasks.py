@@ -1,9 +1,9 @@
 import logging
 
 from PIL import Image
+from zappa.asynchronous import task
 
 from apps.gallery.util import ResponsiveImageHandler
-from zappa.asynchronous import task
 
 from .models import Photo
 

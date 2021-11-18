@@ -5,16 +5,17 @@ import math
 import os
 import shutil
 import uuid
+from io import BytesIO
 
 from django.conf import settings as django_settings
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
-from PIL import Image, ImageOps
-from django.core.files.storage import default_storage
-from apps.gallery import settings as gallery_settings
-from apps.gallery.models import ResponsiveImage, UnhandledImage
 from django.core.files import File
 from django.core.files.storage import default_storage
-from io import BytesIO
+from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from PIL import Image, ImageOps
+
+from apps.gallery import settings as gallery_settings
+from apps.gallery.models import ResponsiveImage, UnhandledImage
+
 logger = logging.getLogger(__name__)
 
 
@@ -189,7 +190,6 @@ class BaseImageHandler(object):
                 os_error,
             )
         return GalleryStatus(True, "sucess", to_path)
-
 
     @staticmethod
     def _open_image(source):
@@ -814,7 +814,6 @@ def get_absolute_path_to_original(image):
         path = os.path.join(django_settings.MEDIA_ROOT, image.image.name)
     elif isinstance(image, ResponsiveImage):
         path = os.path.join(django_settings.MEDIA_ROOT, image.image_original.name)
-
 
     return path
 

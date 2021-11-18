@@ -6,7 +6,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from pywebpush import WebPushException, webpush
 from rest_framework import serializers
-
 from zappa.asynchronous import task
 
 from .constants import (

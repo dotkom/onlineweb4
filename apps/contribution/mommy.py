@@ -8,6 +8,7 @@ from apps.contribution.models import Repository, RepositoryLanguage
 
 git_domain = "https://api.github.com"
 
+
 def update_repositories():
     # Load new data
     fresh = get_git_repositories()
@@ -28,18 +29,12 @@ def update_repositories():
         # If repository exists, only update data
         if Repository.objects.filter(id=fresh_repo.id).exists():
             stored_repo = Repository.objects.get(id=fresh_repo.id)
-            repo_languages = get_repository_languages(
-                stored_repo.url
-            )
-            update_repository(
-                stored_repo, fresh_repo, repo_languages
-            )
+            repo_languages = get_repository_languages(stored_repo.url)
+            update_repository(stored_repo, fresh_repo, repo_languages)
 
         # else: repository does not exist
         else:
-            repo_languages = get_repository_languages(
-                fresh_repo.url
-            )
+            repo_languages = get_repository_languages(fresh_repo.url)
             new_repository(fresh_repo, repo_languages)
 
     # Delete repositories that does not satisfy the updated_at limit
@@ -47,6 +42,7 @@ def update_repositories():
     for repo in old_repositories:
         if repo.updated_at < timezone.now() - timezone.timedelta(days=730):
             repo.delete()
+
 
 def update_repository(stored_repo, fresh_repo, repo_languages):
     stored_repo.name = fresh_repo.name
@@ -75,6 +71,7 @@ def update_repository(stored_repo, fresh_repo, repo_languages):
             )
             new_language.save()
 
+
 def new_repository(new_repo, new_languages):
     # Filter out repositories with inactivity past 2 years (365 days * 2)
     if new_repo.updated_at > timezone.now() - timezone.timedelta(days=730):
@@ -98,11 +95,13 @@ def new_repository(new_repo, new_languages):
             )
             new_language.save()
 
+
 def get_git_repositories():
     url = git_domain + "/users/dotkom/repos?per_page=60"
     r = requests.get(url)
     data = json.loads(r.text)
     return data
+
 
 def get_repository_languages(url):
     r = requests.get(url + "/languages")

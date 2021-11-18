@@ -16,7 +16,6 @@ from apps.marks.models import Mark, MarkUser, Suspension
 from apps.payment.models import Payment, PaymentDelay
 
 
-
 def payment_reminder():
     logging.basicConfig()
     # logger = logging.getLogger()
@@ -46,11 +45,10 @@ def payment_reminder():
 
             payment.active = False
             payment.save()
-        elif (
-            deadline_diff < 259200
-        ):  # Remind them to pay 72 hours before the deadline
+        elif deadline_diff < 259200:  # Remind them to pay 72 hours before the deadline
             if not_paid(payment):
                 send_reminder_mail(payment)
+
 
 def send_reminder_mail(payment):
     subject = _("Betaling: ") + payment.description()
@@ -59,9 +57,9 @@ def send_reminder_mail(payment):
         "payment/email/reminder_notification.txt",
         {
             "payment_description": payment.description(),
-            "payment_deadline": payment.deadline.astimezone(
-                tz("Europe/Oslo")
-            ).strftime("%-d %B %Y kl. %H:%M"),
+            "payment_deadline": payment.deadline.astimezone(tz("Europe/Oslo")).strftime(
+                "%-d %B %Y kl. %H:%M"
+            ),
             "payment_url": settings.BASE_URL
             + payment.content_object.event.get_absolute_url(),
             "payment_email": payment.responsible_mail(),
@@ -71,6 +69,7 @@ def send_reminder_mail(payment):
     receivers = not_paid_mail_addresses(payment)
 
     EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
+
 
 def send_deadline_passed_mail(payment):
     subject = _("Betalingsfrist utgått: ") + payment.description()
@@ -89,32 +88,29 @@ def send_deadline_passed_mail(payment):
 
     EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
 
+
 def send_missed_payment_mail(payment):
     # NOTE
     # This method does nothing. Guess it was left here in cases rules for expired payments
     # were altered
     subject = _("Betalingsfrist utgått: ") + payment.description()
     message = (
-        _("Hei, du har ikke betalt for følgende arrangement: ")
-        + payment.description()
+        _("Hei, du har ikke betalt for følgende arrangement: ") + payment.description()
     )
-    message += _(
-        "Fristen har gått ut, og du har mistet plassen din på arrangementet"
-    )
+    message += _("Fristen har gått ut, og du har mistet plassen din på arrangementet")
     message += _("\nFor mer info om arrangementet se:")
     message += "\n" + str(
         settings.BASE_URL + payment.content_object.event.get_absolute_url()
     )
     message += (
-        _("Dersom du har spørsmål kan du sende mail til ")
-        + payment.responsible_mail()
+        _("Dersom du har spørsmål kan du sende mail til ") + payment.responsible_mail()
     )
     message += _("\n\nMvh\nLinjeforeningen Online")
 
     logging.getLogger(__name__).warn(
-        "Call to method that does nothing. Should it send a mail? Subject: %s"
-        % subject
+        "Call to method that does nothing. Should it send a mail? Subject: %s" % subject
     )
+
 
 def notify_committee(payment):
     subject = _("Manglende betaling: ") + payment.description()
@@ -131,6 +127,7 @@ def notify_committee(payment):
 
     EmailMessage(subject, content, "online@online.ntnu.no", [], receivers).send()
 
+
 def not_paid(payment):
     attendees = payment.content_object.attending_attendees_qs
     not_paid_users = [attendee.user for attendee in attendees if not attendee.paid]
@@ -140,9 +137,11 @@ def not_paid(payment):
         user for user in not_paid_users if user not in payment.payment_delay_users()
     ]
 
+
 def not_paid_mail_addresses(payment):
     # Returns users in the list of attendees but not in the list of paid users
     return [user.email for user in not_paid(payment)]
+
 
 def set_marks(payment):
     mark = Mark()
@@ -163,6 +162,7 @@ def set_marks(payment):
 def unattend(payment):
     for user in not_paid(payment):
         Attendee.objects.get(event=payment.content_object, user=user).delete()
+
 
 def suspend(payment):
     for user in not_paid(payment):
@@ -195,17 +195,14 @@ def payment_delay_handler():
             < payment_delay.valid_to
         )
         if payment_delay.valid_to < timezone.now():
-            handle_deadline_passed(
-                payment_delay, unattend_deadline_passed
-            )
+            handle_deadline_passed(payment_delay, unattend_deadline_passed)
             logger.info("Deadline passed: " + str(payment_delay))
         elif (payment_delay.valid_to.date() - timezone.now().date()).days <= 2:
-            send_notification_mail(
-                payment_delay, unattend_deadline_passed
-            )
+            send_notification_mail(payment_delay, unattend_deadline_passed)
             logger.info("Notification sent to: " + str(payment_delay.user))
 
     # TODO handle committee notifying
+
 
 def handle_deadline_passed(payment_delay, unattend_deadline_passed):
 
@@ -218,9 +215,8 @@ def handle_deadline_passed(payment_delay, unattend_deadline_passed):
 
     payment_delay.active = False
     payment_delay.save()
-    send_deadline_passed_mail(
-        payment_delay, unattend_deadline_passed
-    )
+    send_deadline_passed_mail(payment_delay, unattend_deadline_passed)
+
 
 def handle_suspensions(payment_delay):
     suspension = Suspension()
@@ -237,6 +233,7 @@ def handle_suspensions(payment_delay):
     )
 
     suspension.save()
+
 
 def send_deadline_passed_mail(payment_delay, unattend_deadline_passed):
     payment = payment_delay.payment
@@ -255,6 +252,7 @@ def send_deadline_passed_mail(payment_delay, unattend_deadline_passed):
     receivers = [payment_delay.user.email]
 
     EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
+
 
 def send_notification_mail(payment_delay, unattend_deadline_passed):
     payment = payment_delay.payment
@@ -285,6 +283,7 @@ def send_notification_mail(payment_delay, unattend_deadline_passed):
 
     EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
 
+
 def set_mark(payment_delay):
     mark = Mark()
     mark.title = _("Manglende betaling på %s") % payment_delay.payment.description()
@@ -298,6 +297,7 @@ def set_mark(payment_delay):
     user_entry.user = payment_delay.user
     user_entry.mark = mark
     user_entry.save()
+
 
 def unattend(payment_delay):
     Attendee.objects.get(
