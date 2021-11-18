@@ -445,6 +445,7 @@ class ResponsiveImageHandler(BaseImageHandler):
             return self.status
 
         responsive_image = self.status.data
+
         self._log.debug("generate: cleaning up")
 
         # Clean up

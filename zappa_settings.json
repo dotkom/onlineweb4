@@ -36,7 +36,12 @@
                 "function": "apps.payment.payement_delay_handler",
                 "expression": "cron(45 7 ? * * *)"
             }
-        ]
+        ],
+        "extra_permissions": [{
+            "Effect": "Allow",
+            "Action": ["s3:*"],
+            "Resource": "arn:aws:s3:::onlineweb4-prod/*"
+        }]
     },
     "dev": {
         "aws_region": "eu-north-1",
@@ -53,6 +58,11 @@
         "debug": false,
         "cors": true,
         "timeout_seconds": 120,
-        "certificate_arn": "arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc"
+        "certificate_arn": "arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc",
+        "extra_permissions": [{
+            "Effect": "Allow",
+            "Action": ["s3:*"],
+            "Resource": "arn:aws:s3:::onlineweb4-dev/*"
+        }]
     }
 }
