@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from pywebpush import WebPushException, webpush
 from rest_framework import serializers
 
-from onlineweb4.celery import app as celery_app
+from zappa.asynchronous import task
 
 from .constants import (
     NOTIFICATION_BADGE_URL,
@@ -110,11 +110,7 @@ class NotificationDataSerializer(serializers.ModelSerializer):
         )
 
 
-@celery_app.task(
-    bind=True,
-    autoretry_for=(ObjectDoesNotExist,),
-    retry_kwargs={"max_retries": 3, "countdown": 60},
-)
+@task
 def dispatch_push_notification_task(_, notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient
@@ -131,11 +127,7 @@ def dispatch_push_notification_task(_, notification_id: int):
     notification.save()
 
 
-@celery_app.task(
-    bind=True,
-    autoretry_for=(ObjectDoesNotExist,),
-    retry_kwargs={"max_retries": 3, "countdown": 60},
-)
+@task
 def dispatch_email_notification_task(_, notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient

@@ -31,4 +31,4 @@ def attach_missing_photo_attributes(sender, instance: Photo, **kwargs):
 @receiver(post_save, sender=Photo)
 def handle_image_upload(sender, instance: Photo, created=False, **kwargs):
     if not instance.image:
-        create_responsive_photo_task.delay(photo_id=instance.id)
+        create_responsive_photo_task(photo_id=instance.id)

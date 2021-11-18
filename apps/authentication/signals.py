@@ -146,23 +146,23 @@ def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
         # Handle case when the instance is changed to primary
         if instance.primary and not stored_instance.primary:
             if user.jobmail:
-                update_mailing_list.delay(jobmail, email=instance.email, added=True)
+                update_mailing_list(jobmail, email=instance.email, added=True)
             if user.infomail:
-                update_mailing_list.delay(infomail, email=instance.email, added=True)
+                update_mailing_list(infomail, email=instance.email, added=True)
         # Handle case when the instance is changed from primary
         elif not instance.primary and stored_instance.primary:
             if user.jobmail:
-                update_mailing_list.delay(jobmail, email=instance.email, added=False)
+                update_mailing_list(jobmail, email=instance.email, added=False)
             if user.infomail:
-                update_mailing_list.delay(infomail, email=instance.email, added=False)
+                update_mailing_list(infomail, email=instance.email, added=False)
 
 
 @disable_for_loaddata
 def assign_group_perms(sender, instance, created=False, **kwargs):
     if isinstance(instance, GroupMember):
-        assign_permission_from_group_admins.delay(group_id=instance.group.id)
+        assign_permission_from_group_admins(group_id=instance.group.id)
     if isinstance(instance, OnlineGroup):
-        assign_permission_from_group_admins.delay(group_id=instance.id)
+        assign_permission_from_group_admins(group_id=instance.id)
 
 
 m2m_changed.connect(assign_group_perms, sender=GroupRole.memberships.through)

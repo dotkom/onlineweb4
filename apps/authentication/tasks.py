@@ -6,11 +6,10 @@ from django.contrib.auth.models import Group
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
-from apps.mommy.registry import Task
-from onlineweb4.celery import app
+from zappa.asynchronous import task
 
 
-class SynchronizeGroups(Task):
+class SynchronizeGroups():
     @staticmethod
     def run():
         logger = logging.getLogger("syncer.%s" % __name__)
@@ -108,7 +107,7 @@ class SynchronizeGroups(Task):
                             )
 
 
-@app.task(bind=True)
+@task
 def assign_permission_from_group_admins(self, group_id: int):
     """
     Assign permission to handle groups recursively for all members of a group and sub groups.

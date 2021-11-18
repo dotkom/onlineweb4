@@ -3,14 +3,14 @@ import logging
 from PIL import Image
 
 from apps.gallery.util import ResponsiveImageHandler
-from onlineweb4.celery import app
+from zappa.asynchronous import task
 
 from .models import Photo
 
 logger = logging.getLogger(__name__)
 
 
-@app.task(bind=True)
+@task
 def create_responsive_photo_task(self, photo_id: int):
     photo = Photo.objects.get(pk=photo_id)
     raw_image = photo.raw_image

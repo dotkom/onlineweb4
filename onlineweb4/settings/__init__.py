@@ -3,7 +3,6 @@ import sys
 
 from onlineweb4.settings.django import *
 from onlineweb4.settings.base import *
-from onlineweb4.settings.celery import *
 from onlineweb4.settings.dataporten import *
 from onlineweb4.settings.django_wiki import *
 from onlineweb4.settings.gsuite import *

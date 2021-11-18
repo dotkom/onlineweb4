@@ -20,7 +20,6 @@ def create_generic_offline_issue():
         image=None,
     )
 
-
 class OfflineTest(TestCase):
     def setUp(self):
         self.logger = logging.getLogger(__name__)
