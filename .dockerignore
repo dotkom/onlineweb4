@@ -22,6 +22,5 @@ setup.cfg
 Webpack.Dockerfile
 webpack.test.config.js
 yarn.error.log
-webpack-stats.json
 log/debug.log
 Dockerfile
