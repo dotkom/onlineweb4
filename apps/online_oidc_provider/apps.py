@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class OnlineOidcProviderConfig(AppConfig):
-    name = "online_oidc_provider"
+    name = "apps.online_oidc_provider"

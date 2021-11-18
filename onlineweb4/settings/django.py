@@ -133,7 +133,6 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE = [
-    "django_opentracing.OpenTracingMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -158,11 +157,9 @@ ROOT_URLCONF = "onlineweb4.urls"
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = "onlineweb4.wsgi.application"
-
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 INSTALLED_APPS = [
     # Third party dependencies
-    "health_check",
-    "health_check.db",
     "django.contrib.humanize",
     "django_js_reverse",
     "django_nyt",  # Wiki
@@ -216,7 +213,6 @@ INSTALLED_APPS = [
     "apps.marks",
     "apps.offline",
     "apps.feedback",
-    "apps.mommy",
     "apps.profiles",
     "apps.resourcecenter",
     "apps.mailinglists",
@@ -244,8 +240,6 @@ INSTALLED_APPS = [
     "wiki.plugins.help",
     "wiki.plugins.links",
     "wiki.plugins.globalhistory",
-    "django_apscheduler",
-    "django_celery_results",
 ]
 
 # Make Django messages use bootstrap alert classes
