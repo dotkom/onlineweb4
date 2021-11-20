@@ -7,33 +7,31 @@
         "runtime": "python3.7",
         "s3_bucket": "zappa-4zzd2i1dt",
         "slim_handler": true,
-        "exclude": ["db.db", "log/debug.log"],
         "domain": "online.ntnu.no",
         "memory_size": 2048,
-        "log_level": "WARNING",
+        "log_level": "INFO",
         "debug": false,
         "cors": true,
-        "timeout_seconds": 120,
         "certificate_arn": "arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc",
         "events": [
             {
-                "function": "apps.contribution.update_repositories",
+                "function": "apps.contribution.mommy.update_repositories",
                 "expression": "cron(0 6 ? * * *)"
             },
             {
-                "function": "apps.events.set_event_marks",
+                "function": "apps.events.mommy.set_event_marks",
                 "expression": "cron(0 8 ? * * *)"
             },
             {
-                "function": "apps.feedback.feedback_mail",
+                "function": "apps.feedback.mommy.feedback_mail",
                 "expression": "cron(0 8 ? * * *)"
             },
             {
-                "function": "apps.payment.payment_reminder",
+                "function": "apps.payment.mommy.payment_reminder",
                 "expression": "cron(30 7 ? * * *)"
             },
             {
-                "function": "apps.payment.payement_delay_handler",
+                "function": "apps.payment.mommy.payement_delay_handler",
                 "expression": "cron(45 7 ? * * *)"
             }
         ],
@@ -49,12 +47,10 @@
         "profile_name": "default",
         "project_name": "onlineweb4",
         "s3_bucket": "zappa-4zzd2i1dt",
-        "exclude": ["db.db", "log/debug.log", "bundles/webpack", "node_modules"],
         "domain": "dev.online.ntnu.no",
         "memory_size": 1024,
         "debug": false,
         "cors": true,
-        "timeout_seconds": 120,
         "certificate_arn": "arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc",
         "extra_permissions": [{
             "Effect": "Allow",

@@ -77,6 +77,7 @@ BASE_URL = config("OW4_DJANGO_BASE_URL", default="https://online.ntnu.no")
 AUTH_USER_MODEL = "authentication.OnlineUser"
 LOGIN_URL = "/auth/login/"
 
+S3_MEDIA_STORAGE_ENABLED=False
 # Define where media (uploaded) files are stored
 MEDIA_ROOT = config(
     "OW4_DJANGO_MEDIA_ROOT",

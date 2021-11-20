@@ -13,11 +13,11 @@ services:
       - "5432"
   django:
     build:
-      context: .
-      dockerfile: Django.Dockerfile
+      context: ../.
+      dockerfile: ./docker/Dockerfile.django
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/srv/app
+      - ../.:/srv/app
     ports:
       - "8000:8000"
     depends_on:
@@ -70,11 +70,11 @@ services:
       - OW4_OIDC_RSA_PRIVATE_KEY
   webpack:
     build:
-      context: .
-      dockerfile: Webpack.Dockerfile
+      context: ../.
+      dockerfile: ./docker/Dockerfile.webpack
     command: npm start
     volumes:
-      - .:/srv/app
+      - ../.:/srv/app
       - /srv/app/node_modules
     ports:
       - "3000:3000"

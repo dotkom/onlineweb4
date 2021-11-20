@@ -981,6 +981,8 @@ def verify_directory_structure():
     """
 
     # Verify that the directories exist on current platform, create if not
+    if django_settings.S3_MEDIA_STORAGE_ENABLED:
+        return
     if not os.path.exists(
         os.path.join(
             django_settings.MEDIA_ROOT, gallery_settings.UNHANDLED_THUMBNAIL_PATH
