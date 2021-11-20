@@ -56,6 +56,10 @@
             "Effect": "Allow",
             "Action": ["s3:*"],
             "Resource": "arn:aws:s3:::onlineweb4-dev/*"
-        }]
+        }],
+        "environment_variables": {
+            "OW4_USE_S3": "True",
+            "OW4_S3_BUCKET_NAME": "onlineweb4-dev"
+        }
     }
 }

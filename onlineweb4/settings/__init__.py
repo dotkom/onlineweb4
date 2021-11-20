@@ -11,6 +11,7 @@ from onlineweb4.settings.sentry import *
 from onlineweb4.settings.rest_framework import *
 from onlineweb4.settings.stripe import *
 from onlineweb4.settings.vapid import *
+from onlineweb4.settings.storage import *
 
 try:
     from onlineweb4.settings.local import *
