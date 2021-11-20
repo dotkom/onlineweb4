@@ -19,3 +19,8 @@ except ImportError as e:
     # No local settings file found.
     # You can still override using environment variables.
     pass
+try:
+    if config("OW4_ZAPPA", cast=bool, default=False):
+        from onlineweb4.settings.zappa import *
+except ImportError as e:
+    pass

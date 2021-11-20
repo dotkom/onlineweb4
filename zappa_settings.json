@@ -12,6 +12,7 @@
         "log_level": "INFO",
         "debug": false,
         "cors": true,
+        "keep_warm_expression": "rate(5 minutes)",
         "certificate_arn": "arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc",
         "events": [
             {
@@ -49,6 +50,7 @@
         "s3_bucket": "zappa-4zzd2i1dt",
         "domain": "dev.online.ntnu.no",
         "memory_size": 1024,
+        "keep_warm": false,
         "debug": false,
         "cors": true,
         "certificate_arn": "arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc",
@@ -58,8 +60,20 @@
             "Resource": "arn:aws:s3:::onlineweb4-dev/*"
         }],
         "environment_variables": {
+            "OW4_DJANGO_ALLOWED_HOSTS": "dev.online.ntnu.no",
+            "OW4_DJANGO_BASE_URL": "https://dev.online.ntnu.no",
+            "OW4_ZAPPA": "True",
             "OW4_USE_S3": "True",
             "OW4_S3_BUCKET_NAME": "onlineweb4-dev"
+        },
+        "aws_environment_variables": {
+            "VAULT_ADDR": "https://vault.online.ntnu.no:8200",
+            "VAULT_AUTH_PROVIDER": "aws",
+            "VAULT_AUTH_ROLE": "ow4dev",
+            "VAULT_SECRET_PATH_DB": "postgres/creds/ow4dev",
+            "VAULT_SECRET_FILE_DB": "/tmp/secrets/db.json",
+            "VAULT_SECRET_PATH_ENV": "secret/data/onlineweb4/dev/zappa-env",
+            "VAULT_SECRET_FILE_ENV": "/tmp/secrets/env.json"
         }
     }
 }
