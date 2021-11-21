@@ -123,7 +123,7 @@ setenv =
     OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats-test.json
 commands =
     npm run build:test
-    py.test --cov=apps --cov-report xml --ignore=src/
+    py.test --cov=apps --disable-pytest-warnings --cov-report xml --ignore=src/
 """
 
 [tool.isort]
