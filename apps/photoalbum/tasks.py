@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 @task
-def create_responsive_photo_task(self, photo_id: int):
+def create_responsive_photo_task(photo_id: int):
     photo = Photo.objects.get(pk=photo_id)
     raw_image = photo.raw_image
 

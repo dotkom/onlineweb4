@@ -25,6 +25,6 @@ def create_thumbnail(offline_issue: Issue):
 
 
 @task
-def create_thumbnail_task(_, issue_id: int):
+def create_thumbnail_task(issue_id: int):
     offline_issue = Issue.objects.get(pk=issue_id)
     create_thumbnail(offline_issue)

@@ -20,7 +20,12 @@ from apps.feedback.models import (
     RatingQuestion,
     TextQuestion,
 )
-from apps.feedback.mommy import *
+from apps.feedback.mommy import (
+    end_date,
+    generate_message,
+    get_committee_email,
+    set_marks,
+)
 from apps.marks.models import Mark
 
 
@@ -61,7 +66,7 @@ class FeedbackTestCaseMixin:
             deadline = timezone.now().date() + timedelta(days=4)
 
         self.event = Event.objects.create(
-            title="-",
+            title="test",
             event_start=self.yesterday(),
             event_end=end_date,
             event_type=event_type,
@@ -227,8 +232,8 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
 
     def test_void_date(self):
         feedback_relation = self.create_void_feedback_relation()
-        end_date = end_date(feedback_relation)
-        self.assertFalse(end_date)
+        date = end_date(feedback_relation)
+        self.assertFalse(date)
 
     def test_mark_setting(self):
         users = [User.objects.get(username="user1")]

@@ -3,7 +3,7 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 
 from apps.contribution.models import Repository, RepositoryLanguage
-from apps.contribution.mommy import *
+from apps.contribution.mommy import new_repository, update_repository
 
 
 # contribution.mommy tests

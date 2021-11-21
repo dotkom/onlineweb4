@@ -7,7 +7,7 @@ from django_dynamic_fixture import G
 from apps.authentication.models import Membership
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
-from apps.events.mommy import *
+from apps.events.mommy import active_events, generate_message, set_marks
 from apps.marks.models import MarkUser
 
 

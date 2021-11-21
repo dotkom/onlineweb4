@@ -109,7 +109,7 @@ class NotificationDataSerializer(serializers.ModelSerializer):
 
 
 @task
-def dispatch_push_notification_task(_, notification_id: int):
+def dispatch_push_notification_task(notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient
     notification_data = NotificationDataSerializer(notification).data
@@ -126,7 +126,7 @@ def dispatch_push_notification_task(_, notification_id: int):
 
 
 @task
-def dispatch_email_notification_task(_, notification_id: int):
+def dispatch_email_notification_task(notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient
 

@@ -7,9 +7,11 @@ from rest_framework import status
 
 from apps.events.tests.utils import generate_user
 from apps.online_oidc_provider.test import OIDCTestCase
+from apps.payment.tests.utils import stripe_test
 from apps.webshop.models import Order, OrderLine, Product, ProductSize
 
 
+@stripe_test
 class WebshopProductTests(OIDCTestCase):
     def setUp(self):
         self.user = generate_user(username="test_user")
@@ -37,6 +39,7 @@ class WebshopProductTests(OIDCTestCase):
         self.assertEqual(response.json().get("id"), self.product1.id)
 
 
+@stripe_test
 class WebshopOrderLineTests(OIDCTestCase):
     def setUp(self):
         self.user = generate_user(username="test_user")

@@ -108,7 +108,7 @@ class SynchronizeGroups:
 
 
 @task
-def assign_permission_from_group_admins(self, group_id: int):
+def assign_permission_from_group_admins(group_id: int):
     """
     Assign permission to handle groups recursively for all members of a group and sub groups.
     This task should be run when there are changes to which users should manage the group.
