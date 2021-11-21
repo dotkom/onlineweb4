@@ -170,7 +170,7 @@ class BaseResponsiveImage(models.Model):
 
     def save(self, *args, **kwargs):
         total = 0
-        total  = self.thumbnail.size
+        total = self.thumbnail.size
         total += self.image_xs.size
         total += self.image_sm.size
         total += self.image_md.size

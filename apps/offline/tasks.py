@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from django.core.exceptions import ObjectDoesNotExist
 from zappa.asynchronous import task
 
 from apps.gallery.util import create_responsive_image_from_file

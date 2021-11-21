@@ -54,7 +54,7 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
                     )
 
         # Filter out potential ResponsiveImage objects that have orphan file references
-       # context["images"] = [i for i in context["images"] if i.file_status_ok()]
+        # context["images"] = [i for i in context["images"] if i.file_status_ok()]
 
         # Add query filters and some statistics on disk usage
         context["years"] = years

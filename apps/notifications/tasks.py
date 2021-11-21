@@ -2,7 +2,6 @@ import json
 import logging
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from pywebpush import WebPushException, webpush
 from rest_framework import serializers

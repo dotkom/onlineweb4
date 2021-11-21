@@ -3,12 +3,10 @@
 import logging
 import math
 import os
-import shutil
 import uuid
 from io import BytesIO
 
 from django.conf import settings as django_settings
-from django.core.files import File
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from PIL import Image, ImageOps

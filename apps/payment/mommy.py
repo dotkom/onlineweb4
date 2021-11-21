@@ -71,24 +71,6 @@ def send_reminder_mail(payment):
     EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
 
 
-def send_deadline_passed_mail(payment):
-    subject = _("Betalingsfrist utgått: ") + payment.description()
-
-    content = render_to_string(
-        "payment/email/reminder_deadline_passed.txt",
-        {
-            "payment_description": payment.description(),
-            "payment_url": settings.BASE_URL
-            + payment.content_object.event.get_absolute_url(),
-            "payment_email": payment.responsible_mail(),
-        },
-    )
-
-    receivers = not_paid_mail_addresses(payment)
-
-    EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
-
-
 def send_missed_payment_mail(payment):
     # NOTE
     # This method does nothing. Guess it was left here in cases rules for expired payments
@@ -157,11 +139,6 @@ def set_marks(payment):
         user_entry.user = user
         user_entry.mark = mark
         user_entry.save()
-
-
-def unattend(payment):
-    for user in not_paid(payment):
-        Attendee.objects.get(event=payment.content_object, user=user).delete()
 
 
 def suspend(payment):
