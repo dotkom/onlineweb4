@@ -21,7 +21,6 @@ Django.Dockerfile
 docker-compose.yml
 Makefile
 setup.cfg
-uwsgi.ini
 setup.cfg
 Webpack.Dockerfile
 webpack.config.js

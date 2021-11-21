@@ -65,9 +65,8 @@ django-js-reverse = "~0.9"
 
 pyyaml = "^6.0"
 pywebpush = "^1.11.0"
-uWSGI = { version = "^2.0.20", optional = true }
-boto3 = { version = "^1.20.5", optional = true }
-django-ses = { version = "^2.3.0", optional = true }
+boto3 =  "^1.20.5"
+django-ses = "^2.3.0"
 psycopg2-binary = "^2.9.2"
 zappa = "^0.54.1"
 django-storages = "^1.12.3"
@@ -88,8 +87,6 @@ isort = "~5.9"
 pycodestyle = "~2.7"
 black = "21.10b0"
 
-[tool.poetry.extras]
-prod = ["psycopg2-binary", "uWSGI", "flower", "boto3", "django-ses"]
 
 [tool.tox]
 legacy_tox_ini = """

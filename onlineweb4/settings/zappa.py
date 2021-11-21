@@ -1,6 +1,7 @@
 ### Using https://github.com/hashicorp/vault-lambda-extension
 ### Loads secrets from vault
 import json
+import os
 from decouple import config
 
 DEBUG = False
@@ -72,8 +73,8 @@ APPROVAL_SETTINGS = {
     'SEND_APPROVER_NOTIFICATION_EMAIL': True,
 }
 
-AWS_SES_REGION_NAME = 'eu-west-1'
-AWS_SES_REGION_ENDPOINT = 'email.eu-west-1.amazonaws.com'
+AWS_SES_REGION_NAME = 'eu-north-1'
+AWS_SES_REGION_ENDPOINT = f'email.{AWS_SES_REGION_NAME}.amazonaws.com'
 SESSION_COOKIE_SAMESITE = None
 ADMINS = (
     ('dotKom', 'utvikling@online.ntnu.no'),
@@ -183,3 +184,17 @@ GROUP_SYNCER = [
         ]
     }
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
