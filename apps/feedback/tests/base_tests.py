@@ -20,7 +20,12 @@ from apps.feedback.models import (
     RatingQuestion,
     TextQuestion,
 )
-from apps.feedback.mommy import FeedbackMail
+from apps.feedback.mommy import (
+    end_date,
+    generate_message,
+    get_committee_email,
+    set_marks,
+)
 from apps.marks.models import Mark
 
 
@@ -61,7 +66,7 @@ class FeedbackTestCaseMixin:
             deadline = timezone.now().date() + timedelta(days=4)
 
         self.event = Event.objects.create(
-            title="-",
+            title="test",
             event_start=self.yesterday(),
             event_end=end_date,
             event_type=event_type,
@@ -116,12 +121,12 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
             if user.username != settings.ANONYMOUS_USER_NAME
         ]
 
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
         self.assertEqual(set(message.attended_mails), set(user_mails))
 
     def test_event_not_done(self):
         feedback_relation = self.create_feedback_relation(end_date=timezone.now())
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Event not done")
         self.assertFalse(message.send)
@@ -129,7 +134,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
     def test_user_answered(self):
         feedback_relation = self.create_feedback_relation()
         feedback_relation.answered.set([self.user1])
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
 
         not_answered = [self.user2.email]
         self.assertEqual(set(message.attended_mails), set(not_answered))
@@ -137,7 +142,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
     def test_everyone_answered(self):
         feedback_relation = self.create_feedback_relation()
         feedback_relation.answered.set([self.user1, self.user2])
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Everyone has answered")
         self.assertFalse(message.send)
@@ -147,7 +152,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         feedback_relation = self.create_feedback_relation(
             deadline=self.yesterday().date()
         )
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Deadine passed")
         self.assertFalse(feedback_relation.active)
@@ -156,7 +161,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         feedback_relation = self.create_feedback_relation(
             deadline=timezone.now().date()
         )
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Last warning")
         self.assertTrue(message.send)
@@ -165,14 +170,14 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         feedback_relation = self.create_feedback_relation(
             deadline=timezone.now().date() + timedelta(days=2)
         )
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "Warning message")
         self.assertTrue(message.send)
 
     def test_first_mail(self):
         feedback_relation = self.create_feedback_relation()
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "First message")
         self.assertTrue(message.send)
@@ -183,7 +188,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
             end_date=timezone.now() - timedelta(days=2)
         )
         feedback_relation.first_mail_sent = True
-        message = FeedbackMail.generate_message(feedback_relation, self.logger)
+        message = generate_message(feedback_relation, self.logger)
 
         self.assertEqual(message.status, "No message generated")
         self.assertFalse(message.send)
@@ -194,17 +199,17 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         feedback_relation = self.create_feedback_relation(
             organizer=organizer_group.group
         )
-        email = FeedbackMail.get_committee_email(feedback_relation)
+        email = get_committee_email(feedback_relation)
         self.assertEqual(email, organizer_group.email)
 
         # Default
         feedback_relation = self.create_feedback_relation()
-        email = FeedbackMail.get_committee_email(feedback_relation)
+        email = get_committee_email(feedback_relation)
         self.assertEqual(email, settings.DEFAULT_FROM_EMAIL)
 
         # Not existing
         feedback_relation = self.create_void_feedback_relation()
-        email = FeedbackMail.get_committee_email(feedback_relation)
+        email = get_committee_email(feedback_relation)
         self.assertEqual(email, "missing mail")
 
     def test_group_email(self):
@@ -216,24 +221,24 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         feedback_relation = self.create_feedback_relation(
             event_type=1, organizer=organizer_group
         )
-        email = FeedbackMail.get_committee_email(feedback_relation)
+        email = get_committee_email(feedback_relation)
         self.assertEqual(email, online_group.email)
         self.assertNotEqual(email, settings.EMAIL_ARRKOM)
 
     def test_date(self):
         feedback_relation = self.create_feedback_relation()
-        date = FeedbackMail.end_date(feedback_relation)
+        date = end_date(feedback_relation)
         self.assertEqual(date, self.yesterday().date())
 
     def test_void_date(self):
         feedback_relation = self.create_void_feedback_relation()
-        end_date = FeedbackMail.end_date(feedback_relation)
-        self.assertFalse(end_date)
+        date = end_date(feedback_relation)
+        self.assertFalse(date)
 
     def test_mark_setting(self):
         users = [User.objects.get(username="user1")]
         all_users = User.objects.all()
-        FeedbackMail.set_marks("test_title", users)
+        set_marks("test_title", users)
         mark = Mark.objects.get()
 
         self.assertEqual(set(users), set([mu.user for mu in mark.given_to.all()]))

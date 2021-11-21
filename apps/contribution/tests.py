@@ -3,7 +3,7 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 
 from apps.contribution.models import Repository, RepositoryLanguage
-from apps.contribution.mommy import UpdateRepositories
+from apps.contribution.mommy import new_repository, update_repository
 
 
 # contribution.mommy tests
@@ -40,7 +40,7 @@ class UpdateRepositoriesTest(TestCase):
 
         fresh_languages = {"JavaScript": 80000}
 
-        UpdateRepositories.update_repository(self.repo, fresh_repo, fresh_languages)
+        update_repository(self.repo, fresh_repo, fresh_languages)
         self.assertEqual(fresh_repo.name, self.repo.name)
         self.assertEqual(fresh_repo.description, self.repo.description)
         self.assertEqual(fresh_repo.updated_at, self.repo.updated_at)
@@ -64,7 +64,7 @@ class UpdateRepositoriesTest(TestCase):
 
         fresh_languages = {"PythonScript": 90000}
 
-        UpdateRepositories.new_repository(fresh_repo, fresh_languages)
+        new_repository(fresh_repo, fresh_languages)
         stored_repo = Repository.objects.get(id=4567)
         self.assertEqual(stored_repo.name, fresh_repo.name)
         self.assertEqual(stored_repo.description, fresh_repo.description)

@@ -1,5 +1,9 @@
 @import "~common/less/colors.less";
 
+.dropdown-toggle::after, .dropdown-toggle:empty::after {
+  display: none;
+}
+
 #wiki {
   // OW4 and django-wiki have different Bootstrap versions which screwed up modals
   .modal {

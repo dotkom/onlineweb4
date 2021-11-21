@@ -3,7 +3,7 @@ import os
 import sys
 
 import dj_database_url
-from decouple import config
+from decouple import config, Csv
 
 from django.contrib.messages import constants as messages
 
@@ -17,7 +17,7 @@ DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=True)
 
 INTERNAL_IPS = ("127.0.0.1",)
 
-ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*")
+ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*", cast=Csv())
 
 ADMINS = (("dotkom", "dotkom@online.ntnu.no"),)
 MANAGERS = ADMINS
@@ -77,6 +77,7 @@ BASE_URL = config("OW4_DJANGO_BASE_URL", default="https://online.ntnu.no")
 AUTH_USER_MODEL = "authentication.OnlineUser"
 LOGIN_URL = "/auth/login/"
 
+S3_MEDIA_STORAGE_ENABLED = False
 # Define where media (uploaded) files are stored
 MEDIA_ROOT = config(
     "OW4_DJANGO_MEDIA_ROOT",
@@ -133,7 +134,6 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE = [
-    "django_opentracing.OpenTracingMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -158,11 +158,9 @@ ROOT_URLCONF = "onlineweb4.urls"
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = "onlineweb4.wsgi.application"
-
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 INSTALLED_APPS = [
     # Third party dependencies
-    "health_check",
-    "health_check.db",
     "django.contrib.humanize",
     "django_js_reverse",
     "django_nyt",  # Wiki
@@ -216,7 +214,6 @@ INSTALLED_APPS = [
     "apps.marks",
     "apps.offline",
     "apps.feedback",
-    "apps.mommy",
     "apps.profiles",
     "apps.resourcecenter",
     "apps.mailinglists",
@@ -244,8 +241,6 @@ INSTALLED_APPS = [
     "wiki.plugins.help",
     "wiki.plugins.links",
     "wiki.plugins.globalhistory",
-    "django_apscheduler",
-    "django_celery_results",
 ]
 
 # Make Django messages use bootstrap alert classes

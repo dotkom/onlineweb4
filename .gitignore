@@ -48,3 +48,5 @@ jest/
 venv/
 oidc.key
 .python-version
+zappa_settings.py
+requirements.txt

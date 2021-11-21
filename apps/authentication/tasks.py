@@ -3,14 +3,13 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.models import Group
+from zappa.asynchronous import task
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
-from apps.mommy.registry import Task
-from onlineweb4.celery import app
 
 
-class SynchronizeGroups(Task):
+class SynchronizeGroups:
     @staticmethod
     def run():
         logger = logging.getLogger("syncer.%s" % __name__)
@@ -108,8 +107,8 @@ class SynchronizeGroups(Task):
                             )
 
 
-@app.task(bind=True)
-def assign_permission_from_group_admins(self, group_id: int):
+@task
+def assign_permission_from_group_admins(group_id: int):
     """
     Assign permission to handle groups recursively for all members of a group and sub groups.
     This task should be run when there are changes to which users should manage the group.

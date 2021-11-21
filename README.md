@@ -4,6 +4,26 @@
 
 ## Frameworks
 
+### Zappa 
+The project is deployed to AWS Lambda with the use of [Zappa](https://github.com/zappa/zappa). To 
+deploy (should be done automatically), build a Docker image with Dockerfile.zappa and push it to AWS ECR.
+Then you can run ```zappa update <stage> -d <docker-ecr-image>```. You'll have also have to build NPM and deploy static first if this has been changed since last deploy. 
+
+#### Example for prod
+
+```bash
+yarn build:prod
+python manage.py collectstatic
+
+zappa save-python-settings-file prod
+
+docker build -t onlineweb4-zappa -f docker/Dockerfile.zappa .
+docker tag onlineweb4-zappa:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:latest
+docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:latest
+
+zappa update prod -d 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:latest
+```
+
 ### Frontend
 
 The frontend code is located in the `assets` folder.

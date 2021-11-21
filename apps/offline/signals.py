@@ -14,4 +14,4 @@ def trigger_create_thumbnail(sender, instance: Issue, created=False, **kwargs):
     Calls the create thumbnail task if an issue saved (either created or updated).
     """
     if not instance.image:
-        create_thumbnail_task.delay(issue_id=instance.id)
+        create_thumbnail_task(issue_id=instance.id)

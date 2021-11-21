@@ -44,7 +44,7 @@ def toggle_mailing_lists(sender, instance: User, **kwargs):
 
             g_suite_mailing_list = MAILING_LIST_USER_FIELDS_TO_LIST_NAME[mailing_list]
 
-            update_mailing_list.delay(
+            update_mailing_list(
                 g_suite_mailing_list,
                 instance.primary_email,
                 getattr(instance, mailing_list),

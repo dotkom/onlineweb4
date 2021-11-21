@@ -47,14 +47,14 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
             years.add(img.timestamp.year)
             if img.id:
                 try:
-                    total_disk_usage += img.sizeof_total_raw()
+                    total_disk_usage += img.total_size
                 except OSError as e:
                     getLogger(__name__).error(
                         "GalleryIndex file summation on missing file: %s" % e
                     )
 
         # Filter out potential ResponsiveImage objects that have orphan file references
-        context["images"] = [i for i in context["images"] if i.file_status_ok()]
+        # context["images"] = [i for i in context["images"] if i.file_status_ok()]
 
         # Add query filters and some statistics on disk usage
         context["years"] = years

@@ -63,7 +63,6 @@ urlpatterns = [
         name="wiki-tree",
         kwargs={"path": ""},
     ),
-    url(r"^health/", include("health_check.urls")),
 ]
 
 
@@ -182,7 +181,9 @@ if "apps.shop" in settings.INSTALLED_APPS:
     urlpatterns += [url(r"^shop/", include("apps.shop.urls"))]
 
 if "apps.offline" in settings.INSTALLED_APPS:
-    urlpatterns += [url(r"^offline/", include("apps.offline.urls"))]
+    urlpatterns += [
+        url(r"^offline/", include("apps.offline.urls")),
+    ]
 
 if "apps.posters" in settings.INSTALLED_APPS:
     urlpatterns += [url(r"^dashboard/posters/", include("apps.posters.dashboard.urls"))]
@@ -273,7 +274,3 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler500 = "onlineweb4.views.handler500"
-
-# if prometheus is installed
-if "django_prometheus" in settings.INSTALLED_APPS:
-    urlpatterns += [url("", include("django_prometheus.urls"))]

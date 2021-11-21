@@ -1,0 +1,20 @@
+FROM amazon/aws-lambda-python:3.7
+ENV POETRY_VIRTUALENVS_CREATE=false
+ARG FUNCTION_DIR="/var/task/"
+COPY ./ ${FUNCTION_DIR}
+
+# Setup Python environment
+RUN curl --silent https://releases.hashicorp.com/vault-lambda-extension/0.5.0/vault-lambda-extension_0.5.0_linux_amd64.zip \
+    --output vault-lambda-extension.zip \
+    && unzip vault-lambda-extension.zip -d /opt \
+    && yum install -y git && pip --no-cache-dir install poetry \
+    && yum clean all && rm -rf /var/cache/yum \
+    && poetry install --no-root \
+    && poetry cache clear . --all -n \
+    && ZAPPA_HANDLER_PATH=$( \
+    python -c "from zappa import handler; print (handler.__file__)" \
+    ) \
+    && echo $ZAPPA_HANDLER_PATH \
+    && cp $ZAPPA_HANDLER_PATH ${FUNCTION_DIR}
+
+CMD [ "handler.lambda_handler" ]
