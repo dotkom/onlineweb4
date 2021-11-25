@@ -26,3 +26,6 @@ if S3_MEDIA_STORAGE_ENABLED:
     StaticRootS3BotoStorage = lambda: S3Boto3Storage(location=STATIC_LOCATION)
     STATICFILES_STORAGE = "onlineweb4.settings.StaticRootS3BotoStorage"
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
+
+    WIKI_ATTACHMENTS_LOCAL_PATH = False
+    WIKI_ATTACHMENTS_APPEND_EXTENSION = False
