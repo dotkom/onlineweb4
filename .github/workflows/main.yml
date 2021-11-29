@@ -30,7 +30,7 @@ jobs:
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Set up Python 3.7
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v2.3.1
         with:
           python-version: 3.7
 
@@ -98,7 +98,7 @@ jobs:
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Set up Python 3.7
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v2.3.1
         with:
           python-version: 3.7
 
@@ -130,7 +130,7 @@ jobs:
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Set up Python 3.7
-        uses: actions/setup-python@v2.2.2
+        uses: actions/setup-python@v2.3.1
         with:
           python-version: 3.7
 
