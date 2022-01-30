@@ -15,7 +15,6 @@
     </div>
 </div>
 {% if not has_active_approvals %}
-    {% if enable_dataporten_application %}
     <div class="row">
         <div class="col-xs-12 col-sm-6 col-md-5">
             <a href="{% url 'dataporten:study' %}" class="btn btn-success membership-button">
@@ -35,7 +34,6 @@
             </div>
         </div>
     </div>
-    {% endif %}
     <div class="row">
         <div class="col-md-12">
             <p><strong>NB! Godkjente og avslåtte søknader havner nederst på siden, sjekk her før du sender inn nye søknader!</strong></p>
