@@ -56,7 +56,7 @@
             "OW4_EVENTS_ENABLE_RECAPTCHA": "True",
             "OW4_DJANGO_ALLOWED_HOSTS": "online.ntnu.no,old.online.ntnu.no",
             "OW4_DJANGO_BASE_URL": "https://old.online.ntnu.no",
-            "OW4_GSUITE_CREDENTIALS_PATH": "/tmp/secrets/gsuite.json",
+            "OW4_GSUITE_CREDENTIALS_PATH": "/tmp/secrets/gsuite-creds.json",
             "OW4_GSUITE_ENABLED": "True",
             "OW4_GSUITE_ACCOUNTS_ENABLED": "True",
             "OW4_GSUITE_ACCOUNTS_ENABLE_INSERT": "True",
@@ -80,7 +80,7 @@
             "VAULT_SECRET_PATH_DB": "postgres/creds/ow4",
             "VAULT_SECRET_FILE_DB": "/tmp/secrets/db.json",
             "VAULT_SECRET_PATH_GSUITE": "secret/data/onlineweb4/gsuite",
-            "VAULT_SECRET_FILE_GSUITE": "/tmp/secrets/gsuite.json",
+            "VAULT_SECRET_FILE_GSUITE": "/tmp/secrets/gsuite-creds.json",
             "VAULT_SECRET_PATH_ENV": "secret/data/onlineweb4/zappa-env",
             "VAULT_SECRET_FILE_ENV": "/tmp/secrets/env.json"
         }
