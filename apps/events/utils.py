@@ -378,6 +378,9 @@ def handle_mail_participants(
     user_recipients = [
         send_to_users[i : i + 50] for i in range(0, len(send_to_users), 50)
     ]
+    # Important for tests to pass
+    if len(send_to_users) == 0:
+        user_recipients.append([])
     signature = f"\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til {from_email})"
 
     message = f"{_message}{signature}"
