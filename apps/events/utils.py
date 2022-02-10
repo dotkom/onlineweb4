@@ -374,27 +374,37 @@ def handle_mail_participants(
         return False
     # Who to send emails to
     send_to_users = _to_email_options[_to_email_value][0]
-
+    # Split the groups into smaller lists of max 50 recipients because Amazon SES only allows max 50 per group
+    user_recipients = [
+        send_to_users[i : i + 50] for i in range(0, len(send_to_users), 50)
+    ]
+    # Important for tests to pass
+    if len(send_to_users) == 0:
+        user_recipients.append([])
     signature = f"\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til {from_email})"
 
     message = f"{_message}{signature}"
 
     # Send mail
     try:
-        email_addresses = [a.user.primary_email for a in send_to_users]
-        _email_sent = EmailMessage(
-            str(subject),
-            str(message),
-            from_email,
-            [from_email],
-            email_addresses,
-            attachments=(_images),
-        ).send()
-        logger.info(
-            'Sent mail to %s for event "%s".'
-            % (_to_email_options[_to_email_value][1], event)
-        )
-        return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
+        sent_count = 0
+        # Send the mail to each group
+        for recipient_group in user_recipients:
+            email_addresses = [a.user.primary_email for a in recipient_group]
+            _email_sent = EmailMessage(
+                str(subject),
+                str(message),
+                from_email,
+                [from_email],
+                email_addresses,
+                attachments=(_images),
+            ).send()
+            sent_count += _email_sent
+            logger.info(
+                'Sent mail to %s for event "%s".'
+                % (_to_email_options[_to_email_value][1], event)
+            )
+        return sent_count, all_attendees, attendees_on_waitlist, attendees_not_paid
     except ImproperlyConfigured as e:
         logger.error(
             'Something went wrong while trying to send mail to %s for event "%s"\n%s'
