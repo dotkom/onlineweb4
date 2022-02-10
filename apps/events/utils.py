@@ -375,7 +375,9 @@ def handle_mail_participants(
     # Who to send emails to
     send_to_users = _to_email_options[_to_email_value][0]
     # Split the groups into smaller lists of max 50 recipients because Amazon SES only allows max 50 per group
-    user_recipients = [send_to_users[i:i+50] for i in range(0, len(send_to_users),50)]
+    user_recipients = [
+        send_to_users[i : i + 50] for i in range(0, len(send_to_users), 50)
+    ]
     signature = f"\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til {from_email})"
 
     message = f"{_message}{signature}"
