@@ -32,7 +32,6 @@
                         {% block wiki_breadcrumbs %}{% endblock %}
                     </div>
                     <div class="col-xs-4">
-<!-- TEMPORARLY REMOVE SEARCH FUNCTIONALITY
                       <form method="GET" action="{% spaceless %}
                         {% if article or urlpath %}
                             {% url 'wiki:search' article_id=article.id path=urlpath.path %}
@@ -55,7 +54,6 @@
                             </span>
                         </div>
                       </form>
--->
                     </div>
                 </div>
                 {% block wiki_contents %}{% endblock %}
