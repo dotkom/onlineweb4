@@ -75,7 +75,7 @@ django-storages = "^1.12.3"
 [tool.poetry.dev-dependencies]
 # Testing
 pytest = "~6.2"
-pytest-cov = "~2.12"
+pytest-cov = "~3.0"
 pytest-django = "~4.4"
 factory-boy = "~3.2"
 freezegun = "~1.1"
