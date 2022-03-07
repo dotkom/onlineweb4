@@ -19,14 +19,14 @@ jobs:
         || github.ref == 'refs/heads/main'
     steps:
       - name: checkout-if-pr
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'pull_request_target' }}
         with:
           # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: checkout-if-push
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Set up Python 3.7
@@ -87,14 +87,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout-if-pr
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'pull_request_target' }}
         with:
           # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: checkout-if-push
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Set up Python 3.7
@@ -119,14 +119,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout-if-pr
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'pull_request_target' }}
         with:
           # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: checkout-if-push
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Set up Python 3.7
@@ -151,14 +151,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout-if-pr
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'pull_request_target' }}
         with:
           # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: checkout-if-push
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Cache node modules
