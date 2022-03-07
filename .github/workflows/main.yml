@@ -45,7 +45,7 @@ jobs:
           poetry install --no-interaction --no-ansi
 
       - name: Cache node modules
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         env:
           cache-name: cache-node-modules
         with:
@@ -76,7 +76,7 @@ jobs:
           pip install codecov --quiet
           codecov
       - name: Cache python packages
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/poetry.lock') }}
@@ -162,7 +162,7 @@ jobs:
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Cache node modules
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         env:
           cache-name: cache-node-modules
         with:
