@@ -7,7 +7,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "~3.7"
-Django = "^3.2.9"
+Django = "^3.2.12"
 djangorestframework = "~3.12"
 django-filter = "~21.1"
 pillow = "~8.3"
