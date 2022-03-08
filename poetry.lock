@@ -1698,11 +1698,11 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "unidecode"
-version = "1.2.0"
+version = "1.3.3"
 description = "ASCII transliterations of Unicode text"
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+python-versions = ">=3.5"
 
 [[package]]
 name = "uritemplate"
@@ -1858,7 +1858,7 @@ prod = ["psycopg2-binary"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "4e23f926863acfe60d6b4093211ea840d6a3344a86f826b16263dad69a66d97d"
+content-hash = "00950cd7e723a4905ff88871f019bf0b9a39aa752ab15c1275c1fedf6f4b9d8b"
 
 [metadata.files]
 argcomplete = [
@@ -2893,8 +2893,8 @@ typing-extensions = [
     {file = "typing_extensions-4.0.0.tar.gz", hash = "sha256:2cdf80e4e04866a9b3689a51869016d36db0814d84b8d8a568d22781d45d27ed"},
 ]
 unidecode = [
-    {file = "Unidecode-1.2.0-py2.py3-none-any.whl", hash = "sha256:12435ef2fc4cdfd9cf1035a1db7e98b6b047fe591892e81f34e94959591fad00"},
-    {file = "Unidecode-1.2.0.tar.gz", hash = "sha256:8d73a97d387a956922344f6b74243c2c6771594659778744b2dbdaad8f6b727d"},
+    {file = "Unidecode-1.3.3-py3-none-any.whl", hash = "sha256:a5a8a4b6fb033724ffba8502af2e65ca5bfc3dd53762dedaafe4b0134ad42e3c"},
+    {file = "Unidecode-1.3.3.tar.gz", hash = "sha256:8521f2853fd250891dc27d156a9d30e61c4e76319da963c4a1c27083a909ac30"},
 ]
 uritemplate = [
     {file = "uritemplate-4.1.1-py2.py3-none-any.whl", hash = "sha256:830c08b8d99bdd312ea4ead05994a38e8936266f84b9a7878232db50b044e02e"},
