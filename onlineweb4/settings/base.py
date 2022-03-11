@@ -52,6 +52,7 @@ USER_SEARCH_GROUPS = [
     9,  # velkom
     24,  # itex
     36,  # Online-IL
+    48, # FeminIT
 ]
 
 SLACK_INVITER = {
