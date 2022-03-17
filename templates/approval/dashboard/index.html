@@ -64,7 +64,7 @@ Søknadsgodkjenning
         </div>
         <div class="col-md-2 cell">
             {% if app.has_documentation %}
-                <div class="visible-xs visible-sm">1. </div><a href="/media/{{app.documentation}}" target="_blank">Dokumentasjon</a>
+                <div class="visible-xs visible-sm">1. </div><a href="{{ MEDIA_URL }}{{app.documentation}}" target="_blank">Dokumentasjon</a>
             {% else %}
                 -
             {% endif %}
