@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch.dispatcher import receiver
 
 from apps.profiles.models import Privacy
-from utils import disable_for_loaddata
+from utils.disable_for_loaddata import disable_for_loaddata
 
 User = settings.AUTH_USER_MODEL
 

@@ -5,7 +5,6 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_js_reverse.views import urls_js
-from onlineweb4 import views
 
 from apps.api.urls import urlpatterns as api_urls
 
@@ -57,12 +56,6 @@ urlpatterns = [
     # Wiki
     url(r"^notify/", include("django_nyt.urls")),
     url(r"^wiki/", include("wiki.urls")),
-    url(
-        r"^wiki-tree/",
-        views.WikiTreeView.as_view(),
-        name="wiki-tree",
-        kwargs={"path": ""},
-    ),
 ]
 
 

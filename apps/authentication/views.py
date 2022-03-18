@@ -150,7 +150,7 @@ def verify(request, token):
         user = getattr(rt, "user")
 
         # If it is a stud email, set the ntnu_username for user
-        if re.match(r"[^@]+@stud\.ntnu\.no", rt.email):
+        if re.match(r"^[^@]+@stud\.ntnu\.no$", rt.email):
             user.ntnu_username = rt.email.split("@")[0]
             log.info("Set ntnu_username for user %s to %s" % (user, rt.email))
 

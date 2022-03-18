@@ -1,7 +1,6 @@
 ### Using https://github.com/hashicorp/vault-lambda-extension
 ### Loads secrets from vault
 import json
-import os
 from decouple import config
 
 DEBUG = False

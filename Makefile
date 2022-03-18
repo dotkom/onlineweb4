@@ -4,7 +4,7 @@
 DOCKER_COMPOSE_FILE = ./docker/docker-compose.yml
 DOCKER_COMPOSE_COMMAND = @docker-compose -f ./docker/docker-compose.yml
 BACKEND_SERVICE_NAME = django
-BACKEND_LINT_FOLDERS = apps middleware scripts utils
+BACKEND_LINT_FOLDERS = apps scripts utils
 BACKEND_TEST_FOLDERS ?= apps
 
 FRONTEND_SERVICE_NAME = webpack
@@ -80,7 +80,7 @@ lint-frontend:
 	$(DOCKER_COMPOSE_COMMAND) run --rm $(FRONTEND_SERVICE_NAME) npm run lint
 
 lint-backend-fix:
-	$(DOCKER_COMPOSE_COMMAND) run --rm $(BACKEND_SERVICE_NAME) bash -c "isort apps middleware scripts utils && black apps middleware scripts utils onlineweb4"
+	$(DOCKER_COMPOSE_COMMAND) run --rm $(BACKEND_SERVICE_NAME) bash -c "isort apps scripts utils && black apps scripts utils onlineweb4"
 
 test-backend:
 	$(DOCKER_COMPOSE_COMMAND) run --rm $(BACKEND_SERVICE_NAME) py.test $(BACKEND_TEST_FOLDERS)

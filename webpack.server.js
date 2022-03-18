@@ -38,7 +38,7 @@ config.output.filename = '[name].js';
 config.output.publicPath = process.env.WEBPACK_DEV_GITPOD === 'true' ? `${PROTOCOL}://${PUBLIC_IP}/static/` :
     `${PROTOCOL}://${PUBLIC_IP}:${PUBLIC_PORT}/static/`;
 
-console.log(config.output.publicPath)
+console.log(config.output.publicPath);
 
 // Don't reload if there is an error
 config.plugins.unshift(new webpack.NoEmitOnErrorsPlugin());

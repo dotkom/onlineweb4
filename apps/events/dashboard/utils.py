@@ -86,7 +86,9 @@ def _get_attendee_data(attendee_qs):
     return attendees
 
 
-def _get_event_context(event: Event, response={}):
+def _get_event_context(event: Event, response=None):
+    if response is None:
+        response = {}
     response["attendees"] = _get_attendee_data(
         event.attendance_event.attending_attendees_qs
     )
