@@ -1594,7 +1594,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "stripe"
-version = "2.60.0"
+version = "2.67.0"
 description = "Python bindings for the Stripe API"
 category = "main"
 optional = false
@@ -1859,7 +1859,7 @@ prod = ["psycopg2-binary"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "70a69f6992854677b4c8b672f1bdf028af7a4113fff1f98f4e19b164e69dd75a"
+content-hash = "42094be7df14dc05a61639bb31b180bb09c07af5a778f00d1c91a2c2a283918e"
 
 [metadata.files]
 argcomplete = [
@@ -2841,8 +2841,8 @@ sqlparse = [
     {file = "sqlparse-0.4.2.tar.gz", hash = "sha256:0c00730c74263a94e5a9919ade150dfc3b19c574389985446148402998287dae"},
 ]
 stripe = [
-    {file = "stripe-2.60.0-py2.py3-none-any.whl", hash = "sha256:0050763cb67df6745973bd9757f7a765bed1b82b5d5261fb8908cfc6ec9e5200"},
-    {file = "stripe-2.60.0.tar.gz", hash = "sha256:8966b7793014380f60c6f121ba333d6f333a55818edaf79c8d70464ce0a7a808"},
+    {file = "stripe-2.67.0-py2.py3-none-any.whl", hash = "sha256:7efaee187a0615ce9361b6009122f89488a874c3175b5262dd9741a49088db18"},
+    {file = "stripe-2.67.0.tar.gz", hash = "sha256:718b93d6a18105243bce0c9b48e518f72f1f083d27f07e07b8bdb3a541fe3835"},
 ]
 text-unidecode = [
     {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
