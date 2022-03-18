@@ -319,8 +319,6 @@ def category_delete(request, category_pk):
     messages.success(request, "Kategorien %s ble slettet." % category.name)
     return redirect(category_index)
 
-    raise PermissionDenied
-
 
 @login_required
 # @permission_required('inventory.delete_batch', return_403=True)

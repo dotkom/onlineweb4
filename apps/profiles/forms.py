@@ -99,10 +99,10 @@ class MembershipSettingsForm(forms.ModelForm):
 
 class InternalServicesForm(forms.Form):
     ow4_password = forms.CharField(
-        widget=forms.PasswordInput(), label=_(u"Online passord")
+        widget=forms.PasswordInput(), label=_("Online passord")
     )
     services_password = forms.CharField(
-        widget=forms.PasswordInput(), label=_(u"Ønsket service passord")
+        widget=forms.PasswordInput(), label=_("Ønsket service passord")
     )
     current_user = None
 
@@ -119,7 +119,7 @@ class InternalServicesForm(forms.Form):
 
             if user is None or user.id != self.current_user.id:
                 self._errors["ow4_password"] = self.error_class(
-                    [_(u"Passordet er ikke korrekt.")]
+                    [_("Passordet er ikke korrekt.")]
                 )
 
             return cleaned_data

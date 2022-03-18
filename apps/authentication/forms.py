@@ -126,7 +126,7 @@ class RegisterForm(forms.Form):
                 )
 
             # Check if it's studmail and if someone else already has it in their profile
-            if re.match(r"[^@]+@stud\.ntnu\.no", email):
+            if re.match(r"^[^@]+@stud\.ntnu\.no$", email):
                 ntnu_username = email.split("@")[0]
                 user = User.objects.filter(ntnu_username=ntnu_username)
                 if user.count() == 1:
@@ -142,7 +142,7 @@ class RegisterForm(forms.Form):
             zip_code = cleaned_data["zip_code"]
             if len(zip_code) != 0:
                 # Check if zip_code is 4 digits long
-                if not re.match(r"\d{4}", zip_code):
+                if not re.match(r"^\d{4}$", zip_code):
                     self._errors["zip_code"] = self.error_class(
                         [_("Postnummer må bestå av fire siffer.")]
                     )

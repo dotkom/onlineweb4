@@ -45,7 +45,9 @@ def payment_reminder():
 
             payment.active = False
             payment.save()
-        elif deadline_diff < 259200:  # Remind them to pay 72 hours before the deadline
+        elif (
+            deadline_diff < 24 * 60 * 60 * 3
+        ):  # Remind them to pay 72 hours before the deadline
             if not_paid(payment):
                 send_reminder_mail(payment)
 
@@ -212,7 +214,7 @@ def handle_suspensions(payment_delay):
     suspension.save()
 
 
-def send_deadline_passed_mail(payment_delay, unattend_deadline_passed):
+def send_deadline_passed_mail(payment_delay, unattend_deadline_passed=True):
     payment = payment_delay.payment
 
     subject = _("Betalingsfrist utgått: ") + payment.description()

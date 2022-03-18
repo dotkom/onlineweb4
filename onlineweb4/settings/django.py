@@ -1,6 +1,5 @@
 # -*- coding: utf8 -*-
 import os
-import sys
 
 import dj_database_url
 from decouple import config, Csv
@@ -140,7 +139,6 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "middleware.http.Http403Middleware",
     "reversion.middleware.RevisionMiddleware",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "oidc_provider.middleware.SessionManagementMiddleware",

@@ -182,8 +182,6 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
             logger.error(f"An error occurred during the Stripe charge: {error}")
             raise serializers.ValidationError(error)
 
-        return None
-
     class Meta:
         model = PaymentRelation
         fields = (
@@ -372,8 +370,6 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
         except stripe.error.StripeError as error:
             logger.error(f"An error occurred during the Stripe charge: {error}")
             raise ValidationError(error)
-
-        return None
 
     class Meta:
         model = PaymentTransaction

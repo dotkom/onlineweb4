@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib import messages
@@ -193,9 +194,9 @@ def study_callback(request):
         )
 
     # If the request came from OWF, redirect there.
-    if request.session["dataporten_study_referer"] and request.session[
-        "dataporten_study_referer"
-    ].startswith("https://online.ntnu.no"):
-        return redirect("https://online.ntnu.no/profile/settings/membership")
+    if request.session["dataporten_study_referer"]:
+        host = urlparse(request.session["dataporten_study_referer"]).hostname
+        if host and host.endswith("online.ntnu.no"):
+            return redirect("https://online.ntnu.no/profile/settings/membership")
 
     return redirect("profiles_active", active_tab="membership")
