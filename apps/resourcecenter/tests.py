@@ -4,8 +4,6 @@ when you run "manage.py test".
 
 Replace this with more appropriate tests for your application.
 """
-from unittest import skip
-
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -22,14 +20,6 @@ class SimpleTest(TestCase):
 class ResourceCenterURLTestCase(TestCase):
     def test_resourcecenter_index(self):
         url = reverse("resourcecenter_index")
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    @skip  # django.template.exceptions.TemplateDoesNotExist: resourcecenter/gameservers.html
-    def test_resourcecenter_gameservers(self):
-        url = reverse("resourcecenter_gameservers")
 
         response = self.client.get(url)
 
