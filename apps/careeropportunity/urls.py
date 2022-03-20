@@ -6,7 +6,7 @@ from apps.api.utils import SharedAPIRootRouter
 from apps.careeropportunity import views
 
 urlpatterns = [
-    re_path("^$", views.index, name="careeropportunity_index"),
+    re_path(r"^$", views.index, name="careeropportunity_index"),
     re_path(r"^(\d+)/$", views.index, name="careeropportunity_details"),
 ]
 

@@ -5,7 +5,7 @@ from django.urls import path, re_path
 from apps.approval.dashboard import views
 
 urlpatterns = [
-    re_path("^$", views.index, name="approvals"),
+    re_path(r"^$", views.index, name="approvals"),
     re_path(
         r"^approve_application/$",
         views.approve_application,

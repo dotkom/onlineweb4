@@ -40,7 +40,7 @@ def feedback_notifier(request):
         # This method returns both bools and a list for some reason. Python crashes with the expression: x in bool,
         # so we do this to fetch once and test twice
         not_answered = active_feedback.not_answered()
-        if not_answered == False or request.user not in not_answered:
+        if not not_answered or request.user not in not_answered:
             continue
 
         context_extras["feedback_pending"].append(active_feedback)

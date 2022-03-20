@@ -6,8 +6,8 @@ from apps.dataporten import views
 app_name = "dataporten"
 
 study_urls = [
-    re_path("^study/$", views.study, name="study"),
-    re_path("^study/callback/$", views.study_callback, name="study-callback"),
+    re_path(r"^study/$", views.study, name="study"),
+    re_path(r"^study/callback/$", views.study_callback, name="study-callback"),
 ]
 
 urlpatterns = []

@@ -5,11 +5,15 @@ from django.urls import re_path
 from apps.events.dashboard import views
 
 urlpatterns = [
-    re_path("^$", views.index, name="dashboard_events_index"),
-    re_path("^past$", views.past, name="dashboard_events_past"),
-    re_path("^create/$", views.CreateEventView.as_view(), name="dashboard_event_create"),
+    re_path(r"^$", views.index, name="dashboard_events_index"),
+    re_path(r"^past$", views.past, name="dashboard_events_past"),
+    re_path(
+        "^create/$", views.CreateEventView.as_view(), name="dashboard_event_create"
+    ),
     # details views
-    re_path(r"^(?P<event_id>\d+)/$", views.event_details, name="dashboard_event_details"),
+    re_path(
+        r"^(?P<event_id>\d+)/$", views.event_details, name="dashboard_event_details"
+    ),
     re_path(
         r"^(?P<event_id>\d+)/edit/$",
         views.UpdateEventView.as_view(),

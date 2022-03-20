@@ -3,7 +3,7 @@ from django.urls import re_path
 from apps.api.utils import SharedAPIRootRouter
 from apps.mailinglists import views
 
-urlpatterns = [re_path("^$", views.index, name="mailinglists_index")]
+urlpatterns = [re_path(r"^$", views.index, name="mailinglists_index")]
 
 
 router = SharedAPIRootRouter()

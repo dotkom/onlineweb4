@@ -5,8 +5,8 @@ from django.urls import re_path
 from apps.article.dashboard import views
 
 urlpatterns = [
-    re_path("^$", views.article_index, name="dashboard_article_index"),
-    re_path("^new/$", views.article_create, name="dashboard_article_create"),
+    re_path(r"^$", views.article_index, name="dashboard_article_index"),
+    re_path(r"^new/$", views.article_create, name="dashboard_article_create"),
     re_path(
         r"^(?P<article_id>\d+)/$", views.article_detail, name="dashboard_article_detail"
     ),
