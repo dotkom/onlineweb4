@@ -195,8 +195,8 @@ def study_callback(request):
 
     # If the request came from OWF, redirect there.
     if request.session["dataporten_study_referer"]:
-        host = urlparse(request.session["dataporten_study_referer"]).hostname
-        if host and host.endswith("online.ntnu.no"):
+        host = urlparse(request.session["dataporten_study_referer"])
+        if host and host.hostname and host.hostname.endswith("online.ntnu.no"):
             return redirect("https://online.ntnu.no/profile/settings/membership")
 
     return redirect("profiles_active", active_tab="membership")
