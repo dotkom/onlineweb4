@@ -12,42 +12,42 @@ djangorestframework = "~3.13"
 django-filter = "~21.1"
 pillow = "~9.0"
 markdown2 = "~2.4"
-pytz = "^2021.1"
+pytz = "^2022.1"
 python-memcached = "~1.59"
 stripe = "~2.67"
 icalendar = "~4.0"
-google-api-python-client = "~2.28"
+google-api-python-client = "~2.41"
 PyMuPDF = "~1.19"
 django-filebrowser = "~3.14"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
 django-crispy-forms = "^1.11"
 django-extensions = "^3.1"
 django-dynamic-fixture = "^3.1"
-django-recaptcha = "~2.0"           # Google ReCaptcha
-django-oauth-toolkit = "^1.5.0"       # OAuth2 authentication support
-django-watson = "~1.5.5"            # Indexed model search lib
-django-reversion = "~4.0"           # Model version history with middleware hooks to all post_save signals
+django-recaptcha = "~3.0"           # Google ReCaptcha
+django-oauth-toolkit = "^1.7.1"       # OAuth2 authentication support
+django-watson = "~1.6.2"            # Indexed model search lib
+django-reversion = "~5.0"           # Model version history with middleware hooks to all post_save signals
 django-guardian = "~2.4"            # Per Object permissions framework
-django-taggit = "~1.5"              # Generic multi-model tagging library
+django-taggit = "~2.1"              # Generic multi-model tagging library
 redwine = { git = "https://github.com/dotkom/redwine.git", rev = "1.3.2" }
 reportlab = "~3.6"
 pdfdocument = "~4.0"
 Unidecode = "~1.3"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux = "~1.0"
-django-cors-headers = "~3.7"        # Enable CORS for Nibble
+django-cors-headers = "~3.11"        # Enable CORS for Nibble
 django-datetime-widget = { git = "https://github.com/oleast/django-datetime-widget.git", rev = "95a5ba4738853d1ed4081e1e33e1600cba984aad" }
 django-webpack-loader = "~0.7"      # Integration with webpack
 dj-database-url = "~0.5"            # Allows to configure databases using URLs
-python-decouple = "~3.4"            # Configuration and settings management
+python-decouple = "~3.6"            # Configuration and settings management
 django-oidc-provider = "~0.7"       # OpenID Connect Provider
-docutils = "~0.16"                  # Allows django-admindocs to generate documentation
+docutils = "~0.18"                  # Allows django-admindocs to generate documentation
 requests-oauthlib = "~1.3"          # Simplify OAuth2 connections to external apps
-oic = "~1.2"			            # OpenID Connect Client
+oic = "~1.3"			            # OpenID Connect Client
 python-dateutil = "~2.8"            # Simplify date parsing
 coreapi = "~2.3"                    # API Documentation
 requests = { version = "~2.27", extras = [ "security" ] }
 # Wiki
-wiki = "^0.7.9"
+wiki = "^0.8.0"
 
 # Django 1.9 support
 django-appconf = "~1.0"
@@ -57,7 +57,7 @@ django-appconf = "~1.0"
 # libjpeg-dev					# From package repository.
 
 # Monitoring
-sentry-sdk = { version = "~1.3", extras = [ "django" ] }
+sentry-sdk = { version = "~1.5", extras = [ "django" ] }
 
 django-js-reverse = "~0.9"
 
@@ -73,19 +73,19 @@ django-storages = "^1.12.3"
 
 [tool.poetry.dev-dependencies]
 # Testing
-pytest = "~6.2"
+pytest = "~7.1"
 pytest-cov = "~3.0"
-pytest-django = "~4.4"
+pytest-django = "~4.5"
 factory-boy = "~3.2"
-freezegun = "~1.1"
+freezegun = "~1.2"
 mock = "~4.0"
 tox = "~3.24"
 
 # Linting
-flake8 = "~3.9"
-isort = "~5.9"
-pycodestyle = "~2.7"
-black = "21.10b0"
+flake8 = "~4.0"
+isort = "~5.10"
+pycodestyle = "~2.8"
+black = "~22.1"
 
 [tool.poetry.extras]
 prod = ["psycopg2-binary"]
@@ -106,7 +106,7 @@ whitelist_externals =
     flake8
     black
 commands =
-    isort: isort -c apps scripts utils
+    isort: isort -c apps scripts utils onlineweb4
     flake8: flake8 apps scripts utils
     black: black --check apps scripts utils onlineweb4
 
@@ -136,6 +136,7 @@ DJANGO_SETTINGS_MODULE = "onlineweb4.settings"
 norecursedirs = [ ".*",  "env*", "tmp*" ]
 python_files = [ "tests.py", "*_tests.py" ]
 addopts = "--nomigrations"
+filterwarnings = ["ignore::DeprecationWarning:oidc_provider[.*]", ""]
 
 [build-system]
 requires = ["poetry>=1.0.0"]
