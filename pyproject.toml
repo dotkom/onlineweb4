@@ -19,7 +19,7 @@ icalendar = "~4.0"
 google-api-python-client = "~2.41"
 PyMuPDF = "~1.19"
 django-filebrowser = "~3.14"
-django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
+django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
 django-crispy-forms = "^1.11"
 django-extensions = "^3.1"
 django-dynamic-fixture = "^3.1"
@@ -29,7 +29,7 @@ django-watson = "~1.6.2"            # Indexed model search lib
 django-reversion = "~5.0"           # Model version history with middleware hooks to all post_save signals
 django-guardian = "~2.4"            # Per Object permissions framework
 django-taggit = "~2.1"              # Generic multi-model tagging library
-redwine = { git = "https://github.com/dotkom/redwine.git", rev = "1.3.2" }
+redwine = { git = "https://github.com/dotkom/redwine.git", rev = "1.4.0" }
 reportlab = "~3.6"
 pdfdocument = "~4.0"
 Unidecode = "~1.3"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
@@ -76,6 +76,7 @@ django-storages = "^1.12.3"
 pytest = "~7.1"
 pytest-cov = "~3.0"
 pytest-django = "~4.5"
+pytest-xdist = "~2.5"
 factory-boy = "~3.2"
 freezegun = "~1.2"
 mock = "~4.0"
@@ -122,7 +123,7 @@ setenv =
     OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats-test.json
 commands =
     npm run build:test
-    py.test --cov=apps --disable-pytest-warnings --cov-report xml --ignore=src/
+    py.test --cov=apps --cov-report xml -n auto
 """
 
 [tool.isort]
@@ -136,7 +137,15 @@ DJANGO_SETTINGS_MODULE = "onlineweb4.settings"
 norecursedirs = [ ".*",  "env*", "tmp*" ]
 python_files = [ "tests.py", "*_tests.py" ]
 addopts = "--nomigrations"
-filterwarnings = ["ignore::DeprecationWarning:oidc_provider[.*]", ""]
+filterwarnings = [
+    # Need to remove outdated library
+    "ignore:.*:django.utils.deprecation.RemovedInDjango40Warning:oidc_provider.*",
+    # All local ones are dealt with, this cannot be fixed by us
+    "ignore:.*defines default_app_config.*:django.utils.deprecation.RemovedInDjango41Warning",
+    # we should probably care about OpenAPI-warnings, but they are extremely noisy
+    "ignore:You have a duplicated operationId in your OpenAPI schema:UserWarning",
+    "ignore:<class '.*'> is not compatible with schema generation:UserWarning",
+]
 
 [build-system]
 requires = ["poetry>=1.0.0"]
