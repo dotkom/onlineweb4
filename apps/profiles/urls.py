@@ -34,7 +34,9 @@ urlpatterns = [
     ),
     # re_path('^internal_services/$', views.internal_services, name='profile_internal_services'),
     # Ajax views
-    re_path(r"^deleteposition/$", views.delete_position, name="profile_delete_position"),
+    re_path(
+        r"^deleteposition/$", views.delete_position, name="profile_delete_position"
+    ),
     re_path(r"^email/delete_email/$", views.delete_email, name="profile_delete_email"),
     re_path(r"^email/set_primary/$", views.set_primary, name="profile_set_primary"),
     re_path(r"^email/verify_email/$", views.verify_email, name="profile_verify_email"),
