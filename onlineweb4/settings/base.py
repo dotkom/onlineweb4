@@ -67,9 +67,7 @@ SLACK_INVITER = {
 # SSO / OAuth2 settings
 
 OIDC_RSA_PRIVATE_KEY = ""  # Default case
-if not os.path.isfile("oidc.key"):
-    print("Failed to locate OIDC RSA Private key file during setup.")
-else:
+if os.path.isfile("oidc.key"):
     with open("oidc.key", "r") as f:
         OIDC_RSA_PRIVATE_KEY = f.read()
 

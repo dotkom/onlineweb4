@@ -47,7 +47,7 @@ class WebshopOrderLineTests(OIDCTestCase):
         self.headers = {**self.generate_headers(), **self.bare_headers}
 
         self.url = reverse("webshop_orderlines-list")
-        self.id_url = lambda _id: self.url + str(_id) + "/"
+        self.id_url = lambda _id: f"{self.url}{_id}/"
         date_next_year = timezone.now() + timezone.timedelta(days=366)
         self.mock_card = {
             "number": "4242424242424242",
@@ -64,6 +64,7 @@ class WebshopOrderLineTests(OIDCTestCase):
             Product,
             name="Onlinegenser",
             deadline=timezone.now() + timezone.timedelta(days=7),
+            price=10,
         )
 
         self.product_size_s: ProductSize = G(ProductSize, size="S")
