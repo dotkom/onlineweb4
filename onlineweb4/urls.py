@@ -179,7 +179,9 @@ if "apps.offline" in settings.INSTALLED_APPS:
     ]
 
 if "apps.posters" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^dashboard/posters/", include("apps.posters.dashboard.urls"))]
+    urlpatterns += [
+        re_path(r"^dashboard/posters/", include("apps.posters.dashboard.urls"))
+    ]
 
 if "apps.profiles" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^profile/", include("apps.profiles.urls"))]
@@ -204,7 +206,9 @@ if (
         re_path(
             r"^resourcecenter/", include("apps.resourcecenter.urls")
         ),  # Resourcecenter has catch-all on subpages
-        re_path(r"^dashboard/resources/", include("apps.resourcecenter.dashboard.urls")),
+        re_path(
+            r"^dashboard/resources/", include("apps.resourcecenter.dashboard.urls")
+        ),
     ]
 
 if "apps.slack" in settings.INSTALLED_APPS:
