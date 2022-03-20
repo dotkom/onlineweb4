@@ -192,7 +192,13 @@ class PaymentTest(TransactionTestCase):
         self.simulate_user_payment(user1)
         self.simulate_user_payment(user2)
 
-        self.assertFalse(not_paid(self.event_payment))
+        result = [
+            attendee.user
+            for attendee in self.event_payment.content_object.attending_attendees_qs
+            if attendee.paid
+        ]
+        expected = [user1, user2]
+        self.assertEqual(expected, result)
 
     def test_event_mommy_paid_with_delays(self):
         user1 = G(User)

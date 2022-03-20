@@ -331,7 +331,7 @@ django = "*"
 
 [[package]]
 name = "django-chunks"
-version = "0.4"
+version = "0.5"
 description = "Keyed blocks of content for use in your Django templates"
 category = "main"
 optional = false
@@ -341,8 +341,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/dotkom/django-chunks.git"
-reference = "e6bf109d4fd286964024c140ac1b8f3d86713540"
-resolved_reference = "e6bf109d4fd286964024c140ac1b8f3d86713540"
+reference = "5c01b06f40122c05d2a806f9872b07215ffc33ac"
+resolved_reference = "5c01b06f40122c05d2a806f9872b07215ffc33ac"
 
 [[package]]
 name = "django-classy-tags"
@@ -668,6 +668,17 @@ description = "Module for converting between datetime.timedelta and Go's Duratio
 category = "main"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "execnet"
+version = "1.9.0"
+description = "execnet: rapid multi-Python deployment"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[package.extras]
+testing = ["pre-commit"]
 
 [[package]]
 name = "factory-boy"
@@ -1362,6 +1373,36 @@ docs = ["sphinx", "sphinx-rtd-theme"]
 testing = ["django", "django-configurations (>=2.0)"]
 
 [[package]]
+name = "pytest-forked"
+version = "1.4.0"
+description = "run tests in isolated forked subprocesses"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+py = "*"
+pytest = ">=3.10"
+
+[[package]]
+name = "pytest-xdist"
+version = "2.5.0"
+description = "pytest xdist plugin for distributed testing and loop-on-failing modes"
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+execnet = ">=1.1"
+pytest = ">=6.2.0"
+pytest-forked = "*"
+
+[package.extras]
+psutil = ["psutil (>=3.0)"]
+setproctitle = ["setproctitle"]
+testing = ["filelock"]
+
+[[package]]
 name = "python-dateutil"
 version = "2.8.2"
 description = "Extensions to the standard Python datetime module"
@@ -1438,7 +1479,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "redwine"
-version = "1.2.4"
+version = "1.4.0"
 description = "A wine punishment management system."
 category = "main"
 optional = false
@@ -1448,8 +1489,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/dotkom/redwine.git"
-reference = "1.3.2"
-resolved_reference = "db65804cc9b9e8ee9f574f3d11ae89d2055bc258"
+reference = "1.4.0"
+resolved_reference = "f412bb11d0c675d4219671a90c74731b9407282a"
 
 [[package]]
 name = "reportlab"
@@ -1844,7 +1885,7 @@ prod = ["psycopg2-binary"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "e4bf847e0a08a816ddd312b250ffd9c3d9b6314ebfdfd5b01523915e2fe2e5c4"
+content-hash = "a0ebaef9cd542387060da866d1e52336c948ecbd4c1ddbaf47e97635b5cb76ef"
 
 [metadata.files]
 argcomplete = [
@@ -2181,6 +2222,10 @@ docutils = [
 ]
 durationpy = [
     {file = "durationpy-0.5.tar.gz", hash = "sha256:5ef9416b527b50d722f34655becfb75e49228eb82f87b855ed1911b3314b5408"},
+]
+execnet = [
+    {file = "execnet-1.9.0-py2.py3-none-any.whl", hash = "sha256:a295f7cc774947aac58dde7fdc85f4aa00c42adf5d8f5468fc630c1acf30a142"},
+    {file = "execnet-1.9.0.tar.gz", hash = "sha256:8f694f3ba9cc92cab508b152dcfe322153975c29bda272e2fd7f3f00f36e47c5"},
 ]
 factory-boy = [
     {file = "factory_boy-3.2.1-py2.py3-none-any.whl", hash = "sha256:eb02a7dd1b577ef606b75a253b9818e6f9eaf996d94449c9d5ebb124f90dc795"},
@@ -2627,6 +2672,14 @@ pytest-cov = [
 pytest-django = [
     {file = "pytest-django-4.5.2.tar.gz", hash = "sha256:d9076f759bb7c36939dbdd5ae6633c18edfc2902d1a69fdbefd2426b970ce6c2"},
     {file = "pytest_django-4.5.2-py3-none-any.whl", hash = "sha256:c60834861933773109334fe5a53e83d1ef4828f2203a1d6a0fa9972f4f75ab3e"},
+]
+pytest-forked = [
+    {file = "pytest-forked-1.4.0.tar.gz", hash = "sha256:8b67587c8f98cbbadfdd804539ed5455b6ed03802203485dd2f53c1422d7440e"},
+    {file = "pytest_forked-1.4.0-py3-none-any.whl", hash = "sha256:bbbb6717efc886b9d64537b41fb1497cfaf3c9601276be8da2cccfea5a3c8ad8"},
+]
+pytest-xdist = [
+    {file = "pytest-xdist-2.5.0.tar.gz", hash = "sha256:4580deca3ff04ddb2ac53eba39d76cb5dd5edeac050cb6fbc768b0dd712b4edf"},
+    {file = "pytest_xdist-2.5.0-py3-none-any.whl", hash = "sha256:6fe5c74fec98906deb8f2d2b616b5c782022744978e7bd4695d39c8f42d0ce65"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
