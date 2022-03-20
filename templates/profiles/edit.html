@@ -14,7 +14,7 @@
                     <div class="row row-space">
                     {% csrf_token %}
                 {% for field in user_profile_form %}
-                    {% ifnotequal field.name 'image' %}
+                    {% if field.name != 'image' %}
                         <div class="inline">
                             <div class="col-md-4">{{ field.label }}</div>
                             <div class="col-md-8">
@@ -22,7 +22,7 @@
                                 {{ field.errors }}
                             </div>
                         </div>
-                    {% endifnotequal %}
+                    {% endif %}
                 {% endfor %}
                     </div>
                     <div class="row row-space">

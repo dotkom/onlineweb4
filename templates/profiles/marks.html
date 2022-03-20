@@ -8,8 +8,8 @@
 <div class="row">
     <div class="col-md-12">
 	<p><strong>NB!</strong> Godkjennig av prikkereglene er endelig, med mindre endringer i reglene forekommer.</p>
-        <button class="marks {% ifequal mark_rules_accepted True %}on{% else %}off{% endifequal %}" {% ifequal mark_rules_accepted True %}disabled{% endifequal %}>
-            <input id="marks-checkbox" type="checkbox" {% ifequal mark_rules_accepted True %}checked{% endifequal %}>
+        <button class="marks {% if mark_rules_accepted %}on{% else %}off{% endif %}" {% if mark_rules_accepted %}disabled{% endif %}>
+            <input id="marks-checkbox" type="checkbox" {% if mark_rules_accepted %}checked{% endif %}>
         </button>
     </div>
 </div>

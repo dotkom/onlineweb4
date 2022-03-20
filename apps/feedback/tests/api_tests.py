@@ -95,25 +95,25 @@ class FeedbackRelationTest(FeedbackAPITestCase):
 
     def test_user_cannot_retrieve_a_relation_when_they_cannot_answer(self):
         relation = self.create_feedback_relation()
-        response = self.client.get(self.get_detail_url(relation), **self.headers)
+        response = self.client.get(self.get_detail_re_path(elation), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_user_can_retrieve_a_relation_when_they_can_answer(self):
         relation = self.create_feedback_relation(user=self.user)
-        response = self.client.get(self.get_detail_url(relation), **self.headers)
+        response = self.client.get(self.get_detail_re_path(elation), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_retrieve_a_relation_when_they_have_answered(self):
         relation = self.create_feedback_relation()
         relation.answered.add(self.user)
-        response = self.client.get(self.get_detail_url(relation), **self.headers)
+        response = self.client.get(self.get_detail_re_path(elation), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_users_can_answer_with_a_rating_question(self):
         rating_question = self.create_rating_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {"rating_answers": [{"question": rating_question.id, "answer": 1}]},
             **self.headers,
         )
@@ -124,7 +124,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         rating_question = self.create_rating_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {"rating_answers": [{"question": rating_question.id, "answer": 7}]},
             **self.headers,
         )
@@ -135,7 +135,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         question = self.create_text_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {"text_answers": [{"question": question.id, "answer": "Dette er et svar"}]},
             **self.headers,
         )
@@ -146,7 +146,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         question = self.create_text_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {"text_answers": [{"question": question.id, "answer": ""}]},
             **self.headers,
         )
@@ -157,7 +157,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         question = self.create_multiple_choice_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {
                 "multiple_choice_answers": [
                     {"question": question.id, "answer": question.choices.first().choice}
@@ -172,7 +172,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         question = self.create_multiple_choice_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {
                 "multiple_choice_answers": [
                     {
@@ -192,7 +192,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         multiple_choice_question = self.create_multiple_choice_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {
                 "rating_answers": [{"question": rating_question.id, "answer": 1}],
                 "text_answers": [
@@ -218,7 +218,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         self.create_text_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {"rating_answers": [{"question": rating_question.id, "answer": 1}]},
             **self.headers,
         )
@@ -230,7 +230,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         self.create_text_question(required=False)
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {"rating_answers": [{"question": rating_question.id, "answer": 1}]},
             **self.headers,
         )
@@ -242,7 +242,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         text_question = self.create_text_question(required=False)
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {
                 "rating_answers": [{"question": rating_question.id, "answer": 1}],
                 "text_answers": [{"question": text_question.id, "answer": ""}],
@@ -256,7 +256,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         rating_question = self.create_rating_question()
         relation = self.create_feedback_relation(user=self.user)
         response = self.client.post(
-            self.get_submit_url(relation),
+            self.get_submit_url(elation),
             {
                 "rating_answers": [
                     {"question": rating_question.id, "answer": 1},
