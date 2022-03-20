@@ -190,7 +190,7 @@ class MarkRuleAcceptanceAPITest(OIDCTestCase):
         rule_acceptance: RuleAcceptance = G(
             RuleAcceptance, user=other_user, rule_set=self.rule_set
         )
-        response = self.client.get(self.id_url(rule_acceptance.id), **self.headers)
+        response = self.client.get(self.id_re_path(ule_acceptance.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 

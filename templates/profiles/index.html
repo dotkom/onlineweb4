@@ -23,44 +23,44 @@ Min side - Online
             <div class="row">
                 <div class="col-md-2 col-sm-3 col-xs-12">
                     <ul class="nav nav-pills nav-stacked" id="profile-tabs">
-                        <li class="{% ifequal 'overview' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'overview' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'overview' %}" data-section="overview">Oversikt</a>
                         </li>
                         {% if feedback_pending|length > 0 or active_tab == 'feedback_pending' %}
-                            <li class="{% ifequal 'feedback_pending' active_tab %}active{% endifequal %}">
+                            <li class="{% if 'feedback_pending' == active_tab %}active{% endif %}">
                                 <a href="{% url 'profiles_active' 'feedback_pending' %}" data-section="feedback_pending">
                                     Manglende tilbakemeldinger ({{ feedback_pending|length }})
                                 </a>
                             </li>
                         {% endif %}
-                        <li class="{% ifequal 'edit' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'edit' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'edit' %}" data-section="edit">Rediger profil</a>
                         </li>
-                        <li class="{% ifequal 'saldo' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'saldo' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'saldo' %}" data-section="saldo">Saldo</a>
                         </li>
-                        <li class="{% ifequal 'position' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'position' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'position' %}" data-section="position">Legg til verv</a>
                         </li>
-                        <li class="{% ifequal 'privacy' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'privacy' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'privacy' %}" data-section="privacy">Personvern</a>
                         </li>
-                        <li class="{% ifequal 'connected_apps' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'connected_apps' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'connected_apps' %}" data-section="connected_apps">Apptilkoblinger</a>
                         </li>
-                        <li class="{% ifequal 'marks' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'marks' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker &amp; suspensjoner</a>
                         </li>
-                        <li class="{% ifequal 'password' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'password' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'password' %}" data-section="password">Passord</a>
                         </li>
-                        <li class="{% ifequal 'email' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'email' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'email' %}" data-section="email">Epost-innstillinger</a>
                         </li>
-                        <li class="{%ifequal 'membership' active_tab %}active{% endifequal %}">
+                        <li class="{%if 'membership' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'membership' %}" data-section="membership">Medlemskap</a>
                         </li>
-                        <li class="{% ifequal 'payments' active_tab %}active{% endifequal %}">
+                        <li class="{% if 'payments' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'payments' %}" data-section="payments">Betalinger</a>
                         </li>
                     </ul>

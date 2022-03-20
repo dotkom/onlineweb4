@@ -287,6 +287,10 @@ class UserTagsTestCase(OIDCTestCase):
             preset="photoalbum",
         )
 
+    @classmethod
+    def tearDownClass(cls):
+        cls.image_file.close()
+
     def setUp(self):
         self.now = timezone.now()
         self.past = self.now - timezone.timedelta(days=1)

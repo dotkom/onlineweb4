@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.gallery import views
@@ -9,12 +9,12 @@ from apps.gallery.views import CropView, PresetView
 app_name = "gallery"
 
 urlpatterns = [
-    url(r"^upload/$", views.upload, name="upload"),
-    url(r"^unhandled/$", views.unhandled, name="unhandled"),
-    url(r"^crop/$", CropView.as_view(), name="crop"),
-    url(r"^all/", views.all_images, name="all"),
-    url(r"^search/", views.search, name="search"),
-    url(r"^preset/", PresetView.as_view(), name="preset"),
+    re_path("^upload/$", views.upload, name="upload"),
+    re_path("^unhandled/$", views.unhandled, name="unhandled"),
+    re_path("^crop/$", CropView.as_view(), name="crop"),
+    re_path("^all/", views.all_images, name="all"),
+    re_path("^search/", views.search, name="search"),
+    re_path("^preset/", PresetView.as_view(), name="preset"),
 ]
 
 # API v1

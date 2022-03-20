@@ -48,7 +48,7 @@
 
       <div class="meta">
         {% if event.is_attendance_event %}
-          {% ifequal event.attendance_event.number_of_seats_taken event.attendance_event.max_capacity %}
+          {% if event.attendance_event.number_of_seats_taken == event.attendance_event.max_capacity %}
 		  <div class="col-md-3">
 		    <p>Venteliste: {{ event.attendance_event.number_on_waitlist }} </p>
 		  </div>
@@ -56,7 +56,7 @@
           <div class="col-md-3">
             <p>Påmeldte: {{ event.attendance_event.number_of_seats_taken }} / {{ event.attendance_event.max_capacity }}</p>
           </div>
-          {% endifequal %}
+          {% endif %}
           <div class="col-md-3">
             <p>Sted: {{ event.location }}</p>
           </div>

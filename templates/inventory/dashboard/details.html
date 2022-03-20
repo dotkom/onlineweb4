@@ -43,16 +43,16 @@
             {% for field in new_batch_form %}
                 <div class="col-md-5">
                     <div class="form-group">
-                        <div class="input-group {% if field.errors %}has-error{% endif %} {% ifequal field.name 'expiration_date' %}dp{% endifequal %}">
+                        <div class="input-group {% if field.errors %}has-error{% endif %} {% if field.name == 'expiration_date' %}dp{% endif %}">
                             <span class="input-group-addon">{{ field.label }}</span>
                             {{ field|addclass:"form-control" }}
-                            {% ifequal field.name 'expiration_date' %}
+                            {% if field.name == 'expiration_date' %}
                                 <span class="input-group-btn">
                                     <a href="#" class="btn btn-primary datepickerbutton">
                                         <i class="fa fa-calendar fa-lg"></i>
                                     </a>
                                 </span>
-                            {% endifequal %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -91,25 +91,25 @@
                     <form method="POST" action="{% url 'dashboard_inventory_batch' item.id pk %}">
                     {% csrf_token %}
                     {% for field in form %}
-                        {% ifnotequal field.name 'item' %}
+                        {% if field.name != 'item' %}
                         <div class="col-md-5">
                             <div class="form-group {% if field.errors %}has-error{% endif %}">
-                                <div class="input-group {% ifequal field.name 'expiration_date' %}dp{% endifequal %}">
+                                <div class="input-group {% if field.name == 'expiration_date' %}dp{% endif %}">
                                     <span class="input-group-addon">{{ field.label }}</span>
                                     {{ field|addclass:"form-control" }}
-                                    {% ifequal field.name 'expiration_date' %}
+                                    {% if field.name == 'expiration_date' %}
                                     <span class="input-group-btn datepickerbutton">
                                         <a href="#" class="btn btn-primary">
                                             <i class="fa fa-calendar fa-lg"></i>
                                         </a>
                                     </span>
-                                    {% endifequal %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                         {% else %}
                         {{ field.as_hidden }}
-                        {% endifnotequal %}
+                        {% endif %}
                     {% endfor %}
                     <div class="col-md-2">
                         <div class="pull-right">
