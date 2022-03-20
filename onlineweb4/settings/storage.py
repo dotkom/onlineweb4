@@ -1,6 +1,5 @@
-from storages.backends.s3boto3 import S3Boto3Storage
 from decouple import config
-
+from storages.backends.s3boto3 import S3Boto3Storage
 
 S3_MEDIA_STORAGE_ENABLED = config("OW4_USE_S3", cast=bool, default=False)
 if S3_MEDIA_STORAGE_ENABLED:

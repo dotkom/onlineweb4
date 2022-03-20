@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from onlineweb4.settings.sentry import OW4_SENTRY_DSN
 from sentry_sdk import last_event_id
+
+from onlineweb4.settings.sentry import OW4_SENTRY_DSN
 
 
 def handler500(request, *args, **kwargs):

@@ -18,7 +18,9 @@ urlpatterns = [
         name="event_attendees_json",
     ),
     re_path(r"^(?P<event_id>\d+)/attend/$", views.attend_event, name="attend_event"),
-    re_path(r"^(?P<event_id>\d+)/unattend/$", views.unattend_event, name="unattend_event"),
+    re_path(
+        r"^(?P<event_id>\d+)/unattend/$", views.unattend_event, name="unattend_event"
+    ),
     re_path(
         r"^(?P<event_id>\d+)/show_attending/$",
         views.toggle_show_as_attending,

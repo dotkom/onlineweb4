@@ -2,11 +2,10 @@
 import os
 
 import dj_database_url
-from decouple import config, Csv
-
+from decouple import Csv, config
 from django.contrib.messages import constants as messages
 
-from .base import PROJECT_ROOT_DIRECTORY, PROJECT_SETTINGS_DIRECTORY
+from .base import PROJECT_ROOT_DIRECTORY
 
 TEST_RUNNER = config(
     "OW4_DJANGO_TEST_RUNNER", default="onlineweb4.runner.PytestTestRunner"

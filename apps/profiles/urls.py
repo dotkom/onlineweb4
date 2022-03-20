@@ -58,7 +58,9 @@ urlpatterns = [
         name="profiles_api_plain_user_search",
     ),
     # Endpoint that exposes a json lump of all users which have set their profile to public.
-    re_path("^api_user_search/$", views.api_user_search, name="profiles_api_user_search"),
+    re_path(
+        "^api_user_search/$", views.api_user_search, name="profiles_api_user_search"
+    ),
     re_path("^user_search/$", views.user_search, name="profiles_user_search"),
     # Profile index with active tab.
     re_path(r"^(?P<active_tab>\w+)/$", views.index, name="profiles_active"),

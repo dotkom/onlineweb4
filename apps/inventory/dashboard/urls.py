@@ -26,7 +26,9 @@ urlpatterns = [
         name="dashboard_category_delete",
     ),
     re_path("^new/$", views.new, name="dashboard_inventory_new"),
-    re_path(r"^item/(?P<item_pk>\d+)/$", views.details, name="dashboard_inventory_details"),
+    re_path(
+        r"^item/(?P<item_pk>\d+)/$", views.details, name="dashboard_inventory_details"
+    ),
     re_path(
         r"^item/(?P<item_pk>\d+)/delete/$",
         views.item_delete,
