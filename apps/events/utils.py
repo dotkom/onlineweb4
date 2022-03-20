@@ -17,7 +17,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee, Event, Extras
 from apps.notifications.constants import PermissionType
 from apps.notifications.utils import send_message_to_users
-from apps.payment.models import PaymentDelay, PaymentRelation
+from apps.payment.models import Payment, PaymentDelay, PaymentRelation
 
 
 def handle_waitlist_bump(event, attendees, payment=None):
@@ -51,12 +51,12 @@ def _handle_waitlist_bump_payment(payment, attendees):
     extended_deadline = timezone.now() + timezone.timedelta(days=2)
     message = ""
 
-    if payment.payment_type == 1:  # Instant
+    if payment.payment_type == Payment.Types.IMMEDIATE:
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, extended_deadline)
         message += "Dette arrangementet krever betaling og du må betale innen 48 timer."
 
-    elif payment.payment_type == 2:  # Deadline
+    elif payment.payment_type == Payment.Types.DEADLINE:
         if (
             payment.deadline > extended_deadline
         ):  # More than 2 days left of payment deadline
@@ -71,7 +71,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
                 "Dette arrangementet krever betaling og du har 48 timer på å betale"
             )
 
-    elif payment.payment_type == 3:  # Delay
+    elif payment.payment_type == Payment.Types.DELAY:
         deadline = timezone.now() + payment.delay
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
@@ -312,7 +312,7 @@ def handle_attend_event_payment(event: Event, user: User):
     payment = attendance_event.payment()
 
     if payment and not event.attendance_event.is_on_waitlist(user):
-        if payment.payment_type == 3:
+        if payment.payment_type == Payment.Types.DELAY:
             deadline = timezone.now() + payment.delay
             payment.create_payment_delay(user, deadline)
         else:

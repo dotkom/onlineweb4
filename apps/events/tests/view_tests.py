@@ -15,7 +15,7 @@ from apps.authentication.models import Membership, OnlineGroup
 from apps.marks.models import MarkRuleSet
 from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
-from apps.payment.models import PaymentDelay, PaymentPrice
+from apps.payment.models import Payment, PaymentDelay, PaymentPrice
 
 from ..constants import EventType
 from ..models import AttendanceEvent, Event, Extras, GroupRestriction, StatusCode
@@ -372,7 +372,7 @@ class EventsAttend(EventsTestMixin, TestCase):
             registration_end=timezone.now() + timedelta(days=1),
         )
         self.event_payment = generate_payment(
-            event, payment_type=3, delay=timedelta(days=2)
+            event, payment_type=Payment.Types.DELAY, delay=timedelta(days=2)
         )
         G(PaymentPrice, price=200, payment=self.event_payment)
         url = reverse("attend_event", args=(event.id,))
@@ -550,7 +550,7 @@ class EventsUnattendWaitlist(TransactionTestCase):
 
     def test_payment_delay_is_not_created_if_deadline_over_48_hours(self):
         generate_payment(
-            self.event, payment_type=2, deadline=timezone.now() + timedelta(days=3)
+            self.event, payment_type=Payment.Types.DEADLINE, deadline=timezone.now() + timedelta(days=3)
         )
         generate_attendee(self.event, "user1")
         attend_user_to_event(self.event, self.user)
@@ -567,7 +567,7 @@ class EventsUnattendWaitlist(TransactionTestCase):
     @freeze_time("2017-01-01 12:00")
     def test_payment_delay_is_created_if_deadline_under_48_hours(self):
         generate_payment(
-            self.event, payment_type=2, deadline=timezone.now() + timedelta(hours=47)
+            self.event, payment_type=Payment.Types.DEADLINE, deadline=timezone.now() + timedelta(hours=47)
         )
         generate_attendee(self.event, "user1")
         attend_user_to_event(self.event, self.user)
@@ -586,7 +586,7 @@ class EventsUnattendWaitlist(TransactionTestCase):
     def test_payment_type_delay_uses_payment_delay(self):
         delay_days = 4
         payment_delay_time = timedelta(days=delay_days)
-        generate_payment(self.event, payment_type=3, delay=payment_delay_time)
+        generate_payment(self.event, payment_type=Payment.Types.DELAY, delay=payment_delay_time)
         generate_attendee(self.event, "user1")
         attend_user_to_event(self.event, self.user)
         attend_user_to_event(self.event, self.other_user)
