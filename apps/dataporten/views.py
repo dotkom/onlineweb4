@@ -74,8 +74,8 @@ def study(request):
     return redirect(login_url)
 
 
-@login_required()
-def study_callback(request):  # noqa: C901
+@login_required()  # noqa: C901
+def study_callback(request):
     """This view fetches information from Dataporten to verify the eligibility. This is done by fetching
     the /me/groups-API from Dataporten and further processing the fetched groups to find group membership.
 
