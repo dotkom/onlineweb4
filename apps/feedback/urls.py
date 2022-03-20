@@ -9,7 +9,7 @@ base_url = (
 )
 
 urlpatterns = [
-    re_path("^$", views.index, name="feedback_index"),
+    re_path(r"^$", views.index, name="feedback_index"),
     re_path(base_url + r"$", views.feedback, name="feedback"),
     re_path(base_url + r"results/$", views.result, name="result"),
     re_path(base_url + r"results/chartdata/$", views.chart_data, name="chart_data"),
@@ -23,7 +23,7 @@ urlpatterns = [
         views.chart_data_token,
         name="chart_data_token",
     ),
-    re_path("^deleteanswer/$", views.delete_answer, name="delete_anwer"),
+    re_path(r"^deleteanswer/$", views.delete_answer, name="delete_anwer"),
 ]
 
 

@@ -7,14 +7,14 @@ from apps.sso import endpoints, views
 app_name = "sso"
 
 urlpatterns = [
-    re_path("^$", views.index, name="index"),
-    re_path("^user/", endpoints.oauth2_provider_userinfo, name="user"),
+    re_path(r"^$", views.index, name="index"),
+    re_path(r"^user/", endpoints.oauth2_provider_userinfo, name="user"),
     re_path(
         r"^authorize/",
         views.AuthorizationView.as_view(),
         name="oauth2_provider_authorize",
     ),
-    re_path("^", include("oauth2_provider.urls", "oauth2_provider")),
+    re_path(r"^", include("oauth2_provider.urls", "oauth2_provider")),
 ]
 
 

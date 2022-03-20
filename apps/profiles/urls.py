@@ -8,20 +8,20 @@ from apps.profiles import views
 from apps.shop.views import UserOrderViewSet
 
 urlpatterns = [
-    re_path("^$", views.index, name="profiles"),
+    re_path(r"^$", views.index, name="profiles"),
     # Show a specific profile.
     re_path(
         r"^view/(?P<username>[a-zA-Z0-9_-]+)/$",
         views.view_profile,
         name="profiles_view",
     ),
-    re_path("^feedback-pending/$", views.feedback_pending, name="feedback_pending"),
-    re_path("^edit/$", views.edit_profile, name="profile_edit"),
-    re_path("^privacy/$", views.privacy, name="profile_privacy"),
-    re_path("^connected_apps/$", views.connected_apps, name="profile_connected_apps"),
-    re_path("^password/$", views.password, name="profile_password"),
-    re_path("^position/$", views.position, name="profile_position"),
-    re_path("^email/$", views.add_email, name="profile_add_email"),
+    re_path(r"^feedback-pending/$", views.feedback_pending, name="feedback_pending"),
+    re_path(r"^edit/$", views.edit_profile, name="profile_edit"),
+    re_path(r"^privacy/$", views.privacy, name="profile_privacy"),
+    re_path(r"^connected_apps/$", views.connected_apps, name="profile_connected_apps"),
+    re_path(r"^password/$", views.password, name="profile_password"),
+    re_path(r"^position/$", views.position, name="profile_position"),
+    re_path(r"^email/$", views.add_email, name="profile_add_email"),
     re_path(
         r"^create_gsuite/$",
         views.GSuiteCreateAccount.as_view(),
@@ -34,10 +34,10 @@ urlpatterns = [
     ),
     # re_path('^internal_services/$', views.internal_services, name='profile_internal_services'),
     # Ajax views
-    re_path("^deleteposition/$", views.delete_position, name="profile_delete_position"),
-    re_path("^email/delete_email/$", views.delete_email, name="profile_delete_email"),
-    re_path("^email/set_primary/$", views.set_primary, name="profile_set_primary"),
-    re_path("^email/verify_email/$", views.verify_email, name="profile_verify_email"),
+    re_path(r"^deleteposition/$", views.delete_position, name="profile_delete_position"),
+    re_path(r"^email/delete_email/$", views.delete_email, name="profile_delete_email"),
+    re_path(r"^email/set_primary/$", views.set_primary, name="profile_set_primary"),
+    re_path(r"^email/verify_email/$", views.verify_email, name="profile_verify_email"),
     re_path(
         r"^email/toggle_infomail/$",
         views.toggle_infomail,
@@ -61,7 +61,7 @@ urlpatterns = [
     re_path(
         "^api_user_search/$", views.api_user_search, name="profiles_api_user_search"
     ),
-    re_path("^user_search/$", views.user_search, name="profiles_user_search"),
+    re_path(r"^user_search/$", views.user_search, name="profiles_user_search"),
     # Profile index with active tab.
     re_path(r"^(?P<active_tab>\w+)/$", views.index, name="profiles_active"),
 ]

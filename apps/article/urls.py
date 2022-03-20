@@ -6,7 +6,7 @@ from apps.api.utils import SharedAPIRootRouter
 from apps.article import views
 
 urlpatterns = [
-    re_path("^archive/$", views.archive, name="article_archive"),
+    re_path(r"^archive/$", views.archive, name="article_archive"),
     re_path(
         r"^(?P<article_id>\d+)/(?P<article_slug>[a-zA-Z0-9_-]+)/$",
         views.details,
