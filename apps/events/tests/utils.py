@@ -8,7 +8,6 @@ from apps.authentication.models import Email, GroupMember, OnlineGroup, OnlineUs
 from apps.companyprofile.models import Company
 from apps.events.models.Attendance import CompanyEvent
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
-from apps.profiles.models import Privacy
 
 from ..constants import EventType
 from ..models import AttendanceEvent, Attendee, Event
@@ -75,7 +74,6 @@ def generate_user(username: str) -> OnlineUser:
     user = G(
         OnlineUser, username=username, ntnu_username=username, phone_number="12345678"
     )
-    user.privacy = G(Privacy, user=user)
     G(Email, user=user)
     return user
 

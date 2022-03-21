@@ -312,7 +312,7 @@ class OnlineUser(AbstractUser):
         return self.get_image_url(240)
 
     def get_visible_as_attending_events(self):
-        """ Returns the default value of visible_as_attending_events set in privacy/personvern """
+        """Returns the default value of visible_as_attending_events set in privacy/personvern"""
         if self.privacy.visible_as_attending_events is not None:
             # privacy is created at user creation, see `apps.profiles.signals.create_privacy_profile`,
             # but visibile_as_attending_events can be Null, which indicates the user has not made

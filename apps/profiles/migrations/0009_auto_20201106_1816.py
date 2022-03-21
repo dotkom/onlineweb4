@@ -2,15 +2,14 @@
 
 from django.conf import settings
 from django.db import migrations, models
-from apps.authentication.models import OnlineUser as User
 import django.db.models.deletion
 
-from apps.profiles.models import Privacy
 
-
-def create_privacy_for_all():
+def create_privacy_for_all(apps, schema_editor):
     # we used to have that an user could not have a privacy,
     # this creates it for everyone
+    User = apps.get_model("authentication", "OnlineUser")
+    Privacy = apps.get_model("profiles", "Privacy")
     for user in User.objects.filter(privacy=None):
         Privacy.objects.create(user=user)
 
@@ -23,7 +22,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(model_name="privacy", name="id",),
+        migrations.RemoveField(
+            model_name="privacy",
+            name="id",
+        ),
         migrations.AlterField(
             model_name="privacy",
             name="user",
@@ -35,5 +37,5 @@ class Migration(migrations.Migration):
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
-        migrations.RunPython(),
+        migrations.RunPython(create_privacy_for_all),
     ]
