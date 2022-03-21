@@ -6,7 +6,7 @@ authors = ["dotkom <dotkom@online.ntnu.no>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "~3.7"
+python = "~3.9"
 Django = "^3.2.12"
 djangorestframework = "~3.13"
 django-filter = "~21.1"
