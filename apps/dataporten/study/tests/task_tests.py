@@ -1,6 +1,6 @@
 import json
+from unittest import mock
 
-import mock
 from django.core import mail
 from django.test import TestCase
 from django_dynamic_fixture import G
