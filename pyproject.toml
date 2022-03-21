@@ -77,7 +77,6 @@ pytest-django = "~4.5"
 pytest-xdist = "~2.5"
 factory-boy = "~3.2"
 freezegun = "~1.2"
-mock = "~4.0"
 tox = "~3.24"
 
 # Linting

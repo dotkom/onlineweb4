@@ -1,6 +1,7 @@
+from unittest.mock import patch
+
 from django.test import TestCase
 from django_dynamic_fixture import G
-from mock import patch
 
 from apps.authentication.models import OnlineUser
 from apps.gsuite.mail_syncer.utils import get_group_key, get_user, get_user_key
