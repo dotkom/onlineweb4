@@ -2,7 +2,7 @@ import os
 import sys
 
 import dj_database_url
-from decouple import config
+from decouple import Csv, config
 
 from .base import PROJECT_ROOT_DIRECTORY
 
@@ -12,7 +12,7 @@ sys.dont_write_bytecode = config(
 )
 
 # Change this to the host in production
-ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*")
+ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*", cast=Csv())
 
 DATABASES = {
     # Set this using the environment variable "DATABASE_URL"
@@ -71,12 +71,6 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 #   'apps.example',
 #   'debug_toolbar', # https://github.com/dcramer/django-debug-toolbar
 # )
-
-SYMPA_DB_PASSWD = ""
-SYMPA_DB_USER = ""
-SYMPA_DB_NAME = ""
-SYMPA_DB_PORT = ""
-SYMPA_DB_HOST = ""
 
 # Variables for group syncing script
 # GROUP_SYNCER = [
