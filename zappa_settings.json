@@ -4,7 +4,6 @@
         "django_settings": "onlineweb4.settings",
         "profile_name": "default",
         "project_name": "onlineweb4",
-        "runtime": "python3.9",
         "s3_bucket": "zappa-4zzd2i1dt",
         "domain": "old.online.ntnu.no",
         "memory_size": 1024,
