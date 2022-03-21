@@ -47,7 +47,7 @@ def index(request):
     allowed_events = get_objects_for_user(
         request.user, "events.change_event", accept_global_perms=False
     )
-    events = allowed_events.filter(event_start__gte=timezone.now().date()).order_by(
+    events = allowed_events.filter(event_end__gte=timezone.now()).order_by(
         "event_start"
     )
 
