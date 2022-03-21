@@ -405,17 +405,6 @@ python-versions = "*"
 six = "*"
 
 [[package]]
-name = "django-extensions"
-version = "3.1.5"
-description = "Extensions for Django"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-
-[package.dependencies]
-Django = ">=2.2"
-
-[[package]]
 name = "django-filebrowser"
 version = "3.14.3"
 description = "Media-Management with Grappelli"
@@ -1885,7 +1874,7 @@ prod = ["psycopg2-binary"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.7"
-content-hash = "a0ebaef9cd542387060da866d1e52336c948ecbd4c1ddbaf47e97635b5cb76ef"
+content-hash = "3417695a5445d50b30b51c06a33dfb679a1b100a3bf33a73d7e64571b05edea8"
 
 [metadata.files]
 argcomplete = [
@@ -2133,10 +2122,6 @@ django-crispy-forms = [
 django-datetime-widget = []
 django-dynamic-fixture = [
     {file = "django-dynamic-fixture-3.1.2.tar.gz", hash = "sha256:08cf0dadb91a1058ef7bf2486e5df2a93571f4517a7de1b806d1a6ee6d78b078"},
-]
-django-extensions = [
-    {file = "django-extensions-3.1.5.tar.gz", hash = "sha256:28e1e1bf49f0e00307ba574d645b0af3564c981a6dfc87209d48cb98f77d0b1a"},
-    {file = "django_extensions-3.1.5-py3-none-any.whl", hash = "sha256:9238b9e016bb0009d621e05cf56ea8ce5cce9b32e91ad2026996a7377ca28069"},
 ]
 django-filebrowser = [
     {file = "django-filebrowser-3.14.3.tar.gz", hash = "sha256:d006aea203f21d0374899bfd5d96b020794f3ee461b169f33d5fc72edc4e4ab7"},

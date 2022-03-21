@@ -166,7 +166,6 @@ INSTALLED_APPS = [
     "sorl.thumbnail",  # Wiki
     "chunks",
     "crispy_forms",
-    "django_extensions",
     "django_dynamic_fixture",
     "oauth2_provider",
     "captcha",
