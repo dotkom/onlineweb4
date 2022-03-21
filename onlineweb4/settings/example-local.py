@@ -70,7 +70,6 @@ FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
 # INSTALLED_APPS += (
 #   'apps.example',
 #   'debug_toolbar', # https://github.com/dcramer/django-debug-toolbar
-#   'django_extensions', # http://packages.python.org/django-extensions/
 # )
 
 SYMPA_DB_PASSWD = ""
