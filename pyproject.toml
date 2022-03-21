@@ -138,6 +138,8 @@ norecursedirs = [ ".*",  "env*", "tmp*" ]
 python_files = [ "tests.py", "*_tests.py" ]
 addopts = "--nomigrations"
 filterwarnings = [
+    # for future maintainers: these fields are documented here
+    # https://docs.python.org/3/library/warnings.html#the-warnings-filter
     # Need to remove outdated library
     "ignore:.*:django.utils.deprecation.RemovedInDjango40Warning:oidc_provider.*",
     # All local ones are dealt with, this cannot be fixed by us
