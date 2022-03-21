@@ -1,8 +1,8 @@
 FROM gitpod/workspace-full
 
-RUN pyenv install 3.7.9
+RUN pyenv install 3.9.11
 
-RUN pyenv global 3.7.9
+RUN pyenv global 3.9.11
 
 RUN pip install poetry
 
