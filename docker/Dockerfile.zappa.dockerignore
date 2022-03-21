@@ -21,7 +21,6 @@ Django.Dockerfile
 docker-compose.yml
 Makefile
 setup.cfg
-setup.cfg
 Webpack.Dockerfile
 webpack.config.js
 webpack.production.config.js
@@ -41,5 +40,7 @@ package.json
 License
 static
 files
-docker
 assets
+.venv
+.babelrc
+onlineweb4.egg-info
