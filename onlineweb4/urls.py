@@ -13,8 +13,8 @@ admin.autodiscover()
 
 urlpatterns = [
     # Admin urls
-    re_path(r"^admin/", admin.site.urls),
     re_path(r"^admin/doc/", include("django.contrib.admindocs.urls")),
+    re_path(r"^admin/", admin.site.urls),
     # Onlineweb front page
     re_path(r"^$", TemplateView.as_view(template_name="frontpage.html"), name="home"),
     # Django-js-reverse used to get django urls to react
