@@ -22,7 +22,9 @@ class Privacy(models.Model):
         _("greit å ta bilder på arrangement"), default=None, null=True
     )
 
-    user = models.OneToOneField(User, related_name="privacy", on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(
+        User, related_name="privacy", on_delete=models.CASCADE, primary_key=True
+    )
 
     def __str__(self):
         return self.user.get_full_name()

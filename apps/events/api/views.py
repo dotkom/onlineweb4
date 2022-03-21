@@ -86,7 +86,7 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     )
     def register(self, request, pk=None):
         user = request.user
-        privacy = Privacy.objects.get(user=user)
+        privacy: Privacy = Privacy.objects.get(user=user)
         attendance_event: AttendanceEvent = self.get_object()
         # Check if the recaptcha and other request data is valid
         register_serializer = self.get_serializer(data=request.data)
@@ -96,10 +96,14 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         allow_pictures = data.get("allow_pictures")
 
         # Set the values to the users default settings if sent data is empty
-        if attending_visibility is None:
+        if attending_visibility is None and privacy.visible_as_attending_events is None:
+            attending_visibility = False
+        elif attending_visibility is None:
             attending_visibility = privacy.visible_as_attending_events
 
-        if allow_pictures is None:
+        if allow_pictures is None and privacy.allow_pictures is None:
+            allow_pictures = False
+        elif allow_pictures is None:
             allow_pictures = privacy.allow_pictures
 
         attendee = Attendee.objects.create(
