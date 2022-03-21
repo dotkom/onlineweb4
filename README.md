@@ -75,7 +75,7 @@ If these aren't already installed poetry will likely fail to build the packages.
 
 Onlineweb4 is setup to use the [Poetry](https://python-poetry.org/) for dependency mangement.
 
-To install dependencies run `poetry install`. If your system doesn't have a compatible version of python, 3.7.x, 
+To install dependencies run `poetry install`. If your system doesn't have a compatible version of python, 3.9.x, 
 you can use pyenv.
 
 To start the server firstly run the database migrations with `python manage.py migrate`, and run the server with `python manage.py runserver`.
