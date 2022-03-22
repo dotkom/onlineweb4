@@ -14,7 +14,7 @@ services:
   django:
     build:
       context: ../.
-      dockerfile: ./docker/Dockerfile.django
+      dockerfile: ./docker/Django.Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ../.:/srv/app
@@ -71,7 +71,7 @@ services:
   webpack:
     build:
       context: ../.
-      dockerfile: ./docker/Dockerfile.webpack
+      dockerfile: ./docker/Webpack.Dockerfile
     command: npm start
     volumes:
       - ../.:/srv/app

@@ -1,0 +1,89 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  release:
+
+concurrency: production
+
+env:
+  POETRY_VIRTUALENVS_CREATE: false
+  STAGE: prod
+  ECR_REPOSITORY: onlineweb4-zappa
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # should always hit
+      - name: Cache python packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: Install Zappa
+        run: |
+          pip install poetry
+          poetry install --no-interaction --no-ansi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Generate Zappa settings
+        run: zappa save-python-settings-file $STAGE
+
+      - name: Build Image
+        id: build
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          echo "ECR_REGISTRY=${ECR_REGISTRY}" >> $GITHUB_ENV
+          docker build . -f docker/StaticBuild.Dockerfile -t dotkomonline/ow4-static
+          docker build . -f docker/Zappa.Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+      - name: Tag latest
+        if: ${{ github.event_name == 'push' }}
+        run: docker tag ${{ steps.build.outputs.image }} $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Tag version
+        if: ${{ github.event_name == 'release' }}
+        run: |
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          docker tag ${{ steps.build.outputs.image }} $ECR_REGISTRY/$ECR_REPOSITORY:$VERSION
+
+      - name: Push
+        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY
+
+      - name: Deploy
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          # kinda a cheat to copy files out of the docker image
+          ID=$(docker create dotkomonline/ow4-static)
+          docker cp $ID:/srv/app/static static
+          aws s3 sync static s3://onlineweb4-prod/static --delete
+
+          zappa update $STAGE -d $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
