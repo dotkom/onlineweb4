@@ -12,16 +12,15 @@ Then you can run ```zappa update <stage> -d <docker-ecr-image>```. You'll have a
 #### Example for prod
 
 ```bash
-yarn build:prod
-python manage.py collectstatic
-
+VERSION=4.X.X
 zappa save-python-settings-file prod
 
-docker build -t onlineweb4-zappa -f docker/Dockerfile.zappa .
-docker tag onlineweb4-zappa:latest 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:latest
-docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:latest
+docker build . -f docker/StaticBuild.Dockerfile -t dotkomonline/ow4-static
+docker build . -f docker/Zappa.Dockerfile -t onlineweb4-zappa:latest -t 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
 
-zappa update prod -d 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:latest
+docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
+
+zappa update prod -d 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
 ```
 
 ### Frontend
