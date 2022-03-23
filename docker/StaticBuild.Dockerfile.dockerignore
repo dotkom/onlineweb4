@@ -24,4 +24,6 @@ static
 .venv
 onlineweb4.egg-info
 .gitpod.Dockerfile
-
+webpack-stats.json
+bundles
+static
