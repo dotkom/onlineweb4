@@ -1,0 +1,19 @@
+name: Deploy / Dev
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: deploy-dev
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      STAGE: dev
+      VERSION: latest
+      url: https://dev.online.ntnu.no
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}

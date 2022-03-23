@@ -1,0 +1,32 @@
+name: Deploy / Production
+
+on:
+  release:
+    types:
+      - released
+
+concurrency: deploy-prod
+
+jobs:
+  extract-version:
+    name: Extract version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract-version.outputs.version }}
+    steps:
+      - name: Extract version
+        id: extract-version
+        run: |
+          TAG=${{ github.ref_name }}
+          # start after first char, we only remove `v` here 
+          echo "::set-output name=version::${TAG:1})"
+
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      STAGE: prod
+      VERSION: ${{ needs.extract-version.outputs.version }}
+      url: https://online.ntnu.no
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
