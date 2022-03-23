@@ -87,7 +87,7 @@ jobs:
           # kinda a cheat to copy files out of the docker image
           ID=$(docker create dotkomonline/ow4-static)
           docker cp $ID:/srv/app/static static
-          aws s3 sync static s3://onlineweb4-prod/static --delete
+          aws s3 sync static s3://onlineweb4-prod/static --delete --acl=public-read
 
       - name: Migrate
         run: zappa manage $STAGE migrate
