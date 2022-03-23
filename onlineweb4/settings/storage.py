@@ -16,13 +16,21 @@ if S3_MEDIA_STORAGE_ENABLED:
     }
 
     MEDIA_LOCATION = "media"
-    MediaRootS3BotoStorage = lambda: S3Boto3Storage(location=MEDIA_LOCATION)
+
+    class MediaRootS3BotoStorage(S3Boto3Storage):
+        def __init__(self, **kwargs):
+            super().__init__(**(kwargs | {"location": MEDIA_LOCATION}))
+
     DEFAULT_FILE_STORAGE = "onlineweb4.settings.MediaRootS3BotoStorage"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
     MEDIA_ROOT = ""
 
     STATIC_LOCATION = "static"
-    StaticRootS3BotoStorage = lambda: S3Boto3Storage(location=STATIC_LOCATION)
+
+    class StaticRootS3BotoStorage(S3Boto3Storage):
+        def __init__(self, **kwargs):
+            super().__init__(**(kwargs | {"location": STATIC_LOCATION}))
+
     STATICFILES_STORAGE = "onlineweb4.settings.StaticRootS3BotoStorage"
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
 
