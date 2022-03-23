@@ -32,6 +32,8 @@ ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
 RUN poetry install --no-interaction --no-ansi
 
 COPY . .
-COPY --from=node $APP_DIR/bundles $APP_DIR/webpack-stats.json ./
+
+COPY --from=node $APP_DIR/webpack-stats.json ./webpack-stats.json
+COPY --from=node $APP_DIR/bundles ./bundles
 RUN ./manage.py collectstatic
 # we should now have static and
