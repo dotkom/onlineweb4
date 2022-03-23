@@ -83,7 +83,7 @@ lint-backend-fix:
 	$(DOCKER_COMPOSE_COMMAND) run --rm $(BACKEND_SERVICE_NAME) bash -c "isort apps scripts utils && black apps scripts utils onlineweb4"
 
 test-backend:
-	$(DOCKER_COMPOSE_COMMAND) run --rm $(BACKEND_SERVICE_NAME) py.test $(BACKEND_TEST_FOLDERS) -n auto --dist=loadscope
+	$(DOCKER_COMPOSE_COMMAND) run --rm $(BACKEND_SERVICE_NAME) py.test $(BACKEND_TEST_FOLDERS)
 
 test-frontend:
 	$(DOCKER_COMPOSE_COMMAND) run --rm $(FRONTEND_SERVICE_NAME) npm run test
