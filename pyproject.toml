@@ -113,7 +113,7 @@ setenv =
     OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats-test.json
 commands =
     npm run build:test
-    py.test --cov=apps --cov-report xml -n auto --dist=loadscope
+    py.test --cov=apps --cov-report xml
 """
 
 [tool.isort]
@@ -126,7 +126,7 @@ known_first_party = [ "apps", "utils" ]
 DJANGO_SETTINGS_MODULE = "onlineweb4.settings"
 norecursedirs = [ ".*",  "env*", "tmp*" ]
 python_files = [ "tests.py", "*_tests.py" ]
-addopts = "--nomigrations"
+addopts = "--nomigrations -n auto --dist loadscope"
 filterwarnings = [
     # for future maintainers: these fields are documented here
     # https://docs.python.org/3/library/warnings.html#the-warnings-filter
