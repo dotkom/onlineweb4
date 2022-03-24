@@ -25,6 +25,8 @@ jobs:
     environment:
       name: ${{ inputs.environment }}
       url: ${{ inputs.url }}
+    env:
+      ENVIRONMENT: ${{ inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -60,7 +62,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Generate Zappa settings
-        run: zappa save-python-settings-file ${{ inputs.environment }}
+        run: zappa save-python-settings-file $ENVIRONMENT
 
       - name: Build Image
         id: build
@@ -82,16 +84,16 @@ jobs:
       - name: Deploy
         env:
           IMAGE_TAG: ${{ github.sha }}
-        run: zappa update ${{ inputs.environment }} -d $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        run: zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Sync static files
         run: |
           # kinda a cheat to copy files out of the docker image
           ID=$(docker create dotkomonline/ow4-static)
           docker cp $ID:/srv/app/static static
-          BUCKET_NAME=$( yq ".${{ inputs.environment }}.environment_variables.OW4_S3_BUCKET_NAME" zappa_settings.yml )
+          BUCKET_NAME=$( yq ".${ENVIRONMENT}.environment_variables.OW4_S3_BUCKET_NAME" zappa_settings.yml )
           aws s3 sync static "s3://${BUCKET_NAME}/static" --delete --acl=public-read
 
       - name: Migrate
-        run: zappa manage ${{ inputs.environment }} migrate
+        run: zappa manage $ENVIRONMENT migrate
 
