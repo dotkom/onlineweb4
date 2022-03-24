@@ -9,9 +9,6 @@ on:
       version:
         required: true
         type: string
-      bucket_name:
-        required: true
-        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -92,7 +89,8 @@ jobs:
           # kinda a cheat to copy files out of the docker image
           ID=$(docker create dotkomonline/ow4-static)
           docker cp $ID:/srv/app/static static
-          aws s3 sync static s3://${{ inputs.bucket_name }}/static --delete --acl=public-read
+          BUCKET_NAME=$( yq ".${{ inputs.environment }}.environment_variables.OW4_S3_BUCKET_NAME" zappa_settings.yml )
+          aws s3 sync static "s3://${BUCKET_NAME}/static" --delete --acl=public-read
 
       - name: Migrate
         run: zappa manage ${{ inputs.environment }} migrate
