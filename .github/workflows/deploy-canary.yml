@@ -12,8 +12,9 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: Canary
-      VERSION: latest
+      version: latest
       url: https://dev.online.ntnu.no
+      bucket_name: onlineweb4-dev
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
