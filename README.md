@@ -20,7 +20,7 @@ docker build . -f docker/Zappa.Dockerfile -t onlineweb4-zappa:latest -t 89145926
 
 docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
 
-zappa update prod -d 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
+zappa update Production -d 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
 ```
 
 ### Frontend

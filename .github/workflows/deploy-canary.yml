@@ -1,17 +1,17 @@
-name: Deploy / Dev
+name: Deploy / Canary
 
 on:
   push:
     branches:
       - main
 
-concurrency: deploy-dev
+concurrency: deploy-canary
 
 jobs:
   deploy:
     uses: ./.github/workflows/deploy.yml
     with:
-      STAGE: dev
+      environment: Canary
       VERSION: latest
       url: https://dev.online.ntnu.no
     secrets:

@@ -3,10 +3,13 @@ name: Deploy
 on:
   workflow_call:
     inputs:
-      STAGE:
+      environment:
         required: true
         type: string
-      VERSION:
+      version:
+        required: true
+        type: string
+      bucket_name:
         required: true
         type: string
     secrets:
@@ -23,7 +26,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
-      name: ${{ inputs.STAGE }}
+      name: ${{ inputs.environment }}
       url: ${{ inputs.url }}
     steps:
       - name: Checkout
@@ -60,7 +63,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Generate Zappa settings
-        run: zappa save-python-settings-file ${{ inputs.STAGE }}
+        run: zappa save-python-settings-file ${{ inputs.environment }}
 
       - name: Build Image
         id: build
@@ -72,7 +75,7 @@ jobs:
           docker build . -f docker/StaticBuild.Dockerfile -t dotkomonline/ow4-static
           docker build . -f docker/Zappa.Dockerfile \
                          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                         -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.VERSION }}
+                         -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.version }}
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Push
@@ -82,15 +85,15 @@ jobs:
       - name: Deploy
         env:
           IMAGE_TAG: ${{ github.sha }}
-        run: zappa update ${{ inputs.STAGE }} -d $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        run: zappa update ${{ inputs.environment }} -d $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Sync static files
         run: |
           # kinda a cheat to copy files out of the docker image
           ID=$(docker create dotkomonline/ow4-static)
           docker cp $ID:/srv/app/static static
-          aws s3 sync static s3://onlineweb4-${{ STAGE }}/static --delete --acl=public-read
+          aws s3 sync static s3://${{ inputs.bucket_name }}/static --delete --acl=public-read
 
       - name: Migrate
-        run: zappa manage ${{ STAGE }} migrate
+        run: zappa manage ${{ inputs.environment }} migrate
 
