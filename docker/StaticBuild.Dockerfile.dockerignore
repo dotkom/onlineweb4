@@ -17,6 +17,7 @@ log/debug.log
 venv
 docker
 zappa_settings.json
+zappa_settings.yaml
 zappa_settings.py
 requirements.txt
 README.MD

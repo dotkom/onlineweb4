@@ -24,9 +24,10 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy.yml
     with:
-      STAGE: prod
-      VERSION: ${{ needs.extract-version.outputs.version }}
+      environment: Production
+      version: ${{ needs.extract-version.outputs.version }}
       url: https://online.ntnu.no
+      bucket_name: onlineweb4-prod
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
