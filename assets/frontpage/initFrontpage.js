@@ -1,14 +1,7 @@
 import $ from 'jquery';
-import OfflineWidget from './OfflineWidget';
 
 const TOP_OFFSET_ADJUST = 65;
 
-const offlineWidget = new OfflineWidget();
-
-
-/* RENDER
------------------------------------------------------------------------- */
-offlineWidget.render();
 
 /* FUNCTIONS
 ------------------------------------------------------------------------ */
