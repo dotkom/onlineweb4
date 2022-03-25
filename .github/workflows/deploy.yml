@@ -9,6 +9,9 @@ on:
       version:
         required: true
         type: string
+      url:
+        required: true
+        type: string
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
@@ -75,7 +78,6 @@ jobs:
           docker build . -f docker/Zappa.Dockerfile \
                          -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
                          -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.version }}
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
       - name: Push
         # specifically does not include tag to push all tags
@@ -84,7 +86,7 @@ jobs:
       - name: Deploy
         env:
           IMAGE_TAG: ${{ github.sha }}
-        run: zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        run: zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.version }}
 
       - name: Sync static files
         run: |
