@@ -57,7 +57,7 @@ django-js-reverse = "~0.9"
 pyyaml = "^6.0"
 pywebpush = "^1.11.0"
 uWSGI = { version = "^2.0.20", optional = true }
-boto3 =  "^1.20.5"
+boto3 =  "^1.21.27"
 django-ses = "^2.3.0"
 psycopg2-binary = "^2.9.2"
 zappa = "^0.54.1"
