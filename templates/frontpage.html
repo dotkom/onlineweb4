@@ -55,9 +55,6 @@
                     <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
                 </li>
                 <li class="top-menu-link">
-                    <a data-section="offline" href="{% url 'offline-link' %}">Offline</a>
-                </li>
-                <li class="top-menu-link">
                     <a data-section="business" href="{% url 'business-link' %}">For bedrifter</a>
                 </li>
                 <li class="top-menu-link">
@@ -78,40 +75,6 @@
     <section id="articles">
         <div class="container">
             <div id='article-items'></div>
-        </div>
-    </section>
-
-    <section id="offline">
-        <div class="container">
-            <div class="page-header clearfix">
-                <div class="row">
-                    <div class="col-md-8 col-xs-6">
-                        <h1 id="offline-heading">Offline</h1>
-                    </div>
-                    <div class="col-md-4 col-xs-6 archive-link">
-                        <a href="{% url 'offline' %}">Arkiv<i class="glyphicon glyphicon-chevron-right"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="ingress">
-{% filter markdown %}
-{% chunk "offline_ingress" %}
-{% endfilter %}
-                    </div>
-{% filter markdown %}
-{% chunk "offline_brodtekst" %}
-{% endfilter %}
-                </div>
-                <div class="col-md-6">
-                    <div id="offlineCarousel" class="carousel slide">
-                        <div class="carousel-inner"></div>
-                        <a class="carousel-control left" href="#offlineCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
-                        <a class="carousel-control right" href="#offlineCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -350,7 +313,7 @@
                     </ul>
                     <h3>Annonsering i Offline</h3>
                     <p>Offline er linjeforeningsmagasinet til Online. Det er skrevet og produsert av Onlines Profil- og aviskomité. Vi fokuserer på å skrive interessante og underholdende artikler som skal være noe våre skribenter kan trekke frem senere og være stolte av. Målgruppen for magasinet er primært egne studenter, men innholdet er ikke for internt og appellerer derfor også til ikke-informatikere.</p>
-                    <p>Magasinet er ment å være fullfinansiert gjennom annonser, prisene er kalkulert deretter. Vi ønsker at annonsene skal være av verdi for bedriften og har satt et tak på mengden annonser til cirka 15%. Dette gir for eksempel fire fulle sider på et 28-siders magasin. Opplaget vil variere med annonsesalget for den gitte utgivelsen, men vi sikter på å ha minimum 250 i opplag til en hver tid. Tidligere utgaver finnes på <a href="/offline">våre nettsider</a>.</p>
+                    <p>Magasinet er ment å være fullfinansiert gjennom annonser, prisene er kalkulert deretter. Vi ønsker at annonsene skal være av verdi for bedriften og har satt et tak på mengden annonser til cirka 15%. Dette gir for eksempel fire fulle sider på et 28-siders magasin. Opplaget vil variere med annonsesalget for den gitte utgivelsen, men vi sikter på å ha minimum 250 i opplag til en hver tid.</p>
                     <h3>Stillingsutlysning på web</h3>
                     <p><a href="/careeropportunity">Karrieremuligheter</a> er en egen side på vår nettside hvor bedrifter kan legge ut søknadsinformasjon til sommerjobb og fastjobb. Siden er ment å være en portal for våre studenter hvor de kan følge med på hvordan de kan søke på stillinger og eventuelle søknadsfrister. Utformingen av selve annonsen avtales i dialog med bedriftskomiteen. Man står fritt til å velge tekst og struktur så lenge det ser presentabelt ut.</p>
                     <p>Vi har delt opp annonsekategoriene i to deler: Fast jobb og sommerjobb/internship. Alle sommerjobbannonser er gratis for alle bedrifter, med en begrensning på 1. Ønsker man å annonsere flere forskjellige sommerjobber vil dette koste pr. ekstra annonse.</p>

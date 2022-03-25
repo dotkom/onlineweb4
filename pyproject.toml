@@ -16,7 +16,6 @@ python-memcached = "~1.59"
 stripe = "~2.67"
 icalendar = "~4.0"
 google-api-python-client = "~2.42"
-PyMuPDF = "~1.19"
 django-filebrowser = "~3.14"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
 django-crispy-forms = "^1.11"
@@ -50,6 +49,7 @@ pywebpush = "^1.11.0"
 
 # Monitoring
 sentry-sdk = { version = "~1.5", extras = [ "django" ] }
+
 # AWS
 boto3 =  { version = "~1.21", optional = true }
 django-ses = { version = "~3.0", optional = true }
@@ -57,6 +57,7 @@ zappa = { version = "~0.54", optional = true }
 django-storages = { version = "~1.12", optional = true }
 # psyco postgresql
 psycopg2-binary = { version = "~2.9", optional = true }
+
 
 [tool.poetry.dev-dependencies]
 # Testing
@@ -85,6 +86,7 @@ prod = [
     "django-storages",
 ]
 postgresql = ["psycopg2-binary"]
+
 
 [tool.tox]
 legacy_tox_ini = """

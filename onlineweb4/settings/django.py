@@ -208,7 +208,6 @@ INSTALLED_APPS = [
     "apps.hobbygroups",
     "apps.events",
     "apps.marks",
-    "apps.offline",
     "apps.feedback",
     "apps.profiles",
     "apps.resourcecenter",
