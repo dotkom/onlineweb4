@@ -2,7 +2,6 @@
 
 from django.db import migrations
 
-
 from apps.payment import status
 
 """

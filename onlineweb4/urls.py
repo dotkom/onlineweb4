@@ -6,8 +6,6 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django_js_reverse.views import urls_js
 
-from apps.api.urls import urlpatterns as api_urls
-
 # URL config
 admin.autodiscover()
 
@@ -254,11 +252,9 @@ if "redwine" in settings.INSTALLED_APPS:
 if "rest_framework" in settings.INSTALLED_APPS:
     from apps.api.utils import SharedAPIRootRouter
 
-    # API
-    def api_urls():
-        return SharedAPIRootRouter.shared_router.urls
-
-    urlpatterns += [re_path(r"^api/v1/", include(api_urls()))]
+    urlpatterns += [
+        re_path(r"^api/v1/", include(SharedAPIRootRouter.shared_router.urls))
+    ]
 
 if "oidc_provider" in settings.INSTALLED_APPS:
     urlpatterns += [

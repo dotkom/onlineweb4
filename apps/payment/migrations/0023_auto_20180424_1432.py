@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from datetime import timedelta
+
 from django.db import migrations
 from django.db.migrations import RunPython
 
