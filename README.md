@@ -74,7 +74,7 @@ to interact with the project dependencies:
 Uses the imge built automatically on change to dependencies, can be quite big, and has a very long wait-time.
 Not recommended if you want to actively develop with changing dependencies.
 
-You can built this iamge locally by adding `"docker-compose.build.yml"` to the end of the
+You can build this image locally by adding `"docker-compose.build.yml"` to the end of the
 `dockerComposeFile`-array in [`devcontainer.json`](/.devcontainer/devcontainer.json).
 Will be very slow if you frequently change dependencies.
 
@@ -188,7 +188,9 @@ Pull requests trigger containerized builds that perform code style checks and te
 You can view the details of these tests by clicking the "detail" link in the pull request checks status area.
 
 > **Important:** We have integration tests with Stripe that require valid test-API-keys, those tests are **not**
-> run by default locally, or when creating a PR from a fork of this repository.
+> run by default locally, or when creating a PR from a fork of this repository. To run them, first get ahold of
+> the appropriate testing keys, then add them to an `.devcontainer/.env` file, the name of the environment variables
+> are in [`.devcontainer/.ow4.env`](.devcontainer/.ow4.env).
 
 ## API
 
