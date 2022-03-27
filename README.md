@@ -13,7 +13,7 @@ Then you can run ```zappa update <stage> -d <docker-ecr-image>```. You'll have a
 
 ```bash
 VERSION=4.X.X
-zappa save-python-settings-file prod
+zappa save-python-settings-file Production
 
 docker build . -f docker/StaticBuild.Dockerfile -t dotkomonline/ow4-static
 docker build . -f docker/Zappa.Dockerfile -t onlineweb4-zappa:latest -t 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
