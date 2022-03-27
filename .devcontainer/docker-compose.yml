@@ -3,7 +3,7 @@ version: '3.8'
 services:
   app:
     # we do not include the build-definition here, since that prevents us from using the pre-built image.
-    image: ghcr.io/dotkom/onlineweb4-devcontainer
+    image: ghcr.io/dotkom/onlineweb4-devcontainer:latest
     volumes:
       - ..:/workspace:cached
     # Overrides default command so things don't shut down after the process ends.
@@ -11,8 +11,8 @@ services:
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
     network_mode: service:db
     env_file:
-      - .ow4.env
-      - .env
+      - devcontainer.env
+    # vscode also automatically adds .env from root
     # Uncomment the next line to use a non-root user for all processes.
     # user: vscode
 

@@ -9,20 +9,20 @@
 
 	// Set *default* container specific settings.json values on container create.
 	"settings": { 
-		"python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+		"python.defaultInterpreterPath": "/usr/local/py-utils/bin/python",
 		"python.linting.enabled": true,
 		"python.linting.pylintEnabled": true,
 		"python.testing.cwd": "/workspace",
-		"python.formatting.autopep8Path": "${containerWorkspaceFolder}/.venv/bin/autopep8",
-		"python.formatting.blackPath": "${containerWorkspaceFolder}/.venv/bin/black",
-		"python.formatting.yapfPath": "${containerWorkspaceFolder}/.venv/bin/yapf",
-		"python.linting.banditPath": "${containerWorkspaceFolder}/.venv/bin/bandit",
-		"python.linting.flake8Path": "${containerWorkspaceFolder}/.venv/bin/flake8",
-		"python.linting.mypyPath": "${containerWorkspaceFolder}/.venv/bin/mypy",
-		"python.linting.pycodestylePath": "${containerWorkspaceFolder}/.venv/bin/pycodestyle",
-		"python.linting.pydocstylePath": "${containerWorkspaceFolder}/.venv/bin/pydocstyle",
-		"python.linting.pylintPath": "${containerWorkspaceFolder}/.venv/bin/pylint",
-		"python.testing.pytestPath": "${containerWorkspaceFolder}/.venv/bin/pytest"
+		"python.formatting.autopep8Path": "/usr/local/py-utils/bin/bin/autopep8",
+		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+		"python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+		"python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+		"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+		"python.testing.pytestPath": "/usr/local/py-utils/bin/pytest"
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
@@ -40,7 +40,7 @@
 	],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "poetry run pre-commit install",
+	"postCreateCommand": "pre-commit install",
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode"

@@ -7,23 +7,22 @@ LABEL org.opencontainers.image.source=https://github.com/dotkom/onlineweb4
 LABEL org.opencontainers.image.authors=dotkom
 
 WORKDIR /workspace
-ENV PYTHONUNBUFFERED=1 POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV PYTHONUNBUFFERED=1 POETRY_VIRTUALENVS_CREATE=false
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
-RUN pip install poetry==1.1
-
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-     && apt-get -y install --no-install-recommends \
+RUN pipx install poetry==1.1.13 \
+    && apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
         libjpeg-dev \
         git
 
 FROM base AS with-dependencies
 
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-interaction --no-root --no-ansi && rm poetry.lock pyproject.toml
+RUN poetry install --no-interaction --no-root --no-ansi
 
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --non-interactive && rm package.json yarn.lock
+RUN yarn install --frozen-lockfile --non-interactive

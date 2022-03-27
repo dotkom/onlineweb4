@@ -24,7 +24,8 @@ ENV APP_DIR=/srv/app POETRY_VIRTUALENVS_CREATE=false
 
 WORKDIR $APP_DIR
 
-RUN pip install poetry
+RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.1.13 python3 - \
+    && export PATH="/root/.local/bin:$PATH"
 
 COPY pyproject.toml poetry.lock $APP_DIR
 

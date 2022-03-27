@@ -41,8 +41,8 @@ jobs:
       env:
         POETRY_VIRTUALENVS_CREATE: false
       run: |
-        pip install poetry
-        poetry export -f requirements.txt > requirements.txt --dev -E docs --without-hashes
+        pipx install poetry==1.1.13
+        poetry install
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
