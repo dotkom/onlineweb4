@@ -36,7 +36,7 @@ jobs:
       with:
         python-version: 3.9
 
-    - name: Add Requirements.txt
+    - name: Install dependencies
       if: matrix.language == 'python'
       env:
         POETRY_VIRTUALENVS_CREATE: false
