@@ -1793,7 +1793,7 @@ prod = ["psycopg2-binary"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "f594d0989da022620e38844db8d17f7240aa03d90ce750f8e919d38a76efbfbc"
+content-hash = "d7adedafd935e244a70f96c56116b04b3fd42c31e0e6f82ca3659984ce287a1a"
 
 [metadata.files]
 argcomplete = [
