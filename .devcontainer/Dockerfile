@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.source=https://github.com/dotkom/onlineweb4
 LABEL org.opencontainers.image.authors=dotkom
 
 WORKDIR /workspace
-ENV PYTHONUNBUFFERED=1 POETRY_VIRTUALENVS_CREATE=false
+ENV PYTHONUNBUFFERED=1 POETRY_VIRTUALENVS_IN_PROJECT=true
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
