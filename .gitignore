@@ -34,7 +34,7 @@ _tmp
 *.vagrant
 uploaded_media/*
 build/*
-node_modules/*
+node_modules
 .tox
 coverage
 coverage.xml
@@ -51,4 +51,4 @@ oidc.key
 zappa_settings.py
 requirements.txt
 .env
-.devcontainer/.env
+.venv

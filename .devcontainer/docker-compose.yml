@@ -3,16 +3,22 @@ version: '3.8'
 services:
   app:
     # we do not include the build-definition here, since that prevents us from using the pre-built image.
-    image: ghcr.io/dotkom/onlineweb4-devcontainer
+    image: ghcr.io/dotkom/onlineweb4-devcontainer:latest
     volumes:
       - ..:/workspace:cached
+      # hack?: https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      # this is to be able to use `.venv` _inside_ the container and ignoring the .venv outside,
+      # basically a facny dockerignore
+      - python-venv:/workspace/.venv/
+      # same as above, ignore outside node_modules
+      - node-modules:/workspace/node_modules/
     # Overrides default command so things don't shut down after the process ends.
     command: sleep infinity
     # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
     network_mode: service:db
     env_file:
-      - .ow4.env
-      - .env
+      - devcontainer.env
+    # vscode also automatically adds .env from root
     # Uncomment the next line to use a non-root user for all processes.
     # user: vscode
 
@@ -33,3 +39,5 @@ services:
 
 volumes:
   postgres-data: null
+  node-modules: null
+  python-venv: null
