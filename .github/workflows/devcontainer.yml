@@ -1,0 +1,42 @@
+name: Generate Dev Container Image
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.devcontainer/**/*'
+      - 'pyproject.toml'
+      - 'poetry.lock'
+      - 'yarn.lock'
+      - 'package.json'
+permissions:
+  contents: read
+  packages: write
+jobs:
+  devcontainer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          set -e
+          SETTINGS=.devcontainer/devcontainer.json
+          # prune comments, add build-definition to config since we are building
+          cat $SETTINGS | sed 's/\/\/.*//' | jq '.dockerComposeFile += ["docker-compose.build.yml"]' > $SETTINGS
+          
+          FOLDER_WITH_DOT_DEVCONTAINER="."
+          IMAGE_NAME="onlineweb4-devcontainer"
+          IMAGE_REPOSITORY="$(echo "ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')"
+
+          # [Optional] Enable buildkit, set output to plain text for logging
+          export DOCKER_BUILDKIT=1
+          export BUILDKIT_PROGRESS=plain
+
+          # Do the build - update
+          npm install -g "@vscode/dev-container-cli"
+          devcontainer build --no-cache --image-name "${IMAGE_REPOSITORY}" "${FOLDER_WITH_DOT_DEVCONTAINER}"
+
+          # Push image to GitHub Container Registry
+          echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker push "${IMAGE_REPOSITORY}"
