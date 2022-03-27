@@ -35,7 +35,7 @@ jobs:
 
           # Do the build - update
           npm install -g "@vscode/dev-container-cli"
-          devcontainer build --no-cache --image-name "${IMAGE_REPOSITORY}" "${FOLDER_WITH_DOT_DEVCONTAINER}"
+          devcontainer build --image-name "${IMAGE_REPOSITORY}" "${FOLDER_WITH_DOT_DEVCONTAINER}"
 
           # Push image to GitHub Container Registry
           echo "${{ github.token }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
