@@ -74,9 +74,8 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "ECR_REGISTRY=${ECR_REGISTRY}" >> $GITHUB_ENV
-          docker build . -f docker/StaticBuild.Dockerfile -t dotkomonline/ow4-static
-          docker build . -f docker/Zappa.Dockerfile \
-                         -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+          docker build . --target=static-files -t ow4-static
+          docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
                          -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.version }}
 
       - name: Push
@@ -91,7 +90,7 @@ jobs:
       - name: Sync static files
         run: |
           # kinda a cheat to copy files out of the docker image
-          ID=$(docker create dotkomonline/ow4-static)
+          ID=$(docker create ow4-static)
           docker cp $ID:/srv/app/static static
           BUCKET_NAME=$( yq ".${ENVIRONMENT}.environment_variables.OW4_S3_BUCKET_NAME" zappa_settings.yml )
           aws s3 sync static "s3://${BUCKET_NAME}/static" --delete --acl=public-read
