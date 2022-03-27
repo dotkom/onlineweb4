@@ -1,30 +1,30 @@
 name: Generate Dev Container Image
 on:
-  schedule:
-    - cron: '0 0 1 * *'
-  push:
-    branches:
-      - 'main'
-    paths:
-      - '.devcontainer/**/*'
-      - 'pyproject.toml'
-      - 'poetry.lock'
-      - 'yarn.lock'
-      - 'package.json'
+  workflow_call:
+    inputs:
+      settings-file:
+        required: true
+        type: string
+
 permissions:
   contents: read
   packages: write
+
 jobs:
   devcontainer:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: |
-          set -e
+      - name: Update settings
+        run: |
           SETTINGS=.devcontainer/devcontainer.json
+          TEMP_FILE=/tmp/.devcontainer.json
           # prune comments, add build-definition to config since we are building
-          cat $SETTINGS | sed 's/\/\/.*//' | jq '.dockerComposeFile += ["docker-compose.build.yml"]' > $SETTINGS
-          
+          cat $SETTINGS | sed 's/\/\/.*//' | jq '.dockerComposeFile += ["${{ inputs.settings-file }}"]' > $TEMP_FILE
+          cp $TEMP_FILE $SETTINGS
+      - name: Build and push
+        run: |
+          set -e
           FOLDER_WITH_DOT_DEVCONTAINER="."
           IMAGE_NAME="onlineweb4-devcontainer"
           IMAGE_REPOSITORY="$(echo "ghcr.io/${{ github.repository_owner }}/${IMAGE_NAME}" | tr '[:upper:]' '[:lower:]')"

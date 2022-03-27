@@ -64,6 +64,29 @@ and should work automatically upon opening this repo locally in VS Code with the
 Note: the setup has a focus on the Djangp-backend, the frontend is likely to require more manual intervention,
 if you need help feel free to reach out to someone in Dotkom for help!
 
+### Devcontainer variants
+
+We have two ways to run the development environment, with the one suiting you depending on how you want
+to interact with the project dependencies:
+
+#### Pre-built image with included dependencies (default)
+
+Uses the imge built automatically on change to dependencies, can be quite big, and has a very long wait-time.
+Not recommended if you want to actively develop with changing dependencies.
+
+You can built this iamge locally by adding `"docker-compose.build.yml"` to the end of the
+`dockerComposeFile`-array in [`devcontainer.json`](/.devcontainer/devcontainer.json).
+Will be very slow if you frequently change dependencies.
+
+#### Pre-built image without included dependencies
+
+Useful if your development often involves changing dependencies in `poetry`, but requires that you manually run
+`yarn install` and `poetry install`.
+You can use this method by adding `"docker-compose.no-deps.yml"` to the end of the
+`dockerComposeFile`-array in [`devcontainer.json`](/.devcontainer/devcontainer.json).
+
+You can also build the image locally instead of using our pre-built version by using `docker-compose.no-deps-build.yml` instead.
+
 ### Local installation
 
 The performance of the containers might be a little lackluster on macOS, in which case you can
@@ -79,7 +102,10 @@ The following commands _should_ make `py.test` work out of the box, if they do n
 yarn install --frozen-lockfile
 yarn build:test
 
+# recommended for easier debugging
 # saves the virtual environment and all packages to `.venv`
+poetry config virtualenvs.in-project true
+
 # if you do not have Python 3.9 installed, or Python3.10, you can use e.g. pyenv to manage them.
 poetry install
 
