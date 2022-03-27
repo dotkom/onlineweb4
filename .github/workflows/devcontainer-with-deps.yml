@@ -1,0 +1,21 @@
+name: Generate Dev Container Image (with dependencies)
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.devcontainer/**/*'
+      - 'pyproject.toml'
+      - 'poetry.lock'
+      - 'yarn.lock'
+      - 'package.json'
+permissions:
+  contents: read
+  packages: write
+jobs:
+  build:
+    uses: ./.github/workflows/build-devcontainer.yml
+    with:
+      settings-file: docker-compose.build.yml
