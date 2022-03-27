@@ -1,0 +1,3 @@
+[virtualenvs]
+# makes it easier to debug
+in-project = true
