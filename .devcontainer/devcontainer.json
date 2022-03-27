@@ -1,36 +1,47 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.224.3/containers/python-3-postgres
+// Note that this file cannot have trailing commas, since it is modified as part of CI with jq
 {
-  "name": "OnlineWeb4",
-  "dockerComposeFile": [
-    "docker-compose.yml",
-    "docker-compose.build.yml"
-  ],
-  "service": "app",
-  "workspaceFolder": "/workspace",
-  "settings": {
-    "python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": true,
-    "python.testing.cwd": "/workspace",
-    "python.formatting.autopep8Path": "${containerWorkspaceFolder}/.venv/bin/autopep8",
-    "python.formatting.blackPath": "${containerWorkspaceFolder}/.venv/bin/black",
-    "python.formatting.yapfPath": "${containerWorkspaceFolder}/.venv/bin/yapf",
-    "python.linting.banditPath": "${containerWorkspaceFolder}/.venv/bin/bandit",
-    "python.linting.flake8Path": "${containerWorkspaceFolder}/.venv/bin/flake8",
-    "python.linting.mypyPath": "${containerWorkspaceFolder}/.venv/bin/mypy",
-    "python.linting.pycodestylePath": "${containerWorkspaceFolder}/.venv/bin/pycodestyle",
-    "python.linting.pydocstylePath": "${containerWorkspaceFolder}/.venv/bin/pydocstyle",
-    "python.linting.pylintPath": "${containerWorkspaceFolder}/.venv/bin/pylint",
-    "python.testing.pytestPath": "${containerWorkspaceFolder}/.venv/bin/pytest"
-  },
-  "extensions": [
-    "ms-python.python",
-    "ms-python.vscode-pylance",
-    "bungcip.better-toml"
-  ],
-  "forwardPorts": [
-    8000,
-    3000
-  ],
-  "postCreateCommand": "poetry run pre-commit install",
-  "remoteUser": "vscode"
+	"name": "OnlineWeb4",
+	"dockerComposeFile": ["docker-compose.yml"],
+	"service": "app",
+	"workspaceFolder": "/workspace",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": { 
+		"python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+		"python.linting.enabled": true,
+		"python.linting.pylintEnabled": true,
+		"python.testing.cwd": "/workspace",
+		"python.formatting.autopep8Path": "${containerWorkspaceFolder}/.venv/bin/autopep8",
+		"python.formatting.blackPath": "${containerWorkspaceFolder}/.venv/bin/black",
+		"python.formatting.yapfPath": "${containerWorkspaceFolder}/.venv/bin/yapf",
+		"python.linting.banditPath": "${containerWorkspaceFolder}/.venv/bin/bandit",
+		"python.linting.flake8Path": "${containerWorkspaceFolder}/.venv/bin/flake8",
+		"python.linting.mypyPath": "${containerWorkspaceFolder}/.venv/bin/mypy",
+		"python.linting.pycodestylePath": "${containerWorkspaceFolder}/.venv/bin/pycodestyle",
+		"python.linting.pydocstylePath": "${containerWorkspaceFolder}/.venv/bin/pydocstyle",
+		"python.linting.pylintPath": "${containerWorkspaceFolder}/.venv/bin/pylint",
+		"python.testing.pytestPath": "${containerWorkspaceFolder}/.venv/bin/pytest"
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-python.python",
+		"ms-python.vscode-pylance",
+		"bungcip.better-toml"
+	],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// This can be used to network with other containers or the host.
+	"forwardPorts": [
+		8000, // Django
+		3000 // webpack-dev-server
+	],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "poetry run pre-commit install",
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
 }
