@@ -71,6 +71,7 @@ pytest-django = "~4.5"
 pytest-xdist = "~2.5"
 freezegun = "~1.2"
 tox = "~3.24"
+coverage = { version = "~6.3", extras = [ "toml" ] }
 
 # Linting
 flake8 = "~4.0"
@@ -136,6 +137,14 @@ filterwarnings = [
     # we should probably care about OpenAPI-warnings, but they are extremely noisy
     "ignore:You have a duplicated operationId in your OpenAPI schema:UserWarning",
     "ignore:<class '.*'> is not compatible with schema generation:UserWarning",
+]
+
+[tool.coverage.report]
+omit = [
+    "apps/*/migrations/*",
+    "apps/*/tests/*",
+    "apps/*/test_*.py",
+    "onlineweb4/settings/*",
 ]
 
 [build-system]

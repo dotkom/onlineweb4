@@ -8,9 +8,6 @@ on:
     branches:
       - '*'
 
-env:
-  POETRY_VIRTUALENVS_CREATE: false
-
 jobs:
   test-python:
     runs-on: ubuntu-latest
@@ -68,17 +65,15 @@ jobs:
 
       - name: Python tests
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
           OW4_DJANGO_STRIPE_PUBLIC_KEY_ARRKOM: ${{ secrets.STRIPE_PUBLIC_KEY_ARRKOM }}
           OW4_DJANGO_STRIPE_PUBLIC_KEY_PROKOM: ${{ secrets.STRIPE_PUBLIC_KEY_PROKOM }}
           OW4_DJANGO_STRIPE_PUBLIC_KEY_TRIKOM: ${{ secrets.STRIPE_PUBLIC_KEY_TRIKOM }}
           OW4_DJANGO_STRIPE_PRIVATE_KEY_ARRKOM: ${{ secrets.STRIPE_PRIVATE_KEY_ARRKOM }}
           OW4_DJANGO_STRIPE_PRIVATE_KEY_PROKOM: ${{ secrets.STRIPE_PRIVATE_KEY_PROKOM }}
           OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM: ${{ secrets.STRIPE_PRIVATE_KEY_TRIKOM }}
-        run: |
-          tox -e tests --recreate
-          pip install codecov --quiet
-          codecov
+        run: poetry run tox -e tests --recreate
+      # upload test coverage to codecov
+      - uses: codecov/codecov-action@v2
 
   lint-python:
     runs-on: ubuntu-latest
@@ -95,7 +90,7 @@ jobs:
         if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Cache python packages
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pypoetry
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
@@ -116,7 +111,7 @@ jobs:
           poetry install --no-interaction --no-ansi
 
       - name: Python linting
-        run: tox -e flake8 -e isort -e black --recreate
+        run: poetry run tox -e flake8 -e isort -e black --recreate
 
   check-migrations:
     runs-on: ubuntu-latest
@@ -154,7 +149,7 @@ jobs:
           poetry install --no-interaction --no-ansi
 
       - name: Check migrations
-        run: python manage.py makemigrations --check
+        run: poetry run python manage.py makemigrations --check
 
   lint-js:
     runs-on: ubuntu-latest

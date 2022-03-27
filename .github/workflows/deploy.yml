@@ -19,7 +19,6 @@ on:
         required: true
 
 env:
-  POETRY_VIRTUALENVS_CREATE: false
   ECR_REPOSITORY: onlineweb4-zappa
 
 jobs:
@@ -65,7 +64,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Generate Zappa settings
-        run: zappa save-python-settings-file $ENVIRONMENT
+        run: poetry run zappa save-python-settings-file $ENVIRONMENT
 
       - name: Build Image
         id: build
@@ -85,7 +84,7 @@ jobs:
       - name: Deploy
         env:
           IMAGE_TAG: ${{ github.sha }}
-        run: zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.version }}
+        run: poetry run zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.version }}
 
       - name: Sync static files
         run: |
@@ -96,5 +95,5 @@ jobs:
           aws s3 sync static "s3://${BUCKET_NAME}/static" --delete --acl=public-read
 
       - name: Migrate
-        run: zappa manage $ENVIRONMENT migrate
+        run: poetry run zappa manage $ENVIRONMENT migrate
 
