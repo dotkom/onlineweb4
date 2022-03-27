@@ -2,7 +2,7 @@
 
 from django.db import migrations
 
-from apps.authentication.constants import GroupType, RoleType
+from apps.authentication.constants import GroupType
 
 
 def load_data(apps, schema_editor):
