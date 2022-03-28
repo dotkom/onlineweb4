@@ -72,5 +72,6 @@ RUN ZAPPA_HANDLER_PATH=$(python -c "from zappa import handler; print (handler.__
     && cp $ZAPPA_HANDLER_PATH $FUNCTION_DIR
 
 COPY --from=static-files /srv/app/webpack-stats.json ./
-
+ARG VERSION
+ENV OW4_VERSION=${VERSION}
 CMD [ "handler.lambda_handler" ]
