@@ -4,7 +4,14 @@ import logging
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from googleapiclient.errors import HttpError
-from zappa.asynchronous import task
+
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
+
 
 from apps.gsuite.mail_syncer.utils import insert_email_into_g_suite_group
 

@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from zappa.asynchronous import task
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
+
 
 from apps.gallery.util import create_responsive_image_from_file
 

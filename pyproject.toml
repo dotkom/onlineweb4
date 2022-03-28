@@ -44,24 +44,19 @@ requests = { version = "~2.27", extras = [ "security" ] }
 # Wiki
 wiki = "^0.8.0"
 
-# non-pip
-# imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
-# libjpeg-dev					# From package repository.
-
-# Monitoring
-sentry-sdk = { version = "~1.5", extras = [ "django" ] }
-
 django-js-reverse = "~0.9"
-
-
 pyyaml = "^6.0"
 pywebpush = "^1.11.0"
-uWSGI = { version = "^2.0.20", optional = true }
-boto3 =  "^1.21.27"
-django-ses = "^2.3.0"
-psycopg2-binary = "^2.9.2"
-zappa = "^0.54.1"
-django-storages = "^1.12.3"
+
+# Monitoring
+sentry-sdk = { version = "~1.5", extras = [ "django" ], optional = true }
+# AWS
+boto3 =  { version = "~1.21", optional = true }
+django-ses = { version = "~2.3", optional = true }
+zappa = { version = "~0.54", optional = true }
+django-storages = { version = "~1.12", optional = true }
+# psyco postgresql
+psycopg2-binary = { version = "~2.9", optional = true }
 
 [tool.poetry.dev-dependencies]
 # Testing
@@ -81,7 +76,16 @@ black = "~22.1"
 pre-commit = "~2.17"
 
 [tool.poetry.extras]
-prod = ["psycopg2-binary"]
+# only required for running in production on AWS
+prod = [
+    "psycopg2-binary",
+    "boto3",
+    "django-ses",
+    "zappa",
+    "django-storages",
+    "sentry",
+]
+postgresql = ["psycopg2-binary"]
 
 [tool.tox]
 legacy_tox_ini = """
