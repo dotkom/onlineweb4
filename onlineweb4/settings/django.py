@@ -79,21 +79,21 @@ S3_MEDIA_STORAGE_ENABLED = False
 # Define where media (uploaded) files are stored
 MEDIA_ROOT = config(
     "OW4_DJANGO_MEDIA_ROOT",
-    default=os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media"),
+    default=PROJECT_ROOT_DIRECTORY / "uploaded_media",
 )
 MEDIA_URL = "/media/"
 
 # Define where static files are stored
 STATIC_ROOT = config(
-    "OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, "static")
+    "OW4_DJANGO_STATIC_ROOT", default=PROJECT_ROOT_DIRECTORY / "static"
 )
 STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT_DIRECTORY, "files/static"),
-    os.path.join(PROJECT_ROOT_DIRECTORY, "assets"),
-    os.path.join(PROJECT_ROOT_DIRECTORY, "bundles"),
+    PROJECT_ROOT_DIRECTORY / "files/static",
+    PROJECT_ROOT_DIRECTORY / "assets",
+    PROJECT_ROOT_DIRECTORY / "bundles",
 )
 
 STATICFILES_FINDERS = (
