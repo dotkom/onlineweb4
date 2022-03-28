@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
-  pull_request_target:
-    branches:
-      - '*'
+  pull_request:
 
+env:
+  POETRY_VERSION: "1.1.13"
+  NODE_VERSION: "16"
+  PYTHON_VERSION: "3.9"
 
 jobs:
   test-python:
@@ -21,23 +23,9 @@ jobs:
     #      POSTGRES_DB: onlineweb4
     #      POSTGRES_PASSWORD: postgres
 
-    # Run if the repo is not a fork, or if it is a fork with the label 'safe to test', or if it is dependabot
-    if: |
-        github.event.pull_request.head.repo.full_name == github.repository
-        || contains(github.event.pull_request.labels.*.name, 'safe to test')
-        || github.actor == 'dependabot[bot]'
-        || github.ref == 'refs/heads/main'
     steps:
-      - name: checkout-if-pr
+      - name: Checkout
         uses: actions/checkout@v3
-        if: ${{ github.event_name == 'pull_request_target' }}
-        with:
-          # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: checkout-if-push
-        uses: actions/checkout@v3
-        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Cache python packages
         uses: actions/cache@v3
@@ -46,26 +34,22 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             ${{ runner.os }}-poetry-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules/
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
-      - name: Set up Python 3.9
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Copy settings file
-        run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+      - name: Install Poetry
+        run: pipx install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
-        run: |
-          pipx install poetry==1.1.13
-          poetry install --no-interaction --no-ansi
+        run: poetry install --no-interaction --no-ansi
 
       - name: Install node dependencies
         run: yarn install --pure-lockfile
@@ -84,22 +68,14 @@ jobs:
           # TODO: see service todo
           # DATABASE_URL: postgres://postgres:postgres@db:5432/onlineweb4
         run: poetry run tox -e tests
-      # upload test coverage to codecov
+
       - uses: codecov/codecov-action@v2
 
   lint-python:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout-if-pr
+      - name: Checkout
         uses: actions/checkout@v3
-        if: ${{ github.event_name == 'pull_request_target' }}
-        with:
-          # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: checkout-if-push
-        uses: actions/checkout@v3
-        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Cache python packages
         uses: actions/cache@v3
@@ -109,18 +85,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Set up Python 3.9
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Copy settings file
-        run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+      - name: Install Poetry
+        run: pipx install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
-        run: |
-          pipx install poetry==1.1.13
-          poetry install --no-interaction --no-ansi
+        run: poetry install --no-interaction --no-ansi
 
       - name: Python linting
         run: poetry run tox -e flake8 -e isort -e black
@@ -128,16 +102,8 @@ jobs:
   check-migrations:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout-if-pr
+      - name: Checkout
         uses: actions/checkout@v3
-        if: ${{ github.event_name == 'pull_request_target' }}
-        with:
-          # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - name: checkout-if-push
-        uses: actions/checkout@v3
-        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
 
       - name: Cache python packages
         uses: actions/cache@v3
@@ -147,18 +113,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Set up Python 3.9
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Copy settings file
-        run: cp onlineweb4/settings/example-local.py onlineweb4/settings/local.py
+      - name: Install Poetry
+        run: pipx install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
-        run: |
-          pipx install poetry==1.1.13
-          poetry install --no-interaction --no-ansi
+        run: poetry install --no-interaction --no-ansi
 
       - name: Check migrations
         run: poetry run python manage.py makemigrations --check
@@ -166,24 +130,13 @@ jobs:
   lint-js:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout-if-pr
+      - name: Checkout
         uses: actions/checkout@v3
-        if: ${{ github.event_name == 'pull_request_target' }}
-        with:
-          # when using pull_requst, by default the code that is checked-out is actually the base of the PR, not the code of it.
-          ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: checkout-if-push
-        uses: actions/checkout@v3
-        if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' }}
-
-      - name: Cache node modules
-        uses: actions/cache@v3
+      - uses: actions/setup-node@v2
         with:
-          path: node_modules/
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
 
       - name: Install node dependencies
         run: yarn install --pure-lockfile
