@@ -12,8 +12,7 @@ COPY package.json yarn.lock $APP_DIR
 RUN yarn install --frozen-lockfile
 
 COPY assets ./assets
-COPY .babelrc \ 
-    *.config.js \
+COPY *.config.js \
     webpack.*.js ./
 
 RUN npm run build:prod
