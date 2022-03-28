@@ -105,5 +105,56 @@
       "node_modules/enzyme/"
     ]
   },
-  "homepage": "https://online.ntnu.no/"
+  "homepage": "https://online.ntnu.no/",
+  "eslintConfig": {
+    "extends": "airbnb",
+    "env": {
+      "browser": true,
+      "jest": true
+    },
+    "rules": {
+      "react/jsx-filename-extension": [
+        1,
+        {
+          "extensions": [
+            ".js",
+            ".jsx"
+          ]
+        }
+      ],
+      "import/no-extraneous-dependencies": 0,
+      "import/extensions": 0
+    },
+    "settings": {
+      "import/resolver": {
+        "webpack": {
+          "config": "webpack.config.js"
+        }
+      }
+    }
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "selector-list-comma-newline-after": "always-multi-line"
+    }
+  },
+  "babel": {
+    "presets" : [
+      ["env", {
+        "modules": false
+      }],
+      "react"
+    ],
+    "plugins": [
+      "react-hot-loader/babel",
+      "transform-runtime",
+      "transform-object-rest-spread"
+    ],
+    "env": {
+      "test": {
+        "plugins": ["transform-es2015-modules-commonjs"]
+      }
+    }
+  }
 }
