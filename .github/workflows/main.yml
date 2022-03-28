@@ -8,9 +8,19 @@ on:
     branches:
       - '*'
 
+
 jobs:
   test-python:
     runs-on: ubuntu-latest
+    # TODO: fix postgresql tests, oidc_provider fails
+    # services:
+    #  db:
+    #    image: postgres:latest
+    #    environment:
+    #      POSTGRES_USER: postgres
+    #      POSTGRES_DB: onlineweb4
+    #      POSTGRES_PASSWORD: postgres
+
     # Run if the repo is not a fork, or if it is a fork with the label 'safe to test', or if it is dependabot
     if: |
         github.event.pull_request.head.repo.full_name == github.repository
@@ -71,7 +81,9 @@ jobs:
           OW4_DJANGO_STRIPE_PRIVATE_KEY_ARRKOM: ${{ secrets.STRIPE_PRIVATE_KEY_ARRKOM }}
           OW4_DJANGO_STRIPE_PRIVATE_KEY_PROKOM: ${{ secrets.STRIPE_PRIVATE_KEY_PROKOM }}
           OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM: ${{ secrets.STRIPE_PRIVATE_KEY_TRIKOM }}
-        run: poetry run tox -e tests --recreate
+          # TODO: see service todo
+          # DATABASE_URL: postgres://postgres:postgres@db:5432/onlineweb4
+        run: poetry run tox -e tests
       # upload test coverage to codecov
       - uses: codecov/codecov-action@v2
 
@@ -111,7 +123,7 @@ jobs:
           poetry install --no-interaction --no-ansi
 
       - name: Python linting
-        run: poetry run tox -e flake8 -e isort -e black --recreate
+        run: poetry run tox -e flake8 -e isort -e black
 
   check-migrations:
     runs-on: ubuntu-latest
