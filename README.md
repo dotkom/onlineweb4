@@ -143,6 +143,10 @@ pre-commit run --all-files
 To run the tests you can call
 
 ```shell
+# first run either this or build:prod
+# most tests using Django templates require the `webpack-stats*.json` to exists
+npm run build:test
+
 py.test
 ```
 
@@ -154,6 +158,14 @@ up with `pre-commit`:
 ```shell
 npm run lint
 npm run test
+```
+
+#### Code Test Coverage
+
+
+```shell
+# you can then open the report in a browser, or instead generate XML-report and use any tool to view it.
+py.test --cov= --cov-report html
 ```
 
 #### Editor integration
