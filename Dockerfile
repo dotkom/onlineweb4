@@ -52,12 +52,16 @@ COPY pyproject.toml poetry.lock $FUNCTION_DIR
 RUN yum install -y git unzip \
     && curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.1.13 python3 - \
     && export PATH="/root/.local/bin:$PATH" \
-    && curl --silent https://releases.hashicorp.com/vault-lambda-extension/0.6.0/vault-lambda-extension_0.6.0_linux_amd64.zip \
-        --output vault-lambda-extension.zip \
+    # silent, show errors and location (aka follow redirect)
+    && curl -sSL --output vault-lambda-extension.zip \
+        https://releases.hashicorp.com/vault-lambda-extension/0.6.0/vault-lambda-extension_0.6.0_linux_amd64.zip \
     && unzip vault-lambda-extension.zip -d /opt \
-    && yum clean all && rm -rf /var/cache/yum \
     && poetry install --no-root --no-dev \
-    && poetry cache clear . --all -n
+    && poetry cache clear . --all -n \
+    && yum remove -y git unzip \
+    && yum clean all \
+    && rm vault-lambda-extension.zip \
+    && rm -rf /var/cache/yum
 
 COPY ./ $FUNCTION_DIR
 
