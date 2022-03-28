@@ -17,10 +17,10 @@ permissions:
   packages: write
 
 jobs:
-  permissions:
-    contents: read
-    packages: write
   build:
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/build-devcontainer.yml
     with:
       settings-file: docker-compose.build.yml

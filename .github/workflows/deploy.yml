@@ -6,9 +6,6 @@ on:
       environment:
         required: true
         type: string
-      version:
-        required: true
-        type: string
       url:
         required: true
         type: string
@@ -66,25 +63,35 @@ jobs:
       - name: Generate Zappa settings
         run: poetry run zappa save-python-settings-file $ENVIRONMENT
 
-      - name: Build Image
-        id: build
-        env:
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          echo "ECR_REGISTRY=${ECR_REGISTRY}" >> $GITHUB_ENV
-          docker build . --target=static-files -t ow4-static
-          docker build . -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-                         -t $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.version }}
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
+          tags: |
+            type=sha
+            type=semver,pattern={{version}}
 
-      - name: Push
-        # specifically does not include tag to push all tags
-        run: docker push $ECR_REGISTRY/$ECR_REPOSITORY
+      - name: Build static
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          target: static-files
+          tags: ow4-static
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Deploy
         env:
           IMAGE_TAG: ${{ github.sha }}
-        run: poetry run zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:${{ inputs.version }}
+        run: poetry run zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.meta.outputs.version) }}
 
       - name: Sync static files
         run: |
