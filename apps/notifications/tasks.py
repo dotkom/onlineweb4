@@ -5,7 +5,14 @@ from django.conf import settings
 from django.core.mail import send_mail
 from pywebpush import WebPushException, webpush
 from rest_framework import serializers
-from zappa.asynchronous import task
+
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
+
 
 from .constants import (
     NOTIFICATION_BADGE_URL,

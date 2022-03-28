@@ -56,7 +56,7 @@ RUN yum install -y git unzip \
     && curl -sSL --output vault-lambda-extension.zip \
         https://releases.hashicorp.com/vault-lambda-extension/0.6.0/vault-lambda-extension_0.6.0_linux_amd64.zip \
     && unzip vault-lambda-extension.zip -d /opt \
-    && poetry install --no-root --no-dev \
+    && poetry install --no-root --no-dev -E prod \
     && poetry cache clear . --all -n \
     && yum remove -y git unzip \
     && yum clean all \

@@ -1,7 +1,14 @@
 import logging
 
 from PIL import Image
-from zappa.asynchronous import task
+
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
+
 
 from apps.gallery.util import ResponsiveImageHandler
 

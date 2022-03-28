@@ -3,10 +3,16 @@ import logging
 
 from django.conf import settings
 from django.contrib.auth.models import Group
-from zappa.asynchronous import task
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
+
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
 
 
 class SynchronizeGroups:
