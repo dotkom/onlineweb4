@@ -20,18 +20,20 @@ RUN npm run build:prod
 
 FROM python:3.9 AS static-files
 
-ENV APP_DIR=/srv/app POETRY_VIRTUALENVS_CREATE=false
+ENV APP_DIR=/srv/app \
+    POETRY_VIRTUALENVS_CREATE=false \
+    # for poetry, see https://python-poetry.org/docs/master/#installing-with-the-official-installer
+    PATH="/root/.local/bin:${PATH}"
 
 WORKDIR $APP_DIR
 
-RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.1.13 python3 - \
-    && export PATH="/root/.local/bin:$PATH"
+RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.1.13 python3 -
 
 COPY pyproject.toml poetry.lock $APP_DIR
 
 ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
 
-RUN poetry install --no-interaction --no-ansi
+RUN poetry install --no-interaction --no-ansi --no-dev
 
 COPY . .
 
@@ -43,7 +45,8 @@ RUN ./manage.py collectstatic
 FROM amazon/aws-lambda-python:3.9
 
 LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
-ENV POETRY_VIRTUALENVS_CREATE=false
+ENV POETRY_VIRTUALENVS_CREATE=false \
+    PATH="/root/.local/bin:${PATH}"
 ARG FUNCTION_DIR="/var/task/"
 
 COPY pyproject.toml poetry.lock $FUNCTION_DIR
@@ -51,7 +54,6 @@ COPY pyproject.toml poetry.lock $FUNCTION_DIR
 # Setup Python environment
 RUN yum install -y git unzip \
     && curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.1.13 python3 - \
-    && export PATH="/root/.local/bin:$PATH" \
     # silent, show errors and location (aka follow redirect)
     && curl -sSL --output vault-lambda-extension.zip \
         https://releases.hashicorp.com/vault-lambda-extension/0.6.0/vault-lambda-extension_0.6.0_linux_amd64.zip \
