@@ -1,7 +1,7 @@
 # This is only intended to build the application for deployment on AWS Lambda with Zappa
 # it has limited usage locally
 
-FROM node:16-alpine AS js-static
+FROM node:17-alpine AS js-static
 
 ENV APP_DIR=/srv/app
 
