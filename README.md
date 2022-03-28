@@ -17,7 +17,7 @@ VERSION=4.X.X
 STAGE=Production
 zappa save-python-settings-file $STAGE
 
-docker build . -t onlineweb4-zappa:latest -t 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
+docker build . --build-arg VERSION=$VERSION -t onlineweb4-zappa:latest -t 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
 
 docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
 

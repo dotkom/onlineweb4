@@ -13,6 +13,7 @@ if OW4_SENTRY_DSN:
         dsn=OW4_SENTRY_DSN,
         environment=config("OW4_ENVIRONMENT", default="DEVELOP"),
         debug=DEBUG,
+        release=config("OW4_RELEASE"),
         traces_sample_rate=0.2,
         integrations=[DjangoIntegration(), AwsLambdaIntegration(timeout_warning=True)],
     )
