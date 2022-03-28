@@ -12,7 +12,6 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       environment: Canary
-      version: latest
       url: https://dev.online.ntnu.no
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

@@ -1,6 +1,6 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.224.3/containers/python-3-postgres
-// Note that this file cannot have trailing commas, since it is modified as part of CI with jq.
+// Note that this file cannot have trailing commas, since it is modified as part of CI with jq
 {
 	"name": "OnlineWeb4",
 	"dockerComposeFile": ["docker-compose.yml"],

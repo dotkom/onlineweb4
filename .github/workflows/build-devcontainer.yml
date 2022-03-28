@@ -26,7 +26,6 @@ jobs:
           cat $SETTINGS | sed 's/\/\/.*//' | jq '.dockerComposeFile += ["${{ inputs.settings-file }}"]' > $TEMP_FILE
           cp $TEMP_FILE $SETTINGS
       - name: Build and push
-
         run: |
           set -e
           FOLDER_WITH_DOT_DEVCONTAINER="."
