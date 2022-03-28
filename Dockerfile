@@ -18,7 +18,7 @@ COPY .babelrc \
 
 RUN npm run build:prod
 
-FROM python:3.9 AS static-files
+FROM python:3.10.4 AS static-files
 
 ENV APP_DIR=/srv/app POETRY_VIRTUALENVS_CREATE=false
 
