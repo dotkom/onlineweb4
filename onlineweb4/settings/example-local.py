@@ -50,12 +50,12 @@ EMAIL_BACKEND = config(
 
 MEDIA_ROOT = config(
     "OW4_DJANGO_MEDIA_ROOT",
-    default=os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media"),
+    default=PROJECT_ROOT_DIRECTORY / "uploaded_media",
 )
 MEDIA_URL = "/media/"
 
 STATIC_ROOT = config(
-    "OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, "static")
+    "OW4_DJANGO_STATIC_ROOT", default=PROJECT_ROOT_DIRECTORY / "static"
 )
 STATIC_URL = "/static/"
 

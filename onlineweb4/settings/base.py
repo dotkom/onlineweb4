@@ -1,14 +1,16 @@
 import os
 import sys
+import warnings
+from pathlib import Path
 
 from decouple import config
 
 from apps.sso.settings import OAUTH2_SCOPES
 
 # Directory that contains this file.
-PROJECT_SETTINGS_DIRECTORY = os.path.dirname(globals()["__file__"])
+PROJECT_SETTINGS_DIRECTORY = Path(globals()["__file__"]).parent
 # Root directory. Contains manage.py
-PROJECT_ROOT_DIRECTORY = os.path.dirname(os.path.dirname(PROJECT_SETTINGS_DIRECTORY))
+PROJECT_ROOT_DIRECTORY = PROJECT_SETTINGS_DIRECTORY.parent.parent
 
 sys.dont_write_bytecode = config(
     "OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, default=True
@@ -83,13 +85,30 @@ OAUTH2_PROVIDER = {
     "REFRESH_TOKEN_EXPIRE_SECONDS": 43200,
 }
 
+
+def get_stats_file() -> str:
+    if existing := os.getenv("OW4_WEBPACK_LOADER_STATS_FILE"):
+        return existing
+
+    for path in ["webpack-stats.json", "webpack-stats-test.json"]:
+        if (PROJECT_ROOT_DIRECTORY / path).is_file():
+            return path
+
+    warnings.warn(
+        """
+    Neither `webpack-stats.json` nor `webpack-stats-test.json` exists!
+    Tests using Django templates will fail, and static files will not load when running.
+    Please run `npm run build:test` or `npm run build:prod` to generate the files.
+    """
+    )
+
+    return "webpack-stats.json"
+
+
 WEBPACK_LOADER = {
     "DEFAULT": {
         "BUNDLE_DIR_NAME": "webpack/",  # end with slash
-        "STATS_FILE": os.path.join(
-            PROJECT_ROOT_DIRECTORY,
-            config("OW4_WEBPACK_LOADER_STATS_FILE", default="webpack-stats.json"),
-        ),
+        "STATS_FILE": PROJECT_ROOT_DIRECTORY / get_stats_file(),
     }
 }
 

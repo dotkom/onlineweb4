@@ -1,8 +1,6 @@
-import os
-
 from .base import PROJECT_ROOT_DIRECTORY
 
-LOG_DIR = os.path.join(PROJECT_ROOT_DIRECTORY, "log")
+LOG_DIR = PROJECT_ROOT_DIRECTORY / "log"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
