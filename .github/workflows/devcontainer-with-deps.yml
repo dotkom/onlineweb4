@@ -11,10 +11,15 @@ on:
       - 'poetry.lock'
       - 'yarn.lock'
       - 'package.json'
+
 permissions:
   contents: read
   packages: write
+
 jobs:
+  permissions:
+    contents: read
+    packages: write
   build:
     uses: ./.github/workflows/build-devcontainer.yml
     with:

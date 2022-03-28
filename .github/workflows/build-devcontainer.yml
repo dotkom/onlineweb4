@@ -6,9 +6,15 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   devcontainer:
+    permissions:
+      contents: read
+      packages: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,9 +26,7 @@ jobs:
           cat $SETTINGS | sed 's/\/\/.*//' | jq '.dockerComposeFile += ["${{ inputs.settings-file }}"]' > $TEMP_FILE
           cp $TEMP_FILE $SETTINGS
       - name: Build and push
-        permissions:
-          contents: read
-          packages: write
+
         run: |
           set -e
           FOLDER_WITH_DOT_DEVCONTAINER="."
