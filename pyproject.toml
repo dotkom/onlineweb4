@@ -100,7 +100,7 @@ whitelist_externals =
     black
 commands =
     isort: isort -c apps scripts utils onlineweb4
-    flake8: flake8 apps scripts utils
+    flake8: flake8 apps scripts utils onlineweb4
     black: black --check apps scripts utils onlineweb4
 
 [testenv:tests]
@@ -148,6 +148,6 @@ omit = [
 ]
 
 [build-system]
-requires = ["poetry>=1.0.0"]
+requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.masonry.api"
 
