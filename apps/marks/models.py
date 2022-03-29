@@ -9,7 +9,7 @@ from django.utils.translation import gettext as _
 
 User = settings.AUTH_USER_MODEL
 
-DURATION = 30
+DURATION = 20
 # summer starts 1st June, ends 15th August
 SUMMER = ((6, 1), (8, 15))
 # winter starts 1st December, ends 15th January
