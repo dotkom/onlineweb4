@@ -99,7 +99,7 @@ jobs:
       - name: Python linting
         run: poetry run tox -e flake8 -e isort -e black
 
-  check-migrations:
+  django-checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -126,6 +126,9 @@ jobs:
 
       - name: Check migrations
         run: poetry run python manage.py makemigrations --check
+
+      - name: Django check
+        run: poetry run python manage.py check
 
   lint-js:
     runs-on: ubuntu-latest

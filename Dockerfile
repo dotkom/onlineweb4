@@ -72,5 +72,6 @@ RUN ZAPPA_HANDLER_PATH=$(python -c "from zappa import handler; print (handler.__
 
 COPY --from=static-files /srv/app/webpack-stats.json ./
 ARG VERSION
-ENV OW4_VERSION=${VERSION}
+# https://docs.sentry.io/platforms/python/guides/logging/configuration/releases/#setting-a-release
+ENV SENTRY_VERSION=${VERSION}
 CMD [ "handler.lambda_handler" ]
