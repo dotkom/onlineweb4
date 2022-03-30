@@ -49,7 +49,7 @@ pyyaml = "^6.0"
 pywebpush = "^1.11.0"
 
 # Monitoring
-sentry-sdk = { version = "~1.5", extras = [ "django" ], optional = true }
+sentry-sdk = { version = "~1.5", extras = [ "django" ] }
 # AWS
 boto3 =  { version = "~1.21", optional = true }
 django-ses = { version = "~2.3", optional = true }
@@ -83,7 +83,6 @@ prod = [
     "django-ses",
     "zappa",
     "django-storages",
-    "sentry",
 ]
 postgresql = ["psycopg2-binary"]
 
