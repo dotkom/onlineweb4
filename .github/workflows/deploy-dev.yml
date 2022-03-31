@@ -1,17 +1,17 @@
-name: Deploy / Canary
+name: Deploy / dev
 
 on:
   push:
     branches:
       - main
 
-concurrency: deploy-canary
+concurrency: deploy-dev
 
 jobs:
   deploy:
     uses: ./.github/workflows/deploy.yml
     with:
-      environment: Canary
+      environment: dev
       url: https://dev.online.ntnu.no
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
