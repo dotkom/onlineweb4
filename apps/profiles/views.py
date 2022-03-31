@@ -32,7 +32,6 @@ from apps.authentication.models import Email, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, RegisterToken
 from apps.authentication.serializers import EmailReadOnlySerializer
-from apps.authentication.utils import create_online_mail_alias
 from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import (
     create_g_suite_account,
@@ -79,10 +78,6 @@ def _create_profile_context(request):
     Until now, it has been generated upon loading models.py, which is a bit hacky.
     The code is refactored to use Django signals, so whenever a user is created, a privacy-property is set up.
     """
-
-    # TODO: this should be invoked as a signal upon user receiving is_staff, causes crashes when testing locally
-    if request.user.is_staff and not request.user.online_mail:
-        create_online_mail_alias(request.user)
 
     context = {
         # edit

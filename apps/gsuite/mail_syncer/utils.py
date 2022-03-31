@@ -412,7 +412,9 @@ def get_excess_groups_for_user(domain: str, user: User) -> List[str]:
 
 
 def check_amount_of_members_ow4_g_suite(
-    g_suite_members: List[Dict[str, str]], ow4_users: QuerySet, quiet: bool = False
+    g_suite_members: List[Dict[str, str]],
+    ow4_users: QuerySet[User],
+    quiet: bool = False,
 ) -> bool:
     """
     Compare the number of users in an OW4 group to a G Suite group.
@@ -441,7 +443,7 @@ def check_amount_of_members_ow4_g_suite(
 
 
 def check_emails_match_each_other(
-    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet
+    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet[User]
 ) -> bool:
     """
     Matches emails in two lists of users against each other.
@@ -510,7 +512,7 @@ def _get_g_suite_user_from_g_suite_user_list(
 
 
 def get_missing_ow4_users_for_g_suite(
-    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet
+    g_suite_users: List[Dict[str, str]], users: QuerySet[User]
 ) -> List[Dict[str, str]]:
     """
     Find the OW4 users who are missing given a set of G Suite users.
@@ -519,12 +521,13 @@ def get_missing_ow4_users_for_g_suite(
     :return: A list of users missing from the given G Suite user set.
     """
     missing_users = []
+    domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
 
-    for ow4_user in ow4_users:
+    for user in users:
         if not _get_g_suite_user_from_g_suite_user_list(
-            g_suite_users, ow4_user.get_online_mail()
+            g_suite_users, f"{user.online_mail}@{domain}"
         ):
-            missing_users.append(ow4_user)
+            missing_users.append(user)
 
     logger.debug(
         f"OW4 users missing in G Suite ({len(missing_users)}): {missing_users}"

@@ -123,7 +123,7 @@ class OnlineUser(AbstractUser):
     infomail = models.BooleanField(_("vil ha infomail"), default=False)
     jobmail = models.BooleanField(_("vil ha oppdragsmail"), default=False)
     online_mail = models.CharField(
-        _("Online-epost"), max_length=50, blank=True, null=True
+        _("Online-epost"), max_length=50, blank=True, null=True, unique=True
     )
 
     # Address
@@ -155,8 +155,6 @@ class OnlineUser(AbstractUser):
     ntnu_username = models.CharField(
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
     )
-
-    # TODO checkbox for forwarding of @online.ntnu.no mail
 
     @property
     def is_member(self):
@@ -227,11 +225,6 @@ class OnlineUser(AbstractUser):
     def get_emails(self):
         return Email.objects.filter(user=self)
 
-    def get_online_mail(self):
-        if self.online_mail:
-            return self.online_mail + "@" + settings.OW4_GSUITE_SYNC.get("DOMAIN")
-        return None
-
     def get_active_suspensions(self):
         return self.suspension_set.filter(active=True)
 
@@ -275,7 +268,14 @@ class OnlineUser(AbstractUser):
         if self.ntnu_username == "":
             self.ntnu_username = None
         self.username = self.username.lower()
-        super(OnlineUser, self).save(*args, **kwargs)
+
+        if self.is_staff and not self.online_mail:
+            # avoid circulat imports
+            from apps.authentication.utils import create_online_mail_alias
+
+            self.online_mail = create_online_mail_alias(self)
+
+        super().save(*args, **kwargs)
 
     def serializable_object(self):
         if self.privacy.expose_phone_number:
