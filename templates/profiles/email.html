@@ -55,18 +55,18 @@
         <button type="button" class="btn btn-success btn-sm add-new-email">Legg til ny epostadresse</button>
     </div>
 </div>
-{% if user.is_staff and user.online_mail %}
+{% if user.is_staff %}
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-10">
         <h3>Online e-postkonto</h3>
-        <p>Alle komitemedlemmer vil få e-post sendt til en G Suite-konto. Dersom du ikke allerede har en konto kan du opprette en her.</p>
+        <p>Alle komitemedlemmer vil få e-post sendt til en Google Workspace-konto. Dersom du ikke allerede har en konto kan du opprette en her.</p>
         <p>Denne epostadressen er (eller vil være): <code>{{ user.online_mail }}@online.ntnu.no</code></p>
         <p>Disse adressene er automatisk laget. Om du har <b>en god grunn</b> til å endre din adresse, <a href="mailto:dotkom@online.ntnu.no">ta kontakt med dotkom</a></p>
         <form action="{% url 'profile_create_gsuite_account' %}" method="POST">
             {% csrf_token %}
             <button class="btn btn-success">Opprett G Suite konto</button>
         </form>
-        <h4>Glemt passord til Online-epostkontoen ("G Suite")?</h4>
+        <h4>Glemt passord til Online-epostkontoen ("Google Workpsace / G Suite")?</h4>
         <p>Dersom du har glemt passordet til G Suite kontoen din, eller av andre grunner ikke får logget inn kan du tilbakestille passordet her.</p>
         <form action="{% url 'profile_reset_gsuite_account' %}" method="POST">
             {% csrf_token %}
