@@ -80,6 +80,7 @@ def _create_profile_context(request):
     The code is refactored to use Django signals, so whenever a user is created, a privacy-property is set up.
     """
 
+    # TODO: this should be invoked as a signal upon user receiving is_staff, causes crashes when testing locally
     if request.user.is_staff and not request.user.online_mail:
         create_online_mail_alias(request.user)
 
@@ -169,8 +170,7 @@ def _create_profile_context(request):
         ],
         "internal_services_form": InternalServicesForm(),
         "in_comittee": has_access(request),
-        "enable_dataporten_application": settings.DATAPORTEN.get("STUDY").get("ENABLED")
-        or settings.DATAPORTEN.get("STUDY").get("TESTING"),
+        "DATAPORTEN_ENABLED": "apps.dataporten" in settings.INSTALLED_APPS,
     }
 
     return context

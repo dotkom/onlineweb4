@@ -57,9 +57,11 @@ Min side - Online
                         <li class="{% if 'email' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'email' %}" data-section="email">Epost-innstillinger</a>
                         </li>
+                        {% if DATAPORTEN_ENABLED %}
                         <li class="{%if 'membership' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'membership' %}" data-section="membership">Medlemskap</a>
                         </li>
+                        {% endif %}
                         <li class="{% if 'payments' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'payments' %}" data-section="payments">Betalinger</a>
                         </li>
@@ -97,9 +99,11 @@ Min side - Online
                         <section id="email">
                             {% include "profiles/email.html" %}
                         </section>
+                        {% if DATAPORTEN_ENABLED %}
                         <section id="membership">
                             {% include "profiles/membership.html" %}
                         </section>
+                        {% endif %}
                         <section id="payments">
                             {% include "profiles/payments.html" %}
                         </section>

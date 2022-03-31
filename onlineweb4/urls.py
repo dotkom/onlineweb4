@@ -116,10 +116,10 @@ if "apps.dashboard" in settings.INSTALLED_APPS:
     ]
 
 if "apps.dataporten" in settings.INSTALLED_APPS:
-    from apps.dataporten import urls as dataporten_urls
-
     urlpatterns += [
-        re_path(r"^dataporten/", include(dataporten_urls, namespace="dataporten"))
+        re_path(
+            r"^dataporten/", include("apps.dataporten.urls", namespace="dataporten")
+        )
     ]
 
 if "apps.events" in settings.INSTALLED_APPS:
