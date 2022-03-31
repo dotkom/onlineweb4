@@ -1,28 +1,12 @@
 # Onlineweb 4
 
-[![Build Status](https://cloud.drone.io/api/badges/dotkom/onlineweb4/status.svg)](https://cloud.drone.io/dotkom/onlineweb4) [![codecov](https://codecov.io/gh/dotkom/onlineweb4/branch/main/graph/badge.svg)](https://codecov.io/gh/dotkom/onlineweb4) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black) [![Total alerts](https://img.shields.io/lgtm/alerts/g/dotkom/onlineweb4.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dotkom/onlineweb4/alerts/) [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/dotkom/onlineweb4.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dotkom/onlineweb4/context:python)
+[![codecov](https://codecov.io/gh/dotkom/onlineweb4/branch/main/graph/badge.svg)](https://codecov.io/gh/dotkom/onlineweb4)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/dotkom/onlineweb4.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dotkom/onlineweb4/alerts/)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/dotkom/onlineweb4.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dotkom/onlineweb4/context:python)
+[![Open in Remote - Containers](https://img.shields.io/static/v1?label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/dotkom/onlineweb4)
 
 ## Frameworks
-
-### Zappa
-
-The project is deployed to AWS Lambda with the use of [Zappa](https://github.com/zappa/zappa). To
-deploy (should be done automatically), build a Docker image with Dockerfile.zappa and push it to AWS ECR.
-Then you can run `zappa update <stage> -d <docker-ecr-image>`. You'll have also have to build NPM and deploy static first if this has been changed since last deploy.
-
-#### Example for prod
-
-```bash
-VERSION=4.X.X
-STAGE=Production
-zappa save-python-settings-file $STAGE
-
-docker build . --build-arg VERSION=$VERSION -t onlineweb4-zappa:latest -t 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
-
-docker push 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
-
-zappa update $STAGE -d 891459268445.dkr.ecr.eu-north-1.amazonaws.com/onlineweb4-zappa:$VERSION
-```
 
 ### Frontend
 
@@ -129,9 +113,9 @@ We use [pre-commit](https://pre-commit.com) to run linting before each commit.
 you can set up the git-hooks locally:
 
 ```shell
-pre-commit install
+pre-commit install --install-hooks
 # or if you have not activated the Poetry environment
-poetry run pre-commit install
+poetry run pre-commit install --install-hooks
 ```
 
 And run the lints manually by running
@@ -176,7 +160,7 @@ For potentially improved productivity, you can integrate the linting and formatt
 
 - [Black](https://black.readthedocs.io/en/stable/)
 - [isort](https://github.com/timothycrosley/isort)
-- [Flake8](http://flake8.pycqa.org/).
+- [Flake8](http://flake8.pycqa.org/)
 - [ESLint](https://eslint.org/docs/about/), with editor plugins available [here](https://eslint.org/docs/user-guide/integrations).
 - [stylelint](https://stylelint.io) for our stylesheets, with editor plugins available [here](https://github.com/stylelint/stylelint/blob/master/docs/user-guide/complementary-tools.md#editor-plugins).
 
@@ -204,6 +188,47 @@ You can view the details of these tests by clicking the "detail" link in the pul
 > the appropriate testing keys, then add them to an `.env` file in the project root,
 > the name of the environment variables are in
 > [`.devcontainer/devcontainer.env`](.devcontainer/devcontainer.env).
+
+### Manual release
+
+### Zappa
+
+The project is deployed to AWS Lambda with the use of [Zappa](https://github.com/zappa/zappa). To
+deploy (should be done automatically), build a Docker image and push it to AWS ECR.
+Then you can run `zappa update <stage> -d <docker-ecr-image>`. You'll have also have to build NPM and deploy static first if this has been changed since last deploy.
+
+#### Example for prod
+
+```shell
+# create git tag / github release with release notes first
+# if this is prod add `-prod` suffix
+VERSION=4.X.X-prod
+# OR VERSION=4.X.X if dev
+STAGE=prod
+REGION=eu-north-1
+# log in to AWS in some way first https://docs.aws.amazon.com/cli/latest/userguide/getting-started-prereqs.html#getting-started-prereqs-keys
+# jq is just to extract the "Account" json-key automatically
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity | jq .Account)
+DOCKER_REGISTRY=$AWS_ACCOUNT_ID.dkr.ecr.$REGION.amazonaws.com
+TAG=$DOCKER_REGISTRY/onlineweb4-zappa:$VERSION
+aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+
+# If zappa is not available you must install it, alternatively use devcontainer:
+poentry install -E prod
+# then either run `poetry shell` first, or prepend `poetry run` before the command
+zappa save-python-settings-file $STAGE
+
+docker build . --build-arg VERSION=$VERSION -t $IMAGE --no-cache
+docker push $TAG
+zappa update $STAGE -d $TAG
+
+# If you also have changed static files you must run the following:
+docker build . --target=static-files -t ow4-static
+ID=$(docker create ow4-static)
+docker cp $ID:/srv/app/static static
+BUCKET_NAME=$( yq ".${STAGE}.environment_variables.OW4_S3_BUCKET_NAME" zappa_settings.yml )
+aws s3 sync static "s3://${BUCKET_NAME}/static" --delete --acl=public-read
+```
 
 ## API
 
