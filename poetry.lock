@@ -558,7 +558,7 @@ django-classy-tags = ">=1"
 
 [[package]]
 name = "django-ses"
-version = "2.3.1"
+version = "2.6.1"
 description = "A Django email backend for Amazon's Simple Email Service"
 category = "main"
 optional = true
@@ -567,7 +567,6 @@ python-versions = ">=3.5"
 [package.dependencies]
 boto3 = ">=1.0.0"
 django = ">=2.2"
-future = ">=0.16.0"
 pytz = ">=2016.10"
 
 [package.extras]
@@ -1787,7 +1786,7 @@ prod = ["psycopg2-binary", "boto3", "django-ses", "zappa", "django-storages"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "d892219907e0395d8dabff760af586e84eee7e6e960c1cf5cfbe178359aacedd"
+content-hash = "687a2ee53a05160f37c94de862a8d8e13f033b9c6864f8d03e0c59ed5a606862"
 
 [metadata.files]
 argcomplete = [
@@ -2091,8 +2090,8 @@ django-sekizai = [
     {file = "django_sekizai-3.0.1-py3-none-any.whl", hash = "sha256:92c2a82e62d839dcb2ea77728559c9abcb8d135f51e1d592c37c362fddbeeda1"},
 ]
 django-ses = [
-    {file = "django-ses-2.3.1.tar.gz", hash = "sha256:ececf3b4284001d776e8021e9090184690495c652c0b45f4cfb984688819895b"},
-    {file = "django_ses-2.3.1-py2.py3-none-any.whl", hash = "sha256:34ae53fb439042bda83b4e3bcd5dfc9ac507899ee8f526d1923aa0875696842d"},
+    {file = "django-ses-2.6.1.tar.gz", hash = "sha256:a57ed335bc46d7870b78e45e4ae91fbe6b1f8a16baeeaaf0885cc7ed8c942831"},
+    {file = "django_ses-2.6.1-py2.py3-none-any.whl", hash = "sha256:73c2f6f2f9933ce3d5f32b69cc18c6872a89bf2aeebb74bad2551e6ac79b8988"},
 ]
 django-storages = [
     {file = "django-storages-1.12.3.tar.gz", hash = "sha256:a475edb2f0f04c4f7e548919a751ecd50117270833956ed5bd585c0575d2a5e7"},
