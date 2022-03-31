@@ -1,0 +1,6 @@
+# .git-blame-ignore-revs
+# use `git config --global blame.ignoreRevsFile .git-blame-ignore-revs` to use this locally, makes `git blame` easier to use
+# Format Python code in onlineweb4 and migrations with Black
+10b74f780ed732743183a87d5f1e443bef869c9d
+# run Black-formatting on all the other files
+8acc087654521acf3bbe3ff6c0ecc5e7e4b336e8
