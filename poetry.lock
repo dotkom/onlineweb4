@@ -614,7 +614,7 @@ python-versions = "*"
 
 [[package]]
 name = "django-webpack-loader"
-version = "0.7.0"
+version = "1.4.1"
 description = "Transparently use webpack with django"
 category = "main"
 optional = false
@@ -1787,7 +1787,7 @@ prod = ["psycopg2-binary", "boto3", "django-ses", "zappa", "django-storages"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "d892219907e0395d8dabff760af586e84eee7e6e960c1cf5cfbe178359aacedd"
+content-hash = "dd7daa641fdde790536c89b1952b0dd623c3573d367f1bd69a27fb6412faf790"
 
 [metadata.files]
 argcomplete = [
@@ -2107,8 +2107,8 @@ django-watson = [
     {file = "django_watson-1.6.2-py2.py3-none-any.whl", hash = "sha256:ffe963d1f7aa02d13d84cbe3f71f3731a8bc66f6eeaaac79b66b3e3989c8e035"},
 ]
 django-webpack-loader = [
-    {file = "django-webpack-loader-0.7.0.tar.gz", hash = "sha256:7a3c88201aa54481f9399465615cbe7b9aece8081496a6d0287b7cb8e232f447"},
-    {file = "django_webpack_loader-0.7.0-py2.py3-none-any.whl", hash = "sha256:d28a276ed3d89e97a313b74967e373693f8b86afe629f4c91eea91c5b4f2ec20"},
+    {file = "django-webpack-loader-1.4.1.tar.gz", hash = "sha256:7e34085b7fc4d352e482ff9cf7d09ae4524e730675e25432ab1d25a2dd94e583"},
+    {file = "django_webpack_loader-1.4.1-py2.py3-none-any.whl", hash = "sha256:290ce20a1347e14ba1cadfb5df90f2d1218eb81a1ecdcfb7ccc8ef9adab4b7d3"},
 ]
 djangorestframework = [
     {file = "djangorestframework-3.13.1-py3-none-any.whl", hash = "sha256:24c4bf58ed7e85d1fe4ba250ab2da926d263cd57d64b03e8dcef0ac683f8b1aa"},
