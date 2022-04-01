@@ -108,7 +108,7 @@ jobs:
       - name: Deploy
         env:
           IMAGE_TAG: ${{ github.sha }}
-        run: poetry run zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.meta.outputs.version }}
+        run: poetry run zappa update $ENVIRONMENT -d ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ steps.meta.outputs.version }}
 
       - name: Sync static files
         run: |
