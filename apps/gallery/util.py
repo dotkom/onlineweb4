@@ -389,7 +389,7 @@ class ResponsiveImageHandler(BaseImageHandler):
     """
 
     def __init__(self, image):
-        super(ResponsiveImageHandler, self).__init__(image)
+        super().__init__(image)
         if not isinstance(image, UnhandledImage):
             self._log.error(
                 "Attempt to instance ResponsiveImageHandler with non-UnhandledImage object"

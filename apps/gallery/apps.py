@@ -6,7 +6,7 @@ class GalleryConfig(AppConfig):
     verbose_name = "Gallery"
 
     def ready(self):
-        super(GalleryConfig, self).ready()
+        super().ready()
 
         from watson import search as watson
 

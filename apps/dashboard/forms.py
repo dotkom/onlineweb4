@@ -10,7 +10,7 @@ class HTML5RequiredMixin(Form):
     """
 
     def __init__(self, *args, **kwargs):
-        super(HTML5RequiredMixin, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         for field in self.fields:
             if (
                 self.fields[field].required

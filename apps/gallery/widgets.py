@@ -41,7 +41,7 @@ class SingleImageInput(HiddenInput):
     """
 
     def __init__(self, attrs=None):
-        super(SingleImageInput, self).__init__(attrs)
+        super().__init__(attrs)
         self.input_type = "hidden"
 
     def render(self, name, value, attrs=None, renderer=None):
@@ -82,7 +82,7 @@ class TagInputField(TextInput):
     """
 
     def __init__(self, attrs=None):
-        super(TagInputField, self).__init__(attrs=attrs)
+        super().__init__(attrs=attrs)
 
     def render(self, name, value, attrs=None, renderer=None):
         """
@@ -93,4 +93,4 @@ class TagInputField(TextInput):
         :return: An HTML string representing this widget
         """
 
-        return super(TagInputField, self).render(name, value, attrs=attrs)
+        return super().render(name, value, attrs=attrs)

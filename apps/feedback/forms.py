@@ -21,7 +21,7 @@ class AnswerForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.html5_required = False
-        super(AnswerForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["answer"].label = self.instance.question.label
         self.display = self.instance.question.display
 
@@ -62,7 +62,7 @@ class MultipleChoiceForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.html5_required = False
-        super(MultipleChoiceForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields["answer"] = forms.ModelChoiceField(
             queryset=Choice.objects.filter(question=self.instance.question.question),
