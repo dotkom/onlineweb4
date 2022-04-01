@@ -52,7 +52,7 @@ pywebpush = "^1.11.0"
 sentry-sdk = { version = "~1.5", extras = [ "django" ] }
 # AWS
 boto3 =  { version = "~1.21", optional = true }
-django-ses = { version = "~2.3", optional = true }
+django-ses = { version = "~3.0", optional = true }
 zappa = { version = "~0.54", optional = true }
 django-storages = { version = "~1.12", optional = true }
 # psyco postgresql
