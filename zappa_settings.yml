@@ -20,7 +20,7 @@ prod:
     expression: cron(0 8 ? * * *)
   - function: apps.payment.mommy.payment_reminder
     expression: cron(30 7 ? * * *)
-  - function: apps.payment.mommy.payement_delay_handler
+  - function: apps.payment.mommy.payment_delay_handler
     expression: cron(45 7 ? * * *)
   extra_permissions:
   - Effect: Allow
