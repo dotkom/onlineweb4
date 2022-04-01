@@ -36,7 +36,7 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
         """
 
         # We would like to add years to our index to enable filterbuttons
-        context = super(GalleryIndex, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         years = set()
         total_disk_usage = 0
@@ -95,7 +95,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
             "%s updated ResponsiveImage %d" % (self.request.user, self.object.id)
         )
 
-        return super(GalleryDetail, self).form_valid(form)
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         """
@@ -104,7 +104,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
 
         messages.error(self.request, "Noen av feltene inneholder feil.")
 
-        return super(GalleryDetail, self).form_invalid(form)
+        return super().form_invalid(form)
 
     def get_success_url(self):
         """

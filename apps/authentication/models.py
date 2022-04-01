@@ -349,7 +349,7 @@ class Email(models.Model):
         if self.primary:
             self.user.email = self.email
             self.user.save()
-        super(Email, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.email
@@ -400,7 +400,7 @@ class Membership(models.Model):
 
     def save(self, *args, **kwargs):
         self.username = self.username.lower()
-        super(Membership, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username

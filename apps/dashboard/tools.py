@@ -92,7 +92,7 @@ class DashboardMixin(object):
         if not has_access(request):
             raise PermissionDenied
 
-        return super(DashboardMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """
@@ -102,7 +102,7 @@ class DashboardMixin(object):
         :return: A context dictionary
         """
 
-        context = super(DashboardMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context.update(get_base_context(self.request))
 
         return context

@@ -6,7 +6,7 @@ class OfflineConfig(AppConfig):
     verbose_name = "Offline"
 
     def ready(self):
-        super(OfflineConfig, self).ready()
+        super().ready()
 
         from chunks.models import Chunk
         from reversion import revisions as reversion

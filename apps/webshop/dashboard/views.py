@@ -31,7 +31,7 @@ class Categories(DashboardPermissionMixin, TemplateView):
     permission_required = "webshop.change_category"
 
     def get_context_data(self, *args, **kwargs):
-        context = super(Categories, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context["categories"] = Category.objects.all().prefetch_related("products")
         return context
 
@@ -85,7 +85,7 @@ class ProductCreate(DashboardPermissionMixin, CreateView):
     permission_required = "webshop.add_product"
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProductCreate, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context["category"] = get_object_or_404(
             Category, slug=self.kwargs.get("category_slug")
         )
@@ -96,7 +96,7 @@ class ProductCreate(DashboardPermissionMixin, CreateView):
         # Setting foreign key
         category = get_object_or_404(Category, slug=self.kwargs.get("category_slug"))
         product.category = category
-        return super(ProductCreate, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse(
@@ -113,7 +113,7 @@ class ProductUpdate(DashboardPermissionMixin, UpdateView):
     permission_required = "webshop.change_product"
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProductUpdate, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         context["category"] = self.object.category
         return context
 
@@ -138,7 +138,7 @@ class ProductImage(DashboardPermissionMixin, DetailView):
     permission_required = "webshop.change_product"
 
     def get_context_data(self, *args, **kwargs):
-        context = super(ProductImage, self).get_context_data(*args, **kwargs)
+        context = super().get_context_data(*args, **kwargs)
         # Filter out potential ResponsiveImage objects that have orphan file references
         images = ResponsiveImage.objects.all().order_by("-timestamp")[:15]
         context["images"] = [i for i in images if i.file_status_ok()]
@@ -177,12 +177,12 @@ class OrderDeliver(DashboardPermissionMixin, DetailView):
     permission_required = "webshop.change_orderline"
 
     def post(self, *args, **kwargs):
-        super(OrderDeliver, self).get(*args, **kwargs)
+        super().get(*args, **kwargs)
         if not self.object.delivered:
             self.object.delivered = True
             self.object.save()
         return self.get(*args, **kwargs)
 
     def get(self, *args, **kwargs):
-        super(OrderDeliver, self).get(*args, **kwargs)
+        super().get(*args, **kwargs)
         return redirect("dashboard-webshop:order", pk=self.object.pk)

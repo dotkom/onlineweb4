@@ -20,7 +20,7 @@ class NewClientForm(forms.ModelForm):
         """
         clean override to check the validity of both redirect uri's and scopes
         """
-        cleaned_data = super(NewClientForm, self).clean()
+        cleaned_data = super().clean()
         scopes = cleaned_data.get("scopes")
         redirect_uris = cleaned_data.get("redirect_uris")
 

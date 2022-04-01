@@ -6,7 +6,7 @@ class ArticleConfig(AppConfig):
     verbose_name = "Article"
 
     def ready(self):
-        super(ArticleConfig, self).ready()
+        super().ready()
 
         from watson import search as watson
 

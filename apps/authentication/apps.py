@@ -6,7 +6,7 @@ class AuthenticationConfig(AppConfig):
     verbose_name = "Authentication for OW4"
 
     def ready(self):
-        super(AuthenticationConfig, self).ready()
+        super().ready()
 
         from reversion import revisions as reversion
         from watson import search as watson

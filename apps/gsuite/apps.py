@@ -6,6 +6,6 @@ class GsuiteConfig(AppConfig):
     verbose_name = "G Suite Utilities"
 
     def ready(self):
-        super(GsuiteConfig, self).ready()
+        super().ready()
 
         import apps.gsuite.mail_syncer.signals  # noqa: F401

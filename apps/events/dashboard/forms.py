@@ -143,7 +143,7 @@ class ChangeAttendanceEventForm(forms.ModelForm, HTML5RequiredMixin):
 
 class CreateFeedbackRelationForm(forms.ModelForm, HTML5RequiredMixin):
     def __init__(self, *args, **kwargs):
-        super(CreateFeedbackRelationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         feedback = Feedback.objects.filter(available=True)
         self.fields["feedback"].queryset = feedback
 

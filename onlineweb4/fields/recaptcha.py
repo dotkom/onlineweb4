@@ -34,7 +34,7 @@ class RecaptchaValidator(object):
 
 class RecaptchaField(serializers.CharField):
     def __init__(self, write_only=True, **kwargs):
-        super(RecaptchaField, self).__init__(write_only=write_only, **kwargs)
+        super().__init__(write_only=write_only, **kwargs)
         self.validators.append(RecaptchaValidator())
 
 
