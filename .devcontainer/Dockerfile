@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.source=https://github.com/dotkom/onlineweb4
 LABEL org.opencontainers.image.authors=dotkom
 
 WORKDIR /workspace
-ENV PYTHONUNBUFFERED=1 POETRY_VIRTUALENVS_IN_PROJECT=true
+ENV PYTHONUNBUFFERED=1
 
 # [Choice] Node.js version: none, lts/*, 16, 14, 12, 10
 ARG NODE_VERSION="none"
@@ -22,7 +22,9 @@ RUN pipx install poetry==1.1.13 \
 FROM base AS with-dependencies
 
 COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-interaction --no-root --no-ansi
-
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --non-interactive
+RUN poetry install --no-interaction --no-root --no-ansi \
+    && export POETRY_ENV_PATH=$(poetry env info --path) \
+    && poetry cache clear . --all --no-interaction
+# does not install node_modules, since that would require
+# that we mount node_modules in a docker volume, which makes the environment
+# more complicated than necessary

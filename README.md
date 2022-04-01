@@ -51,7 +51,13 @@ if you need help feel free to reach out to someone in Dotkom for help!
 ### Devcontainer variants
 
 We have two ways to run the development environment, with the one suiting you depending on how you want
-to interact with the project dependencies:
+to interact with the project dependencies.
+
+Note: regardless of base image, the remaning dependencies (and pre-commit) will be installed when you create the
+container.
+
+> _Important disclaimer:_ Be wary of combining local and devcontainer environments, in particular
+> local `.venv` and `node_modules`-folders can quickly make your environment confusing.
 
 #### Pre-built image with included dependencies (default)
 
@@ -60,7 +66,6 @@ Not recommended if you want to actively develop with changing dependencies.
 
 You can build this image locally by adding `"docker-compose.build.yml"` to the end of the
 `dockerComposeFile`-array in [`devcontainer.json`](/.devcontainer/devcontainer.json).
-Will be very slow if you frequently change dependencies.
 
 #### Pre-built image without included dependencies
 
@@ -70,6 +75,21 @@ You can use this method by adding `"docker-compose.no-deps.yml"` to the end of t
 `dockerComposeFile`-array in [`devcontainer.json`](/.devcontainer/devcontainer.json).
 
 You can also build the image locally instead of using our pre-built version by using `docker-compose.no-deps-build.yml` instead.
+
+### Run OnlineWeb4
+
+```shell
+# in one terminal
+yarn start
+
+# in another terminal
+# only required first time
+python manage.py migrate
+
+python manage.py runserver
+```
+
+If you are using the devcontainer, onlineweb4 should then be available at [http://localhost:8000](http://localhost:8000). Please open an issue if that does not work!
 
 ### Local installation
 
@@ -145,7 +165,6 @@ npm run test
 ```
 
 #### Code Test Coverage
-
 
 ```shell
 # you can then open the report in a browser, or instead generate XML-report and use any tool to view it.
