@@ -2,7 +2,6 @@
 prod:
   aws_region: eu-north-1
   django_settings: onlineweb4.settings
-  profile_name: default
   project_name: onlineweb4
   s3_bucket: zappa-4zzd2i1dt
   domain: old.online.ntnu.no
@@ -70,7 +69,6 @@ prod:
 dev:
   aws_region: eu-north-1
   django_settings: onlineweb4.settings
-  profile_name: default
   project_name: onlineweb4
   s3_bucket: zappa-4zzd2i1dt
   domain: dev.online.ntnu.no
