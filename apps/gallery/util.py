@@ -60,7 +60,7 @@ def create_responsive_image_from_file(
     return status.data
 
 
-class GalleryStatus(object):
+class GalleryStatus:
     """
     Status container for gallery processes
     """
@@ -90,7 +90,7 @@ class GalleryStatus(object):
         return "Status: %s (%s): %s" % (self.status, self.message, self.data)
 
 
-class BaseImageHandler(object):
+class BaseImageHandler:
     """
     Abstract base handler for gallery images
     """
