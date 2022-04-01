@@ -1,4 +1,4 @@
-class Onlineweb4Userinfo(object):
+class Onlineweb4Userinfo:
     """Generate userinfo for onlineweb4 claim."""
 
     oidc_fields = ["member", "staff", "superuser", "rfid", "field_of_study"]

@@ -73,7 +73,7 @@ def get_base_context(request):
 
 
 # Mixin for Class Based Views
-class DashboardMixin(object):
+class DashboardMixin:
     """
     The DashboardMixin sets up the needed context data, as well as performs
     generic access checks.

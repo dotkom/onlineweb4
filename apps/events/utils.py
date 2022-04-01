@@ -96,7 +96,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
     return message
 
 
-class Calendar(object):
+class Calendar:
     def __init__(self):
         self.cal = icalendar.Calendar()
         # Filename served by webserver

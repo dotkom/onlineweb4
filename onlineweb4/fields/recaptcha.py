@@ -22,7 +22,7 @@ def validate_recaptcha(captcha_data):
         logger.error(err)
 
 
-class RecaptchaValidator(object):
+class RecaptchaValidator:
     def __call__(self, value):
         response = validate_recaptcha(value)
         success = response.get("success", False)
