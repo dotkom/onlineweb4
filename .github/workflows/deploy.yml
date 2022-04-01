@@ -12,7 +12,7 @@ on:
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
-      AWS_ACCESS_KEY:
+      AWS_SECRET_ACCESS_KEY:
         required: true
       SENTRY_AUTH_TOKEN:
         required: true
