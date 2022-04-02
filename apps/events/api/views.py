@@ -6,8 +6,8 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from apps.payment.serializers import PaymentReadOnlySerializer
+from apps.profiles.models import Privacy
 
-from ...profiles.models import Privacy
 from ..constants import AttendStatus
 from ..filters import (
     EventFilter,
@@ -86,25 +86,24 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     )
     def register(self, request, pk=None):
         user = request.user
-        privacy: Privacy = Privacy.objects.get(user=user)
+        privacy: Privacy = user.privacy
         attendance_event: AttendanceEvent = self.get_object()
         # Check if the recaptcha and other request data is valid
         register_serializer = self.get_serializer(data=request.data)
         register_serializer.is_valid(raise_exception=True)
         data = register_serializer.validated_data
-        attending_visibility = data.get("show_as_attending_event")
-        allow_pictures = data.get("allow_pictures")
-
         # Set the values to the users default settings if sent data is empty
-        if attending_visibility is None and privacy.visible_as_attending_events is None:
-            attending_visibility = False
-        elif attending_visibility is None:
-            attending_visibility = privacy.visible_as_attending_events
-
-        if allow_pictures is None and privacy.allow_pictures is None:
-            allow_pictures = False
-        elif allow_pictures is None:
-            allow_pictures = privacy.allow_pictures
+        # intentionally uses that bool(None) == False
+        attending_visibility = (
+            specific
+            if (specific := data.get("show_as_attending_event"))
+            else bool(privacy.visible_as_attending_events)
+        )
+        allow_pictures = (
+            specific
+            if (specific := data.get("allow_pictures"))
+            else bool(privacy.allow_pictures)
+        )
 
         attendee = Attendee.objects.create(
             event=attendance_event,
