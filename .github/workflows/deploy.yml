@@ -52,7 +52,7 @@ jobs:
 
       - name: Install Zappa
         run: |
-          pipx install poetry==1.1.13
+          pip install poetry==1.1.13
           poetry install --no-interaction --no-ansi
 
       - name: Configure AWS credentials

@@ -46,7 +46,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: pipx install poetry==${{ env.POETRY_VERSION }}
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
         run: poetry install --no-interaction --no-ansi
@@ -91,7 +91,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: pipx install poetry==${{ env.POETRY_VERSION }}
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
         run: poetry install --no-interaction --no-ansi
@@ -119,7 +119,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: pipx install poetry==${{ env.POETRY_VERSION }}
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
         run: poetry install --no-interaction --no-ansi
