@@ -511,7 +511,7 @@ http://%s/auth/verify/%s/
 
 Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
 kan dette gjøres ved å klikke på knappen for verifisering på din profil.
-    """
+"""
         )
         % (request.META["HTTP_HOST"], token)
     )
