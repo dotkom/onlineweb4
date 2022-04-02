@@ -96,12 +96,12 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         # intentionally uses that bool(None) == False
         attending_visibility = (
             specific
-            if (specific := data.get("show_as_attending_event"))
+            if (specific := data.get("show_as_attending_event")) is not None
             else bool(privacy.visible_as_attending_events)
         )
         allow_pictures = (
             specific
-            if (specific := data.get("allow_pictures"))
+            if (specific := data.get("allow_pictures")) is not None
             else bool(privacy.allow_pictures)
         )
 

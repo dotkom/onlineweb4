@@ -128,8 +128,8 @@ class RegisterSerializer(serializers.Serializer):
     """
 
     recaptcha = RecaptchaField()
-    allow_pictures = serializers.BooleanField(default=False)
-    show_as_attending_event = serializers.BooleanField(default=False)
+    allow_pictures = serializers.BooleanField(required=False)
+    show_as_attending_event = serializers.BooleanField(required=False)
     note = serializers.CharField(default="", max_length=100)
 
 
