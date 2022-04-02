@@ -133,4 +133,5 @@ class PrivacySerializer(serializers.ModelSerializer):
             "expose_phone_number",
             "expose_address",
             "visible_as_attending_events",
+            "allow_pictures",
         )

@@ -15,7 +15,6 @@ from apps.events.models import (
 )
 from apps.events.tests.utils import attend_user_to_event, generate_event, generate_user
 from apps.online_oidc_provider.test import OIDCTestCase
-from apps.profiles.models import Privacy
 
 from .utils import generate_attendee
 
@@ -26,7 +25,6 @@ class EventsAPITestCase(OIDCTestCase):
     def setUp(self):
         self.committee = G(Group, name="Bedkom")
         self.user = generate_user(username="_user")
-        self.privacy = G(Privacy, user=self.user)
         self.token = self.generate_access_token(self.user)
         self.headers = {**self.headers, **self.generate_headers()}
 

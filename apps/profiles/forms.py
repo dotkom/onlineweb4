@@ -44,6 +44,9 @@ class ProfileForm(forms.ModelForm):
 
 
 class PrivacyForm(forms.ModelForm):
+    allow_pictures = forms.BooleanField(initial=False)
+    visible_as_attending_events = forms.BooleanField(initial=False)
+
     class Meta:
         model = Privacy
         exclude = ["user", "expose_nickname"]

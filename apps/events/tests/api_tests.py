@@ -8,7 +8,6 @@ from apps.authentication.models import OnlineUser
 from apps.companyprofile.models import Company
 from apps.events.models import CompanyEvent, GroupRestriction
 from apps.online_oidc_provider.test import OIDCTestCase
-from apps.profiles.models import Privacy
 
 from .utils import attend_user_to_event, generate_event, generate_user
 
@@ -23,7 +22,6 @@ class EventsAPITestCase(OIDCTestCase):
 
         self.committee = G(Group, name="Bedkom")
         self.user = generate_user(username="_user")
-        self.privacy = G(Privacy, user=self.user)
         self.token = self.generate_access_token(self.user)
         self.headers = {**self.headers, **self.generate_headers()}
 

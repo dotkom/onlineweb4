@@ -1,3 +1,5 @@
+import random
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -33,9 +35,12 @@ class OIDCTestCase(TestCase):
         return ResponseType.objects.create(value=RESPONSE_TYPE_CHOICES[1])
 
     def generate_access_token(
-        self, user, client_id="123", refresh_token="456", _scope="openid profile"
+        self, user, client_id=None, refresh_token=None, _scope="openid profile"
     ):
-
+        if client_id is None:
+            client_id = random.randint(0, 100_000)
+        if refresh_token is None:
+            refresh_token = random.randint(0, 100_000)
         oidc_client = Client.objects.create(
             client_type=CLIENT_TYPE_CHOICES[1],
             client_id=client_id,

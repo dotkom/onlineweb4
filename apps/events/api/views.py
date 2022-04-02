@@ -6,6 +6,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from apps.payment.serializers import PaymentReadOnlySerializer
+from apps.profiles.models import Privacy
 
 from ..constants import AttendStatus
 from ..filters import (
@@ -85,17 +86,30 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     )
     def register(self, request, pk=None):
         user = request.user
+        privacy: Privacy = user.privacy
         attendance_event: AttendanceEvent = self.get_object()
         # Check if the recaptcha and other request data is valid
         register_serializer = self.get_serializer(data=request.data)
         register_serializer.is_valid(raise_exception=True)
-
         data = register_serializer.validated_data
+        # Set the values to the users default settings if sent data is empty
+        # intentionally uses that bool(None) == False
+        attending_visibility = (
+            specific
+            if (specific := data.get("show_as_attending_event")) is not None
+            else bool(privacy.visible_as_attending_events)
+        )
+        allow_pictures = (
+            specific
+            if (specific := data.get("allow_pictures")) is not None
+            else bool(privacy.allow_pictures)
+        )
+
         attendee = Attendee.objects.create(
             event=attendance_event,
             user=user,
-            show_as_attending_event=data.get("show_as_attending_event"),
-            allow_pictures=data.get("allow_pictures"),
+            show_as_attending_event=attending_visibility,
+            allow_pictures=allow_pictures,
             note=data.get("note"),
         )
 

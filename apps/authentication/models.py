@@ -313,9 +313,9 @@ class OnlineUser(AbstractUser):
 
     def get_visible_as_attending_events(self):
         """Returns the default value of visible_as_attending_events set in privacy/personvern"""
-        if hasattr(self, "privacy"):
-            return self.privacy.visible_as_attending_events
-        return False
+        # privacy is created at user creation, see `apps.profiles.signals.create_privacy_profile`,
+        # intentionally uses that bool(None) == False, in case user has not set a preference
+        return bool(self.privacy.visible_as_attending_events)
 
     @property
     def mark_rules_accepted(self):
