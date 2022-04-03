@@ -2,7 +2,6 @@ from typing import Tuple
 
 from django.contrib.auth.models import Group
 from django.utils import timezone
-from apps.payment.models import Payment
 from django_dynamic_fixture import G
 from rest_framework import status
 
@@ -14,6 +13,7 @@ from apps.events.tests.utils import (
     pay_for_event,
 )
 from apps.online_oidc_provider.test import OIDCTestCase
+from apps.payment.models import Payment
 from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 
 from ...models import Extras, StatusCode

@@ -27,7 +27,6 @@ logger = logging.getLogger(__name__)
 
 
 class Payment(models.Model):
-
     class Types(models.IntegerChoices):
         IMMEDIATE = 1, _("Umiddelbar")
         DEADLINE = 2, _("Frist")
