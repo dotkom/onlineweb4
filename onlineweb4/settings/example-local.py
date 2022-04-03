@@ -62,9 +62,6 @@ STATIC_URL = "/static/"
 # Url of default profile picture
 DEFAULT_PROFILE_PICTURE_URL = os.path.join(STATIC_URL, "img", "profile_default.png")
 
-# Filebrowser local settings.
-FILEBROWSER_MEDIA_ROOT = MEDIA_ROOT
-
 # If you use django extensions that should not be used in production
 # add them here.
 # INSTALLED_APPS += (

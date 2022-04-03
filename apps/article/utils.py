@@ -1,5 +1,3 @@
-from filebrowser.settings import VERSIONS
-
 MONTH_STRINGS = {
     "1": "Januar",
     "2": "Februar",
@@ -14,17 +12,6 @@ MONTH_STRINGS = {
     "11": "November",
     "12": "Desember",
 }
-
-
-def find_image_versions(article):
-    img = article.image
-    img_strings = []
-
-    for ver in VERSIONS.keys():
-        if ver.startswith("article_"):
-            img_strings.append(img.version_generate(ver).url)
-
-    return img_strings
 
 
 def create_article_filters(articles):
