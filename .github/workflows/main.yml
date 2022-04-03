@@ -27,29 +27,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cache python packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'yarn'
 
+      - name: Install Poetry
+        run: pipx install poetry==${{ env.POETRY_VERSION }}
+
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install Poetry
-        run: pip install poetry==${{ env.POETRY_VERSION }}
+          cache: 'poetry'
 
       - name: Install python dependencies
-        run: poetry install --no-interaction --no-ansi
+        run: |
+          poetry env use 3.9
+          poetry install
 
       - name: Install node dependencies
         run: yarn install --pure-lockfile
@@ -67,7 +62,9 @@ jobs:
           OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM: ${{ secrets.STRIPE_PRIVATE_KEY_TRIKOM }}
           # TODO: see service todo
           # DATABASE_URL: postgres://postgres:postgres@db:5432/onlineweb4
-        run: poetry run tox -e tests
+        run: |
+          poetry env use 3.9
+          poetry run tox -e tests
 
       - uses: codecov/codecov-action@v2
 
@@ -77,27 +74,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cache python packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
+      - name: Install Poetry
+        run: pipx install poetry==${{ env.POETRY_VERSION }}
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install Poetry
-        run: pip install poetry==${{ env.POETRY_VERSION }}
+          cache: 'poetry'
 
       - name: Install python dependencies
-        run: poetry install --no-interaction --no-ansi
+        run: |
+          poetry env use 3.9
+          poetry install
 
       - name: Python linting
-        run: poetry run tox -e flake8 -e isort -e black
+        run: |
+          poetry env use 3.9
+          poetry run tox -e flake8 -e isort -e black
 
   django-checks:
     runs-on: ubuntu-latest
@@ -105,30 +99,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Cache python packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
+      - name: Install Poetry
+        run: pipx install poetry==${{ env.POETRY_VERSION }}
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
         with:
           python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install Poetry
-        run: pip install poetry==${{ env.POETRY_VERSION }}
+          cache: 'poetry'
 
       - name: Install python dependencies
-        run: poetry install --no-interaction --no-ansi
+        run: |
+          poetry run python -V
+          poetry env use 3.9
+          poetry install
+          poetry run python -V
 
       - name: Check migrations
-        run: poetry run python manage.py makemigrations --check
+        run: |
+          poetry run python -V
+          poetry env use 3.9
+          poetry run python -V
+          poetry run python manage.py makemigrations --check
 
       - name: Django check
-        run: poetry run python manage.py check
+        run: |
+          poetry env use 3.9
+          poetry run python manage.py check
 
   lint-js:
     runs-on: ubuntu-latest

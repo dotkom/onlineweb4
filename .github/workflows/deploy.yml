@@ -36,19 +36,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      # should always hit
-      - name: Cache python packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-
-
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.9
+          python-version: "3.9"
 
       - name: Install Zappa
         run: pip install zappa==0.54
