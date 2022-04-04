@@ -110,7 +110,6 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          poetry run python -V
           poetry env use 3.9
           poetry install
           poetry run python -V
