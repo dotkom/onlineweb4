@@ -46,7 +46,7 @@ class EventOrderedByRegistration(models.Manager):
         DAYS_FORWARD_DELTA = timezone.now() + timedelta(days=DELTA_FUTURE_SETTING)
 
         return (
-            super(EventOrderedByRegistration, self)
+            super()
             .get_queryset()
             .annotate(
                 registration_filtered=Case(

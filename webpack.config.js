@@ -103,9 +103,6 @@ const webpackConfig = {
     mailinglists: [
       './assets/mailinglists/index',
     ],
-    offline: [
-      './assets/offline/index',
-    ],
     profiles: [
       './assets/profiles/index',
     ],

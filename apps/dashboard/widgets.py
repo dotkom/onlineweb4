@@ -86,7 +86,7 @@ class DatePickerInput(TextInput):
     """
 
     def __init__(self, attrs=None):
-        super(DatePickerInput, self).__init__(attrs)
+        super().__init__(attrs)
         self.input_type = "text"
 
     def render(self, name, value, attrs=None, renderer=None):
@@ -131,7 +131,7 @@ class DatetimePickerInput(TextInput):
     """
 
     def __init__(self, attrs=None):
-        super(DatetimePickerInput, self).__init__(attrs)
+        super().__init__(attrs)
         self.input_type = "text"
 
     def render(self, name, value, attrs=None, renderer=None):
@@ -174,7 +174,7 @@ class TimePickerInput(TextInput):
     """
 
     def __init__(self, attrs=None):
-        super(TimePickerInput, self).__init__(attrs)
+        super().__init__(attrs)
         self.input_type = "text"
 
     def render(self, name, value, attrs=None, renderer=None):

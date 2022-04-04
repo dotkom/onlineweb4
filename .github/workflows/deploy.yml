@@ -12,7 +12,7 @@ on:
     secrets:
       AWS_ACCESS_KEY_ID:
         required: true
-      AWS_ACCESS_KEY:
+      AWS_SECRET_ACCESS_KEY:
         required: true
       SENTRY_AUTH_TOKEN:
         required: true
@@ -51,9 +51,7 @@ jobs:
           python-version: 3.9
 
       - name: Install Zappa
-        run: |
-          pipx install poetry==1.1.13
-          poetry install --no-interaction --no-ansi
+        run: pip install zappa==0.54
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -67,7 +65,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Generate Zappa settings
-        run: poetry run zappa save-python-settings-file $ENVIRONMENT
+        run: zappa save-python-settings-file $ENVIRONMENT
 
       - name: Docker meta
         id: meta
@@ -108,7 +106,7 @@ jobs:
       - name: Deploy
         env:
           IMAGE_TAG: ${{ github.sha }}
-        run: poetry run zappa update $ENVIRONMENT -d $ECR_REGISTRY/$ECR_REPOSITORY:${{ steps.meta.outputs.version }}
+        run: zappa update $ENVIRONMENT -d ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ steps.meta.outputs.version }}
 
       - name: Sync static files
         run: |
@@ -119,5 +117,5 @@ jobs:
           aws s3 sync static "s3://${BUCKET_NAME}/static" --delete --acl=public-read
 
       - name: Migrate
-        run: poetry run zappa manage $ENVIRONMENT migrate
+        run: zappa manage $ENVIRONMENT migrate
 

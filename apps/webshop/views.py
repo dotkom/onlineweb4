@@ -32,7 +32,7 @@ class LoginRequiredMixin:
 
 class CartMixin:
     def get_context_data(self, **kwargs):
-        context = super(CartMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["order_line"] = self.current_order_line()
         return context
 
@@ -71,7 +71,7 @@ class Home(WebshopMixin, TemplateView):
         return None
 
     def get_context_data(self, **kwargs):
-        context = super(Home, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["products"] = Product.objects.filter(active=True)
         return context
 
@@ -98,7 +98,7 @@ class ProductDetail(WebshopMixin, DetailView):
         return breadcrumbs
 
     def get_context_data(self, **kwargs):
-        context = super(ProductDetail, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["orderform"] = OrderForm
         context["sizes"] = ProductSize.objects.filter(product=self.get_object())
         return context
@@ -108,7 +108,7 @@ class ProductDetail(WebshopMixin, DetailView):
         product = self.get_object()
         if product.deadline and product.deadline < timezone.now():
             messages.error(request, "Dette produktet er ikke lenger tilgjengelig.")
-            return super(ProductDetail, self).get(request, *args, **kwargs)
+            return super().get(request, *args, **kwargs)
 
         if not product.in_stock():
             messages.error(request, "Dette produktet er utsolgt.")
@@ -143,7 +143,7 @@ class ProductDetail(WebshopMixin, DetailView):
             return redirect("webshop_checkout")
         else:
             messages.error(request, "Vennligst oppgi et gyldig antall")
-        return super(ProductDetail, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class Checkout(LoginRequiredMixin, WebshopMixin, TemplateView):
@@ -165,7 +165,7 @@ class Checkout(LoginRequiredMixin, WebshopMixin, TemplateView):
 
             self.remove_inactive_orders(invalid_orders)
 
-        return super(Checkout, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def remove_inactive_orders(self, orders):
         for order in orders:
@@ -193,7 +193,7 @@ class RemoveOrder(LoginRequiredMixin, WebshopMixin, RedirectView):
             Order.objects.filter(order_line=order_line, id=order_id).delete()
         else:
             Order.objects.filter(order_line=order_line).delete()
-        return super(RemoveOrder, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):

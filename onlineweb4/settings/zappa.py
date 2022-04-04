@@ -30,7 +30,6 @@ SECRET_KEY = env["SECRET_KEY"]
 
 DATAPORTEN = {
     "STUDY": {
-        "ENABLED": config("OW4_DP_STUDY_ENABLED", cast=bool, default=False),
         "TESTING": config("OW4_DP_STUDY_TESTING", cast=bool, default=True),
         "CLIENT_ID": env["DP_STUDY_CLIENT_ID"],
         "CLIENT_SECRET": env["DP_STUDY_CLIENT_SECRET"],

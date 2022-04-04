@@ -207,7 +207,7 @@ def set_marks(title, not_responded):
         user_entry.save()
 
 
-class Message(object):
+class Message:
     subject = ""
     intro = ""
     date = ""

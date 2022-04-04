@@ -44,6 +44,9 @@ class ProfileForm(forms.ModelForm):
 
 
 class PrivacyForm(forms.ModelForm):
+    allow_pictures = forms.BooleanField(initial=False)
+    visible_as_attending_events = forms.BooleanField(initial=False)
+
     class Meta:
         model = Privacy
         exclude = ["user", "expose_nickname"]
@@ -65,7 +68,7 @@ class PositionForm(forms.ModelForm):
         }
 
     def clean(self):
-        super(PositionForm, self).clean()
+        super().clean()
 
         period_start = self.cleaned_data["period_start"]
         period_end = self.cleaned_data["period_end"]
@@ -87,7 +90,7 @@ class PositionForm(forms.ModelForm):
 
 class MembershipSettingsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(MembershipSettingsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["started_date"].widget.attrs["class"] = "hasDatePicker"
 
     class Meta:
@@ -107,7 +110,7 @@ class InternalServicesForm(forms.Form):
     current_user = None
 
     def clean(self):
-        super(InternalServicesForm, self).clean()
+        super().clean()
         if self.is_valid():
             cleaned_data = self.cleaned_data
 

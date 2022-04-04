@@ -3,7 +3,7 @@ from rest_framework import serializers
 from apps.authentication.models import Email
 
 
-class OnlineUserEmailValidator(object):
+class OnlineUserEmailValidator:
     def validate_email(self, email):
         all_emails = [email_obj.email for email_obj in Email.objects.all()]
         if email in all_emails:

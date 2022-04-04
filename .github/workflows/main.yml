@@ -46,7 +46,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: pipx install poetry==${{ env.POETRY_VERSION }}
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
         run: poetry install --no-interaction --no-ansi
@@ -91,7 +91,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: pipx install poetry==${{ env.POETRY_VERSION }}
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
         run: poetry install --no-interaction --no-ansi
@@ -99,7 +99,7 @@ jobs:
       - name: Python linting
         run: poetry run tox -e flake8 -e isort -e black
 
-  check-migrations:
+  django-checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -119,13 +119,16 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install Poetry
-        run: pipx install poetry==${{ env.POETRY_VERSION }}
+        run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
         run: poetry install --no-interaction --no-ansi
 
       - name: Check migrations
         run: poetry run python manage.py makemigrations --check
+
+      - name: Django check
+        run: poetry run python manage.py check
 
   lint-js:
     runs-on: ubuntu-latest

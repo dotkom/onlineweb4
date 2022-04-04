@@ -98,11 +98,11 @@ class Mark(models.Model):
     def save(self, *args, **kwargs):
         if not self.added_date:
             self.added_date = timezone.now().date()
-        super(Mark, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def delete(self, **kwargs):
         given_to = [mu.user for mu in self.given_to.all()]
-        super(Mark, self).delete()
+        super().delete()
         for user in given_to:
             _fix_mark_history(user)
 
@@ -128,12 +128,12 @@ class MarkUser(models.Model):
         if not self.expiration_date:
             self.expiration_date = timezone.now().date()
             run_history_update = True
-        super(MarkUser, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if run_history_update:
             _fix_mark_history(self.user)
 
     def delete(self):
-        super(MarkUser, self).delete()
+        super().delete()
         _fix_mark_history(self.user)
 
     def __str__(self):

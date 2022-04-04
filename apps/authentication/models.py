@@ -156,8 +156,6 @@ class OnlineUser(AbstractUser):
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
     )
 
-    # TODO checkbox for forwarding of @online.ntnu.no mail
-
     @property
     def is_member(self):
         """
@@ -227,11 +225,6 @@ class OnlineUser(AbstractUser):
     def get_emails(self):
         return Email.objects.filter(user=self)
 
-    def get_online_mail(self):
-        if self.online_mail:
-            return self.online_mail + "@" + settings.OW4_GSUITE_SYNC.get("DOMAIN")
-        return None
-
     def get_active_suspensions(self):
         return self.suspension_set.filter(active=True)
 
@@ -275,7 +268,14 @@ class OnlineUser(AbstractUser):
         if self.ntnu_username == "":
             self.ntnu_username = None
         self.username = self.username.lower()
-        super(OnlineUser, self).save(*args, **kwargs)
+
+        if self.is_staff and not self.online_mail:
+            # avoid circulat imports
+            from apps.authentication.utils import create_online_mail_alias
+
+            self.online_mail = create_online_mail_alias(self)
+
+        super().save(*args, **kwargs)
 
     def serializable_object(self):
         if self.privacy.expose_phone_number:
@@ -313,9 +313,9 @@ class OnlineUser(AbstractUser):
 
     def get_visible_as_attending_events(self):
         """Returns the default value of visible_as_attending_events set in privacy/personvern"""
-        if hasattr(self, "privacy"):
-            return self.privacy.visible_as_attending_events
-        return False
+        # privacy is created at user creation, see `apps.profiles.signals.create_privacy_profile`,
+        # intentionally uses that bool(None) == False, in case user has not set a preference
+        return bool(self.privacy.visible_as_attending_events)
 
     @property
     def mark_rules_accepted(self):
@@ -349,7 +349,7 @@ class Email(models.Model):
         if self.primary:
             self.user.email = self.email
             self.user.save()
-        super(Email, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.email
@@ -400,7 +400,7 @@ class Membership(models.Model):
 
     def save(self, *args, **kwargs):
         self.username = self.username.lower()
-        super(Membership, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.username

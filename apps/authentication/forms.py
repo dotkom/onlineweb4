@@ -93,7 +93,7 @@ class RegisterForm(forms.Form):
     phone = forms.CharField(label=_("Telefon"), max_length=20, required=False)
 
     def clean(self):
-        super(RegisterForm, self).clean()
+        super().clean()
         if self.is_valid():
             cleaned_data = self.cleaned_data
 
@@ -189,7 +189,7 @@ class ChangePasswordForm(forms.Form):
     )
 
     def clean(self):
-        super(ChangePasswordForm, self).clean()
+        super().clean()
         if self.is_valid():
             cleaned_data = self.cleaned_data
 

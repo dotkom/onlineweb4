@@ -38,11 +38,6 @@ urlpatterns = [
         TemplateView.as_view(template_name="frontpage.html"),
         name="business-link",
     ),
-    re_path(
-        r"^#offline$",
-        TemplateView.as_view(template_name="frontpage.html"),
-        name="offline-link",
-    ),
     # Online Notifier Owner Verification (checked yearly or so by Google)
     re_path(
         r"^google79c0b331a83a53de\.html$",
@@ -116,10 +111,10 @@ if "apps.dashboard" in settings.INSTALLED_APPS:
     ]
 
 if "apps.dataporten" in settings.INSTALLED_APPS:
-    from apps.dataporten import urls as dataporten_urls
-
     urlpatterns += [
-        re_path(r"^dataporten/", include(dataporten_urls, namespace="dataporten"))
+        re_path(
+            r"^dataporten/", include("apps.dataporten.urls", namespace="dataporten")
+        )
     ]
 
 if "apps.events" in settings.INSTALLED_APPS:
@@ -170,11 +165,6 @@ if "apps.inventory" in settings.INSTALLED_APPS:
 
 if "apps.shop" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^shop/", include("apps.shop.urls"))]
-
-if "apps.offline" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^offline/", include("apps.offline.urls")),
-    ]
 
 if "apps.posters" in settings.INSTALLED_APPS:
     urlpatterns += [

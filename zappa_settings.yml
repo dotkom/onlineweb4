@@ -1,8 +1,7 @@
 ---
-Production:
+prod:
   aws_region: eu-north-1
   django_settings: onlineweb4.settings
-  profile_name: default
   project_name: onlineweb4
   s3_bucket: zappa-4zzd2i1dt
   domain: old.online.ntnu.no
@@ -20,7 +19,7 @@ Production:
     expression: cron(0 8 ? * * *)
   - function: apps.payment.mommy.payment_reminder
     expression: cron(30 7 ? * * *)
-  - function: apps.payment.mommy.payement_delay_handler
+  - function: apps.payment.mommy.payment_delay_handler
     expression: cron(45 7 ? * * *)
   extra_permissions:
   - Effect: Allow
@@ -67,11 +66,9 @@ Production:
     VAULT_SECRET_FILE_GSUITE: "/tmp/secrets/gsuite-creds.json"
     VAULT_SECRET_PATH_ENV: secret/data/onlineweb4/zappa-env
     VAULT_SECRET_FILE_ENV: "/tmp/secrets/env.json"
-# like canary bird — flies into the coal mine to check if it is dangerous
-Canary:
+dev:
   aws_region: eu-north-1
   django_settings: onlineweb4.settings
-  profile_name: default
   project_name: onlineweb4
   s3_bucket: zappa-4zzd2i1dt
   domain: dev.online.ntnu.no
@@ -87,7 +84,7 @@ Canary:
     Resource: arn:aws:s3:::onlineweb4-dev/*
   environment_variables:
     OW4_DJANGO_DEBUG: 'False'
-    OW4_ENVIRONMENT: Canary
+    OW4_ENVIRONMENT: Dev
     LANG: en_US.UTF-8
     LC_ALL: en_US.UTF-8
     OW4_SENTRY_DSN: https://df3629be91944be79c790681d9a57f76:4f7c06b4cdef41b8bb0f87c9fc57050a@sentry.io/204971
