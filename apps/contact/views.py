@@ -53,10 +53,9 @@ def contact_submit(request):
 
             EmailMessage(
                 subject,
-                content,
+                f"E-post: {from_email}\n{content}",
                 settings.DEFAULT_FROM_EMAIL,
                 to_email,
-                reply_to=[from_email],
             ).send()
             messages.success(request, "Meldingen ble sendt")
         else:
