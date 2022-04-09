@@ -4,7 +4,7 @@
 {
 	"name": "OnlineWeb4",
 	"dockerComposeFile": [
-		"docker-compose.yml",
+		"docker-compose.yml"
 	],
 	"service": "app",
 	"workspaceFolder": "/workspace",
