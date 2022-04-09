@@ -192,11 +192,16 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
     Checks whether the span of a marks duration needs to have vacation durations added.
     """
 
+    duration = DURATION
+    mark_change_date = date(2022, 2, 1)
+    if added_date < mark_change_date:
+        duration = 30
+
     if type(added_date) == datetime:
         added_date = added_date.date()
 
     # Add the duration
-    expiry_date = added_date + timedelta(days=DURATION)
+    expiry_date = added_date + timedelta(days=duration)
     # Set up the summer and winter vacations
     summer_start_date = date(added_date.year, SUMMER[0][0], SUMMER[0][1])
     summer_end_date = date(added_date.year, SUMMER[1][0], SUMMER[1][1])
@@ -209,13 +214,13 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
         expiry_date += timedelta(days=(summer_end_date - added_date).days)
     # If the number of days between added_date and the beginning of summer vacation is less
     # than the duration, we need to add the length of summer to the expiry date
-    elif 0 < (summer_start_date - added_date).days < DURATION:
+    elif 0 < (summer_start_date - added_date).days < duration:
         expiry_date += timedelta(days=(summer_end_date - summer_start_date).days)
     # Same for middle of winter vacation, which will be at the end of the year
     elif first_winter_start_date < added_date < first_winter_end_date:
         expiry_date += timedelta(days=(first_winter_end_date - added_date).days)
     # And for before the vacation
-    elif 0 < (first_winter_start_date - added_date).days < DURATION:
+    elif 0 < (first_winter_start_date - added_date).days < duration:
         expiry_date += timedelta(
             days=(first_winter_end_date - first_winter_start_date).days
         )

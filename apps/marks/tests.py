@@ -79,6 +79,15 @@ class MarksTest(TestCase):
         d = date(2013, 7, 1)
         self.assertEqual(date(2013, 9, 14), _get_with_duration_and_vacation(d))
 
+    def test_getting_expiration_date_with_no_vacation_in_spring_for_new_mark_duration(
+        self,
+    ):
+        self.logger.debug(
+            "Testing expiration date with no vacation span in the spring for new mark"
+        )
+        d = date(2013, 2, 1)
+        self.assertEqual(date(2013, 2, 21), _get_with_duration_and_vacation(d))
+
 
 class MarkRuleSetTest(TestCase):
     def setUp(self):
