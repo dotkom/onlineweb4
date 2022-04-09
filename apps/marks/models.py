@@ -162,11 +162,19 @@ def _fix_mark_history(user):
     markusers = MarkUser.objects.filter(user=user).order_by("mark__added_date")
     last_expiry_date = None
     for entry in markusers:
+
+        # If the creation date is before the 1 of february 2022, the duration of the
+        # mark should be 30 days. The mark rule duration was changed.
+        duration = DURATION
+        mark_change_date = date(2022, 2, 1)
+        if entry.mark.added_date < mark_change_date:
+            duration = 30
+
         # If there's a last_expiry date, it means a mark has been processed already.
         # If that expiration date is within a DURATION of this added date, build on it.
         if (
             last_expiry_date
-            and entry.mark.added_date - timedelta(days=DURATION) < last_expiry_date
+            and entry.mark.added_date - timedelta(days=duration) < last_expiry_date
         ):
             entry.expiration_date = _get_with_duration_and_vacation(last_expiry_date)
         # If there is no last_expiry_date or the last expiry date is over a DURATION old
