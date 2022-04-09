@@ -89,7 +89,7 @@ dev:
     LC_ALL: en_US.UTF-8
     OW4_SENTRY_DSN: https://df3629be91944be79c790681d9a57f76:4f7c06b4cdef41b8bb0f87c9fc57050a@sentry.io/204971
     OW4_EVENTS_ENABLE_RECAPTCHA: 'True'
-    OW4_DJANGO_ALLOWED_HOSTS: dev.online.ntnu.no
+    OW4_DJANGO_ALLOWED_HOSTS: dev.online.ntnu.no,*.execute-api.eu-north-1.amazonaws.com
     OW4_DJANGO_BASE_URL: https://dev.online.ntnu.no
     OW4_GSUITE_ENABLED: 'True'
     OW4_GSUITE_ACCOUNTS_ENABLED: 'True'

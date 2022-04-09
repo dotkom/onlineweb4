@@ -1,5 +1,6 @@
 import sentry_sdk
 from decouple import config
+from rest_framework.serializers import ValidationError
 from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -11,4 +12,5 @@ sentry_sdk.init(
     environment=config("OW4_ENVIRONMENT", default="DEVELOP"),
     traces_sample_rate=0.2,
     integrations=[DjangoIntegration(), AwsLambdaIntegration(timeout_warning=True)],
+    ignore_errors=[ValidationError],
 )
