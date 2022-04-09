@@ -5,8 +5,6 @@
 	"name": "OnlineWeb4",
 	"dockerComposeFile": [
 		"docker-compose.yml",
-		"docker-compose.build.yml",
-		"docker-compose.no-deps.yml"
 	],
 	"service": "app",
 	"workspaceFolder": "/workspace",
