@@ -1558,7 +1558,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "tox"
-version = "3.24.5"
+version = "3.25.0"
 description = "tox is a generic virtualenv management and test command line tool"
 category = "dev"
 optional = false
@@ -1757,7 +1757,7 @@ prod = ["psycopg2-binary", "boto3", "django-ses", "zappa", "django-storages"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "2e48e0e4e5429678e5b6766f772a8df020abc4225c8c5ecbcce426aaa475bbed"
+content-hash = "b8dfd88ebc31d4f08df8eae582b4fd960064e62e4829cc4d48261b8fc2be8f6a"
 
 [metadata.files]
 argcomplete = [
@@ -2654,8 +2654,8 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 tox = [
-    {file = "tox-3.24.5-py2.py3-none-any.whl", hash = "sha256:be3362472a33094bce26727f5f771ca0facf6dafa217f65875314e9a6600c95c"},
-    {file = "tox-3.24.5.tar.gz", hash = "sha256:67e0e32c90e278251fea45b696d0fef3879089ccbe979b0c556d35d5a70e2993"},
+    {file = "tox-3.25.0-py2.py3-none-any.whl", hash = "sha256:0805727eb4d6b049de304977dfc9ce315a1938e6619c3ab9f38682bb04662a5a"},
+    {file = "tox-3.25.0.tar.gz", hash = "sha256:37888f3092aa4e9f835fc8cc6dadbaaa0782651c41ef359e3a5743fcb0308160"},
 ]
 tqdm = [
     {file = "tqdm-4.63.1-py2.py3-none-any.whl", hash = "sha256:6461b009d6792008d0000e1b0c7ca50195ec78c0e808a3a6b668a56a3236c3a5"},
