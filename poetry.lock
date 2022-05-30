@@ -1523,7 +1523,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "stripe"
-version = "2.67.0"
+version = "3.2.0"
 description = "Python bindings for the Stripe API"
 category = "main"
 optional = false
@@ -1757,7 +1757,7 @@ prod = ["psycopg2-binary", "boto3", "django-ses", "zappa", "django-storages"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "2e48e0e4e5429678e5b6766f772a8df020abc4225c8c5ecbcce426aaa475bbed"
+content-hash = "52278f0dbe0b8d9f2fd4aecb04ab39d294ba3d6755c7e9de0a9fe78dfa530c3d"
 
 [metadata.files]
 argcomplete = [
@@ -2638,8 +2638,8 @@ sqlparse = [
     {file = "sqlparse-0.4.2.tar.gz", hash = "sha256:0c00730c74263a94e5a9919ade150dfc3b19c574389985446148402998287dae"},
 ]
 stripe = [
-    {file = "stripe-2.67.0-py2.py3-none-any.whl", hash = "sha256:7efaee187a0615ce9361b6009122f89488a874c3175b5262dd9741a49088db18"},
-    {file = "stripe-2.67.0.tar.gz", hash = "sha256:718b93d6a18105243bce0c9b48e518f72f1f083d27f07e07b8bdb3a541fe3835"},
+    {file = "stripe-3.2.0-py2.py3-none-any.whl", hash = "sha256:210d5137bdc686a31ee435a7c1761e112544ad58d84dd8cb7f0903068edcabd2"},
+    {file = "stripe-3.2.0.tar.gz", hash = "sha256:d9a47de7d963cf69a880f3d04961b792c40f456c74e09878551555de3c2261f0"},
 ]
 text-unidecode = [
     {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
