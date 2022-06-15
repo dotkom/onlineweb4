@@ -197,7 +197,7 @@ class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
 
 
 class GroupMemberViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
-    permission_classes = (DjangoObjectPermissionOrAnonReadOnly,)
+    permission_classes = (IsAuthenticated,)
     queryset = GroupMember.objects.all()
     serializer_classes = {
         "create": GroupMemberCreateSerializer,
