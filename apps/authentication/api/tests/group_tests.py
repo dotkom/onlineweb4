@@ -239,10 +239,10 @@ class GroupMemberTestCase(OIDCTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_un_authenticated_user_gets_200(self):
+    def test_un_authenticated_user_gets_401(self):
         response = self.client.get(self.url, **self.bare_headers)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_superuser_can_create_memberships(self):
         self.user.save()

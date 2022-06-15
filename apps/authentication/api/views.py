@@ -1,7 +1,11 @@
 from django.contrib.auth.models import Group, Permission
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import (
+    AllowAny,
+    DjangoObjectPermissions,
+    IsAuthenticated,
+)
 from rest_framework.response import Response
 
 from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
@@ -29,10 +33,7 @@ from apps.authentication.serializers import (
     UserUpdateSerializer,
 )
 from apps.common.rest_framework.mixins import MultiSerializerMixin
-from apps.permissions.drf_permissions import (
-    DjangoObjectPermissionOrAnonReadOnly,
-    DjangoObjectPermissionOrAuthReadOnly,
-)
+from apps.permissions.drf_permissions import DjangoObjectPermissionOrAnonReadOnly
 
 from .filters import OnlineGroupFilter, UserFilter
 from .permissions import IsSelfOrSuperUser
@@ -200,7 +201,7 @@ class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
 
 
 class GroupMemberViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
-    permission_classes = (DjangoObjectPermissionOrAuthReadOnly,)
+    permission_classes = (DjangoObjectPermissions,)
     queryset = GroupMember.objects.all()
     serializer_classes = {
         "create": GroupMemberCreateSerializer,
