@@ -10,7 +10,7 @@ class DjangoObjectPermissionOrAnonReadOnly(permissions.DjangoObjectPermissions):
         # The rest are handled by object permissions
         return True
     
-class DjangoObjectPermissions(permissions.DjangoObjectPermissions):
+class DjangoObjectPermissionOrAuthReadOnly(permissions.DjangoObjectPermissions):
     authenticated_users_only = True
 
     def has_permission(self, request, view):
