@@ -31,7 +31,7 @@ from apps.authentication.serializers import (
 from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.permissions.drf_permissions import (
     DjangoObjectPermissionOrAnonReadOnly,
-    DjangoObjectPermissionOrAuthReadOnly, 
+    DjangoObjectPermissionOrAuthReadOnly,
 )
 
 from .filters import OnlineGroupFilter, UserFilter
