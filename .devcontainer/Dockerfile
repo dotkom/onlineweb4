@@ -17,7 +17,10 @@ RUN pipx install poetry==1.1.13 \
     && apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends \
         libjpeg-dev \
-        git
+        git \
+        locales \
+    && sed -i '/nb_NO.UTF-8/s/^# //g' /etc/locale.gen \
+    && locale-gen
 
 FROM base AS with-dependencies
 

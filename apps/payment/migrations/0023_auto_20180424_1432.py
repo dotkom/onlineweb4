@@ -11,8 +11,7 @@ from django.db.migrations import RunPython
 def forward(apps, schema_editor):
     Payment = apps.get_model("payment", "Payment")
 
-    # Payment type 3 is 'Utsettelse'
-    for payment in Payment.objects.filter(payment_type=3):
+    for payment in Payment.objects.filter(payment_type=Payment.Types.DELAY):
         payment.delay_duration = timedelta(days=payment.delay)
         payment.save()
 
@@ -20,8 +19,7 @@ def forward(apps, schema_editor):
 def backward(apps, schema_editor):
     Payment = apps.get_model("payment", "Payment")
 
-    # Payment type 3 is 'Utsettelse'
-    for payment in Payment.objects.filter(payment_type=3):
+    for payment in Payment.objects.filter(payment_type=Payment.Types.DELAY):
         payment.delay = payment.delay_duration.days
         payment.save()
 

@@ -24,7 +24,7 @@ def payment_reminder():
 
     # All payments using deadline
     event_payments = Payment.objects.filter(
-        payment_type=2,
+        payment_type=Payment.Types.DEADLINE,
         active=True,
         content_type=ContentType.objects.get_for_model(AttendanceEvent),
     )
@@ -112,8 +112,9 @@ def notify_committee(payment):
     EmailMessage(subject, content, "online@online.ntnu.no", [], receivers).send()
 
 
-def not_paid(payment):
+def not_paid(payment: Payment):
     attendees = payment.content_object.attending_attendees_qs
+
     not_paid_users = [attendee.user for attendee in attendees if not attendee.paid]
 
     # Removes users with active payment delays from the list

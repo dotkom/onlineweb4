@@ -13,6 +13,7 @@ from apps.events.tests.utils import (
     pay_for_event,
 )
 from apps.online_oidc_provider.test import OIDCTestCase
+from apps.payment.models import Payment
 from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 
 from ...models import Extras, StatusCode
@@ -373,7 +374,7 @@ class AttendanceEventTestCase(OIDCTestCase):
     def test_payment_is_configured_on_registration(self, _):
         generate_payment(
             self.event,
-            payment_type=1,
+            payment_type=Payment.Types.IMMEDIATE,
             deadline=timezone.now() + timezone.timedelta(days=1),
         )
         attendance = self.event.attendance_event
@@ -432,7 +433,7 @@ class AttendanceEventTestCase(OIDCTestCase):
     def test_attendance_payment_info_works_when_event_has_payment(self):
         generate_payment(
             self.event,
-            payment_type=1,
+            payment_type=Payment.Types.IMMEDIATE,
             deadline=timezone.now() + timezone.timedelta(days=1),
         )
         response = self.client.get(self.get_payment_url(self.event.id), **self.headers)
@@ -447,7 +448,7 @@ class AttendanceEventTestCase(OIDCTestCase):
     def test_attendance_payment_info_only_works_for_authenticated_users(self):
         generate_payment(
             self.event,
-            payment_type=1,
+            payment_type=Payment.Types.IMMEDIATE,
             deadline=timezone.now() + timezone.timedelta(days=1),
         )
         response = self.client.get(
