@@ -7,7 +7,7 @@ optional = true
 python-versions = ">=3.6"
 
 [package.extras]
-test = ["coverage", "flake8", "pexpect", "wheel"]
+test = ["wheel", "pexpect", "flake8", "coverage"]
 
 [[package]]
 name = "asgiref"
@@ -303,7 +303,7 @@ python-versions = "*"
 
 [[package]]
 name = "django"
-version = "3.2.12"
+version = "3.2.15"
 description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
@@ -920,9 +920,9 @@ python-versions = ">=3.7"
 MarkupSafe = ">=0.9.2"
 
 [package.extras]
-babel = ["babel"]
-lingua = ["lingua"]
 testing = ["pytest"]
+lingua = ["lingua"]
+babel = ["babel"]
 
 [[package]]
 name = "markdown"
@@ -1007,12 +1007,12 @@ requests = "*"
 typing-extensions = "*"
 
 [package.extras]
-develop = ["cherrypy (==3.2.4)", "pyopenssl"]
-docs = ["sphinx", "sphinx-autobuild", "alabaster"]
-ldap_authn = ["pyldap"]
-quality = ["pylama", "isort", "eradicate", "mypy", "black", "bandit", "readme-renderer"]
-testing = ["responses", "testfixtures", "pytest", "freezegun"]
 types = ["types-requests"]
+testing = ["freezegun", "pytest", "testfixtures", "responses"]
+quality = ["readme-renderer", "bandit", "black", "mypy", "eradicate", "isort", "pylama"]
+ldap_authn = ["pyldap"]
+docs = ["alabaster", "sphinx-autobuild", "sphinx"]
+develop = ["pyopenssl", "cherrypy (==3.2.4)"]
 
 [[package]]
 name = "packaging"
@@ -1108,8 +1108,8 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-dev = ["pre-commit", "tox"]
-testing = ["pytest", "pytest-benchmark"]
+testing = ["pytest-benchmark", "pytest"]
+dev = ["tox", "pre-commit"]
 
 [[package]]
 name = "pre-commit"
@@ -1272,7 +1272,7 @@ coverage = {version = ">=5.2.1", extras = ["toml"]}
 pytest = ">=4.6"
 
 [package.extras]
-testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtualenv"]
+testing = ["virtualenv", "pytest-xdist", "six", "process-tests", "hunter", "fields"]
 
 [[package]]
 name = "pytest-django"
@@ -1701,10 +1701,10 @@ Pillow = "*"
 sorl-thumbnail = ">=12.8,<13"
 
 [package.extras]
-devel = ["django-functest (>=1.2,<1.3)", "pytest (>=6.2.5,<6.3)", "pytest-django", "pytest-cov", "coverage", "codecov", "ddt", "pytest-pythonpath", "flake8 (>=3.7,<3.8)", "black (>=20.8b1,<20.9)", "pre-commit"]
-test = ["django-functest (>=1.2,<1.3)", "pytest (>=6.2.5,<6.3)", "pytest-django", "pytest-cov", "coverage", "codecov", "ddt", "pytest-pythonpath"]
-testlint = ["flake8 (>=3.7,<3.8)", "black (>=20.8b1,<20.9)", "pre-commit"]
 transifex = ["transifex-client"]
+testlint = ["pre-commit", "black (>=20.8b1,<20.9)", "flake8 (>=3.7,<3.8)"]
+test = ["pytest-pythonpath", "ddt", "codecov", "coverage", "pytest-cov", "pytest-django", "pytest (>=6.2.5,<6.3)", "django-functest (>=1.2,<1.3)"]
+devel = ["pre-commit", "black (>=20.8b1,<20.9)", "flake8 (>=3.7,<3.8)", "pytest-pythonpath", "ddt", "codecov", "coverage", "pytest-cov", "pytest-django", "pytest (>=6.2.5,<6.3)", "django-functest (>=1.2,<1.3)"]
 
 [[package]]
 name = "wrapt"
@@ -1757,7 +1757,7 @@ prod = ["psycopg2-binary", "boto3", "django-ses", "zappa", "django-storages"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "2e48e0e4e5429678e5b6766f772a8df020abc4225c8c5ecbcce426aaa475bbed"
+content-hash = "e875601ee2e17f8e284bc182a3c9ecd4651957dc46d359c95eaab89269e02a7d"
 
 [metadata.files]
 argcomplete = [
@@ -1986,8 +1986,8 @@ dj-database-url = [
     {file = "dj_database_url-0.5.0-py2.py3-none-any.whl", hash = "sha256:851785365761ebe4994a921b433062309eb882fedd318e1b0fcecc607ed02da9"},
 ]
 django = [
-    {file = "Django-3.2.12-py3-none-any.whl", hash = "sha256:9b06c289f9ba3a8abea16c9c9505f25107809fb933676f6c891ded270039d965"},
-    {file = "Django-3.2.12.tar.gz", hash = "sha256:9772e6935703e59e993960832d66a614cf0233a1c5123bc6224ecc6ad69e41e2"},
+    {file = "Django-3.2.15-py3-none-any.whl", hash = "sha256:115baf5049d5cf4163e43492cdc7139c306ed6d451e7d3571fe9612903903713"},
+    {file = "Django-3.2.15.tar.gz", hash = "sha256:f71934b1a822f14a86c9ac9634053689279cd04ae69cb6ade4a59471b886582b"},
 ]
 django-chunks = []
 django-classy-tags = [
