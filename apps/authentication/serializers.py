@@ -28,6 +28,7 @@ class UserNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("first_name", "last_name", "username")
+        exclude = ("email")
 
 
 class UserReadOnlySerializer(serializers.ModelSerializer):
