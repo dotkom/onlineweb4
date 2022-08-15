@@ -7,7 +7,7 @@ optional = true
 python-versions = ">=3.6"
 
 [package.extras]
-test = ["coverage", "flake8", "pexpect", "wheel"]
+test = ["wheel", "pexpect", "flake8", "coverage"]
 
 [[package]]
 name = "asgiref"
@@ -18,7 +18,7 @@ optional = false
 python-versions = ">=3.7"
 
 [package.extras]
-tests = ["pytest", "pytest-asyncio", "mypy (>=0.800)"]
+tests = ["mypy (>=0.800)", "pytest-asyncio", "pytest"]
 
 [[package]]
 name = "atomicwrites"
@@ -283,7 +283,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 wrapt = ">=1.10,<2"
 
 [package.extras]
-dev = ["tox", "bump2version (<1)", "sphinx (<2)", "importlib-metadata (<3)", "importlib-resources (<4)", "configparser (<5)", "sphinxcontrib-websupport (<2)", "zipp (<2)", "PyTest (<5)", "PyTest-Cov (<2.6)", "pytest", "pytest-cov"]
+dev = ["pytest-cov", "pytest", "PyTest-Cov (<2.6)", "PyTest (<5)", "zipp (<2)", "sphinxcontrib-websupport (<2)", "configparser (<5)", "importlib-resources (<4)", "importlib-metadata (<3)", "sphinx (<2)", "bump2version (<1)", "tox"]
 
 [[package]]
 name = "distlib"
@@ -315,8 +315,8 @@ pytz = "*"
 sqlparse = ">=0.2.2"
 
 [package.extras]
-argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
+argon2 = ["argon2-cffi (>=19.1.0)"]
 
 [[package]]
 name = "django-chunks"
@@ -564,12 +564,12 @@ python-versions = ">=3.5"
 Django = ">=2.2"
 
 [package.extras]
-azure = ["azure-storage-blob (>=12.0.0)"]
-boto3 = ["boto3 (>=1.4.4)"]
-dropbox = ["dropbox (>=7.2.1)"]
-google = ["google-cloud-storage (>=1.27.0)"]
-libcloud = ["apache-libcloud"]
 sftp = ["paramiko"]
+libcloud = ["apache-libcloud"]
+google = ["google-cloud-storage (>=1.27.0)"]
+dropbox = ["dropbox (>=7.2.1)"]
+boto3 = ["boto3 (>=1.4.4)"]
+azure = ["azure-storage-blob (>=12.0.0)"]
 
 [[package]]
 name = "django-taggit"
@@ -646,8 +646,8 @@ optional = false
 python-versions = ">=3.7"
 
 [package.extras]
-docs = ["furo (>=2021.8.17b43)", "sphinx (>=4.1)", "sphinx-autodoc-typehints (>=1.12)"]
-testing = ["covdefaults (>=1.2.0)", "coverage (>=4)", "pytest (>=4)", "pytest-cov", "pytest-timeout (>=1.4.2)"]
+testing = ["pytest-timeout (>=1.4.2)", "pytest-cov", "pytest (>=4)", "coverage (>=4)", "covdefaults (>=1.2.0)"]
+docs = ["sphinx-autodoc-typehints (>=1.12)", "sphinx (>=4.1)", "furo (>=2021.8.17b43)"]
 
 [[package]]
 name = "flake8"
@@ -704,9 +704,9 @@ protobuf = ">=3.12.0"
 requests = ">=2.18.0,<3.0.0dev"
 
 [package.extras]
-grpc = ["grpcio (>=1.33.2,<2.0dev)", "grpcio-status (>=1.33.2,<2.0dev)"]
-grpcgcp = ["grpcio-gcp (>=0.2.2)"]
 grpcio-gcp = ["grpcio-gcp (>=0.2.2)"]
+grpcgcp = ["grpcio-gcp (>=0.2.2)"]
+grpc = ["grpcio-status (>=1.33.2,<2.0dev)", "grpcio (>=1.33.2,<2.0dev)"]
 
 [[package]]
 name = "google-api-python-client"
@@ -738,9 +738,9 @@ rsa = {version = ">=3.1.4,<5", markers = "python_version >= \"3.6\""}
 six = ">=1.9.0"
 
 [package.extras]
-aiohttp = ["requests (>=2.20.0,<3.0.0dev)", "aiohttp (>=3.6.2,<4.0.0dev)"]
-pyopenssl = ["pyopenssl (>=20.0.0)"]
 reauth = ["pyu2f (>=0.1.5)"]
+pyopenssl = ["pyopenssl (>=20.0.0)"]
+aiohttp = ["aiohttp (>=3.6.2,<4.0.0dev)", "requests (>=2.20.0,<3.0.0dev)"]
 
 [[package]]
 name = "google-auth-httplib2"
@@ -847,10 +847,10 @@ optional = false
 python-versions = ">=3.6.1,<4.0"
 
 [package.extras]
-pipfile_deprecated_finder = ["pipreqs", "requirementslib"]
-requirements_deprecated_finder = ["pipreqs", "pip-api"]
-colors = ["colorama (>=0.4.3,<0.5.0)"]
 plugins = ["setuptools"]
+colors = ["colorama (>=0.4.3,<0.5.0)"]
+requirements_deprecated_finder = ["pip-api", "pipreqs"]
+pipfile_deprecated_finder = ["requirementslib", "pipreqs"]
 
 [[package]]
 name = "itypes"
@@ -920,9 +920,9 @@ python-versions = ">=3.7"
 MarkupSafe = ">=0.9.2"
 
 [package.extras]
-babel = ["babel"]
-lingua = ["lingua"]
 testing = ["pytest"]
+lingua = ["lingua"]
+babel = ["babel"]
 
 [[package]]
 name = "markdown"
@@ -1007,12 +1007,12 @@ requests = "*"
 typing-extensions = "*"
 
 [package.extras]
-develop = ["cherrypy (==3.2.4)", "pyopenssl"]
-docs = ["sphinx", "sphinx-autobuild", "alabaster"]
-ldap_authn = ["pyldap"]
-quality = ["pylama", "isort", "eradicate", "mypy", "black", "bandit", "readme-renderer"]
-testing = ["responses", "testfixtures", "pytest", "freezegun"]
 types = ["types-requests"]
+testing = ["freezegun", "pytest", "testfixtures", "responses"]
+quality = ["readme-renderer", "bandit", "black", "mypy", "eradicate", "isort", "pylama"]
+ldap_authn = ["pyldap"]
+docs = ["alabaster", "sphinx-autobuild", "sphinx"]
+develop = ["pyopenssl", "cherrypy (==3.2.4)"]
 
 [[package]]
 name = "packaging"
@@ -1108,8 +1108,8 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-dev = ["pre-commit", "tox"]
-testing = ["pytest", "pytest-benchmark"]
+testing = ["pytest-benchmark", "pytest"]
+dev = ["tox", "pre-commit"]
 
 [[package]]
 name = "pre-commit"
@@ -1257,7 +1257,7 @@ py = ">=1.8.2"
 tomli = ">=1.0.0"
 
 [package.extras]
-testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.7.2)", "requests", "xmlschema"]
+testing = ["xmlschema", "requests", "pygments (>=2.7.2)", "nose", "mock", "hypothesis (>=3.56)", "argcomplete"]
 
 [[package]]
 name = "pytest-cov"
@@ -1272,7 +1272,7 @@ coverage = {version = ">=5.2.1", extras = ["toml"]}
 pytest = ">=4.6"
 
 [package.extras]
-testing = ["fields", "hunter", "process-tests", "six", "pytest-xdist", "virtualenv"]
+testing = ["virtualenv", "pytest-xdist", "six", "process-tests", "hunter", "fields"]
 
 [[package]]
 name = "pytest-django"
@@ -1523,7 +1523,7 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "stripe"
-version = "2.67.0"
+version = "4.0.2"
 description = "Python bindings for the Stripe API"
 category = "main"
 optional = false
@@ -1575,8 +1575,8 @@ toml = ">=0.9.4"
 virtualenv = ">=16.0.0,<20.0.0 || >20.0.0,<20.0.1 || >20.0.1,<20.0.2 || >20.0.2,<20.0.3 || >20.0.3,<20.0.4 || >20.0.4,<20.0.5 || >20.0.5,<20.0.6 || >20.0.6,<20.0.7 || >20.0.7"
 
 [package.extras]
-docs = ["pygments-github-lexers (>=0.0.5)", "sphinx (>=2.0.0)", "sphinxcontrib-autoprogram (>=0.1.5)", "towncrier (>=18.5.0)"]
-testing = ["flaky (>=3.4.0)", "freezegun (>=0.3.11)", "pytest (>=4.0.0)", "pytest-cov (>=2.5.1)", "pytest-mock (>=1.10.0)", "pytest-randomly (>=1.0.0)", "psutil (>=5.6.1)", "pathlib2 (>=2.3.3)"]
+testing = ["pathlib2 (>=2.3.3)", "psutil (>=5.6.1)", "pytest-randomly (>=1.0.0)", "pytest-mock (>=1.10.0)", "pytest-cov (>=2.5.1)", "pytest (>=4.0.0)", "freezegun (>=0.3.11)", "flaky (>=3.4.0)"]
+docs = ["towncrier (>=18.5.0)", "sphinxcontrib-autoprogram (>=0.1.5)", "sphinx (>=2.0.0)", "pygments-github-lexers (>=0.0.5)"]
 
 [[package]]
 name = "tqdm"
@@ -1701,10 +1701,10 @@ Pillow = "*"
 sorl-thumbnail = ">=12.8,<13"
 
 [package.extras]
-devel = ["django-functest (>=1.2,<1.3)", "pytest (>=6.2.5,<6.3)", "pytest-django", "pytest-cov", "coverage", "codecov", "ddt", "pytest-pythonpath", "flake8 (>=3.7,<3.8)", "black (>=20.8b1,<20.9)", "pre-commit"]
-test = ["django-functest (>=1.2,<1.3)", "pytest (>=6.2.5,<6.3)", "pytest-django", "pytest-cov", "coverage", "codecov", "ddt", "pytest-pythonpath"]
-testlint = ["flake8 (>=3.7,<3.8)", "black (>=20.8b1,<20.9)", "pre-commit"]
 transifex = ["transifex-client"]
+testlint = ["pre-commit", "black (>=20.8b1,<20.9)", "flake8 (>=3.7,<3.8)"]
+test = ["pytest-pythonpath", "ddt", "codecov", "coverage", "pytest-cov", "pytest-django", "pytest (>=6.2.5,<6.3)", "django-functest (>=1.2,<1.3)"]
+devel = ["pre-commit", "black (>=20.8b1,<20.9)", "flake8 (>=3.7,<3.8)", "pytest-pythonpath", "ddt", "codecov", "coverage", "pytest-cov", "pytest-django", "pytest (>=6.2.5,<6.3)", "django-functest (>=1.2,<1.3)"]
 
 [[package]]
 name = "wrapt"
@@ -1757,7 +1757,7 @@ prod = ["psycopg2-binary", "boto3", "django-ses", "zappa", "django-storages"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9"
-content-hash = "2e48e0e4e5429678e5b6766f772a8df020abc4225c8c5ecbcce426aaa475bbed"
+content-hash = "b8336ebf8d3103b675b1a31c75746c9de3d0005e503bac484c6711371862af0e"
 
 [metadata.files]
 argcomplete = [
@@ -2638,8 +2638,8 @@ sqlparse = [
     {file = "sqlparse-0.4.2.tar.gz", hash = "sha256:0c00730c74263a94e5a9919ade150dfc3b19c574389985446148402998287dae"},
 ]
 stripe = [
-    {file = "stripe-2.67.0-py2.py3-none-any.whl", hash = "sha256:7efaee187a0615ce9361b6009122f89488a874c3175b5262dd9741a49088db18"},
-    {file = "stripe-2.67.0.tar.gz", hash = "sha256:718b93d6a18105243bce0c9b48e518f72f1f083d27f07e07b8bdb3a541fe3835"},
+    {file = "stripe-4.0.2-py2.py3-none-any.whl", hash = "sha256:de2d532764d07aca0b974ac4ce8d1feee4007cf8c3c2cf6070c16b4cdbb4eb6d"},
+    {file = "stripe-4.0.2.tar.gz", hash = "sha256:d085b3e9450a5550912f476c6dbb2bafa129e485e24d6f4047c5094ff08d5de2"},
 ]
 text-unidecode = [
     {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
