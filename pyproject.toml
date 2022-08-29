@@ -13,7 +13,7 @@ django-filter = "~21.1"
 pillow = "~9.0"
 pytz = "^2022.1"
 python-memcached = "~1.59"
-stripe = "~2.67"
+stripe = "~4.1"
 icalendar = "~4.0"
 google-api-python-client = "~2.42"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
