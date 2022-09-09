@@ -225,19 +225,12 @@ are-we-there-yet@~1.1.2:
     delegates "^1.0.0"
     readable-stream "^2.0.6"
 
-argparse@^1.0.7:
+argparse@^1.0.10, argparse@^1.0.7:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/argparse/-/argparse-1.0.10.tgz#bcd6791ea5ae09725e17e5ad988134cd40b3d911"
   integrity sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==
   dependencies:
     sprintf-js "~1.0.2"
-
-argparse@~0.1.15:
-  version "0.1.16"
-  resolved "https://registry.yarnpkg.com/argparse/-/argparse-0.1.16.tgz#cfd01e0fbba3d6caed049fbd758d40f65196f57c"
-  dependencies:
-    underscore "~1.7.0"
-    underscore.string "~2.4.0"
 
 arr-diff@^2.0.0:
   version "2.0.0"
@@ -422,9 +415,12 @@ atob@^2.1.1:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-autolinker@~0.15.0:
-  version "0.15.3"
-  resolved "https://registry.yarnpkg.com/autolinker/-/autolinker-0.15.3.tgz#342417d8f2f3461b14cf09088d5edf8791dc9832"
+autolinker@^3.11.0:
+  version "3.16.2"
+  resolved "https://registry.yarnpkg.com/autolinker/-/autolinker-3.16.2.tgz#6bb4f32432fc111b65659336863e653973bfbcc9"
+  integrity sha512-JiYl7j2Z19F9NdTmirENSUUIIL/9MytEWtmzhfmsKPCp9E+G35Y0UNCMoM9tFigxT59qSc8Ml2dlZXOCVTYwuA==
+  dependencies:
+    tslib "^2.3.0"
 
 autoprefixer@^6.3.1:
   version "6.7.7"
@@ -7384,12 +7380,13 @@ remark@^8.0.0:
     remark-stringify "^4.0.0"
     unified "^6.0.0"
 
-remarkable@^1.6.2:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/remarkable/-/remarkable-1.7.1.tgz#aaca4972100b66a642a63a1021ca4bac1be3bff6"
+remarkable@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/remarkable/-/remarkable-2.0.1.tgz#280ae6627384dfb13d98ee3995627ca550a12f31"
+  integrity sha512-YJyMcOH5lrR+kZdmB0aJJ4+93bEojRZ1HGDn9Eagu6ibg7aVZhc3OWbbShRid+Q5eAfsEqWxpe+g5W5nYNfNiA==
   dependencies:
-    argparse "~0.1.15"
-    autolinker "~0.15.0"
+    argparse "^1.0.10"
+    autolinker "^3.11.0"
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
@@ -8489,6 +8486,11 @@ trough@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trough/-/trough-1.0.1.tgz#a9fd8b0394b0ae8fff82e0633a0a36ccad5b5f86"
 
+tslib@^2.3.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
+  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
+
 tty-browserify@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/tty-browserify/-/tty-browserify-0.0.0.tgz#a157ba402da24e9bf957f9aa69d524eed42901a6"
@@ -8572,18 +8574,10 @@ uncontrollable@^5.0.0:
   dependencies:
     invariant "^2.2.4"
 
-underscore.string@~2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/underscore.string/-/underscore.string-2.4.0.tgz#8cdd8fbac4e2d2ea1e7e2e8097c42f442280f85b"
-
 underscore@^1.12.1:
   version "1.12.1"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.12.1.tgz#7bb8cc9b3d397e201cf8553336d262544ead829e"
   integrity sha512-hEQt0+ZLDVUMhebKxL4x1BTtDY7bavVofhZ9KZ4aI26X9SRaE+Y3m83XUL1UP2jn8ynjndwCCpEHdUG+9pP1Tw==
-
-underscore@~1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.7.0.tgz#6bbaf0877500d36be34ecaa584e0db9fef035209"
 
 unherit@^1.0.4:
   version "1.1.0"
