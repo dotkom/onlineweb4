@@ -1396,7 +1396,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "redwine"
-version = "1.4.1"
+version = "1.4.0"
 description = "A wine punishment management system."
 category = "main"
 optional = false
@@ -1406,8 +1406,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/dotkom/redwine.git"
-reference = "1.4.1"
-resolved_reference = "f412bb11d0c675d4219671a90c74731b9407282a"
+reference = "v1.4.2"
+resolved_reference = "77465b694fe518f0649ef2fbe862e1d5a2d355c4"
 
 [[package]]
 name = "reportlab"
