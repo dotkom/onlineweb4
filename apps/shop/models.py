@@ -68,9 +68,10 @@ class OrderLine(models.Model):
         descriptions = []
         for order in self.orders.all():
             item: Item = order.content_object
-            descriptions.append(
-                {"name": item.name, "price": item.price, "quantity": order.quantity}
-            )
+            if item:
+                descriptions.append(
+                    {"name": item.name, "price": item.price, "quantity": order.quantity}
+                )
         return descriptions
 
     def pay(self):

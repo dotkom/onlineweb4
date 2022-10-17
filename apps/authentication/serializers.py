@@ -30,6 +30,7 @@ class UserNameSerializer(serializers.ModelSerializer):
         fields = ("id", "first_name", "last_name", "email", "username")
 
 
+
 class UserReadOnlySerializer(serializers.ModelSerializer):
     rfid = serializers.HiddenField(default="")
 
