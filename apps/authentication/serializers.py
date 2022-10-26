@@ -27,7 +27,7 @@ from onlineweb4.fields.recaptcha import RecaptchaField
 class UserNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "first_name", "last_name", "email", "username")
+        fields = ("id", "first_name", "last_name", "email", "username", "is_active")
 
 
 class UserReadOnlySerializer(serializers.ModelSerializer):
