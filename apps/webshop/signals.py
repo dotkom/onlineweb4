@@ -1,6 +1,6 @@
 import logging
 
-from django.db.models.signals import post_save
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from apps.payment.models import Payment, PaymentPrice
@@ -10,6 +10,7 @@ from utils.disable_for_loaddata import disable_for_loaddata
 logger = logging.getLogger(__name__)
 
 
+@receiver(post_delete, sender=Order)
 @receiver(post_save, sender=Order)
 @disable_for_loaddata
 def sync_order_line_subtotal_to_payment_price(sender, instance: Order, **kwargs):
