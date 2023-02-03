@@ -5,7 +5,6 @@ import icalendar
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMessage
 from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -395,7 +394,9 @@ def handle_mail_participants(
             attachments=(_images),
         )
         email.send_in_background(
-            error_callback=lambda e, nse, se: handle_mail_error(e, nse, se, [from_email])
+            error_callback=lambda e, nse, se: handle_mail_error(
+                e, nse, se, [from_email]
+            )
         )
 
         logger.info(

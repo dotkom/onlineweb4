@@ -32,7 +32,10 @@ def feedback_mail():
             )
             email.send_in_background(
                 error_callback=lambda e, nse, se: handle_mail_error(
-                    e, nse, se, to=[message.committee_mail],
+                    e,
+                    nse,
+                    se,
+                    to=[message.committee_mail],
                 )
             )
             logger.info("Emails sent to: " + str(message.attended_mails))

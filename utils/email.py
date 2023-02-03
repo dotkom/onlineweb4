@@ -1,12 +1,10 @@
 import itertools
-import time
 import logging
-
+import time
 from threading import Thread
 from typing import List, Optional
-from django.core.mail import EmailMessage
-from django.core.mail import get_connection
 
+from django.core.mail import EmailMessage, get_connection
 
 MAX_ATTEMPTS = 5
 BACKOFF_START = 1
@@ -23,8 +21,12 @@ def handle_mail_error(
 ) -> None:
     """Callback called when an error occures while sending batched emails."""
 
-    not_sent_recipients = list(itertools.chain.from_iterable(em.recipients() for em in emails_not_sent))
-    sent_recipients = list(itertools.chain.from_iterable(em.recipients() for em in emails_sent))
+    not_sent_recipients = list(
+        itertools.chain.from_iterable(em.recipients() for em in emails_not_sent)
+    )
+    sent_recipients = list(
+        itertools.chain.from_iterable(em.recipients() for em in emails_sent)
+    )
 
     message = (
         f"An error occured while attempting to send batch emails.\n"
@@ -42,20 +44,20 @@ def handle_mail_error(
 
     # Sending a regular EmailMessage because if anything other breaks, we are doomed either way.
     email = EmailMessage(
-        subject='An error occured while sending emails',
+        subject="An error occured while sending emails",
         body=message,
-        from_email='onlineweb4-error@online.ntnu.no',  # TODO: Change??
+        from_email="onlineweb4-error@online.ntnu.no",  # TODO: Change??
         to=to or [],
-        bcc=['dotkom@online.ntnu.no'],
+        bcc=["dotkom@online.ntnu.no"],
     )
     email.send()
-    
+
     logger.info(f"Sent error email to {', '.join(to or [])} and dotkom@online.ntnu.no")
 
 
 class AutoChunkedEmailMessage:
     def __init__(
-        self, 
+        self,
         subject="",
         body="",
         from_email=None,
@@ -82,8 +84,8 @@ class AutoChunkedEmailMessage:
 
     def _create_chunks(self):
         to = self.kwargs.get("to") or []
-        cc = self.kwargs.get("cc")  or []
-        bcc = self.kwargs.get("bcc")  or []
+        cc = self.kwargs.get("cc") or []
+        bcc = self.kwargs.get("bcc") or []
 
         def create_chunk():
             return {
@@ -118,7 +120,7 @@ class AutoChunkedEmailMessage:
 
         return chunks
 
-    def _send(self, emails, error_callback=None, fail_silently=False):
+    def _send(self, emails, error_callback=None, fail_silently=False):  # noqa: C901
         not_sent = emails.copy()
 
         tries = 0
@@ -132,20 +134,25 @@ class AutoChunkedEmailMessage:
                 try:
                     email.send(fail_silently=fail_silently)
                 except Exception as e:
+
                     def rethrow():
+                        nonlocal e
+
                         try:
                             if callable(error_callback):
                                 error_callback(
                                     e,
                                     not_sent,  # Email objects not sent
-                                    [em for em in emails if em not in not_sent],  # Email objects that has been sent
+                                    [
+                                        em for em in emails if em not in not_sent
+                                    ],  # Email objects that has been sent
                                 )
                         finally:
                             raise
-        
+
                     # This is ultimately the weird bug that this whole class is trying to fix.
-                    if 'Recipient count exceeds 50' in str(e):
-                        logger.debug('Recipient count exceeds 50?, retrying soon.')
+                    if "Recipient count exceeds 50" in str(e):
+                        logger.debug("Recipient count exceeds 50?, retrying soon.")
                         pass
                     else:
                         rethrow()
@@ -161,24 +168,27 @@ class AutoChunkedEmailMessage:
             not_sent = [x for x in not_sent if x not in successes]
 
             backoff *= BACKOFF_FACTOR
-            logger.debug(f'Failed to send {len(not_sent)} emails, retrying in {backoff} seconds')
+            logger.debug(
+                f"Failed to send {len(not_sent)} emails, retrying in {backoff} seconds"
+            )
             time.sleep(backoff)
-
 
     def send(self, error_callback=None, fail_silently=False):
         # Use a shared connection in order for throttling to be properly handled using django-ses.
         # https://github.com/django-ses/django-ses/blob/f9ebfab30d2b8dab9a9c73fc9ec2f36037533e65/django_ses/__init__.py#L154
         connection = get_connection()
-        logger.info('Using connection type %s to send emails', type(connection))
-        self.kwargs['connection'] = connection
-        
+        logger.info("Using connection type %s to send emails", type(connection))
+        self.kwargs["connection"] = connection
+
         chunks = self._create_chunks()
 
         emails = []
         for chunk in chunks:
-            emails.append(EmailMessage(
-                **self.kwargs | chunk,
-            ))
+            emails.append(
+                EmailMessage(
+                    **self.kwargs | chunk,
+                )
+            )
 
         self._send(
             emails,
@@ -188,10 +198,13 @@ class AutoChunkedEmailMessage:
 
     def send_in_background(self, error_callback=None, fail_silently=False):
         """Same as send() but utilizes a thread to send the emails in the background."""
-        thread = Thread(target=self.send, kwargs={
-            'error_callback': error_callback,
-            'fail_silently': fail_silently,
-        })
+        thread = Thread(
+            target=self.send,
+            kwargs={
+                "error_callback": error_callback,
+                "fail_silently": fail_silently,
+            },
+        )
         thread.start()
 
         return thread
