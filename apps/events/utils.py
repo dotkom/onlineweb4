@@ -373,12 +373,7 @@ def handle_mail_participants(
     if _to_email_value not in _to_email_options:
         return False
     # Who to send emails to
-    send_to_users = _to_email_options[_to_email_value][0]
-
-    # Important for tests to pass
-    user_recipients = send_to_users
-    if len(send_to_users) == 0:
-        user_recipients.append([])
+    user_recipients = _to_email_options[_to_email_value][0]
     signature = f"\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til {from_email})"
 
     message = f"{_message}{signature}"
