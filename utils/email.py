@@ -21,6 +21,11 @@ def handle_mail_error(
 ) -> None:
     """Callback called when an error occures while sending batched emails."""
 
+    dotkom_address = "dotkom@online.ntnu.no"
+    bcc = None
+    if to is not None and dotkom_address not in to:
+        bcc = [dotkom_address]
+
     not_sent_recipients = list(
         itertools.chain.from_iterable(em.recipients() for em in emails_not_sent)
     )
@@ -48,11 +53,11 @@ def handle_mail_error(
         body=message,
         from_email="onlineweb4-error@online.ntnu.no",  # TODO: Change??
         to=to or [],
-        bcc=["dotkom@online.ntnu.no"],
+        bcc=bcc,
     )
     email.send()
 
-    logger.info(f"Sent error email to {', '.join(to or [])} and dotkom@online.ntnu.no")
+    logger.info(f"Sent error email to {', '.join((to or []) + (bcc or []))}")
 
 
 class AutoChunkedEmailMessage:
