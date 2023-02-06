@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from apps.events.models import AttendanceEvent
 from apps.marks.models import Mark, MarkUser
+from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
 def set_event_marks():
@@ -22,13 +23,21 @@ def set_event_marks():
         message = generate_message(attendance_event)
 
         if message.send:
-            EmailMessage(
-                message.subject,
-                str(message),
-                message.committee_mail,
-                [],
-                message.not_attended_mails,
-            ).send()
+            email = AutoChunkedEmailMessage(
+                subject=message.subject,
+                body=str(message),
+                from_email=message.committee_mail,
+                to=[],
+                bcc=message.not_attended_mails,
+            )
+            email.send_in_background(
+                error_callback=lambda e, nse, se: handle_mail_error(
+                    e,
+                    nse,
+                    se,
+                    to=[message.committee_mail],
+                )
+            )
             logger.info("Emails sent to: " + str(message.not_attended_mails))
         else:
             logger.info("Everyone met. No mails sent to users")

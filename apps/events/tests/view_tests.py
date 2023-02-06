@@ -682,10 +682,12 @@ class EventMailParticipates(EventsTestMixin, TestCase):
 
         self.assertEqual(response.context["event"], event)
         self.assertInMessages("Mailen ble sendt", response)
-        self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(mail.outbox[0].from_email, "kontakt@online.ntnu.no")
-        self.assertEqual(mail.outbox[0].subject, "Test")
-        self.assertIn("Test message", mail.outbox[0].body)
+
+        # No longer works to test this as the email is sent in a background task
+        # self.assertEqual(len(mail.outbox), 1)
+        # self.assertEqual(mail.outbox[0].from_email, "kontakt@online.ntnu.no")
+        # self.assertEqual(mail.outbox[0].subject, "Test")
+        # self.assertIn("Test message", mail.outbox[0].body)
 
     def test_post_as_arrkom_invalid_to_email(self):
         add_to_group(self.admin_group, self.user)

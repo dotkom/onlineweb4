@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from apps.feedback.models import FeedbackRelation
 from apps.marks.models import Mark, MarkUser
+from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
 def feedback_mail():
@@ -22,13 +23,21 @@ def feedback_mail():
         logger.info("Status: " + message.status)
 
         if message.send:
-            EmailMessage(
-                message.subject,
-                str(message),
-                message.committee_mail,
-                [],
-                message.attended_mails,
-            ).send()
+            email = AutoChunkedEmailMessage(
+                subject=message.subject,
+                body=str(message),
+                from_email=message.committee_mail,
+                to=[],
+                bcc=message.attended_mails,
+            )
+            email.send_in_background(
+                error_callback=lambda e, nse, se: handle_mail_error(
+                    e,
+                    nse,
+                    se,
+                    to=[message.committee_mail],
+                )
+            )
             logger.info("Emails sent to: " + str(message.attended_mails))
 
             if message.results_message:

@@ -14,6 +14,7 @@ from pytz import timezone as tz
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Mark, MarkUser, Suspension
 from apps.payment.models import Payment, PaymentDelay
+from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
 def payment_reminder():
@@ -70,7 +71,18 @@ def send_reminder_mail(payment):
 
     receivers = not_paid_mail_addresses(payment)
 
-    EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
+    email = AutoChunkedEmailMessage(
+        subject=subject,
+        body=content,
+        from_email=payment.responsible_mail(),
+        to=[],
+        bcc=receivers,
+    )
+    email.send_in_background(
+        error_callback=lambda e, nse, se: handle_mail_error(
+            e, nse, se, to=[payment.responsible_mail()]
+        )
+    )
 
 
 def send_missed_payment_mail(payment):
