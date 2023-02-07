@@ -69,9 +69,6 @@ urlpatterns = [
 ]
 
 router = SharedAPIRootRouter()
-router.register(
-    "profile/search", views.PublicProfileSearchSet, basename="profile-search"
-)
 router.register("profile/orders", UserOrderViewSet, basename="profile-orders")
 router.register(
     "profile/privacy", views.PersonalPrivacyView, basename="profile-privacy"
