@@ -4,13 +4,40 @@ import time
 from threading import Thread
 from typing import List, Optional
 
+import boto3
+from django.conf import settings
 from django.core.mail import EmailMessage, get_connection
+from django_ses import SESBackend
 
 MAX_ATTEMPTS = 5
 BACKOFF_START = 1
 BACKOFF_FACTOR = 2
 
 logger = logging.getLogger(__name__)
+
+
+class CustomSESBackend(SESBackend):
+    # Override open method in order to always create a boto3 client from a new session
+    # https://github.com/caltechlibrary/handprint/commit/3d0356c32873fc3887f1b4b55d5a48c42c382171
+    def open(self):
+        if self.connection:
+            return False
+
+        try:
+            session = boto3.session.Session()
+            self.connection = session.client(
+                "sesv2" if self._use_ses_v2 else "ses",
+                aws_access_key_id=self._access_key_id,
+                aws_secret_access_key=self._access_key,
+                aws_session_token=self._session_token,
+                region_name=self._region_name,
+                endpoint_url=self._endpoint_url,
+                config=self._config,
+            )
+
+        except Exception:
+            if not self.fail_silently:
+                raise
 
 
 def handle_mail_error(
@@ -51,7 +78,7 @@ def handle_mail_error(
     email = EmailMessage(
         subject="An error occured while sending emails",
         body=message,
-        from_email="onlineweb4-error@online.ntnu.no",  # TODO: Change??
+        from_email="onlineweb4-error@online.ntnu.no",
         to=to or [],
         bcc=bcc,
     )
@@ -181,7 +208,11 @@ class AutoChunkedEmailMessage:
     def send(self, error_callback=None, fail_silently=False):
         # Use a shared connection in order for throttling to be properly handled using django-ses.
         # https://github.com/django-ses/django-ses/blob/f9ebfab30d2b8dab9a9c73fc9ec2f36037533e65/django_ses/__init__.py#L154
-        connection = get_connection()
+        if settings.EMAIL_BACKEND == "django_ses.SESBackend":
+            connection = CustomSESBackend(fail_silently=fail_silently)
+        else:
+            connection = get_connection(fail_silently=fail_silently)
+
         logger.info("Using connection type %s to send emails", type(connection))
         self.kwargs["connection"] = connection
 
