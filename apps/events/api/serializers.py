@@ -9,7 +9,6 @@ from apps.gallery.serializers import ResponsiveImageSerializer
 from onlineweb4.fields.recaptcha import RecaptchaField
 
 from ..models import (
-    AttendanceEvent,
     Attendee,
     Event,
     Extras,
