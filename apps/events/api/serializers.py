@@ -6,6 +6,7 @@ from rest_framework import fields, serializers
 from apps.authentication.serializers import UserReadOnlySerializer
 from apps.gallery.serializers import ResponsiveImageSerializer
 from onlineweb4.fields.recaptcha import RecaptchaField
+from apps.events.models import AttendanceEvent
 
 from ..models import (
     AttendanceEvent,
@@ -27,6 +28,19 @@ class ExtrasSerializer(serializers.ModelSerializer):
         fields = ("id", "choice", "note")
 
 
+class AttendanceResultSerializer(serializers.Serializer):
+    status = fields.BooleanField()
+    message = fields.CharField()
+    status_code = fields.IntegerField()
+    offset = fields.DateTimeField(allow_null=True)
+
+
+class AttendeeInfoSerializer(serializers.Serializer):
+    is_attendee = fields.BooleanField()
+    is_on_waitlist = fields.BooleanField()
+    is_eligible_for_signup = AttendanceResultSerializer()
+
+
 class EventSerializer(serializers.ModelSerializer):
     images = ResponsiveImageSerializer(many=True)
     author = UserReadOnlySerializer()
@@ -37,10 +51,28 @@ class EventSerializer(serializers.ModelSerializer):
     end_date = serializers.DateTimeField(source="event_end")
     is_attendance_event = serializers.BooleanField(read_only=True)
     max_capacity = serializers.IntegerField(source="attendance_event.max_capacity")
+    waitlist = serializers.BooleanField(source="attendance_event.waitlist")
     number_of_seats_taken = serializers.IntegerField(
         source="attendance_event.number_of_seats_taken"
     )
     companies = serializers.StringRelatedField(many=True)
+    attendee_info = serializers.SerializerMethodField()
+
+    def get_attendee_info(self, obj):
+        user = self.context["request"].user
+        if user.is_authenticated:
+            try:
+                attendance_event = AttendanceEvent.objects.get(event__id=obj.id)
+            except AttendanceEvent.DoesNotExist:
+                return
+
+            return {
+                "is_attendee": attendance_event.is_attendee(user),
+                "is_on_waitlist": attendance_event.is_on_waitlist(user),
+                "is_eligible_for_signup": AttendanceResultSerializer(
+                    attendance_event.is_eligible_for_signup(user)
+                ).data,
+            }
 
     class Meta:
         model = Event
@@ -62,15 +94,10 @@ class EventSerializer(serializers.ModelSerializer):
             "companies",
             "is_attendance_event",
             "max_capacity",
+            "waitlist",
             "number_of_seats_taken",
+            "attendee_info",
         )
-
-
-class AttendanceResultSerializer(serializers.Serializer):
-    status = fields.BooleanField()
-    message = fields.CharField()
-    status_code = fields.IntegerField()
-    offset = fields.DateTimeField(allow_null=True)
 
 
 class AttendanceEventSerializer(serializers.ModelSerializer):

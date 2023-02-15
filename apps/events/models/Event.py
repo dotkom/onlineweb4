@@ -1,14 +1,14 @@
 import logging
 from collections import OrderedDict
-from datetime import timedelta
-
+from datetime import timedelta, datetime
+from django.db.models.functions import TruncSecond
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import SET_NULL, Case, Q, Value, When
+from django.db.models import SET_NULL, Case, Q, F, Value, When
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone
@@ -27,6 +27,65 @@ logger = logging.getLogger(__name__)
 User = settings.AUTH_USER_MODEL
 
 # Managers
+
+
+class EventOrderedByClosestActiveThenNewestInactive(models.Manager):
+    """
+    Order by closest event to start if not yet started, then all others are ordered by last ended.
+    """
+
+    def get_queryset(self):
+        now = timezone.now()
+
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                closest=Case(
+                    When(
+                        Q(event_start__gte=now) & Q(event_end__gte=now),
+                        then="event_start",
+                    ),
+                    default=now + (now - TruncSecond(F("event_end"))),  # Don't even ask
+                    output_field=models.DateTimeField(),
+                )
+            )
+            .annotate(
+                has_passed=Case(
+                    When(
+                        Q(event_end__lte=now),
+                        then=Value(True),
+                    ),
+                    default=Value(False),
+                    output_field=models.BooleanField(),
+                )
+            )
+            .order_by("has_passed", "closest")
+        )
+
+    def get_queryset_for_user(self, user: User):
+        """
+        :return: Queryset filtered by these requirements:
+            event is visible AND (event has NO group restriction OR user having access to restricted event)
+            OR the user is attending the event themselves
+        """
+        group_restriction_query = Q(group_restriction__isnull=True) | Q(
+            group_restriction__groups__in=user.groups.all()
+        )
+        is_attending_query = (
+            (
+                Q(attendance_event__isnull=False)
+                & Q(attendance_event__attendees__user=user)
+            )
+            if not user.is_anonymous
+            else Q()
+        )
+        is_visible_query = Q(visible=True)
+        return (
+            self.get_queryset()
+            .filter(group_restriction_query & is_visible_query | is_attending_query)
+            .distinct()
+        )
 
 
 class EventOrderedByRegistration(models.Manager):
@@ -108,6 +167,7 @@ class Event(models.Model):
     # Managers
     objects = models.Manager()
     by_registration = EventOrderedByRegistration()
+    by_nearest_active_event = EventOrderedByClosestActiveThenNewestInactive()
 
     author = models.ForeignKey(
         User,
@@ -128,18 +188,18 @@ class Event(models.Model):
     ingress_short = models.CharField(
         _("kort ingress"),
         max_length=150,
-        validators=[validators.MinLengthValidator(25)],
+        validators=[validators.MinLengthValidator(1)],
         help_text="En kort ingress som blir vist på forsiden",
     )
     """Short ingress used on the frontpage"""
     ingress = models.TextField(
         _("ingress"),
-        validators=[validators.MinLengthValidator(25)],
+        validators=[validators.MinLengthValidator(1)],
         help_text="En ingress som blir vist før beskrivelsen.",
     )
     """Ingress used in archive and details page"""
     description = models.TextField(
-        _("beskrivelse"), validators=[validators.MinLengthValidator(45)]
+        _("beskrivelse"), validators=[validators.MinLengthValidator(1)]
     )
     """Event description shown on details page"""
     image = models.ForeignKey(
