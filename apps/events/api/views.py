@@ -58,14 +58,14 @@ class EventViewSet(viewsets.ModelViewSet):
         "event_start",
         "event_end",
         "id",
-        "is_today",
-        "registration_filtered",
+        "closest",
+        "has_passed",
     )
-    ordering = ("-is_today", "registration_filtered", "id")
+    ordering = ("has_passed", "closest", "id")
 
     def get_queryset(self):
         user = self.request.user
-        return Event.by_registration.get_queryset_for_user(user)
+        return Event.by_nearest_active_event.get_queryset_for_user(user)
 
 
 class AttendanceEventViewSet(viewsets.ModelViewSet):

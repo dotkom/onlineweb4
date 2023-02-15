@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from random import choice as random_choice
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -548,7 +548,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
             return not attendee.has_paid
         return False
 
-    def can_refund_payment(self, payment_relation) -> (bool, str):
+    def can_refund_payment(self, payment_relation) -> Tuple[bool, str]:
         if self.unattend_deadline < timezone.now():
             return False, _("Fristen for å melde seg av har utgått")
         if len(Attendee.objects.filter(event=self, user=payment_relation.user)) == 0:
