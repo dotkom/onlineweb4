@@ -7,23 +7,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('events', '0001_squashed_0028_auto_20200525_1440'),
+        ("events", "0001_squashed_0028_auto_20200525_1440"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='event',
-            name='description',
-            field=models.TextField(validators=[django.core.validators.MinLengthValidator(1)], verbose_name='beskrivelse'),
+            model_name="event",
+            name="description",
+            field=models.TextField(
+                validators=[django.core.validators.MinLengthValidator(1)],
+                verbose_name="beskrivelse",
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='ingress',
-            field=models.TextField(help_text='En ingress som blir vist før beskrivelsen.', validators=[django.core.validators.MinLengthValidator(1)], verbose_name='ingress'),
+            model_name="event",
+            name="ingress",
+            field=models.TextField(
+                help_text="En ingress som blir vist før beskrivelsen.",
+                validators=[django.core.validators.MinLengthValidator(1)],
+                verbose_name="ingress",
+            ),
         ),
         migrations.AlterField(
-            model_name='event',
-            name='ingress_short',
-            field=models.CharField(help_text='En kort ingress som blir vist på forsiden', max_length=150, validators=[django.core.validators.MinLengthValidator(1)], verbose_name='kort ingress'),
+            model_name="event",
+            name="ingress_short",
+            field=models.CharField(
+                help_text="En kort ingress som blir vist på forsiden",
+                max_length=150,
+                validators=[django.core.validators.MinLengthValidator(1)],
+                verbose_name="kort ingress",
+            ),
         ),
     ]
