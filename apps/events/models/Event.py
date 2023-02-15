@@ -1,14 +1,15 @@
 import logging
 from collections import OrderedDict
-from datetime import timedelta, datetime
-from django.db.models.functions import TruncSecond
+from datetime import datetime, timedelta
+
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import SET_NULL, Case, Q, F, Value, When
+from django.db.models import SET_NULL, Case, F, Q, Value, When
+from django.db.models.functions import TruncSecond
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone

@@ -4,9 +4,9 @@ from django.utils import timezone
 from rest_framework import fields, serializers
 
 from apps.authentication.serializers import UserReadOnlySerializer
+from apps.events.models import AttendanceEvent
 from apps.gallery.serializers import ResponsiveImageSerializer
 from onlineweb4.fields.recaptcha import RecaptchaField
-from apps.events.models import AttendanceEvent
 
 from ..models import (
     AttendanceEvent,
