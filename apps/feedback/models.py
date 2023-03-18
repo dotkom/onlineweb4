@@ -51,7 +51,7 @@ class FeedbackRelation(models.Model):
     deadline = models.DateField(_("Tidsfrist"))
     gives_mark = models.BooleanField(
         _("Gir Prikk"),
-        default=True,
+        default=False,
         help_text=_(
             "Gir automatisk prikk til brukere som ikke har svart innen fristen"
         ),
