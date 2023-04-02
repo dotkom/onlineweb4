@@ -144,7 +144,6 @@ def index(request):
             "members": [
                 {"name": "Cibus", "email": "cibus.mattek@gmail.com"},
                 {"name": "KOM", "email": "kom.linjeforening@gmail.com"},
-                
                 {
                     "name": "MiT (ligger også på Gløshaugen)",
                     "email": "leder@maskining.no",
@@ -194,7 +193,8 @@ def index(request):
                 {"name": "Badcom", "email": "badcom.mail@gmail.com"},
                 {"name": "En Psykt Vanlig Uke", "email": "epvu.trondheim@gmail.com"},
                 {"name": "Fadderutvalget", "email": "fadderutvalget@gmail.com"},
-                {"name": "Høyre studentforening", "email": "hoyrestudenttrondheim@gmail.com"},
+                {"name": "Høyre studentforening",
+                    "email": "hoyrestudenttrondheim@gmail.com"},
                 {"name": "Taktlaus", "email": "styret@taktlaus.no"},
                 {"name": "Mannskor", "email": "formann@mannskor.no"},
                 {"name": "NTNUI", "email": "hovedstyret@ntnui.no"},
