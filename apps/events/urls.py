@@ -45,11 +45,6 @@ urlpatterns = [
         views.calendar_export,
         name="events_personal_ics",
     ),
-    re_path(
-        r"^user/signed_username$",
-        views.signed_username,
-        name="signed_username",
-    ),
 ]
 
 # API v1

@@ -3,6 +3,7 @@ from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from django.core.signing import Signer
 
 from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
@@ -34,7 +35,6 @@ from apps.permissions.drf_permissions import DjangoObjectPermissionOrAnonReadOnl
 from .filters import OnlineGroupFilter, UserFilter
 from .permissions import IsSelfOrSuperUser
 from .serializers.user_data import UserDataSerializer
-
 
 class UserViewSet(
     MultiSerializerMixin,
@@ -70,6 +70,19 @@ class UserViewSet(
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
+
+    # See templates/events/index.html. This is exposing this logic in the api.
+    @action(detail=True, methods=["get"], url_path="personalized_calendar_link")
+    def personalized_calendar_link(self, request, pk=None):
+        user: User = self.get_object()
+        username = user.username
+
+        signer = Signer()
+        signed_value = signer.sign(username)
+
+        link = f"http://old.online.ntnu.no/events/user/{signed_value}.ics"
+        return Response(data={'link': link}, status=status.HTTP_200_OK)
+
     @action(detail=True, methods=["put"])
     def anonymize_user(self, request, pk=None):
         user: User = self.get_object()
@@ -83,6 +96,7 @@ class UserViewSet(
     def dump_data(self, request, pk: int):
         user: User = self.get_object()
         serializer = self.get_serializer(user)
+
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["get"], url_path="permissions")
