@@ -331,6 +331,7 @@ def generate_json(request, event_id):
 
     return response
 
+
 def calendar_export(request, event_id=None, user=None):
     calendar = EventCalendar()
     if event_id:

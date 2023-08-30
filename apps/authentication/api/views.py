@@ -36,6 +36,7 @@ from .filters import OnlineGroupFilter, UserFilter
 from .permissions import IsSelfOrSuperUser
 from .serializers.user_data import UserDataSerializer
 
+
 class UserViewSet(
     MultiSerializerMixin,
     viewsets.GenericViewSet,
