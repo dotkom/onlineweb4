@@ -48,9 +48,9 @@ class UserViewSet(
     """
     Viewset for User serializer. Supports filtering on 'first_name', 'last_name', 'email'
     """
+
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, UserReadOnlySerializer)
-
 
     permission_classes = (IsSelfOrSuperUser,)
     filterset_class = UserFilter
@@ -74,18 +74,16 @@ class UserViewSet(
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
-
     # See templates/events/index.html. This is exposing this logic in the api.
     @action(detail=True, methods=["get"], url_path="personalized_calendar_link")
     def personalized_calendar_link(self, request, pk=None):
         user: User = self.get_object()
         username = user.username
-
         signer = Signer()
         signed_value = signer.sign(username)
 
         link = f"http://old.online.ntnu.no/events/user/{signed_value}.ics"
-        return Response(data={'link': link}, status=status.HTTP_200_OK)
+        return Response(data={"link": link}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["put"])
     def anonymize_user(self, request, pk=None):
@@ -115,9 +113,7 @@ class UserViewSet(
         if user.is_superuser:
             permissions = Permission.objects.all().order_by("content_type")
         else:
-            permissions = Permission.objects.filter(
-                group__user=user
-            ) | Permission.objects.filter(user=user)
+            permissions = Permission.objects.filter(group__user=user) | Permission.objects.filter(user=user)
             permissions.order_by("content_type").distinct()
         serializer = self.get_serializer(permissions, many=True)
         return Response(data=serializer.data)
@@ -137,9 +133,7 @@ class PermissionsViewSet(viewsets.ReadOnlyModelViewSet):
         if user.is_superuser:
             permissions = Permission.objects.all().order_by("content_type")
         else:
-            permissions = Permission.objects.filter(
-                group__user=user
-            ) | Permission.objects.filter(user=user)
+            permissions = Permission.objects.filter(group__user=user) | Permission.objects.filter(user=user)
             permissions.distinct().order_by("content_type")
         return permissions
 
