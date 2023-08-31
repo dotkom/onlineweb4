@@ -1,9 +1,9 @@
 from django.contrib.auth.models import Group, Permission
+from django.core.signing import Signer
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from django.core.signing import Signer
 
 from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
