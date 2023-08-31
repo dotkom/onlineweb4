@@ -48,6 +48,9 @@ class UserViewSet(
     """
     Viewset for User serializer. Supports filtering on 'first_name', 'last_name', 'email'
     """
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, UserReadOnlySerializer)
+
 
     permission_classes = (IsSelfOrSuperUser,)
     filterset_class = UserFilter
