@@ -142,10 +142,21 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     )
     def public_attendees(self, request, pk=None):
         attendance_event: AttendanceEvent = self.get_object()
-        attendees = (
-            attendance_event.attending_attendees_qs | attendance_event.waitlist_qs
-        )
-        attendees = attendees.order_by("-show_as_attending_event", "timestamp")
+        attendees = attendance_event.attending_attendees_qs
+        serializer = self.get_serializer(attendees, many=True)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["GET"],
+        permission_classes=(permissions.IsAuthenticated,),
+        serializer_class=PublicAttendeeSerializer,
+        url_path="public-on-waitlist",
+    )
+    def public_on_waitlist(self, request, pk=None):
+        attendance_event: AttendanceEvent = self.get_object()
+        attendees = attendance_event.waitlist_qs
         serializer = self.get_serializer(attendees, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
