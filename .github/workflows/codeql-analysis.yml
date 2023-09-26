@@ -30,18 +30,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python 3.9
+    - name: Set up Python
       if: matrix.language == 'python'
       uses: actions/setup-python@v3
       with:
-        python-version: 3.9
+        python-version: 3.11
 
     - name: Install dependencies
       if: matrix.language == 'python'
       env:
         POETRY_VIRTUALENVS_CREATE: false
       run: |
-        pipx install poetry==1.1.13
+        pipx install poetry==1.6.1
         poetry install
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL

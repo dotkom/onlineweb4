@@ -110,7 +110,7 @@ yarn build:test
 # saves the virtual environment and all packages to `.venv`
 poetry config virtualenvs.in-project true
 
-# if you do not have Python 3.9 installed, or Python3.10, you can use e.g. pyenv to manage them.
+# if you do not have Python 3.11 installed, you can use e.g. pyenv to manage them.
 poetry install
 
 # use the virtual environment
