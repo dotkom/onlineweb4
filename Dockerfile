@@ -43,7 +43,7 @@ RUN ./manage.py collectstatic
 
 FROM amazon/aws-lambda-python:3.9
 
-LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
+LABEL maintainer="Dotkom <hjelp@online.ntnu.no>"
 ENV POETRY_VIRTUALENVS_CREATE=false \
     PATH="/root/.local/bin:${PATH}"
 ARG FUNCTION_DIR="/var/task/"

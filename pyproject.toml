@@ -2,7 +2,7 @@
 name = "onlineweb4"
 version = "1.0.0"
 description = "Web pages for Online, Linjeforeningen for Informatikk at NTNU"
-authors = ["dotkom <dotkom@online.ntnu.no>"]
+authors = ["dotkom <hjelp@online.ntnu.no>"]
 license = "MIT"
 
 [tool.poetry.dependencies]

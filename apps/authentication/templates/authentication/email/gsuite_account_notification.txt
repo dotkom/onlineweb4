@@ -10,4 +10,4 @@ Du kan logge inn på kontoen ved å gå til https://accounts.google.com/AddSessi
 Om du ønsker å sette opp videresending til en privat e-postkonto kan dette gjøres ved å følge guiden som ligger på wikien vår:
 https://online.ntnu.no/wiki/komiteer/epost_aliaser/
 
-Dersom du har noen spørsmål kan du ta kontakt med dotkom på dotkom@online.ntnu.no.
+Dersom du har noen spørsmål kan du ta kontakt med dotkom på hjelp@online.ntnu.no.

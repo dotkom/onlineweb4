@@ -21,7 +21,7 @@ def handle_mail_error(
 ) -> None:
     """Callback called when an error occures while sending batched emails."""
 
-    dotkom_address = "dotkom@online.ntnu.no"
+    dotkom_address = "hjelp@online.ntnu.no"
     bcc = None
     if to is not None and dotkom_address not in to:
         bcc = [dotkom_address]

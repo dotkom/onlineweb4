@@ -264,7 +264,7 @@ Onlineweb4 has an Oauth2/OIDC-provider built-in, allowing external projects to a
 
 ### For production setup
 
-To authenticate users through `https://online.ntnu.no`, contact `dotkom@online.ntnu.no` for issuing a new client.  
+To authenticate users through `https://online.ntnu.no`, contact `hjelp@online.ntnu.no` for issuing a new client.  
 Follow the steps in _Usage in a project_ for how to use the client information.
 
 ### For local setup

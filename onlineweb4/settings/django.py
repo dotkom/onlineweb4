@@ -17,7 +17,7 @@ INTERNAL_IPS = ("127.0.0.1",)
 
 ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*", cast=Csv())
 
-ADMINS = (("dotkom", "dotkom@online.ntnu.no"),)
+ADMINS = (("dotkom", "hjelp@online.ntnu.no"),)
 MANAGERS = ADMINS
 
 # Added due to breaking change in django-revision 4.0, see https://django-reversion.readthedocs.io/en/stable/changelog.html
@@ -35,7 +35,7 @@ DATABASES = {
 DEFAULT_FROM_EMAIL = "online@online.ntnu.no"
 EMAIL_ARRKOM = "arrkom@online.ntnu.no"
 EMAIL_BEDKOM = "bedkom@online.ntnu.no"
-EMAIL_DOTKOM = "dotkom@online.ntnu.no"
+EMAIL_DOTKOM = "hjelp@online.ntnu.no"
 EMAIL_EKSKOM = "ekskom@online.ntnu.no"
 EMAIL_FAGKOM = "fagkom@online.ntnu.no"
 EMAIL_HS = "hs@online.ntnu.no"

@@ -148,7 +148,7 @@ const initialize = () => {
           const jsonResponse = JSON.parse(res.responseText);
           setStatusMessage(jsonResponse.message, 'alert-danger');
         } else {
-          setStatusMessage('En uventet feil ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+          setStatusMessage('En uventet feil ble oppdaget. Kontakt hjelp@online.ntnu.no for assistanse.', 'alert-danger');
         }
       },
       crossDomain: false,
