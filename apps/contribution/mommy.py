@@ -1,8 +1,8 @@
 import json
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 
 import requests
-from django.utils import timezone
-from pytz import timezone as tz
 
 from apps.contribution.models import Repository, RepositoryLanguage
 
@@ -12,14 +12,14 @@ git_domain = "https://api.github.com"
 def update_repositories():
     # Load new data
     fresh = get_git_repositories()
-    localtz = tz("Europe/Oslo")
+    localtz = ZoneInfo("Europe/Oslo")
     for repo in fresh:
         fresh_repo = Repository(
             id=int(repo["id"]),
             name=repo["name"],
             description=repo["description"],
             updated_at=localtz.localize(
-                timezone.datetime.strptime(repo["updated_at"], "%Y-%m-%dT%H:%M:%SZ")
+                datetime.strptime(repo["updated_at"], "%Y-%m-%dT%H:%M:%SZ")
             ),
             url=repo["url"],
             public_url=repo["html_url"],
@@ -40,7 +40,7 @@ def update_repositories():
     # Delete repositories that does not satisfy the updated_at limit
     old_repositories = Repository.objects.all()
     for repo in old_repositories:
-        if repo.updated_at < timezone.now() - timezone.timedelta(days=730):
+        if repo.updated_at < datetime.now() - timedelta(days=730):
             repo.delete()
 
 
@@ -74,7 +74,7 @@ def update_repository(stored_repo, fresh_repo, repo_languages):
 
 def new_repository(new_repo, new_languages):
     # Filter out repositories with inactivity past 2 years (365 days * 2)
-    if new_repo.updated_at > timezone.now() - timezone.timedelta(days=730):
+    if new_repo.updated_at > datetime.now(timezone.utc) - timedelta(days=730):
         new_repo = Repository(
             id=new_repo.id,
             name=new_repo.name,

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+from zoneinfo import ZoneInfo
 
 import icalendar
 from django.conf import settings
@@ -9,7 +10,6 @@ from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
-from pytz import timezone as tz
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
@@ -328,7 +328,7 @@ def handle_attend_event_payment(event: Event, user: User):
             "events/email/payment_reminder.txt",
             {
                 "event": event.title,
-                "time": deadline.astimezone(tz("Europe/Oslo")).strftime(
+                "time": deadline.astimezone(ZoneInfo("Europe/Oslo")).strftime(
                     "%-d %B %Y kl. %H:%M"
                 ),
                 "price": payment.price().price,

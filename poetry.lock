@@ -2032,13 +2032,13 @@ unidecode = ["Unidecode (>=1.1.1)"]
 
 [[package]]
 name = "pytz"
-version = "2022.7.1"
+version = "2023.3.post1"
 description = "World timezone definitions, modern and historical"
 optional = false
 python-versions = "*"
 files = [
-    {file = "pytz-2022.7.1-py2.py3-none-any.whl", hash = "sha256:78f4f37d8198e0627c5f1143240bb0206b8691d8d7ac6d78fee88b78733f8c4a"},
-    {file = "pytz-2022.7.1.tar.gz", hash = "sha256:01a0681c4b9684a28304615eba55d1ab31ae00bf68ec157ec3708a8182dbbcd0"},
+    {file = "pytz-2023.3.post1-py2.py3-none-any.whl", hash = "sha256:ce42d816b81b68506614c11e8937d3aa9e41007ceb50bfdcb0749b921bf646c7"},
+    {file = "pytz-2023.3.post1.tar.gz", hash = "sha256:7b4fddbeb94a1eba4b557da24f19fdf9db575192544270a9101d8509f9f43d7b"},
 ]
 
 [[package]]
@@ -2672,4 +2672,8 @@ prod = ["boto3", "django-ses", "django-storages", "psycopg2-binary", "zappa"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
+<<<<<<< HEAD
 content-hash = "dd8c7890173198e4a5c7a89b9551a6bdf3114e280b4b2c630ea7a60acc8fd4ef"
+=======
+content-hash = "08a1215c611fdfed03ab464b99cbb43e439f30911e1f1c776b21946f5bea6d6f"
+>>>>>>> 8bde5ee0 (Prep for django 4.0 by removing direct pytz usage)
