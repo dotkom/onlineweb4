@@ -7,7 +7,7 @@
     "> 5% in NO"
   ],
   "dependencies": {
-    "autoprefixer": "^7.1.4",
+    "autoprefixer": "^10.0.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.0",
@@ -16,7 +16,7 @@
     "classnames": "^2.2.5",
     "corejs-typeahead": "^1.1.0",
     "cropperjs": "^1.5.11",
-    "cssnano": "^3.10.0",
+    "cssnano": "^5.0.0",
     "dropzone": "^4.3.0",
     "enzyme-adapter-react-16": "^1.12.1",
     "eonasdan-bootstrap-datetimepicker": "^4.17.43",
@@ -33,7 +33,7 @@
     "moment": "^2.29.2",
     "null-loader": "^0.1.1",
     "picturefill": "^3.0.2",
-    "postcss-loader": "^2.0.6",
+    "postcss-loader": "^4.0.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-bootstrap": "0.32.4",
