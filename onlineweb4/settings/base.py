@@ -124,6 +124,8 @@ GUARDIAN_RENDER_403 = True
 TAGGIT_CASE_INSENSITIVE = True
 
 # crispy forms settings
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap3"
+
 CRISPY_TEMPLATE_PACK = "bootstrap3"
 
 # Not really sure what this does.

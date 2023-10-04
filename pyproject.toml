@@ -8,36 +8,36 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "~3.11"
 Django = "^3.2.12"
-djangorestframework = "~3.13"
+djangorestframework = "~3.14"
 django-filter = "~21.1"
-pillow = "~9.0"
+pillow = "~10.0"
 python-memcached = "~1.59"
 stripe = "~2.67"
-icalendar = "~4.0"
-google-api-python-client = "~2.42"
+icalendar = "~5.0"
+google-api-python-client = "~2.101"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
-django-crispy-forms = "^1.11"
-django-dynamic-fixture = "^3.1"
+django-crispy-forms = "~2.0"
+crispy-bootstrap3 = "^2022.1"
+django-dynamic-fixture = "^4.0"
 django-recaptcha = "~3.0"           # Google ReCaptcha
 django-oauth-toolkit = "^1.7.1"       # OAuth2 authentication support
 django-watson = "~1.6.2"            # Indexed model search lib
 django-reversion = "~5.0"           # Model version history with middleware hooks to all post_save signals
 django-guardian = "~2.4"            # Per Object permissions framework
-django-taggit = "~2.1"              # Generic multi-model tagging library
+django-taggit = "~4.0"              # Generic multi-model tagging library
 redwine = { git = "https://github.com/dotkom/redwine.git", rev = "v1.4.6" }
 pdfdocument = "~4.0"
 Unidecode = "~1.3"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux = "~1.0"
-django-cors-headers = "~3.11"        # Enable CORS for Nibble
+django-cors-headers = "~4.2"        # Enable CORS for Nibble
 django-datetime-widget = { git = "https://github.com/oleast/django-datetime-widget.git", rev = "95a5ba4738853d1ed4081e1e33e1600cba984aad" }
 django-webpack-loader = "~0.7"      # Integration with webpack
-dj-database-url = "~0.5"            # Allows to configure databases using URLs
-python-decouple = "~3.6"            # Configuration and settings management
+dj-database-url = "~2.1"            # Allows to configure databases using URLs
+python-decouple = "~3.8"            # Configuration and settings management
 django-oidc-provider = "~0.7"       # OpenID Connect Provider
-docutils = "~0.18"                  # Allows django-admindocs to generate documentation
-oic = "~1.3"			            # OpenID Connect Client
-coreapi = "~2.3"                    # API Documentation
-requests = { version = "~2.27", extras = [ "security" ] }
+docutils = "~0.20"                  # Allows django-admindocs to generate documentation
+oic = "~1.6"			            # OpenID Connect Client
+requests = { version = "~2.31", extras = [ "security" ] }
 # Wiki
 wiki = "^0.8.0"
 
@@ -46,26 +46,27 @@ pyyaml = "^6.0"
 pywebpush = "^1.11.0"
 
 # Monitoring
-sentry-sdk = { version = "~1.5", extras = [ "django" ] }
+sentry-sdk = { version = "~1.31", extras = [ "django" ] }
 
 # AWS
-boto3 =  { version = "~1.21", optional = true }
-django-ses = { version = "~3.0", optional = true }
-zappa = { version = "~0.54", optional = true }
-django-storages = { version = "~1.12", optional = true }
+boto3 =  { version = "~1.28", optional = true }
+django-ses = { version = "~3.5", optional = true }
+zappa = { version = "~0.58", optional = true }
+django-storages = { version = "~1.14", extras = ["s3"], optional = true }
 # psyco postgresql
 psycopg2-binary = { version = "~2.9", optional = true }
+pip = "^23.2.1"
 
 
 [tool.poetry.dev-dependencies]
 # Testing
-pytest = "~7.1"
-pytest-cov = "~3.0"
+pytest = "~7.4"
+pytest-cov = "~4.1"
 pytest-django = "~4.5"
-pytest-xdist = "~2.5"
+pytest-xdist = "~3.3"
 freezegun = "~1.2"
 tox = "~3.24"
-coverage = { version = "~6.3", extras = [ "toml" ] }
+coverage = { version = "~7.3", extras = [ "toml" ] }
 
 # Linting
 flake8 = "~6.0"
@@ -144,10 +145,10 @@ filterwarnings = [
 
 [tool.coverage.report]
 omit = [
-    "apps/*/migrations/*",
-    "apps/*/tests/*",
-    "apps/*/test_*.py",
-    "onlineweb4/settings/*",
+    "apps/**/migrations/*",
+    "apps/**/tests/*",
+    "apps/**/test_*.py",
+    "onlineweb4/settings/**",
 ]
 
 [build-system]

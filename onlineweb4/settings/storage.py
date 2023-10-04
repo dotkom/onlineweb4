@@ -2,7 +2,7 @@ from decouple import config
 
 S3_MEDIA_STORAGE_ENABLED = config("OW4_USE_S3", cast=bool, default=False)
 if S3_MEDIA_STORAGE_ENABLED:
-    from storages.backends.s3boto3 import S3Boto3Storage
+    from storages.backends.s3 import S3Storage
 
     AWS_S3_REGION_NAME = config("OW4_S3_REGION", default="eu-north-1")
     AWS_STORAGE_BUCKET_NAME = config("OW4_S3_BUCKET_NAME")
@@ -18,7 +18,7 @@ if S3_MEDIA_STORAGE_ENABLED:
 
     MEDIA_LOCATION = "media"
 
-    class MediaRootS3BotoStorage(S3Boto3Storage):
+    class MediaRootS3BotoStorage(S3Storage):
         def __init__(self, **kwargs):
             super().__init__(**(kwargs | {"location": MEDIA_LOCATION}))
 
@@ -28,7 +28,7 @@ if S3_MEDIA_STORAGE_ENABLED:
 
     STATIC_LOCATION = "static"
 
-    class StaticRootS3BotoStorage(S3Boto3Storage):
+    class StaticRootS3BotoStorage(S3Storage):
         def __init__(self, **kwargs):
             super().__init__(**(kwargs | {"location": STATIC_LOCATION}))
 
