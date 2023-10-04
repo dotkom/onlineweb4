@@ -38,7 +38,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
         uses: actions/setup-python@v3
@@ -52,7 +52,7 @@ jobs:
         run: poetry install --no-interaction --no-ansi
 
       - name: Install node dependencies
-        run: yarn install --pure-lockfile
+        run: npm ci
 
       - name: npm build
         run: npm run build:prod
@@ -139,10 +139,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Install node dependencies
-        run: yarn install --pure-lockfile
+        run: npm ci
 
       - name: JS linting
         run: npm run lint-js

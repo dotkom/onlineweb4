@@ -21,17 +21,6 @@ const PUBLIC_PORT = process.env.WEBPACK_DEV_PUBLIC_PORT || PORT;
 const HOST = `${PUBLIC_IP}:${PORT}`;
 const PROTOCOL = HTTPS ? 'https' : 'http';
 
-// Add hot reloading to all entries
-// https://webpack.js.org/concepts/hot-module-replacement/
-Object.keys(config.entry).forEach((entry) => {
-  if ({}.hasOwnProperty.call(config.entry, entry)) {
-    config.entry[entry].unshift(
-      `webpack-dev-server/client?http://${HOST}`,
-      'webpack/hot/dev-server'
-    );
-  }
-});
-
 // Remove [hash] since webpack-dev-server stores all generated copies in memory based on filename
 config.output.filename = '[name].js';
 // Entries will be served from a seperate http server instead of from filesystem
@@ -40,34 +29,10 @@ config.output.publicPath = process.env.WEBPACK_DEV_GITPOD === 'true' ? `${PROTOC
 
 console.log(config.output.publicPath);
 
-// Don't reload if there is an error
-config.plugins.unshift(new webpack.NoEmitOnErrorsPlugin());
-// HMR
-config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
 
-
-const compiler = webpack(config);
-
-new WebpackDevServer(compiler, {
-  publicPath: config.output.publicPath,
+config.devServer = {
   // Enables Hot Module Reloading (only CSS and React atm)
   hot: true,
-  // Adds some code that refreshes the page if the code changes
-  inline: true,
-  // TODO: Not sure if this is actually needed
-  historyApiFallback: true,
-  disableHostCheck: true,
   // Allow CORS
   headers: { 'Access-Control-Allow-Origin': '*' },
-  stats: {
-    // Hide some 'useless' info
-    chunks: false,
-    // Enables color output
-    colors: true,
-  },
-}).listen(PORT, IP, (err) => {
-  if (err) {
-    console.error(err);
-  }
-  console.log(`Listening at ${HOST}`);
-});
+}

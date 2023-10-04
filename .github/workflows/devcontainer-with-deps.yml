@@ -9,7 +9,7 @@ on:
       - '.devcontainer/**/*'
       - 'pyproject.toml'
       - 'poetry.lock'
-      - 'yarn.lock'
+      - 'package-lock.json'
       - 'package.json'
 
 permissions:

@@ -1,6 +1,5 @@
 const config = require('./webpack.config.js');
 const BundleTracker = require('webpack-bundle-tracker');
-const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 
 /*
@@ -15,9 +14,7 @@ config.module.rules = [
 ];
 
 config.plugins = [
-  // Needed because otherwise the common entry is not created
-  new CommonsChunkPlugin({ names: ['common'] }),
-  new BundleTracker({ filename: './webpack-stats-test.json' }),
+  new BundleTracker({ path: __dirname, filename: 'webpack-stats-test.json' }),
 ]
 
 module.exports = config;
