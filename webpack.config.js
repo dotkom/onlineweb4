@@ -1,6 +1,6 @@
 const path = require('path');
 const BundleTracker = require('webpack-bundle-tracker');
-const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 /*
   A base configuration for webpack.
@@ -27,9 +27,7 @@ const webpackConfig = {
       './assets/careeropportunity/index',
     ],
     core: [
-      'react-hot-loader/patch',
       './assets/core/index',
-      './assets/core/LoadingComponent/index',
     ],
     contact: [
       './assets/contact/index',
@@ -161,18 +159,24 @@ const webpackConfig = {
         // Hack for modules that depend on global jQuery
         // https://webpack.js.org/guides/shimming/#imports-loader
         test: /(node_modules\/bootstrap\/.+|jquery.jqplot|jqplot\.\w+)\.js$/,
-        loader: 'imports-loader?jQuery=jquery,$=jquery,this=>window',
+        loader: 'imports-loader',
+        options: {
+            imports: {
+              moduleName: 'jquery',
+              name: '$',
+            },
+            wrapper: 'window'
+          }
       },
       {
         test: /\.css$/,
         loader: [
           {
-            // Load CSS by inserting <style> elements. Necessary for hot reloading
-            loader: 'style-loader',
+            loader: MiniCssExtractPlugin.loader,
           },
           {
             // CSS + sourcemapping
-            loader: 'css-loader',
+            loader: "css-loader",
             options: {
               sourceMap: true,
             },
@@ -190,7 +194,7 @@ const webpackConfig = {
         test: /\.less$/,
         loader: [
           {
-            loader: 'style-loader',
+            loader: MiniCssExtractPlugin.loader
           },
           {
             loader: 'css-loader',
@@ -230,14 +234,11 @@ const webpackConfig = {
     ],
   },
   plugins: [
-    // If several entries import the same code we can avoid duplication
-    // of dependencies by adding it to a common entry which all entries can import from
-    new CommonsChunkPlugin({
-      names: ['common'],
-      minChunks: 2,
-    }),
     // This is how we tell django which entries exist and where they are stored
-    new BundleTracker({ filename: './webpack-stats.json' }),
+    new BundleTracker({ path: __dirname, filename: 'webpack-stats.json' }),
+    new MiniCssExtractPlugin({
+      filename: '[name]-[hash].css',
+      chunkFilename: '[name]-[hash].css',  })
   ],
 };
 
@@ -245,5 +246,7 @@ const webpackConfig = {
 if (process.env.OW4_ABAKUS_OVERRIDE && process.env.OW4_ABAKUS_OVERRIDE.toLowerCase() === 'true') {
   webpackConfig.entry.core.push('./assets/core/z_override_abakus');
 }
+
+webpackConfig.mode = "development";
 
 module.exports = webpackConfig;

@@ -70,7 +70,7 @@ You can build this image locally by adding `"docker-compose.build.yml"` to the e
 #### Pre-built image without included dependencies
 
 Useful if your development often involves changing dependencies in `poetry`, but requires that you manually run
-`yarn install` and `poetry install`.
+`npm ci` and `poetry install`.
 You can use this method by adding `"docker-compose.no-deps.yml"` to the end of the
 `dockerComposeFile`-array in [`devcontainer.json`](/.devcontainer/devcontainer.json).
 
@@ -80,7 +80,7 @@ You can also build the image locally instead of using our pre-built version by u
 
 ```shell
 # in one terminal
-yarn start
+npm run start
 
 # in another terminal
 # only required first time
@@ -101,10 +101,10 @@ The following commands _should_ make `py.test` work out of the box, if they do n
 
 ```shell
 # static files are required for tests to pass
-# we use Node 16 and Yarn v1, see e.g. https://github.com/nvm-sh/nvm
+# we use Node 18 and npm, see e.g. https://github.com/nvm-sh/nvm
 # for help with managing multiple Node versions on your system
-yarn install --frozen-lockfile
-yarn build:test
+npm ci
+npm run build:test
 
 # recommended for easier debugging
 # saves the virtual environment and all packages to `.venv`
