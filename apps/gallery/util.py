@@ -138,7 +138,6 @@ class BaseImageHandler:
 
         # If this object is a ResponsiveImageHandler instance, create thumbnails for the responsive image
         elif isinstance(self, ResponsiveImageHandler):
-
             filename = os.path.basename(get_absolute_path_to_original(self.image))
 
             # Generate the full thumbnail path for the unhandled image
@@ -239,7 +238,7 @@ class BaseImageHandler:
 
         try:
             # Convert our image to a thumbnail
-            img = ImageOps.fit(img, thumb_size, Image.ANTIALIAS)
+            img = ImageOps.fit(img, thumb_size, Image.LANCZOS)
         except IOError as e:
             return GalleryStatus(False, "Image is truncated.", e)
 
@@ -535,7 +534,7 @@ class ResponsiveImageHandler(BaseImageHandler):
             target_width = math.ceil(image_width * scaling_factor)
 
         try:
-            image = ImageOps.fit(image, (target_width, target_height), Image.ANTIALIAS)
+            image = ImageOps.fit(image, (target_width, target_height), Image.LANCZOS)
         except IOError as io_error:
             self._log.error(
                 "Critical error while resizing %s to %s (Image truncation)"
