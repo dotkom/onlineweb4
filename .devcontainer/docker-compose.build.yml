@@ -11,4 +11,4 @@ services:
         # Use -bullseye variants on local arm64/Apple Silicon.
         VARIANT: 3.11
         # Optional Node.js version to install
-        NODE_VERSION: "16"
+        NODE_VERSION: "18"

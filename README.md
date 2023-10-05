@@ -80,7 +80,7 @@ You can also build the image locally instead of using our pre-built version by u
 
 ```shell
 # in one terminal
-npm run start
+npm run build
 
 # in another terminal
 # only required first time
@@ -104,7 +104,7 @@ The following commands _should_ make `py.test` work out of the box, if they do n
 # we use Node 18 and npm, see e.g. https://github.com/nvm-sh/nvm
 # for help with managing multiple Node versions on your system
 npm ci
-npm run build:test
+npm run build
 
 # recommended for easier debugging
 # saves the virtual environment and all packages to `.venv`
@@ -147,9 +147,8 @@ pre-commit run --all-files
 To run the tests you can call
 
 ```shell
-# first run either this or build:prod
-# most tests using Django templates require the `webpack-stats*.json` to exists
-npm run build:test
+# most tests using Django templates require the `webpack-stats.json` to exists
+npm run build
 
 py.test
 ```
@@ -161,7 +160,6 @@ up with `pre-commit`:
 
 ```shell
 npm run lint
-npm run test
 ```
 
 #### Code Test Coverage

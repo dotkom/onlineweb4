@@ -90,15 +90,15 @@ def get_stats_file() -> str:
     if existing := os.getenv("OW4_WEBPACK_LOADER_STATS_FILE"):
         return existing
 
-    for path in ["webpack-stats.json", "webpack-stats-test.json"]:
+    for path in ["webpack-stats.json"]:
         if (PROJECT_ROOT_DIRECTORY / path).is_file():
             return path
 
     warnings.warn(
         """
-    Neither `webpack-stats.json` nor `webpack-stats-test.json` exists!
+    `webpack-stats.json` does not exists!
     Tests using Django templates will fail, and static files will not load when running.
-    Please run `npm run build:test` or `npm run build:prod` to generate the files.
+    Please run `npm run build` to generate the files.
     """
     )
 
@@ -107,7 +107,7 @@ def get_stats_file() -> str:
 
 WEBPACK_LOADER = {
     "DEFAULT": {
-        "BUNDLE_DIR_NAME": "webpack/",  # end with slash
+        "BUNDLE_DIR_NAME": "esbuild/",  # end with slash
         "STATS_FILE": PROJECT_ROOT_DIRECTORY / get_stats_file(),
     }
 }

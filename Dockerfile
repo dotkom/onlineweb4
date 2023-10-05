@@ -1,9 +1,10 @@
 # This is only intended to build the application for deployment on AWS Lambda with Zappa
 # it has limited usage locally
 
-FROM node:20-alpine AS js-static
+FROM node:18-alpine AS js-static
 
 ENV APP_DIR=/srv/app
+ENV NODE_ENV=production
 
 WORKDIR $APP_DIR
 
@@ -12,10 +13,9 @@ COPY package.json package-lock.json $APP_DIR
 RUN npm ci
 
 COPY assets ./assets
-COPY *.config.js \
-    webpack.*.js ./
+COPY esbuild.mjs ./
 
-RUN npm run build:prod
+RUN npm run build
 
 FROM python:3.11 AS static-files
 
