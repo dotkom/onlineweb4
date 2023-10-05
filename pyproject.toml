@@ -116,9 +116,9 @@ setenv =
     DATABASE_URL = sqlite:///db.db
     DJANGO_SETTINGS_MODULE = onlineweb4.settings
     PYTHONPATH = {toxinidir}:{toxinidir}
-    OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats-test.json
+    OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats.json
 commands =
-    npm run build:test
+    npm run build
     py.test --cov=apps --cov-report xml
 """
 

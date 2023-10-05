@@ -51,3 +51,4 @@ zappa_settings.py
 requirements.txt
 .env
 .venv
+meta.json

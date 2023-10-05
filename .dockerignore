@@ -33,3 +33,4 @@ onlineweb4.egg-info
 .pre-commit-config.yaml
 webpack.test.config.js
 .devcontainer
+meta.json
