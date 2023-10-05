@@ -1,4 +1,4 @@
-import Urls from 'urls';
+import Urls from 'common/utils/django_reverse';
 import $ from 'jquery';
 
 class Filters {

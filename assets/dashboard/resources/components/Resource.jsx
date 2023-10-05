@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Urls from 'urls';
+import Urls from 'common/utils/django_reverse';
 import Cookies from 'js-cookie';
 
-import HobbyPropTypes from '../propTypes/hobby';
+import ResourcePropTypes from '../propTypes/resource';
 
-const deleteHobby = async (id) => {
+const deleteResource = async (id) => {
   try {
-    const res = await fetch(`/api/v1/hobbys/${id}`, {
+    const res = await fetch(`/api/v1/resources/${id}`, {
       method: 'DELETE',
       headers: {
         Accept: 'application/json',
@@ -27,16 +27,16 @@ const deleteHobby = async (id) => {
   return null;
 };
 
-const Hobby = ({ hobby }) => {
-  const basePath = Urls.hobbies_dashboard_index();
+const Resource = ({ resource }) => {
+  const basePath = Urls.resources_dashboard_index();
   return (
     <tr>
-      <td>{ hobby.title }</td>
-      <td>{ hobby.priority }</td>
-      <td>{ hobby.active ? 'Ja' : 'Nei' }</td>
+      <td>{ resource.title }</td>
+      <td>{ resource.priority }</td>
+      <td>{ resource.active ? 'Ja' : 'Nei' }</td>
       <td className="btn-group">
         <Link
-          to={`${basePath}edit/${hobby.id}`}
+          to={`${basePath}edit/${resource.id}`}
           type="button"
           className="btn btn-warning"
           title="Rediger"
@@ -44,7 +44,7 @@ const Hobby = ({ hobby }) => {
           <i className="fa fa-pencil" />
         </Link>
         <button
-          onClick={() => deleteHobby(hobby.id)}
+          onClick={() => deleteResource(resource.id)}
           type="button"
           className="btn btn-danger"
           title="Slett"
@@ -56,8 +56,8 @@ const Hobby = ({ hobby }) => {
   );
 };
 
-Hobby.propTypes = {
-  hobby: HobbyPropTypes,
+Resource.propTypes = {
+  resource: ResourcePropTypes,
 };
 
-export default Hobby;
+export default Resource;

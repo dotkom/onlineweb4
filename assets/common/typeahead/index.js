@@ -1,5 +1,5 @@
 import Bloodhound from 'corejs-typeahead';
-import Urls from 'urls';
+import Urls from 'common/utils/django_reverse';
 import { template } from 'underscore';
 import './less/typeahead.less';
 

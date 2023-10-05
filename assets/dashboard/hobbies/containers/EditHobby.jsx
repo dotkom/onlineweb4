@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Cookies from 'js-cookie';
-import Urls from 'urls';
+import Urls from 'common/utils/django_reverse';
 
-import ResourceForm from '../components/ResourceForm';
-import ResourceDetails from '../components/ResourceDetails';
+import HobbyForm from '../components/HobbyForm';
+import HobbyDetails from '../components/HobbyDetails';
 
 const DEFAULT_VALUES = {
   title: '',
   description: '',
+  read_more_link: '',
   image_id: 0,
   priority: 0,
   active: true,
 };
 
-const getResource = async (id) => {
+const getHobby = async (id) => {
   try {
-    const res = await fetch(`/api/v1/resources/${id}/?format=json`, {
+    const res = await fetch(`/api/v1/hobbys/${id}/?format=json`, {
       method: 'GET',
     });
     if (res.ok) {
@@ -31,16 +32,16 @@ const getResource = async (id) => {
   return null;
 };
 
-const patchResource = async (id, resource) => {
+const patchHobby = async (id, hobby) => {
   try {
-    const res = await fetch(`/api/v1/resources/${id}/`, {
+    const res = await fetch(`/api/v1/hobbys/${id}/`, {
       method: 'PATCH',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         'X-CSRFToken': Cookies.get('csrftoken'),
       },
-      body: JSON.stringify(resource),
+      body: JSON.stringify(hobby),
     });
     if (res.ok) {
       const json = await res.json();
@@ -54,14 +55,14 @@ const patchResource = async (id, resource) => {
   return null;
 };
 
-const EditResource = ({ id }) => {
-  const [resource, setResource] = useState(DEFAULT_VALUES);
-  const basePath = Urls.resources_dashboard_index();
+const EditHobby = ({ id }) => {
+  const [hobby, setHobby] = useState(DEFAULT_VALUES);
+  const basePath = Urls.hobbies_dashboard_index();
 
-  const initResource = async () => {
-    const res = await getResource(id);
+  const initHobby = async () => {
+    const res = await getHobby(id);
     if (res) {
-      setResource({
+      setHobby({
         ...res,
         image_id: res.image ? res.image.id : null,
       });
@@ -69,29 +70,29 @@ const EditResource = ({ id }) => {
   };
 
   const handleSave = () => {
-    patchResource(id, resource);
+    patchHobby(id, hobby);
   };
 
   useEffect(() => {
-    initResource();
+    initHobby();
   }, []);
 
-  const title = `Endre på ressurse${resource.title ? `n: ${resource.title}` : ''}`;
+  const title = `Endre på interessegruppe${hobby.title ? `n: ${hobby.title}` : ''}`;
 
   return (
-    <ResourceDetails title={title} backUrl={basePath}>
-      <ResourceForm
-        resource={resource}
-        setResource={setResource}
+    <HobbyDetails title={title} backUrl={basePath}>
+      <HobbyForm
+        hobby={hobby}
+        setHobby={setHobby}
         onSave={handleSave}
-        onCancel={initResource}
+        onCancel={initHobby}
       />
-    </ResourceDetails>
+    </HobbyDetails>
   );
 };
 
-EditResource.propTypes = {
+EditHobby.propTypes = {
   id: PropTypes.string.isRequired,
 };
 
-export default EditResource;
+export default EditHobby;
