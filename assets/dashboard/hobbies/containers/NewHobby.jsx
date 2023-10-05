@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Cookies from 'js-cookie';
-import Urls from 'urls';
+import Urls from 'common/utils/django_reverse';
 
 import HobbyForm from '../components/HobbyForm';
 import HobbyDetails from '../components/HobbyDetails';

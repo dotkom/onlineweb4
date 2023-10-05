@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Urls from 'urls';
+import Urls from 'common/utils/django_reverse';
 
 import DashboardTable from 'dashboard/common/DashboardTable';
 import DashboardPanel from 'dashboard/common/DashboardPanel';
