@@ -149,7 +149,6 @@ def edit(request, order_id=None):
     "posters.view_poster_order", (Poster, "pk", "order_id"), return_403=True
 )
 def detail(request, order_id=None):
-
     if not order_id:
         return HttpResponse(status=400)
 

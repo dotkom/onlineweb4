@@ -59,7 +59,6 @@ def archive_month(request, year, month):
 
 
 def details(request, article_id, article_slug):
-
     article = get_object_or_404(Article, pk=article_id)
 
     if article.changed_date != article.created_date:

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("splash", "0008_auto_20160812_2053")]
 
     operations = [

@@ -60,7 +60,6 @@ class OrderMixin(models.Model):
         return self.get_absolute_url()
 
     class Meta:
-
         permissions = (
             ("add_poster_order", "Add poster orders"),
             ("overview_poster_order", "View poster order overview"),

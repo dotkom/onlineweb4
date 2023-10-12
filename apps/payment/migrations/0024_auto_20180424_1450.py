@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("payment", "0023_auto_20180424_1432")]
 
     operations = [migrations.RemoveField(model_name="payment", name="delay")]

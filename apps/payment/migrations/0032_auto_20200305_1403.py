@@ -19,7 +19,6 @@ def remove_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("payment", "0031_paymenttransaction_source")]
 
     operations = [migrations.RunPython(load_data, remove_data)]

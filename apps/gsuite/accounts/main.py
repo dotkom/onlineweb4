@@ -52,7 +52,6 @@ def create_temporary_password():
 
 
 def create_g_suite_account(user):
-
     directory = setup_g_suite_client()
 
     password = create_temporary_password()

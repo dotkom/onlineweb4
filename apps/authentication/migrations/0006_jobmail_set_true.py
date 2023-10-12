@@ -20,7 +20,6 @@ def set_jobmail_field(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0005_onlineuser_jobmail")]
 
     operations = [migrations.RunPython(set_jobmail_field)]

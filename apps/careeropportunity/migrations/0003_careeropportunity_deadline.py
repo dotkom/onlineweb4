@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("careeropportunity", "0002_careeropportunity_job_type")]
 
     operations = [

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("inventory", "0007_batch_low_stock_treshhold")]
 
     operations = [

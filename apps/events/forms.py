@@ -9,7 +9,6 @@ from apps.marks.models import MarkRuleSet
 
 
 class CaptchaForm(forms.Form):
-
     phone_number = forms.CharField(
         label=_("Telefonnummer er påkrevd for å være påmeldt et arrangement."),
         error_messages={"required": _("Telefonnummer er påkrevd!")},

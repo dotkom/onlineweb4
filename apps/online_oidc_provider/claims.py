@@ -33,7 +33,6 @@ def userinfo(claims, user):
 
 
 class Onlineweb4ScopeClaims(ScopeClaims):
-
     info_onlineweb4 = (
         _("Onlineweb4"),
         _(

@@ -175,7 +175,6 @@ def unattend_event(request, event_id):
 
     # Delete payment delays connected to the user and event
     if payment:
-
         payments = PaymentRelation.objects.filter(
             payment=payment, user=request.user, refunded=False
         )

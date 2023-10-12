@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0045_auto_20200222_1436")]
 
     operations = [migrations.RemoveField(model_name="onlineuser", name="saldo")]

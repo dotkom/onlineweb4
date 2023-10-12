@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("gallery", "0013_auto_20190506_1719"),
         ("hobbygroups", "0007_remove_hobby_image"),

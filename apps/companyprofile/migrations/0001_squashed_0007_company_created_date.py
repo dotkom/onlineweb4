@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("companyprofile", "0001_initial"),
         ("companyprofile", "0002_auto_20151014_2132"),

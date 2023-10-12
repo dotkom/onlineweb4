@@ -636,7 +636,6 @@ def feedback_pending(request):
 
 class GSuiteCreateAccount(View):
     def post(self, request, *args, **kwargs):
-
         try:
             create_g_suite_account(request.user)
             messages.success(

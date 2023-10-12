@@ -19,7 +19,6 @@ class ArticleAdmin(VersionAdmin):
 
     # set the created and changed by fields
     def save_model(self, request, obj, form, change):
-
         obj.changed_by = request.user
 
         if not change:

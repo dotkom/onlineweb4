@@ -30,7 +30,6 @@ def revert_data(*args):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0035_auto_20190627_1854")]
 
     operations = [migrations.RunPython(load_data, revert_data)]

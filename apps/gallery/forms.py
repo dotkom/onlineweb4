@@ -24,7 +24,6 @@ class ImageField(forms.ImageField):
 
 
 def get_correct_file_name(uploaded_file):
-
     file_name, file_extension = os.path.splitext(uploaded_file.name)
 
     if file_extension.lower() == ".jpg":
@@ -37,7 +36,6 @@ class DocumentForm(forms.Form):
     file = ImageField()
 
     def clean(self):
-
         if "file" not in self.cleaned_data:
             self._errors["file"] = "File attribute missing."
             return self

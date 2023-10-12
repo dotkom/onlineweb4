@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("gallery", "0009_responsiveimage_tags")]
 
     operations = [

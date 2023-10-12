@@ -28,7 +28,8 @@ DATAPORTEN_SCOPES = settings.DATAPORTEN.get("STUDY", {}).get("SCOPES")
 @login_required()
 def study(request):
     """This view redirects the user to Dataporten to request authorization for fetching information about the
-    user's groups membership, which can be used to verify eligibility for membership of Online."""
+    user's groups membership, which can be used to verify eligibility for membership of Online.
+    """
 
     # If the user already is a member we can return early. However, if we're in testing, we want to skip the check.
     if request.user.is_member and not settings.DATAPORTEN.get("STUDY").get("TESTING"):

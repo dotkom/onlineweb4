@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("splash", "0001_initial"),
         ("splash", "0002_splashyear_start_date"),

@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("gallery", "0012_auto_20160309_2133")]
 
     operations = [

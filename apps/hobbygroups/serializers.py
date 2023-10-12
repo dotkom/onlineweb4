@@ -6,7 +6,6 @@ from apps.hobbygroups.models import Hobby
 
 
 class HobbySerializer(serializers.ModelSerializer):
-
     image = ResponsiveImageSerializer(read_only=True)
     image_id = serializers.PrimaryKeyRelatedField(
         write_only=True, source="image", queryset=ResponsiveImage.objects.all()

@@ -32,7 +32,6 @@ class PosterPermissionTestCase(TestCase):
         add_to_group(self.ordering_group, self.ordering_user)
 
     def test_poster_admins(self):
-
         all_admin_users = get_poster_admins()
 
         self.assertIn(self.admin_user, all_admin_users)

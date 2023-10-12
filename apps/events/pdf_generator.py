@@ -9,7 +9,6 @@ from reportlab.platypus import Paragraph, TableStyle
 
 
 class EventPDF:
-
     event = None
     attendees = None
     waiters = None

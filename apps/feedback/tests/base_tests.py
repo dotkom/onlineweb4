@@ -32,7 +32,6 @@ from apps.marks.models import Mark
 class FeedbackTestCaseMixin:
     # Feedback mail
     def setUp(self):
-
         self.logger = logging.getLogger()
 
         # Setup users

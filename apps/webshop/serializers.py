@@ -79,7 +79,6 @@ class OrderCreateSerializer(serializers.ModelSerializer):
     quantity = serializers.IntegerField(min_value=1, max_value=100, default=1)
 
     def validate_product(self, product: Product):
-
         if not product.active:
             raise serializers.ValidationError(
                 "Produktet er ikke lenger aktivt og kan ikke kjøpes"

@@ -18,7 +18,6 @@ class HTML5RequiredMixin(Form):
                 not in (AdminFileWidget, HiddenInput, FileInput)
                 and "__prefix__" not in self.fields[field].widget.attrs
             ):
-
                 self.fields[field].widget.attrs["required"] = "required"
                 if self.fields[field].label:
                     self.fields[field].label += " *"
