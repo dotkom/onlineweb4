@@ -197,7 +197,7 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
     if added_date < mark_change_date:
         duration = 30
 
-    if type(added_date) == datetime:
+    if isinstance(added_date, datetime):
         added_date = added_date.date()
 
     # Add the duration
