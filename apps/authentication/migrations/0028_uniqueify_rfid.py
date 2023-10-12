@@ -8,7 +8,6 @@ import apps.authentication.validators
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0027_auto_20180412_1730")]
 
     operations = [

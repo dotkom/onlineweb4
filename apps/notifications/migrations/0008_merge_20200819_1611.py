@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("notifications", "0007_auto_20200814_1937"),
         ("notifications", "0007_auto_20200812_1933"),

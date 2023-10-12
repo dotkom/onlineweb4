@@ -47,7 +47,6 @@ class CommitteeApplicationViewSet(ModelViewSet):
 
 
 class MembershipApprovalViewSet(ModelViewSet):
-
     permission_classes = (IsAuthenticated,)
     schema = AutoSchema(tags=["Membership Applications"])
     serializer_class = MembershipApprovalSerializer

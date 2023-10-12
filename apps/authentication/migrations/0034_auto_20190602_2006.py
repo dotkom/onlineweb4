@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0033_convert_position_period_to_date")]
 
     operations = [

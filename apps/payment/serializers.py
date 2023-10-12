@@ -204,7 +204,6 @@ class PaymentRelationUpdateSerializer(serializers.ModelSerializer):
     )
 
     def update(self, instance: PaymentRelation, validated_data):
-
         # Update should only be used to confirm a payment relation. PENDING is the first stage of a payment.
         if instance.status != status.PENDING:
             raise ValidationError("Denne betalingen er allerede betalt og bekreftet")
@@ -393,7 +392,6 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
     )
 
     def update(self, instance: PaymentTransaction, validated_data):
-
         # Update should only be used to confirm transactions. PENDING is the first stage of a payment.
         if instance.status != status.PENDING:
             raise ValidationError("Denne transaksjonen er allerede betalt og bekreftet")

@@ -10,7 +10,6 @@ from oauth2_provider.validators import URIValidator
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [migrations.swappable_dependency(settings.AUTH_USER_MODEL)]

@@ -24,7 +24,6 @@ def load_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("payment", "0027_auto_20190515_1412")]
 
     operations = [migrations.RunPython(load_data)]

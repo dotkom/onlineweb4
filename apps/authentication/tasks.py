@@ -36,7 +36,6 @@ class SynchronizeGroups:
 
     @staticmethod
     def add_users(sync, logger):
-
         # FORWARD SYNC
         # Syncing users from source groups to destination groups
 
@@ -68,7 +67,6 @@ class SynchronizeGroups:
 
     @staticmethod
     def remove_users(sync, logger):
-
         # BACKWARDS SYNC
         # Removing users from destination group(s) if they are not in the source group(s)
 

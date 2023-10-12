@@ -24,7 +24,6 @@ def backward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("feedback", "0014_auto_20200131_1453")]
 
     operations = [migrations.RunPython(forward, backward)]

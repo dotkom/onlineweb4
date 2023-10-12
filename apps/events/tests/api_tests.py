@@ -19,7 +19,6 @@ def generate_attendee(event, username, rfid):
 
 class EventsAPITestCase(OIDCTestCase):
     def setUp(self):
-
         self.committee = G(Group, name="Bedkom")
         self.user = generate_user(username="_user")
         self.token = self.generate_access_token(self.user)
@@ -44,7 +43,6 @@ class EventsAPITestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_detail(self):
-
         response = self.client.get(self.id_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

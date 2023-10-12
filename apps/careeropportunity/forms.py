@@ -4,7 +4,6 @@ from apps.careeropportunity.models import CareerOpportunity
 
 
 class AddCareerOpportunityForm(forms.ModelForm):
-
     title = forms.CharField(
         label="Tittel",
         required=True,

@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("webshop", "0004_auto_20151118_2242")]
 
     operations = [

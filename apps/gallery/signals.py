@@ -31,7 +31,6 @@ resp_img_uuid = uuid.uuid1()
 # If we delete an image, we don't want to keep the actual images
 # This signal makes sure that the images along with the thumbnails are deleted from disk
 def responsive_image_delete(sender, instance, **kwargs):
-
     log = logging.getLogger(__name__)
     filename = str(instance.image_original)
 

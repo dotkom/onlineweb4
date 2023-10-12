@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("authentication", "0045_auto_20200222_1436"),
         ("approval", "0009_auto_20200229_1046"),

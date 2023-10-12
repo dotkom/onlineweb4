@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("authentication", "0041_auto_20190911_2238"),
         ("marks", "0008_auto_20191009_1245"),

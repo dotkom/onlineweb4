@@ -9,7 +9,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("webshop", "0005_auto_20160428_2259")]
 
     operations = [

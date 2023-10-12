@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("hobbygroups", "0005_auto_20190506_1719")]
 
     operations = [migrations.RemoveField(model_name="hobby", name="image")]

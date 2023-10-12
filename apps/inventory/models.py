@@ -23,7 +23,6 @@ class ItemCategory(models.Model):
 
 
 class Item(models.Model):
-
     name = models.CharField(_("Varetype"), max_length=50)
     description = models.CharField(
         _("Beskrivelse"), max_length=50, null=True, blank=True
@@ -101,7 +100,6 @@ class Item(models.Model):
         self.handle_notifications(amount)
 
     def handle_notifications(self, amount):
-
         # Send one notification when the stock goes to or below 10
         if (
             self.total_amount <= self.low_stock_treshold
@@ -135,7 +133,6 @@ class Item(models.Model):
 
 
 class Batch(models.Model):
-
     item = models.ForeignKey(
         Item, verbose_name=_("Vare"), related_name="batches", on_delete=models.CASCADE
     )

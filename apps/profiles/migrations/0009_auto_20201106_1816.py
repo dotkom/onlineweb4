@@ -15,7 +15,6 @@ def create_privacy_for_all(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("profiles", "0008_auto_20201024_1903"),

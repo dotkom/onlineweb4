@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("gallery", "0011_responsiveimage_photographer")]
 
     operations = [

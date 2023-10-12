@@ -27,7 +27,6 @@ def backward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("payment", "0022_payment_delay_duration")]
 
     operations = [RunPython(forward, backward)]
