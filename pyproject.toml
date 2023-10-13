@@ -55,7 +55,6 @@ zappa = { version = "~0.58", optional = true }
 django-storages = { version = "~1.14", extras = ["s3"], optional = true }
 # psyco postgresql
 psycopg2-binary = { version = "~2.9", optional = true }
-pip = "^23.2.1"
 
 
 [tool.poetry.dev-dependencies]
