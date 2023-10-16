@@ -1,4 +1,4 @@
-import jQuery from 'jquery';
+// import jQuery from 'jquery';
 import moment from 'moment';
 import { ajax, showStatusMessage } from 'common/utils';
 

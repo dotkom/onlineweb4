@@ -1,5 +1,5 @@
 import moment from 'moment';
-import $ from 'jquery';
+// import $ from 'jquery';
 import { makeApiRequest } from 'common/utils';
 
 function ArticleArchiveWidget() {

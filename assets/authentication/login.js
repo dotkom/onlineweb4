@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 
 export default () => {
   // Setting focus on either username or password if errortext is presented

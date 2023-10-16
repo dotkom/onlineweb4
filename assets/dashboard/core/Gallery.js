@@ -1,4 +1,4 @@
-import jQuery from 'jquery';
+// import jQuery from 'jquery';
 import MicroEvent from 'common/utils/MicroEvent';
 import { ajaxEnableCSRF, format, render } from 'common/utils';
 import moment from 'moment';

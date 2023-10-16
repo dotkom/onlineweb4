@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 import 'common/jqplot';
 import { ajaxEnableCSRF, debouncedResize, setStatusMessage } from 'common/utils/';
 
