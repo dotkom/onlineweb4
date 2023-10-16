@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// // import $ from 'jquery';
 
 const TOP_OFFSET_ADJUST = 65;
 

@@ -1,4 +1,4 @@
-import jQuery from 'jquery';
+// import jQuery from 'jquery';
 import Dropzone from 'dropzone';
 import 'dropzone/dist/dropzone.css';
 import './less/dropzone.less';

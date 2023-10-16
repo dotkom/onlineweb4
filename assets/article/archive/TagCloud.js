@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 
 $('div.tagcloud span').each(function tagCloud() {
   const max = $('div.tagcloud').data('max_frequency');
