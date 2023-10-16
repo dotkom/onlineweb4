@@ -6,9 +6,9 @@ authors = ["dotkom <dotkom@online.ntnu.no>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "~3.11"
+python = "~4.01"
 Django = "^3.2.12"
-djangorestframework = "~3.14"
+djangorestframework = "~4.04"
 django-filter = "~23.3"
 pillow = "~10.0"
 python-memcached = "~1.59"
@@ -18,7 +18,7 @@ google-api-python-client = "~2.103"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
 django-crispy-forms = "~2.0"
 crispy-bootstrap3 = "^2022.1"
-django-dynamic-fixture = "~3.1"
+django-dynamic-fixture = "~4.0"
 django-recaptcha = "~3.0"           # Google ReCaptcha
 django-oauth-toolkit = "~1.7"       # OAuth2 authentication support
 django-watson = "~1.6.2"            # Indexed model search lib
