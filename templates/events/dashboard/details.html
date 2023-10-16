@@ -152,7 +152,7 @@ Arrangementsdetaljer
 {% block js %}
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     {{ block.super }}
-    {% render_bundle 'dashboardEvents' 'js' %}
+    {% render_bundle 'dashboardEvents' 'js' attrs='async type="module"' %}
     <script>
         // Update details view form with action attribute
         $('#create-event-form').attr('action', "{% url 'dashboard_events_edit' event.id %}")

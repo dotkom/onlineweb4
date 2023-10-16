@@ -11,7 +11,7 @@
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'frontpage' 'js' %}
+    {% render_bundle 'frontpage' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block apple-webapp %}

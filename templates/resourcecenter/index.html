@@ -13,7 +13,7 @@ Ressurssenter - Online
 
 {% block js %}
 	{{ block.super }}
-	{% render_bundle 'resourcecenter' 'js' %}
+	{% render_bundle 'resourcecenter' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block content %}

@@ -117,5 +117,5 @@ Min side - Online
 {% endblock content %}
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'profiles' 'js' %}
+    {% render_bundle 'profiles' 'js' attrs='async type="module"' %}
 {% endblock %}

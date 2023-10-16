@@ -11,7 +11,7 @@
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'articleDetails' 'js' %}
+    {% render_bundle 'articleDetails' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block content %}

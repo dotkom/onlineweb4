@@ -12,7 +12,7 @@ Interessegrupper - Online
 
 {% block js %}
 	{{ block.super }}
-	{% render_bundle 'hobbygroups' 'js' %}
+	{% render_bundle 'hobbygroups' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block content %}
