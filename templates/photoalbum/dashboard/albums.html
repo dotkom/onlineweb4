@@ -12,7 +12,7 @@ Fotoalbum - Online Dashboard
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardPhotoAlbum' 'js' %}
+    {% render_bundle 'dashboardPhotoAlbum' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block page-header %}

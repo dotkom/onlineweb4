@@ -20,7 +20,7 @@
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardAuthentication' 'js' %}
+    {% render_bundle 'dashboardAuthentication' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block content %}

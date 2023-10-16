@@ -16,7 +16,7 @@ Arrangementsoversikt
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardEvents' 'js' %}
+    {% render_bundle 'dashboardEvents' 'js' attrs='async type="module"' %}
 {% endblock js %}
 
 {% block breadcrumbs %}

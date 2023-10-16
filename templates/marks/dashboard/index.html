@@ -9,7 +9,7 @@
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardMarks' 'js' %}
+    {% render_bundle 'dashboardMarks' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block page-header %}

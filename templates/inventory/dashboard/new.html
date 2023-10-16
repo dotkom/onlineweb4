@@ -14,7 +14,7 @@ Ny vare - Online Dashboard
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardInventory' 'js' %}
+    {% render_bundle 'dashboardInventory' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block page-header %}

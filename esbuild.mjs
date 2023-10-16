@@ -62,7 +62,8 @@ let result = await esbuild.build({
     plugins: [lessLoader()],
     platform: "browser",
     // we could use https://github.com/marcofugaro/browserslist-to-esbuild
-    target: ['chrome109', 'firefox72', 'safari16', 'edge109'],
+    target: ['chrome109', 'firefox109', 'safari16', 'edge109'],
+    splitting: true,
     minify: process.env.NODE_ENV === "production" || false,
     sourcemap: process.env.NODE_ENV === "production" || false,
     metafile: true

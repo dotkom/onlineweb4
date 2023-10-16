@@ -99,5 +99,5 @@ Arrangementsarkiv - Online
 
 {% block js %}
   {{ block.super }}
-  {% render_bundle 'eventsArchive' 'js' %}
+  {% render_bundle 'eventsArchive' 'js' attrs='async type="module"' %}
 {% endblock %}
