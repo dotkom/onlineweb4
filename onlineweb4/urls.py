@@ -16,7 +16,7 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["chunks"] = Chunk.objects.filter(key__startswith="om_")[:21]
+        context["chunks"] = Chunk.objects.filter(key__startswith="om_")[:25]
         return context
 
 
