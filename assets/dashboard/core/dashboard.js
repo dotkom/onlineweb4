@@ -1,4 +1,4 @@
-// import jQuery from 'jquery';
+import jQuery from 'jquery';
 import 'common/datetimepicker';
 import 'common/tablesorter';
 import { ajaxEnableCSRF } from 'common/utils';
