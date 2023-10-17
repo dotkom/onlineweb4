@@ -34,7 +34,7 @@ jobs:
       if: matrix.language == 'python'
       uses: actions/setup-python@v4
       with:
-        python-version: 3.11
+        python-version-file: '.python-version'
 
     - name: Install dependencies
       if: matrix.language == 'python'
