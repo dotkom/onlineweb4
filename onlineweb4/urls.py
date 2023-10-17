@@ -1,3 +1,4 @@
+from chunks.models import Chunk
 from django.conf import settings
 from django.conf.urls import include, re_path
 from django.conf.urls.static import static
@@ -9,33 +10,43 @@ from django_js_reverse.views import urls_js
 # URL config
 admin.autodiscover()
 
+
+class HomePageView(TemplateView):
+    template_name = "frontpage.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["chunks"] = Chunk.objects.filter(key__startswith="om_")[:21]
+        return context
+
+
 urlpatterns = [
     # Admin urls
     re_path(r"^admin/doc/", include("django.contrib.admindocs.urls")),
     re_path(r"^admin/", admin.site.urls),
     # Onlineweb front page
-    re_path(r"^$", TemplateView.as_view(template_name="frontpage.html"), name="home"),
+    re_path(r"^$", HomePageView.as_view(), name="home"),
     # Django-js-reverse used to get django urls to react
     re_path(r"^jsreverse/$", urls_js, name="js_reverse"),
     # nav-bar menu urls
     re_path(
         r"^#events$",
-        TemplateView.as_view(template_name="frontpage.html"),
+        HomePageView.as_view(template_name="frontpage.html"),
         name="events-link",
     ),
     re_path(
         r"^#articles$",
-        TemplateView.as_view(template_name="frontpage.html"),
+        HomePageView.as_view(template_name="frontpage.html"),
         name="articles-link",
     ),
     re_path(
         r"^#about$",
-        TemplateView.as_view(template_name="frontpage.html"),
+        HomePageView.as_view(template_name="frontpage.html"),
         name="about-link",
     ),
     re_path(
         r"^#business$",
-        TemplateView.as_view(template_name="frontpage.html"),
+        HomePageView.as_view(template_name="frontpage.html"),
         name="business-link",
     ),
     # Online Notifier Owner Verification (checked yearly or so by Google)
