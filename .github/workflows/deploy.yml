@@ -48,7 +48,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version-file: '.python-version'
 
       - name: Install Zappa
         run: pip install zappa==0.58
