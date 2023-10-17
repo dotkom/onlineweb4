@@ -40,16 +40,7 @@ Ny karrieremulighet
                         {% if field.field.required %}<span style="color:red;" title="Dette feltet kreves">*</span>{% endif %}
                     </div>
                     <div class="col-md-9">
-                        {% if field.name == 'start' or field.name == 'end' or field.name == 'deadline' %}
-                            <div class="input-group {% if field.errors %}has-error{% endif %} {% if field.name == 'start' or field.name == 'end' or field.name == 'deadline' %}dtp{% endif %}">
-                            {{ field|addclass:"form-control"}}
-                                <span class="input-group-btn">
-                                    <a href="#" class="btn btn-primary datepickerbutton">
-                                        <i class="fa fa-calendar fa-lg"></i>
-                                    </a>
-                                </span>
-                            </div>
-                        {% elif field.name == 'featured' or field.name == 'deadline_asap' %}
+                        {% if field.name == 'featured' or field.name == 'deadline_asap' %}
                             {{ field }}
                         {% else %}
                             {{ field|addclass:"form-control"}}
