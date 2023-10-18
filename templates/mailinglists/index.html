@@ -12,7 +12,7 @@ Epostlister - Online
 
 {% block js %}
 	{{ block.super }}
-	{% render_bundle 'mailinglists' 'js' %}
+	{% render_bundle 'mailinglists' 'js' attrs='async type="module"' %}
 {% endblock js %}
 
 

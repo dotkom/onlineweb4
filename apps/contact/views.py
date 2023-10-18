@@ -15,13 +15,11 @@ def index(request):
 
 
 def contact_submit(request):
-
     log = logging.getLogger(__name__)
 
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-
             name = form.cleaned_data["contact_name"]
             content = form.cleaned_data["content"]
             from_email = form.cleaned_data["contact_email"]

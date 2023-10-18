@@ -1,23 +1,23 @@
 # This is only intended to build the application for deployment on AWS Lambda with Zappa
 # it has limited usage locally
 
-FROM node:16-alpine AS js-static
+FROM node:18-alpine AS js-static
 
 ENV APP_DIR=/srv/app
+ENV NODE_ENV=production
 
 WORKDIR $APP_DIR
 
-COPY package.json yarn.lock $APP_DIR
+COPY package.json package-lock.json $APP_DIR
 
-RUN yarn install --frozen-lockfile
+RUN npm ci
 
 COPY assets ./assets
-COPY *.config.js \
-    webpack.*.js ./
+COPY esbuild.mjs ./
 
-RUN npm run build:prod
+RUN npm run build
 
-FROM python:3.9 AS static-files
+FROM python:3.11 AS static-files
 
 ENV APP_DIR=/srv/app \
     POETRY_VIRTUALENVS_CREATE=false \
@@ -26,7 +26,7 @@ ENV APP_DIR=/srv/app \
 
 WORKDIR $APP_DIR
 
-RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.1.13 python3 -
+RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.6.1 python3 -
 
 COPY pyproject.toml poetry.lock $APP_DIR
 
@@ -41,7 +41,7 @@ COPY --from=js-static $APP_DIR/bundles ./bundles
 
 RUN ./manage.py collectstatic
 
-FROM amazon/aws-lambda-python:3.9
+FROM amazon/aws-lambda-python:3.11
 
 LABEL maintainer="Dotkom <hjelp@online.ntnu.no>"
 ENV POETRY_VIRTUALENVS_CREATE=false \
@@ -52,7 +52,7 @@ COPY pyproject.toml poetry.lock $FUNCTION_DIR
 
 # Setup Python environment
 RUN yum install -y git unzip \
-    && curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.1.13 python3 - \
+    && curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.6.1 python3 - \
     # silent, show errors and location (aka follow redirect)
     && curl -sSL --output vault-lambda-extension.zip \
         https://releases.hashicorp.com/vault-lambda-extension/0.6.0/vault-lambda-extension_0.6.0_linux_amd64.zip \

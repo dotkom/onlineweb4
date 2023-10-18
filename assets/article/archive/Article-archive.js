@@ -1,4 +1,4 @@
-import $ from 'jquery';
+/// import $ from 'jquery';
 import ArticleArchiveWidget from './ArticleArchiveWidget';
 
 let isLoadingNewContent = false; // Indicating if we are currently loading something

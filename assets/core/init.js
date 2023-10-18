@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 
 const addAnimation = () => {
   const svg = document.querySelectorAll('.mn-svg');

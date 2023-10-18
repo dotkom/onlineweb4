@@ -6,7 +6,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("taggit", "0002_auto_20150616_2121"),
         ("gallery", "0008_auto_20151024_1845"),

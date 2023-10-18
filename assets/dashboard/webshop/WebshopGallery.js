@@ -1,4 +1,4 @@
-import jQuery from 'jquery';
+// import jQuery from 'jquery';
 
 const WebshopGallery = (function PrivateWebshopGallery($) {
   const images = [];

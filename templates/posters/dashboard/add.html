@@ -14,7 +14,7 @@
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardPosters' 'js' %}
+    {% render_bundle 'dashboardPosters' 'js' attrs='async type="module"' %}
 {% endblock js %}
 
 

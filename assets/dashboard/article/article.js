@@ -1,5 +1,5 @@
 import moment from 'moment';
-import jQuery from 'jquery';
+// import jQuery from 'jquery';
 import { ajax, showStatusMessage } from 'common/utils';
 /**
  * Created by myth on 10/18/15.

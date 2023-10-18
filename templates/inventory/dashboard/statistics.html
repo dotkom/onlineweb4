@@ -17,7 +17,7 @@ Varelager statistikk
 {% block js %}
     {{ block.super }}
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    {% render_bundle 'dashboardInventory' 'js' %}
+    {% render_bundle 'dashboardInventory' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block content %}

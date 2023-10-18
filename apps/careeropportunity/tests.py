@@ -1,7 +1,7 @@
-import pytz
+from datetime import datetime, timedelta, timezone
+
 from django.test import TestCase
 from django.urls import reverse
-from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
 
@@ -20,8 +20,8 @@ class CareerOpportunityURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_careeropportunity_detail(self):
-        past = timezone.datetime(2000, 1, 1, 1, 0, 0, 0, pytz.UTC)
-        future = timezone.now() + timezone.timedelta(days=1)
+        past = datetime(2000, 1, 1, 1, 0, 0, 0, timezone.utc)
+        future = datetime.now(timezone.utc) + timedelta(days=1)
         careeropportunity = G(CareerOpportunity, start=past, end=future)
 
         url = reverse("careeropportunity_details", args=(careeropportunity.id,))
@@ -37,8 +37,8 @@ class CompanyAPITestCase(OIDCTestCase):
         self.id_url = lambda _id: self.url + str(_id) + "/"
 
         self.company: Company = G(Company, name="online")
-        self.past = timezone.now() - timezone.timedelta(days=7)
-        self.future = timezone.now() + timezone.timedelta(days=7)
+        self.past = datetime.now(timezone.utc) - timedelta(days=7)
+        self.future = datetime.now(timezone.utc) + timedelta(days=7)
         self.opportunity: CareerOpportunity = G(
             CareerOpportunity, start=self.past, end=self.future, company=self.company
         )

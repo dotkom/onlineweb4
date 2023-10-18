@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0043_onlinegroup_parent_group")]
 
     operations = [

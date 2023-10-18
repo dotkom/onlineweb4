@@ -20,7 +20,6 @@ def load_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0032_auto_20190602_1939")]
 
     operations = [migrations.RunPython(load_data)]

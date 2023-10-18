@@ -1,7 +1,6 @@
-import datetime
 import logging
+from datetime import datetime, timezone
 
-import pytz
 from django.test import TestCase
 from django.urls import reverse
 from django_dynamic_fixture import G
@@ -62,7 +61,7 @@ class ArticleURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_article_archive_year_exists(self):
-        created_date = datetime.datetime(2013, 1, 1, 1, 0, 0, 0, pytz.UTC)
+        created_date = datetime(2013, 1, 1, 1, 0, 0, 0, timezone.utc)
         G(Article, created_date=created_date, published_date=created_date)
 
         url = reverse("article_archive_year", args=(2013,))
@@ -79,7 +78,7 @@ class ArticleURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_article_archive_month_exists(self):
-        created_date = datetime.datetime(2013, 1, 1, 1, 0, 0, 0, pytz.UTC)
+        created_date = datetime(2013, 1, 1, 1, 0, 0, 0, timezone.utc)
         G(Article, created_date=created_date, published_date=created_date)
 
         url = reverse("article_archive_month", args=(2013, "Januar"))
@@ -107,7 +106,7 @@ class ArticleAPIURLTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_article_detail(self):
-        in_the_past = datetime.datetime(2000, 1, 1, 0, 0, 0, 0, pytz.UTC)
+        in_the_past = datetime(2000, 1, 1, 0, 0, 0, 0, timezone.utc)
 
         article = G(Article, created_date=in_the_past, published_date=in_the_past)
 

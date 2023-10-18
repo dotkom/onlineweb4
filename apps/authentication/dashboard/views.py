@@ -166,7 +166,6 @@ class GroupCreateView(DashboardPermissionMixin, CreateView):
 @login_required
 @permission_required("authentication.view_membership", return_403=True)
 def members_index(request):
-
     """
     Index overview for memberships in dashboard
     """

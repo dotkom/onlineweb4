@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+from datetime import datetime, timedelta, timezone
 
-import pytz
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from django.utils import timezone
 
 from apps.authentication.models import Membership
 
@@ -34,11 +32,11 @@ class Command(BaseCommand):
                 continue
             # set the correct expiry date according to FOS.
             if line == "MIT" or line == "mit":
-                expiration_date = now + datetime.timedelta(days=365 * 2)
+                expiration_date = now + timedelta(days=365 * 2)
                 note = "Master %d" % now.year
                 continue
             if line == "BIT" or line == "bit":
-                expiration_date = now + datetime.timedelta(days=365 * 3)
+                expiration_date = now + timedelta(days=365 * 3)
                 note = "Bachelor %d" % now.year
                 continue
 
@@ -67,9 +65,9 @@ class Command(BaseCommand):
 
     def now(self):
         now = timezone.now()
-        now = datetime.datetime(now.year, 9, 15, 0, 0)
+        now = datetime(now.year, 9, 15, 0, 0)
         # subtract a year if we're adding people with this script in the spring
         if now.month < 6:
-            now = now - datetime.timedelta(days=365)
-        pytz.timezone(timezone.get_default_timezone_name()).localize(now)
+            now = now - timedelta(days=365)
+        now = now.astimezone()
         return now

@@ -7,9 +7,8 @@ on:
   pull_request:
 
 env:
-  POETRY_VERSION: "1.1.13"
-  NODE_VERSION: "16"
-  PYTHON_VERSION: "3.9"
+  POETRY_VERSION: "1.6.1"
+  NODE_VERSION: "18"
 
 jobs:
   test-python:
@@ -25,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cache python packages
         uses: actions/cache@v3
@@ -38,12 +37,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version-file: '.python-version'
 
       - name: Install Poetry
         run: pip install poetry==${{ env.POETRY_VERSION }}
@@ -52,10 +51,10 @@ jobs:
         run: poetry install --no-interaction --no-ansi
 
       - name: Install node dependencies
-        run: yarn install --pure-lockfile
+        run: npm ci
 
       - name: npm build
-        run: npm run build:prod
+        run: npm run build
 
       - name: Python tests
         env:
@@ -69,13 +68,13 @@ jobs:
           # DATABASE_URL: postgres://postgres:postgres@db:5432/onlineweb4
         run: poetry run tox -e tests
 
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
 
   lint-python:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cache python packages
         uses: actions/cache@v3
@@ -85,10 +84,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version-file: '.python-version'
 
       - name: Install Poetry
         run: pip install poetry==${{ env.POETRY_VERSION }}
@@ -103,7 +102,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Cache python packages
         uses: actions/cache@v3
@@ -113,10 +112,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-poetry-
 
-      - name: Set up Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version-file: '.python-version'
 
       - name: Install Poetry
         run: pip install poetry==${{ env.POETRY_VERSION }}
@@ -134,15 +133,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'yarn'
+          cache: 'npm'
 
       - name: Install node dependencies
-        run: yarn install --pure-lockfile
+        run: npm ci
 
       - name: JS linting
         run: npm run lint-js

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("careeropportunity", "0016_careeropportunity_application_email"),
     ]

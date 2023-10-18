@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 import { setStatusMessage } from 'common/utils/';
 
 const assignToJob = (orderId, row) => {

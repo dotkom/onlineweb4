@@ -9,7 +9,6 @@ import apps.article.models
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("article", "0001_initial"),
         ("article", "0002_auto_20150218_2217"),

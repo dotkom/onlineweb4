@@ -162,7 +162,6 @@ def _fix_mark_history(user):
     markusers = MarkUser.objects.filter(user=user).order_by("mark__added_date")
     last_expiry_date = None
     for entry in markusers:
-
         # If the creation date is before the 1 of february 2022, the duration of the
         # mark should be 30 days. The mark rule duration was changed.
         duration = DURATION
@@ -197,7 +196,7 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
     if added_date < mark_change_date:
         duration = 30
 
-    if type(added_date) == datetime:
+    if isinstance(added_date, datetime):
         added_date = added_date.date()
 
     # Add the duration
@@ -232,7 +231,6 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
 
 
 class Suspension(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(_("tittel"), max_length=64)
     description = models.CharField(_("beskrivelse"), max_length=255)

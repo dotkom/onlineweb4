@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("marks", "0004_auto_20150916_1915")]
 
     operations = [

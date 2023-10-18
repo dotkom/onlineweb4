@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("profiles", "0006_auto_20191122_2012"),
         ("profiles", "0006_privacy_allow_pictures"),

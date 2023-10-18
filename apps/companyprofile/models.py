@@ -5,7 +5,6 @@ from apps.gallery.models import ResponsiveImage
 
 
 class Company(models.Model):
-
     IMAGE_FOLDER = "images/companies"
     IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".gif", ".png", ".tif", ".tiff"]
 

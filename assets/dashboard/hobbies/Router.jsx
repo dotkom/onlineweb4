@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as ReactRouter, Switch, Route } from 'react-router-dom';
-import Urls from 'urls';
+import Urls from 'common/utils/django_reverse';
 
 import HobbiessList from './containers/HobbiesList';
 import NewHobby from './containers/NewHobby';

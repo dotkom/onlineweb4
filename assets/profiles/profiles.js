@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 import { ajaxEnableCSRF, setStatusMessage } from 'common/utils/';
 
 ajaxEnableCSRF($);

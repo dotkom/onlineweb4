@@ -290,7 +290,6 @@ def _payment_prices(attendance_event):
     payment = attendance_event.payment()
 
     if payment and len(payment.prices()) > 1:
-
         for price in payment.prices():
             summary[price] = 0
 
@@ -493,7 +492,6 @@ def event_change_reservation(request, event_id):
 @login_required
 @permission_required("events.view_attendee", return_403=True)
 def attendee_details(request, attendee_id):
-
     context = get_base_context(request)
 
     attendee = get_object_or_404(Attendee, pk=attendee_id)

@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("hobbygroups", "0002_hobby_priority")]
 
     operations = [

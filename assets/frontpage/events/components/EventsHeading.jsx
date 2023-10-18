@@ -1,6 +1,6 @@
 import React from 'react';
 import { Glyphicon } from 'react-bootstrap';
-import Urls from 'urls';
+import Urls from 'common/utils/django_reverse';
 import EventFilter from './EventFilter';
 
 const EventsHeading = ({ eventTypes, setEventVisibility }) => (

@@ -12,7 +12,7 @@
 
 {% block js %}
   {{ block.super }}
-  {% render_bundle 'sso' 'js' %}
+  {% render_bundle 'sso' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block content %}

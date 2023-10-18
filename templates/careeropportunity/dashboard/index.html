@@ -12,7 +12,7 @@ Karrieremuligheter - Online
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardCareeropportunity' 'js' %}
+    {% render_bundle 'dashboardCareeropportunity' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block page-header %}

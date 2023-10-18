@@ -45,7 +45,6 @@ class EventsAPITestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_detail(self):
-
         response = self.client.get(self.get_detail_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

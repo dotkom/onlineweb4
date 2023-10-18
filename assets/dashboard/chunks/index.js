@@ -1,5 +1,5 @@
 import showdown from 'showdown';
-import $ from 'jquery';
+// import $ from 'jquery';
 
 let sourceText = '';
 let previousSourceText;

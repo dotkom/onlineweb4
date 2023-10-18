@@ -1,4 +1,4 @@
-import jQuery from 'jquery';
+// import jQuery from 'jquery';
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.css';
 import { format, render } from 'common/utils';

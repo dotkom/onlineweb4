@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("gallery", "0011_responsiveimage_photographer"),
         ("inventory", "0004_auto_20160110_2140"),

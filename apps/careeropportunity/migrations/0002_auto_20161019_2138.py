@@ -8,7 +8,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("taggit", "0002_auto_20150616_2121"),
         ("careeropportunity", "0001_squashed_0003_auto_20151017_2258"),

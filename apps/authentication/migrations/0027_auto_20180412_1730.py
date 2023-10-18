@@ -25,7 +25,6 @@ def backward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0026_auto_20171108_1027")]
 
     operations = [RunPython(remove_duplicate_rfids, backward)]

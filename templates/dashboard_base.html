@@ -13,7 +13,6 @@
     <link rel="icon" href="{{ STATIC_URL }}img/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block styles %}
-        {% render_bundle 'common' 'css' %}
         {% render_bundle 'dashboard' 'css' %}
     {% endblock %}
 </head>
@@ -364,8 +363,7 @@
             window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-2.2.4.min.js"><\/script>');
         </script>
 
-        {% render_bundle 'common' 'js' %}
-        {% render_bundle 'dashboard' 'js' %}
+        {% render_bundle 'dashboard' 'js' attrs='async type="module"' %}
     {% endblock %}
 
     {% if GOOGLE_ANALYTICS_KEY %}

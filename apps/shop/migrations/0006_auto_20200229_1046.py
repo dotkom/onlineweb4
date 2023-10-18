@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("shop", "0005_merge_20190506_2241")]
 
     operations = [

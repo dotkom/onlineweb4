@@ -27,7 +27,6 @@ logger = logging.getLogger(__name__)
 
 
 class Payment(models.Model):
-
     TYPE_CHOICES = ((1, _("Umiddelbar")), (2, _("Frist")), (3, _("Utsettelse")))
 
     # Make sure these exist in settings if they are to be used.

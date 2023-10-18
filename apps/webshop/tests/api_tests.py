@@ -247,7 +247,6 @@ class WebshopOrderTests(OIDCTestCase):
         )
 
     def test_user_cannot_create_order_with_size_for_products_without_sizes(self):
-
         response = self.client.post(
             self.url,
             {"product": self.product1.id, "size": self.product_size_l.id},

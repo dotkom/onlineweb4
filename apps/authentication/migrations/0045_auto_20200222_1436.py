@@ -6,7 +6,6 @@ import apps.authentication.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0044_auto_20200220_1537")]
 
     operations = [

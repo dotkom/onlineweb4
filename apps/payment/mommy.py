@@ -2,6 +2,7 @@
 
 import locale
 import logging
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -9,7 +10,6 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from pytz import timezone as tz
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Mark, MarkUser, Suspension
@@ -33,7 +33,6 @@ def payment_reminder():
     today = timezone.now()
 
     for payment in event_payments:
-
         # Number of days until the deadline
         deadline_diff = (payment.deadline - today).seconds
 
@@ -60,9 +59,9 @@ def send_reminder_mail(payment):
         "payment/email/reminder_notification.txt",
         {
             "payment_description": payment.description(),
-            "payment_deadline": payment.deadline.astimezone(tz("Europe/Oslo")).strftime(
-                "%-d %B %Y kl. %H:%M"
-            ),
+            "payment_deadline": payment.deadline.astimezone(
+                ZoneInfo("Europe/Oslo")
+            ).strftime("%-d %B %Y kl. %H:%M"),
             "payment_url": settings.BASE_URL
             + payment.content_object.event.get_absolute_url(),
             "payment_email": payment.responsible_mail(),
@@ -196,7 +195,6 @@ def payment_delay_handler():
 
 
 def handle_deadline_passed(payment_delay, unattend_deadline_passed):
-
     if unattend_deadline_passed:
         set_mark(payment_delay)
         handle_suspensions(payment_delay)
@@ -250,7 +248,7 @@ def send_notification_mail(payment_delay, unattend_deadline_passed):
 
     subject = _("Husk betaling for ") + payment.description()
 
-    valid_to = payment_delay.valid_to.astimezone(tz("Europe/Oslo"))
+    valid_to = payment_delay.valid_to.astimezone(ZoneInfo("Europe/Oslo"))
 
     # If event unattend deadline has not passed when payment deadline passes,
     # then the user will be automatically unattended, and given a mark.

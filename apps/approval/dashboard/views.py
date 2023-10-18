@@ -31,7 +31,6 @@ from .forms import (
 @login_required
 @permission_required("approval.view_membershipapproval", return_403=True)
 def index(request):
-
     # Generic check to see if user has access to dashboard. (Is staff or superuser)
     if not has_access(request):
         raise PermissionDenied
