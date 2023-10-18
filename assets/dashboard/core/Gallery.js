@@ -1,7 +1,6 @@
 // import jQuery from 'jquery';
 import MicroEvent from 'common/utils/MicroEvent';
 import { ajaxEnableCSRF, format, render } from 'common/utils';
-import moment from 'moment';
 import GalleryCrop from './GalleryCrop';
 import GalleryUpload from './GalleryUpload';
 
@@ -147,7 +146,7 @@ const Gallery = (function PrivateGallery($) {
         Gallery.ajax('GET', `/api/v1/images/?query=${query}${preset ? `&preset=${preset}` : ''}`, null, (data) => {
           const images = data.results.map(image => ({
             ...image,
-            timestamp: moment(image.timpstamp).format('YYYY-MM-DD HH:MM:SS'),
+            timestamp: new Intl.DateTimeFormat("nb-NO", { dateStyle: "short", timeStyle: "medium" }).format(new Date(image.timpstamp)),
           }));
           let html = render(TMPL_IMAGE_SEARCH_RESULT, { images });
           if (!data.results.length) html = '<div class="col-md-12"><p>Ingen bilder matchet søket...</p></div></div>';

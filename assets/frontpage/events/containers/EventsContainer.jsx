@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import moment from 'moment';
 import Events from '../components/Events';
 import { setEventsForEventTypeId, toggleEventTypeDisplay } from '../utils';
 
@@ -16,18 +15,19 @@ const mergeEventImages = (eventImage, companyEvent) => {
   return [...eventImages, ...companyImages];
 };
 
-const DAYS_BACK_DELTA = moment().subtract(3, 'days');
-const DAYS_FORWARD_DELTA = moment().add(3, 'days');
+// 3 days in milliseconds
+const THREE_DAYS = 3 * 24 * 60 * 60 * 1000
+const DAYS_BACK_DELTA = new Date() - THREE_DAYS;
+const DAYS_FORWARD_DELTA = new Date() + THREE_DAYS;
 
 const getRegistrationFiltered = ({ attendance_event: attendance, event_start: startDate }) => {
+  const registration_start = attendance !== null ? new Date(attendance.registration_start) : null;
   if (
-    attendance &&
-    moment(attendance.registration_start).isBetween(
-      DAYS_BACK_DELTA,
-      DAYS_FORWARD_DELTA,
-    )
+    attendance
+    && DAYS_BACK_DELTA <= registration_start
+    && registration_start < DAYS_FORWARD_DELTA
   ) {
-    return attendance.registration_start;
+    return registration_start;
   }
   return startDate;
 };
@@ -35,8 +35,8 @@ const getRegistrationFiltered = ({ attendance_event: attendance, event_start: st
 const apiEventsToEvents = event => ({
   eventUrl: `/events/${event.id}/${event.slug}`,
   ingress: event.ingress_short,
-  startDate: event.event_start,
-  endDate: event.event_end,
+  startDate: new Date(event.event_start),
+  endDate: new Date(event.event_end),
   registrationFiltered: getRegistrationFiltered(event),
   title: event.title,
   images: mergeEventImages(event.image, event.company_event),
@@ -44,13 +44,14 @@ const apiEventsToEvents = event => ({
 
 const sortEvents = (a, b) => {
   // checks if the event is starting today or is ongoing
-  if (moment().isBetween(a.startDate, a.endDate)) {
-    if (moment().isBetween(b.startDate, b.endDate)) {
-      return moment(a.endDate).isBefore(b.endDate) ? -1 : 1;
+  const now = new Date();
+  if (a.startDate <= now && now < a.endDate) {
+    if (b.startDate <= now && now < b.endDate) {
+      return a.endDate < b.endDate ? -1 : 1;
     }
     return -1;
   }
-  return moment(a.registrationFiltered).isBefore(b.registrationFiltered) ? -1 : 1;
+  return a.registrationFiltered < b.registrationFiltered ? -1 : 1;
 };
 
 /*
@@ -84,7 +85,7 @@ const initialEventTypes = eventTypes => (
 class EventsContainer extends Component {
   constructor(props) {
     super(props);
-    this.API_URL = `/api/v1/events/?event_end__gte=${moment().format('YYYY-MM-DD')}`;
+    this.API_URL = `/api/v1/events/?event_end__gte=${new Date().toISOString().slice(0, "YYYY-MM-DD".length)}`;
     const eventTypes = [
       { id: '1', name: 'Sosialt' },
       { id: '2', name: 'Bedriftspresentasjon' },

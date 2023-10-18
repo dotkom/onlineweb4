@@ -1,5 +1,4 @@
 // import jQuery from 'jquery';
-import moment from 'moment';
 import { ajax, showStatusMessage } from 'common/utils';
 
 /**
@@ -93,7 +92,8 @@ const GalleryDashboard = (function PrivateGalleryDashboard($) {
         html = '<tr><td colspan="4">Ingen bilder matchet søket...</td></tr>';
       } else {
         for (let i = 0; i < data.results.length; i += 1) {
-          const timestamp = moment(data.results[i].timestamp);
+          const timestamp = new Intl.DateTimeFormat("nb-NO", {
+            dateStyle: "short", "timeStyle": "medium"}).format(new Date(data.results[i].timestamp));
 
           html += `
             <tr>
@@ -106,7 +106,7 @@ const GalleryDashboard = (function PrivateGalleryDashboard($) {
                 <a href="${data.results[i].id}/">${data.results[i].name}</a>
               </td>
               <td>${data.results[i].description}</td>
-              <td>${timestamp.format('YYYY-MM-DD HH:MM:SS')}</td>
+              <td>${timestamp}</td>
               <td>${data.results[i].preset_display}</td>
             </tr>`;
         }

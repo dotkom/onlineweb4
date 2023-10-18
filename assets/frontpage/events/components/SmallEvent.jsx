@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 
 const SmallEvent = ({ eventUrl, startDate, title }) => (
   <li>
     <span>
-      {moment(startDate).format('DD.MM')}
+      {new Intl.DateTimeFormat("nb-NO", { month: "2-digit", day: "2-digit" }).format(startDate)}
     </span>
     <a href={eventUrl}>
       {title}
@@ -15,7 +14,7 @@ const SmallEvent = ({ eventUrl, startDate, title }) => (
 
 SmallEvent.propTypes = {
   eventUrl: PropTypes.string.isRequired,
-  startDate: PropTypes.string.isRequired,
+  startDate: PropTypes.instanceOf(Date).isRequired,
   title: PropTypes.string.isRequired,
 };
 

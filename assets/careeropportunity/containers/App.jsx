@@ -1,6 +1,5 @@
 import React from 'react';
 import { Router, Route, Switch } from 'react-router';
-import moment from 'moment';
 import { createBrowserHistory } from 'history';
 import FilterableJobList from './FilterableJobList';
 import DetailView from './DetailView';
@@ -21,7 +20,9 @@ const getDeadlines = deadlines => (
 // Normalizes data from the server, most notably converting to camelCase.
 const normalizeData = job => ({
   locations: job.location.map(location => location.name), // Locations contains name and slug
-  deadline: job.deadline ? moment(job.deadline).format('Do MMMM YYYY') : 'Ikke spesifisert', // Format and give default value
+  deadline: job.deadline
+    ? new Intl.DateTimeFormat('nb-NO', { dateStyle: "long" }).format(new Date(job.deadline))
+    : 'Ikke spesifisert',
   companyImage: job.company.image,
   companyName: job.company.name,
   companyDescription: job.company.short_description,

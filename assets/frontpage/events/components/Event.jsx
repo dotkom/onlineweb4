@@ -26,7 +26,7 @@ Event.propTypes = {
   eventUrl: PropTypes.string.isRequired,
   images: EventImage.propTypes.images,
   ingress: PropTypes.string.isRequired,
-  startDate: PropTypes.string.isRequired,
+  startDate: PropTypes.instanceOf(Date).isRequired,
   title: PropTypes.string.isRequired,
 };
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Col } from 'react-bootstrap';
-import moment from 'moment';
 import Fuse from 'fuse.js';
 import Job from './Job';
 import tagsPropTypes from '../propTypes/tags';
@@ -42,10 +41,10 @@ const arrangeJobs = (jobs, check) => {
 
 // Check for the deadline tags. If the difference between the deadline, and
 // the current date is less than the deadline specified by the tag, return true.
-const deadlineCheck = (job, id, tag) => (
-  moment().isValid(job.deadline) ?
-    new Date(job.deadline).getTime() - Date.now() <= tag.deadline : false
-);
+const deadlineCheck = (job, id, tag) => {
+  const date = Date.parse(job.deadline);
+  return !isNaN(date) ? new Date(job.deadline).getTime() - Date.now() <= tag.deadline : false;
+};
 
 const JobList = ({ jobs, tags, filterText }) => {
   const fuse = new Fuse(jobs, {

@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import { Carousel } from 'react-bootstrap';
 import ImagePropTypes from 'common/proptypes/ImagePropTypes';
 
@@ -20,12 +19,12 @@ const EventImage = ({ date, eventUrl, images }) => (
         ))
       }
     </Carousel>
-    <span className="hero-date">{ moment(date).format('DD. MMMM') }</span>
+    <span className="hero-date">{ new Intl.DateTimeFormat("nb-NO", { month: "long", day: "2-digit" }).format(date) }</span>
   </div>
 );
 
 EventImage.propTypes = {
-  date: PropTypes.string.isRequired,
+  date: PropTypes.instanceOf(Date).isRequired,
   eventUrl: PropTypes.string.isRequired,
   images: PropTypes.arrayOf(ImagePropTypes),
 };
