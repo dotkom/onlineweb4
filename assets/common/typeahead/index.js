@@ -1,4 +1,7 @@
-import Bloodhound from 'corejs-typeahead';
+import Bloodhound from 'corejs-typeahead/dist/bloodhound';
+import "corejs-typeahead/dist/typeahead.jquery";
+import "corejs-typeahead/dist/typeahead.bundle";
+
 import Urls from 'common/utils/django_reverse';
 import { template } from 'underscore';
 import './less/typeahead.less';
