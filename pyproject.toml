@@ -14,7 +14,7 @@ pillow = "~10.1"
 python-memcached = "~1.59"
 stripe = "~2.67"
 icalendar = "~5.0"
-google-api-python-client = "~2.103"
+google-api-python-client = "~2.104"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
 django-crispy-forms = "~2.0"
 crispy-bootstrap3 = "^2022.1"
