@@ -146,7 +146,7 @@ const Gallery = (function PrivateGallery($) {
         Gallery.ajax('GET', `/api/v1/images/?query=${query}${preset ? `&preset=${preset}` : ''}`, null, (data) => {
           const images = data.results.map(image => ({
             ...image,
-            timestamp: new Intl.DateTimeFormat("nb-NO", { dateStyle: "short", timeStyle: "medium" }).format(new Date(image.timpstamp)),
+            timestamp: new Intl.DateTimeFormat("nb-NO", { dateStyle: "short", timeStyle: "medium" }).format(new Date(image.timestamp)),
           }));
           let html = render(TMPL_IMAGE_SEARCH_RESULT, { images });
           if (!data.results.length) html = '<div class="col-md-12"><p>Ingen bilder matchet søket...</p></div></div>';
