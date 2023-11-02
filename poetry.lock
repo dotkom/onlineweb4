@@ -795,12 +795,13 @@ requests = ">=2.13.0"
 
 [[package]]
 name = "django-oidc-provider"
-version = "0.8.0"
+version = "0.8.1"
 description = "OpenID Connect Provider implementation for Django."
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-oidc-provider-0.8.0.tar.gz", hash = "sha256:4b06dc708309837699221940c833550fb43518232388b023a7c42a4cb6e89f0a"},
+    {file = "django-oidc-provider-0.8.1.tar.gz", hash = "sha256:f33474974b0e2a08249f6bf196fc17dcd48c9dfc65fa8ed67fd4ba4573ee3cf6"},
+    {file = "django_oidc_provider-0.8.1-py2.py3-none-any.whl", hash = "sha256:de01cf1c1eb4bac3afe555791b555e6249eadb98fe2299c0a94e3c7fb217ffc8"},
 ]
 
 [package.dependencies]
