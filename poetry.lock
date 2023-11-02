@@ -778,13 +778,13 @@ django = ">=2.2,<4.3"
 
 [[package]]
 name = "django-oauth-toolkit"
-version = "1.7.1"
+version = "2.3.0"
 description = "OAuth2 Provider for Django"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-oauth-toolkit-1.7.1.tar.gz", hash = "sha256:37b690fa53f340c7391bdbc0fdbb32fd9ef8a7c012e72ee8754c331a2d7b4adb"},
-    {file = "django_oauth_toolkit-1.7.1-py3-none-any.whl", hash = "sha256:756e44421d0993f27705736b6c33a3d89018393859a31ac926296950f76e4433"},
+    {file = "django-oauth-toolkit-2.3.0.tar.gz", hash = "sha256:cf1cb1a5744672e6bd7d66b4a110a463bcef9cf5ed4f27e29682cc6a4d0df1ed"},
+    {file = "django_oauth_toolkit-2.3.0-py3-none-any.whl", hash = "sha256:47dfeab97ec21496f307c2cf3468e64ca08897fa499bf3104366d32005c9111d"},
 ]
 
 [package.dependencies]
@@ -2858,4 +2858,4 @@ prod = ["boto3", "django-ses", "django-storages", "psycopg2-binary", "zappa"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "0ed3ed4fbdbef5a8b995ff1ebd58f6305be9422e476313c6b4c0d0a839191431"
+content-hash = "797d493f09409e2c1ceaac30ace3259cb2634a9ce14123d6cac2d2d4929671e9"
