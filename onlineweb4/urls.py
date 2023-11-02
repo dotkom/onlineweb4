@@ -107,9 +107,6 @@ if "apps.companyprofile" in settings.INSTALLED_APPS:
 if "apps.contact" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^contact/", include("apps.contact.urls"))]
 
-if "apps.contribution" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^contribution/", include("apps.contribution.urls"))]
-
 if "apps.dashboard" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^dashboard/", include("apps.dashboard.urls")),
