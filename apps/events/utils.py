@@ -73,6 +73,10 @@ def _handle_waitlist_bump_payment(payment, attendees):
 
     elif payment.payment_type == 3:  # Delay
         deadline = timezone.now() + payment.delay
+
+        if payment.deadline:
+            deadline = max(deadline, payment.deadline)
+
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
 
