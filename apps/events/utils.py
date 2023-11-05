@@ -16,7 +16,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee, Event, Extras
 from apps.notifications.constants import PermissionType
 from apps.notifications.utils import send_message_to_users
-from apps.payment.models import PaymentDelay, PaymentRelation
+from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
@@ -51,12 +51,12 @@ def _handle_waitlist_bump_payment(payment, attendees):
     extended_deadline = timezone.now() + timezone.timedelta(days=2)
     message = ""
 
-    if payment.payment_type == 1:  # Instant
+    if payment.payment_type == PaymentTypes.IMMEDIATE:
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, extended_deadline)
         message += "Dette arrangementet krever betaling og du må betale innen 48 timer."
 
-    elif payment.payment_type == 2:  # Deadline
+    elif payment.payment_type == PaymentTypes.DEADLINE:  # Deadline
         if (
             payment.deadline > extended_deadline
         ):  # More than 2 days left of payment deadline
@@ -71,7 +71,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
                 "Dette arrangementet krever betaling og du har 48 timer på å betale"
             )
 
-    elif payment.payment_type == 3:  # Delay
+    elif payment.payment_type == PaymentTypes.DELAY:  # Delay
         deadline = timezone.now() + payment.delay
 
         if payment.deadline:
