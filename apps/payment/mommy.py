@@ -13,7 +13,7 @@ from django.utils.translation import gettext as _
 
 from apps.events.models import AttendanceEvent, Attendee
 from apps.marks.models import Mark, MarkUser, Suspension
-from apps.payment.models import Payment, PaymentDelay
+from apps.payment.models import Payment, PaymentDelay, PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
@@ -23,9 +23,8 @@ def payment_reminder():
     # logger.info("Event payment job started")
     locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
-    # All payments using deadline
     event_payments = Payment.objects.filter(
-        payment_type=2,
+        payment_type=PaymentTypes.DEADLINE,
         active=True,
         content_type=ContentType.objects.get_for_model(AttendanceEvent),
     )
