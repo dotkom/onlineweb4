@@ -20,6 +20,15 @@ from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
+def get_delay_payment_deadline(payment_delay, payment_deadline):
+    deadline = timezone.now() + payment_delay
+
+    if payment_deadline:
+        return max(deadline, payment_deadline)
+
+    return deadline
+
+
 def handle_waitlist_bump(event, attendees, payment=None):
     title = "Du har fått plass på %s" % (event.title)
 
@@ -56,7 +65,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
             payment.create_payment_delay(attendee.user, extended_deadline)
         message += "Dette arrangementet krever betaling og du må betale innen 48 timer."
 
-    elif payment.payment_type == PaymentTypes.DEADLINE:  # Deadline
+    elif payment.payment_type == PaymentTypes.DEADLINE:
         if (
             payment.deadline > extended_deadline
         ):  # More than 2 days left of payment deadline
@@ -71,11 +80,8 @@ def _handle_waitlist_bump_payment(payment, attendees):
                 "Dette arrangementet krever betaling og du har 48 timer på å betale"
             )
 
-    elif payment.payment_type == PaymentTypes.DELAY:  # Delay
-        deadline = timezone.now() + payment.delay
-
-        if payment.deadline:
-            deadline = max(deadline, payment.deadline)
+    elif payment.payment_type == PaymentTypes.DELAY:
+        deadline = get_delay_payment_deadline(payment.delay, payment.deadline)
 
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
@@ -316,8 +322,8 @@ def handle_attend_event_payment(event: Event, user: User):
     payment = attendance_event.payment()
 
     if payment and not event.attendance_event.is_on_waitlist(user):
-        if payment.payment_type == 3:
-            deadline = timezone.now() + payment.delay
+        if payment.payment_type == PaymentTypes.DELAY:
+            deadline = get_delay_payment_deadline(payment.delay, payment.deadline)
             payment.create_payment_delay(user, deadline)
         else:
             deadline = payment.deadline
