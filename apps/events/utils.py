@@ -20,15 +20,6 @@ from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
-def get_delay_payment_deadline(payment_delay, payment_deadline):
-    deadline = timezone.now() + payment_delay
-
-    if payment_deadline:
-        return max(deadline, payment_deadline)
-
-    return deadline
-
-
 def handle_waitlist_bump(event, attendees, payment=None):
     title = "Du har fått plass på %s" % (event.title)
 
@@ -81,7 +72,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
             )
 
     elif payment.payment_type == PaymentTypes.DELAY:
-        deadline = get_delay_payment_deadline(payment.delay, payment.deadline)
+        deadline = timezone.now() + payment.delay
 
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
@@ -323,7 +314,7 @@ def handle_attend_event_payment(event: Event, user: User):
 
     if payment and not event.attendance_event.is_on_waitlist(user):
         if payment.payment_type == PaymentTypes.DELAY:
-            deadline = get_delay_payment_deadline(payment.delay, payment.deadline)
+            deadline = timezone.now() + payment.delay
             payment.create_payment_delay(user, deadline)
         else:
             deadline = payment.deadline
