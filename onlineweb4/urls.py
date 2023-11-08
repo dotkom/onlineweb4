@@ -240,6 +240,9 @@ if "apps.webshop" in settings.INSTALLED_APPS:
 if "apps.chunksapi" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^chunks/", include("apps.chunksapi.urls"))]
 
+if "apps.committeeupdates" in settings.INSTALLED_APPS:
+    urlpatterns += [re_path(r"^committeeupdates/", include("apps.committeeupdates.urls"))]
+
 if "apps.payment" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^payment/", include("apps.payment.urls"))]
 

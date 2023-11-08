@@ -225,6 +225,7 @@ INSTALLED_APPS = [
     "apps.shop",
     "apps.webshop",
     "apps.chunksapi",
+    "apps.committeeupdates",
     "scripts",
     # External apps
     "redwine",
