@@ -32,7 +32,8 @@ class OIDCTestCase(TestCase):
 
     @staticmethod
     def _get_response_type():
-        return ResponseType.objects.create(value=RESPONSE_TYPE_CHOICES[1])
+        rt, _ = ResponseType.objects.get_or_create(value=RESPONSE_TYPE_CHOICES[1][0])
+        return rt
 
     def generate_access_token(
         self, user, client_id=None, refresh_token=None, _scope="openid profile"
@@ -42,7 +43,7 @@ class OIDCTestCase(TestCase):
         if refresh_token is None:
             refresh_token = random.randint(0, 100_000)
         oidc_client = Client.objects.create(
-            client_type=CLIENT_TYPE_CHOICES[1],
+            client_type=CLIENT_TYPE_CHOICES[1][0],
             client_id=client_id,
             _redirect_uris="http://localhost",
         )

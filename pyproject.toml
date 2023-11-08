@@ -12,7 +12,7 @@ djangorestframework = "~3.14"
 django-filter = "~23.5"
 pillow = "~10.2"
 python-memcached = "~1.59"
-stripe = "~2.67"
+stripe = "~3.5"
 icalendar = "~5.0"
 google-api-python-client = "~2.113"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
@@ -138,7 +138,11 @@ filterwarnings = [
     "ignore:.*:django.utils.deprecation.RemovedInDjango40Warning:oidc_provider.*",
     # All local ones are dealt with, this cannot be fixed by us
     "ignore:.*defines default_app_config.*:django.utils.deprecation.RemovedInDjango41Warning",
+    "ignore:Use setlocale\\(\\), getencoding\\(\\) and getlocale\\(\\) instead:DeprecationWarning:.*django.*",
+    "ignore:'cgi' is deprecated and slated for removal in Python 3.13:DeprecationWarning:.*django.*",
+    "ignore:'etree' is deprecated. Use 'xml.etree.ElementTree' instead.:DeprecationWarning:.*wiki.*",
     # we should probably care about OpenAPI-warnings, but they are extremely noisy
+    "ignore:Schema component \"Event\" has been overriden with a different value.:UserWarning:rest_framework.schemas.openapi",
     "ignore:You have a duplicated operationId in your OpenAPI schema:UserWarning",
     "ignore:<class '.*'> is not compatible with schema generation:UserWarning",
 ]
