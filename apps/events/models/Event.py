@@ -265,18 +265,16 @@ class Event(models.Model):
 
     @property
     def images(self):
-        images = ResponsiveImage.objects.none()
-        if self.image:
-            images |= ResponsiveImage.objects.filter(pk=self.image.id)
-        company_image_ids = self.companies.values_list("image")
-        images |= ResponsiveImage.objects.filter(pk__in=company_image_ids)
-        return images.distinct()
-
-    @property
-    def company_event(self):
-        from .Attendance import CompanyEvent
-
-        return CompanyEvent.objects.filter(event=self)
+        # we want to have self.image first, so use dict-keys instead of set since keys are ordered.
+        # it is not entirely clear why we even need to de-deplicate here
+        images = {self.image: None}
+        images |= {c.image: None for c in self.companies.select_related("image")}
+        # if company or we are missing an image, remove it
+        try:
+            del images[None]
+        except KeyError:
+            pass
+        return list(images.keys())
 
     @property
     def organizer_name(self):
