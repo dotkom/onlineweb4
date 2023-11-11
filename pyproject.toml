@@ -11,7 +11,6 @@ Django = "^3.2.23"
 djangorestframework = "~3.14"
 django-filter = "~23.5"
 pillow = "~10.2"
-python-memcached = "~1.59"
 stripe = "~3.5"
 icalendar = "~5.0"
 google-api-python-client = "~2.113"
@@ -57,18 +56,17 @@ django-storages = { version = "~1.14", extras = ["s3"], optional = true }
 psycopg2-binary = { version = "~2.9", optional = true }
 
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 # Testing
 pytest = "~7.4"
 pytest-cov = "~4.1"
 pytest-django = "~4.7"
 pytest-xdist = "~3.4"
 freezegun = "~1.4"
-tox = "~4.12"
 coverage = { version = "~7.4", extras = [ "toml" ] }
 
 # Linting
-flake8 = "~7.0"
+ruff = "~0.1"
 isort = "~5.12"
 pycodestyle = "~2.11"
 black = "~23.12"
@@ -84,42 +82,12 @@ prod = [
     "django-storages",
 ]
 postgresql = ["psycopg2-binary"]
+s3 = ["django-storages"]
 
 
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-envlist = tests, flake8, isort, black
-skipsdist = True
-basepython = python3
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = ["F403"]
 
-[testenv]
-basepython = python3
-allowlist_externals =
-    npm
-    py.test
-    isort
-    flake8
-    black
-commands =
-    isort: isort -c apps scripts utils onlineweb4
-    flake8: flake8 apps scripts utils onlineweb4
-    black: black --check apps scripts utils onlineweb4
-
-[testenv:tests]
-passenv =
-    DATABASE_URL
-    OAUTH2_*
-    OW4_*
-setenv =
-    DATABASE_URL = sqlite:///db.db
-    DJANGO_SETTINGS_MODULE = onlineweb4.settings
-    PYTHONPATH = {toxinidir}:{toxinidir}
-    OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats.json
-commands =
-    npm run build
-    py.test --cov=apps --cov-report xml
-"""
 
 [tool.isort]
 profile = "black"

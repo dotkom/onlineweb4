@@ -67,7 +67,7 @@ jobs:
           OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM: ${{ secrets.STRIPE_PRIVATE_KEY_TRIKOM }}
           # TODO: see service todo
           # DATABASE_URL: postgres://postgres:postgres@db:5432/onlineweb4
-        run: poetry run tox -e tests
+        run: poetry run py.test --cov=apps --cov-report xml
 
       - uses: codecov/codecov-action@v3
 
@@ -96,8 +96,12 @@ jobs:
       - name: Install python dependencies
         run: poetry install --no-interaction --no-ansi
 
-      - name: Python linting
-        run: poetry run tox -e flake8 -e isort -e black
+      - name: Ruff
+        run: poetry run isort -c apps scripts utils onlineweb4
+      - name: Isort
+        run: poetry run black --check apps scripts utils onlineweb4
+      - name: Black
+        run: poetry run ruff check apps scripts utils onlineweb4
 
   django-checks:
     runs-on: ubuntu-latest
