@@ -32,10 +32,9 @@ class CareerOpportunityURLTestCase(TestCase):
 
 
 class CompanyAPITestCase(OIDCTestCase):
-    def setUp(self):
-        self.url = reverse("careeropportunity-list")
-        self.id_url = lambda _id: self.url + str(_id) + "/"
+    basename = "careeropportunity"
 
+    def setUp(self):
         self.company: Company = G(Company, name="online")
         self.past = datetime.now(timezone.utc) - timedelta(days=7)
         self.future = datetime.now(timezone.utc) + timedelta(days=7)
@@ -44,12 +43,12 @@ class CompanyAPITestCase(OIDCTestCase):
         )
 
     def test_careeropportunity_api_returns_200_ok(self):
-        response = self.client.get(self.url)
+        response = self.client.get(self.get_list_url())
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_client_can_get_careeropportunity_by_id(self):
-        response = self.client.get(self.id_url(self.company.id))
+        response = self.client.get(self.get_detail_url(self.company.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("title"), self.opportunity.title)
@@ -60,7 +59,7 @@ class CompanyAPITestCase(OIDCTestCase):
             CareerOpportunity, start=self.past, end=self.future, company=other_company
         )
 
-        response = self.client.get(f"{self.url}?company={self.company.id}")
+        response = self.client.get(f"{self.get_list_url()}?company={self.company.id}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

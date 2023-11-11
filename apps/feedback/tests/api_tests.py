@@ -2,7 +2,6 @@ import logging
 
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
@@ -34,18 +33,10 @@ def add_content_type_permission_to_group(group: Group, model):
 
 
 class FeedbackAPITestCase(FeedbackTestCaseMixin, OIDCTestCase):
-    url_basename = None
-
     def setUp(self):
         super().setUp()
 
         self.feedback: Feedback = G(Feedback)
-
-    def get_list_url(self):
-        return reverse(f"{self.url_basename}-list")
-
-    def get_detail_url(self, obj):
-        return reverse(f"{self.url_basename}-detail", args=[obj.id])
 
     def create_feedback_relation(self, *args, **kwargs):
         return super().create_feedback_relation(feedback=self.feedback, *args, **kwargs)
@@ -80,10 +71,10 @@ class FeedbackAPITestCase(FeedbackTestCaseMixin, OIDCTestCase):
 
 
 class FeedbackRelationTest(FeedbackAPITestCase):
-    url_basename = "feedback_relations"
+    basename = "feedback_relations"
 
     def get_submit_url(self, relation: FeedbackRelation):
-        return reverse(f"{self.url_basename}-submit", args=[relation.id])
+        return self.get_action_url("submit", relation.id)
 
     def test_url_returns_401_without_login(self):
         response = self.client.get(self.get_list_url(), **self.bare_headers)
@@ -95,18 +86,18 @@ class FeedbackRelationTest(FeedbackAPITestCase):
 
     def test_user_cannot_retrieve_a_relation_when_they_cannot_answer(self):
         relation = self.create_feedback_relation()
-        response = self.client.get(self.get_detail_url(relation), **self.headers)
+        response = self.client.get(self.get_detail_url(relation.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_user_can_retrieve_a_relation_when_they_can_answer(self):
         relation = self.create_feedback_relation(user=self.user)
-        response = self.client.get(self.get_detail_url(relation), **self.headers)
+        response = self.client.get(self.get_detail_url(relation.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_retrieve_a_relation_when_they_have_answered(self):
         relation = self.create_feedback_relation()
         relation.answered.add(self.user)
-        response = self.client.get(self.get_detail_url(relation), **self.headers)
+        response = self.client.get(self.get_detail_url(relation.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_users_can_answer_with_a_rating_question(self):
@@ -300,7 +291,7 @@ class FeedbackRelationTest(FeedbackAPITestCase):
 
 
 class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
-    url_basename = "feedback_question_text"
+    basename = "feedback_question_text"
 
     def setUp(self):
         super().setUp()
@@ -327,7 +318,7 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
     def test_admin_user_can_retrieve_questions(self):
         self.group.user_set.add(self.user)
         question = self.create_text_question()
-        response = self.client.get(self.get_detail_url(question), **self.headers)
+        response = self.client.get(self.get_detail_url(question.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -363,7 +354,7 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
         self.group.user_set.add(self.user)
         question = self.create_text_question()
         response = self.client.patch(
-            self.get_detail_url(question), {"display": False}, **self.headers
+            self.get_detail_url(question.id), {"display": False}, **self.headers
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -372,14 +363,14 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
     def test_permitted_user_can_delete_question(self):
         self.group.user_set.add(self.user)
         question = self.create_text_question()
-        response = self.client.delete(self.get_detail_url(question), **self.headers)
+        response = self.client.delete(self.get_detail_url(question.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(TextQuestion.objects.filter(pk=question.id).count(), 0)
 
 
 class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
-    url_basename = "feedback_question_rating"
+    basename = "feedback_question_rating"
 
     def setUp(self):
         super().setUp()
@@ -399,13 +390,13 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
 
     def test_cannot_retrieve_without_permission(self):
         question = self.create_rating_question()
-        response = self.client.get(self.get_detail_url(question), **self.headers)
+        response = self.client.get(self.get_detail_url(question.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_user_can_retrieve_questions(self):
         self.group.user_set.add(self.user)
         question = self.create_rating_question()
-        response = self.client.get(self.get_detail_url(question), **self.headers)
+        response = self.client.get(self.get_detail_url(question.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -441,7 +432,7 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
         self.group.user_set.add(self.user)
         question = self.create_rating_question()
         response = self.client.patch(
-            self.get_detail_url(question), {"display": False}, **self.headers
+            self.get_detail_url(question.id), {"display": False}, **self.headers
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -450,26 +441,20 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
     def test_permitted_user_can_delete_question(self):
         self.group.user_set.add(self.user)
         question = self.create_rating_question()
-        response = self.client.delete(self.get_detail_url(question), **self.headers)
+        response = self.client.delete(self.get_detail_url(question.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(RatingQuestion.objects.filter(pk=question.id).count(), 0)
 
 
 class GenericSurveyTestCase(OIDCTestCase):
-    url_basename = "feedback_generic_surveys"
+    basename = "feedback_generic_surveys"
 
     def setUp(self):
         super().setUp()
         self.group: Group = G(Group)
         add_content_type_permission_to_group(self.group, GenericSurvey)
         self.feedback: Feedback = G(Feedback)
-
-    def get_list_url(self):
-        return reverse(f"{self.url_basename}-list")
-
-    def get_detail_url(self, obj: GenericSurvey):
-        return reverse(f"{self.url_basename}-detail", args=[obj.id])
 
     def create_survey(self, owner: User = None, owner_group: Group = None):
         survey: GenericSurvey = G(
@@ -496,20 +481,20 @@ class GenericSurveyTestCase(OIDCTestCase):
     def test_owner_user_can_retrieve_their_own_survey(self):
         self.group.user_set.add(self.user)
         survey = self.create_survey()
-        response = self.client.get(self.get_detail_url(survey), **self.headers)
+        response = self.client.get(self.get_detail_url(survey.id), **self.headers)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_other_user_cannot_retrieve_survey_without_ownership(self):
         self.group.user_set.add(self.user)
         survey = self.create_survey(G(User), G(Group))
-        response = self.client.get(self.get_detail_url(survey), **self.headers)
+        response = self.client.get(self.get_detail_url(survey.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         survey.owner_group = self.group
         survey.save()
 
-        response = self.client.get(self.get_detail_url(survey), **self.headers)
+        response = self.client.get(self.get_detail_url(survey.id), **self.headers)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_create_survey(self):
@@ -530,7 +515,7 @@ class GenericSurveyTestCase(OIDCTestCase):
         }
 
         response = self.client.patch(
-            self.get_detail_url(survey), survey_data, **self.headers
+            self.get_detail_url(survey.id), survey_data, **self.headers
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -540,7 +525,7 @@ class GenericSurveyTestCase(OIDCTestCase):
         survey_data = {"title": "A way better title"}
 
         response = self.client.patch(
-            self.get_detail_url(survey), survey_data, **self.headers
+            self.get_detail_url(survey.id), survey_data, **self.headers
         )
         survey.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
