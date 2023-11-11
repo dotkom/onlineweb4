@@ -240,11 +240,18 @@ class Event(models.Model):
     # TODO move payment and feedback stuff to attendance event when dasboard is done
 
     def feedback_users(self):
+        # why is this not on attendance_event?
+        from .Attendance import Attendee
+
         if self.is_attendance_event():
-            return [
-                a.user for a in self.attendance_event.attendees.filter(attended=True)
-            ]
-        return []
+            qs = self.attendance_event.attendees.filter(attended=True).values_list(
+                "user", flat=True
+            )
+        else:
+            qs = Attendee.objects.none()
+        from apps.authentication.models import OnlineUser as User
+
+        return User.objects.filter(pk__in=qs.values_list("user", flat=True))
 
     def feedback_date(self):
         return self.event_end

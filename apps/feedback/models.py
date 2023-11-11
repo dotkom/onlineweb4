@@ -17,6 +17,7 @@ from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
@@ -130,12 +131,11 @@ class FeedbackRelation(models.Model):
         if user in self.answered.all():
             return False
 
-        if hasattr(self.content_object, "feedback_users"):
-            if self.content_object.feedback_users():
-                if user not in self.content_object.feedback_users():
-                    return False
-            else:
-                return False
+        if (
+            hasattr(self.content_object, "feedback_users")
+            and not self.content_object.feedback_users().filter(pk=user.id).exists()
+        ):
+            return False
         return True
 
     def answer_error_message(self, user):
@@ -143,9 +143,8 @@ class FeedbackRelation(models.Model):
             return _("Du har allerede svart på skjemaet.")
 
         if hasattr(self.content_object, "feedback_users"):
-            if self.content_object.feedback_users():
-                if user not in self.content_object.feedback_users():
-                    return _("Du har ikke tilgang til å svare på dette skjemaet.")
+            if not self.content_object.feedback_users().filter(pk=user.id).exists():
+                return _("Du har ikke tilgang til å svare på dette skjemaet.")
             else:
                 return _("Skjemaet har ingen brukere som kan svare på skjemaet.")
 
@@ -153,11 +152,13 @@ class FeedbackRelation(models.Model):
 
     def not_answered(self):
         if hasattr(self.content_object, "feedback_users"):
-            return set(self.content_object.feedback_users()).difference(
-                set(self.answered.all())
+            return self.content_object.feedback_users().filter(
+                ~Q(pk__in=self.answered.all())
             )
         else:
-            return False
+            from apps.events.models import Attendee
+
+            return Attendee.objects.none()
 
     def content_email(self):
         if hasattr(self.content_object, "feedback_mail"):
@@ -297,9 +298,9 @@ class GenericSurvey(models.Model):
 
     def feedback_users(self):
         if self.allowed_users.exists():
-            return self.allowed_users.all()
+            return self.allowed_users.values_list("id", flat=True)
         else:
-            return OnlineUser.objects.all()
+            return OnlineUser.objects.values_list("id", flat=True)
 
     def feedback_email(self):
         if (
