@@ -65,12 +65,16 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        return Event.by_nearest_active_event.get_queryset_for_user(user).select_related(
-            "image",
-            "organizer",
-            "group_restriction",
-            "attendance_event",
-            "attendance_event__reserved_seats",
+        return (
+            Event.by_nearest_active_event.get_queryset_for_user(user)
+            .select_related(
+                "image",
+                "organizer",
+                "group_restriction",
+                "attendance_event",
+                "attendance_event__reserved_seats",
+            )
+            .prefetch_related("attendance_event__attendees")
         )
 
 
