@@ -71,12 +71,15 @@ class EventViewSet(viewsets.ModelViewSet):
 class AttendanceEventViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceEventSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = AttendanceEvent.objects.all()
 
     def get_queryset(self):
         user = self.request.user
         events = Event.by_registration.get_queryset_for_user(user)
-        return super().get_queryset().filter(event__in=events)
+        return (
+            AttendanceEvent.objects.all()
+            .select_related("reserved_seats", "event")
+            .filter(event__in=events)
+        )
 
     @action(
         detail=True,

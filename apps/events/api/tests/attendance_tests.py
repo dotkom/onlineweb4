@@ -65,12 +65,12 @@ class AttendanceEventTestCase(OIDCTestCase):
         return self.get_action_url("payment", event_id)
 
     def test_anonymous_user_can_get_list(self):
-        with self.assertNumQueries(12):
+        with self.assertNumQueries(10):
             response = self.client.get(self.get_list_url(), **self.bare_headers)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_not_extra_queries_for_logged_in(self):
-        with self.assertNumQueries(28):
+        with self.assertNumQueries(26):
             response = self.client.get(self.get_list_url(), **self.headers)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -408,7 +408,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.attendee1.save()
         self.attendee2.save()
 
-        with self.assertNumQueries(9):
+        with self.assertNumQueries(8):
             response = self.client.get(
                 self.get_public_attendees_url(self.event.id), **self.headers
             )
