@@ -71,7 +71,7 @@ coverage = { version = "~7.3", extras = [ "toml" ] }
 flake8 = "~6.1"
 isort = "~5.12"
 pycodestyle = "~2.11"
-black = "~23.10"
+black = "~23.11"
 pre-commit = "~3.5"
 
 [tool.poetry.extras]
