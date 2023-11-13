@@ -823,13 +823,13 @@ django = "*"
 
 [[package]]
 name = "django-reversion"
-version = "5.0.6"
+version = "5.0.8"
 description = "An extension to the Django web framework that provides version control for model instances."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "django-reversion-5.0.6.tar.gz", hash = "sha256:6ee25a97070dda14f3e082b8b999bfbecb4a9f082ff1f851e344d056a18c934c"},
-    {file = "django_reversion-5.0.6-py3-none-any.whl", hash = "sha256:eb69f131f04a31b39fda2ce3bca77599c2a825544b437f79ba8d43a2a5e81eef"},
+    {file = "django-reversion-5.0.8.tar.gz", hash = "sha256:45d378bc6e606df6b2ad0077aec8b0a00e35f18c74ca2a1ae9cc262ceb32fb9a"},
+    {file = "django_reversion-5.0.8-py3-none-any.whl", hash = "sha256:229ad0d2819416157502ff13d81bad2366227b763ce85b63b8a223edb756a513"},
 ]
 
 [package.dependencies]
