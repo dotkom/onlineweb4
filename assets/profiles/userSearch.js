@@ -1,4 +1,4 @@
-// import $ from 'jquery';
+import $ from 'jquery';
 import { userTypeahead } from 'common/typeahead';
 import Spinner from 'spin.js';
 import './less/typeahead.less';
@@ -26,9 +26,5 @@ export default () => {
   $(window).load(() => {
     $('.affix-spinner-wrapper').remove();
     $('.affix').show();
-    $('body').scrollspy({
-      target: '#affix',
-      offset: 90,
-    });
   });
 };

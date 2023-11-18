@@ -1,5 +1,5 @@
 import Urls from 'common/utils/django_reverse';
-// import $ from 'jquery';
+import $ from 'jquery';
 import { plainUserTypeahead } from 'common/typeahead';
 import Cookies from 'js-cookie';
 
