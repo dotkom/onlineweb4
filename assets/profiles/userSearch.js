@@ -1,4 +1,4 @@
-// import $ from 'jquery';
+import $ from 'jquery';
 import { userTypeahead } from 'common/typeahead';
 import Spinner from 'spin.js';
 import './less/typeahead.less';
