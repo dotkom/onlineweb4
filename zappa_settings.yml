@@ -11,8 +11,6 @@ prod:
   keep_warm_expression: rate(5 minutes)
   certificate_arn: arn:aws:acm:us-east-1:891459268445:certificate/f42ea573-15bb-43a0-a549-7d8fe834a1dc
   events:
-  - function: apps.contribution.mommy.update_repositories
-    expression: cron(0 6 ? * * *)
   - function: apps.events.mommy.set_event_marks
     expression: cron(0 8 ? * * *)
   - function: apps.feedback.mommy.feedback_mail
