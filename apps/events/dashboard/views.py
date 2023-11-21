@@ -66,7 +66,7 @@ def past(request):
     allowed_events = get_objects_for_user(
         request.user, "events.change_event", accept_global_perms=False
     )
-    events = allowed_events.filter(event_start__lt=timezone.now().date()).order_by(
+    events = allowed_events.filter(event_start__lt=timezone.now()).order_by(
         "-event_start"
     )
 
