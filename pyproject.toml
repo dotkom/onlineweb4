@@ -61,7 +61,7 @@ psycopg2-binary = { version = "~2.9", optional = true }
 # Testing
 pytest = "~7.4"
 pytest-cov = "~4.1"
-pytest-django = "~4.6"
+pytest-django = "~4.7"
 pytest-xdist = "~3.4"
 freezegun = "~1.2"
 tox = "~4.11"
