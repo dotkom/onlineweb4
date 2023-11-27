@@ -852,13 +852,13 @@ django-classy-tags = ">=3.0"
 
 [[package]]
 name = "django-ses"
-version = "3.5.0"
-description = "A Django email backend for Amazon's Simple Email Service"
+version = "3.5.1"
+description = "A Django email backend for Amazon's Simple Email Service (SES)"
 optional = true
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 files = [
-    {file = "django_ses-3.5.0-py3-none-any.whl", hash = "sha256:3522fe531155eb06bb015b3b36324c059194450633b33f9bd5bc9d1328822fe2"},
-    {file = "django_ses-3.5.0.tar.gz", hash = "sha256:dc1644f50608fbf3a64f085a371c61d56d68eba3c5efa69651f13dc3ba05049d"},
+    {file = "django_ses-3.5.1-py3-none-any.whl", hash = "sha256:313b57b020a13333b6333c084809acfcbc80d5459b39905f5373af145f039de9"},
+    {file = "django_ses-3.5.1.tar.gz", hash = "sha256:5d8d260f651d040b744fd82f04a5bcf49efc97f5307adfe44cd2e61ae8011ba2"},
 ]
 
 [package.dependencies]
