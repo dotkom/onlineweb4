@@ -33,7 +33,7 @@ def payment_reminder():
 
     for payment in event_payments:
         # Number of days until the deadline
-        deadline_diff = (payment.deadline - today).seconds
+        deadline_diff = (payment.deadline - today).total_seconds()
 
         if deadline_diff <= 0:
             if not_paid(payment):
