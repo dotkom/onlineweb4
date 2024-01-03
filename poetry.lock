@@ -2386,13 +2386,13 @@ crt = ["botocore[crt] (>=1.33.2,<2.0a.0)"]
 
 [[package]]
 name = "sentry-sdk"
-version = "1.36.0"
+version = "1.39.1"
 description = "Python client for Sentry (https://sentry.io)"
 optional = false
 python-versions = "*"
 files = [
-    {file = "sentry-sdk-1.36.0.tar.gz", hash = "sha256:f32dd16547f2f45e1c71a96fd4a48925e629541f7ddfe3d5d25ef7d5e94eb3c8"},
-    {file = "sentry_sdk-1.36.0-py2.py3-none-any.whl", hash = "sha256:25d574f94fdf72199e331c2401fdac60d01b5be8f32822174c51c3ff0fc2f8cb"},
+    {file = "sentry-sdk-1.39.1.tar.gz", hash = "sha256:320a55cdf9da9097a0bead239c35b7e61f53660ef9878861824fd6d9b2eaf3b5"},
+    {file = "sentry_sdk-1.39.1-py2.py3-none-any.whl", hash = "sha256:81b5b9ffdd1a374e9eb0c053b5d2012155db9cbe76393a8585677b753bd5fdc1"},
 ]
 
 [package.dependencies]
@@ -2858,4 +2858,4 @@ prod = ["boto3", "django-ses", "django-storages", "psycopg2-binary", "zappa"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "4c0510fe2f033c8d6888d6935134c306ab9a95c11b50c1ed5851096158b085ab"
+content-hash = "cda6c5aeec2399c6de073fa1b599a050a82db914414564f098d460c996ba6edc"
