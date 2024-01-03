@@ -10,9 +10,16 @@ def handle_app_authorized(sender, request, token, **kwargs):
         return
     if not token.user:
         return
-    ApplicationConsent.objects.create(
-        user=token.user, client=token.application, approved_scopes=token.scopes
+
+    consent, created = ApplicationConsent.objects.get_or_create(
+        user=token.user,
+        client=token.application,
+        defaults={"approved_scopes": token.scopes},
     )
+
+    if not created:
+        consent.approved_scopes = token.scopes
+        consent.save()
 
 
 app_authorized.connect(handle_app_authorized)
