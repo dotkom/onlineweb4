@@ -4,10 +4,6 @@ from apps.sso.models import ApplicationConsent
 
 
 def handle_app_authorized(sender, request, token, **kwargs):
-    if ApplicationConsent.objects.filter(
-        pk=token.application.pk, user=token.user
-    ).exists():
-        return
     if not token.user:
         return
 
