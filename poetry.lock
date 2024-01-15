@@ -454,13 +454,13 @@ toml = ["tomli"]
 
 [[package]]
 name = "crispy-bootstrap3"
-version = "2022.1"
+version = "2024.1"
 description = "Bootstrap3 template pack for django-crispy-forms"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "crispy-bootstrap3-2022.1.tar.gz", hash = "sha256:f62729ed06976caf7fd5fd4fe009c0a702b0705db7765c2b486ba96c64341146"},
-    {file = "crispy_bootstrap3-2022.1-py3-none-any.whl", hash = "sha256:be4908ca997e6ee86cda128c631b3adb33f1db483fd97fa72ae45ca3ad49ad02"},
+    {file = "crispy-bootstrap3-2024.1.tar.gz", hash = "sha256:343c696ae1a854ac0ccad25e9e7d782400783034220a11aa179d1d799acf6161"},
+    {file = "crispy_bootstrap3-2024.1-py3-none-any.whl", hash = "sha256:257555c61ec6cd792e8654822e836794237465442a6e4b47ed31f7464e8c10f4"},
 ]
 
 [package.dependencies]
@@ -2881,4 +2881,4 @@ prod = ["boto3", "django-ses", "django-storages", "psycopg2-binary", "zappa"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "21aeb9d6e6c0681dd07c5aba820f37c9cefed2ac265c0616303084d5070e098f"
+content-hash = "d382d5860ade198c055445042d9d4c545de971cabc2d09a3bf768acf2fcdc960"
