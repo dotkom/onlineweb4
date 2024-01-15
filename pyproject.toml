@@ -64,7 +64,7 @@ pytest-cov = "~4.1"
 pytest-django = "~4.7"
 pytest-xdist = "~3.4"
 freezegun = "~1.2"
-tox = "~4.11"
+tox = "~4.12"
 coverage = { version = "~7.3", extras = [ "toml" ] }
 
 # Linting
