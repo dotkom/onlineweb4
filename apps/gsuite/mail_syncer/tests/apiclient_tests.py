@@ -1,3 +1,4 @@
+import copy
 from unittest.mock import patch
 
 from django.conf import settings
@@ -17,7 +18,7 @@ from apps.gsuite.mail_syncer.utils import (
 class GSuiteAPITestCase(TestCase):
     def setUp(self):
         self.domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
-        self.ow4_gsuite_sync = settings.OW4_GSUITE_SYNC.copy()
+        self.ow4_gsuite_sync = copy.deepcopy(settings.OW4_GSUITE_SYNC)
 
     @patch("logging.Logger.debug")
     def test_insert_when_insert_disabled(self, mocked_logger):

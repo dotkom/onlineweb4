@@ -1,3 +1,4 @@
+import copy
 from unittest.mock import patch
 
 from django.conf import settings
@@ -10,7 +11,7 @@ from apps.gsuite.mail_syncer.utils import setup_g_suite_client
 
 class GSuiteAPIClientTestCase(TestCase):
     def setUp(self):
-        self.ow4_gsuite_settings = settings.OW4_GSUITE_SETTINGS.copy()
+        self.ow4_gsuite_settings = copy.deepcopy(settings.OW4_GSUITE_SETTINGS)
 
     def test_build_gsuite_api_client_no_credentials(self):
         self.assertRaises(
@@ -30,7 +31,7 @@ class GSuiteAPIClientTestCase(TestCase):
     def test_setup_g_suite_client_no_delegated_account(
         self, mocked_logger, mocked_return_func
     ):
-        ow4_gsuite_sync = settings.OW4_GSUITE_SYNC.copy()
+        ow4_gsuite_sync = copy.deepcopy(settings.OW4_GSUITE_SYNC)
         ow4_gsuite_sync["ENABLED"] = True
         self.ow4_gsuite_settings["ENABLED"] = True
         self.ow4_gsuite_settings["DELEGATED_ACCOUNT"] = None
@@ -50,7 +51,7 @@ class GSuiteAPIClientTestCase(TestCase):
     def test_setup_g_suite_client_no_unsafe_enabled(
         self, mocked_logger, mocked_return_func
     ):
-        ow4_gsuite_sync = settings.OW4_GSUITE_SYNC.copy()
+        ow4_gsuite_sync = copy.deepcopy(settings.OW4_GSUITE_SYNC)
         self.ow4_gsuite_settings["ENABLED"] = True
         ow4_gsuite_sync["ENABLED"] = True
         ow4_gsuite_sync["ENABLE_INSERT"] = False

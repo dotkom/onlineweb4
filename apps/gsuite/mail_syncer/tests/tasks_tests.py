@@ -1,3 +1,4 @@
+import copy
 from unittest.mock import patch
 
 from django.conf import settings
@@ -37,7 +38,7 @@ class GSuiteSignalsTestCase(TestCase):
         user.email_user.add(email)
         group_name = list(settings.OW4_GSUITE_SYNC.get("GROUPS").keys())[0]
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = copy.deepcopy(self.ow4_gsuite_sync)
         ow4_gsuite_sync["ENABLE_INSERT"] = True
 
         error_message = "Member already exists"
@@ -65,7 +66,7 @@ class GSuiteSignalsTestCase(TestCase):
         user.email_user.add(email)
         group_name = list(settings.OW4_GSUITE_SYNC.get("GROUPS").keys())[0]
 
-        ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
+        ow4_gsuite_sync = copy.deepcopy(self.ow4_gsuite_sync)
         ow4_gsuite_sync["ENABLE_DELETE"] = True
 
         error_message = "Resource Not Found"
