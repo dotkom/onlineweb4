@@ -926,13 +926,13 @@ files = [
 
 [[package]]
 name = "django-webpack-loader"
-version = "2.0.1"
+version = "3.0.0"
 description = "Transparently use webpack with django"
 optional = false
 python-versions = "*"
 files = [
-    {file = "django-webpack-loader-2.0.1.tar.gz", hash = "sha256:0e8dfb2fcdb39dbfd01be7603c060132a4664f483811ce3c75f2d3c0d39ab762"},
-    {file = "django_webpack_loader-2.0.1-py2.py3-none-any.whl", hash = "sha256:2704c5b0e699a9a3a70aa21b75825d8637cd0df8134c3308b5c2976ecc20b5f7"},
+    {file = "django-webpack-loader-3.0.0.tar.gz", hash = "sha256:74d0fa6eda788b84b1ab828c2e7efce8414b05eef0a4eb2bf27d311a50e0a4ed"},
+    {file = "django_webpack_loader-3.0.0-py2.py3-none-any.whl", hash = "sha256:61b8f571c3a1fdf9eb4b9935cd046f24673bf5aba005c07c8c30c074aa09dde6"},
 ]
 
 [[package]]
@@ -2881,4 +2881,4 @@ prod = ["boto3", "django-ses", "django-storages", "psycopg2-binary", "zappa"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "00e5c654bc986dc6aeb47cb0b98e4cb70f661138073e686e48e9a16d6283fb9b"
+content-hash = "20130b6085f4890ac9d3aa98e95e65d709346d0d480b64a06b9a8c46126b7933"
