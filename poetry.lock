@@ -1019,13 +1019,13 @@ pyflakes = ">=3.2.0,<3.3.0"
 
 [[package]]
 name = "freezegun"
-version = "1.2.2"
+version = "1.4.0"
 description = "Let your Python tests travel through time"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "freezegun-1.2.2-py3-none-any.whl", hash = "sha256:ea1b963b993cb9ea195adbd893a48d573fda951b0da64f60883d7e988b606c9f"},
-    {file = "freezegun-1.2.2.tar.gz", hash = "sha256:cd22d1ba06941384410cd967d8a99d5ae2442f57dfafeff2fda5de8dc5c05446"},
+    {file = "freezegun-1.4.0-py3-none-any.whl", hash = "sha256:55e0fc3c84ebf0a96a5aa23ff8b53d70246479e9a68863f1fcac5a3e52f19dd6"},
+    {file = "freezegun-1.4.0.tar.gz", hash = "sha256:10939b0ba0ff5adaecf3b06a5c2f73071d9678e507c5eaedb23c761d56ac774b"},
 ]
 
 [package.dependencies]
@@ -2881,4 +2881,4 @@ prod = ["boto3", "django-ses", "django-storages", "psycopg2-binary", "zappa"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "50d8894de5a9f279a04d8c23aaacbcf2a8a94be1b0c9075ad56586b5d721a61b"
+content-hash = "00e5c654bc986dc6aeb47cb0b98e4cb70f661138073e686e48e9a16d6283fb9b"

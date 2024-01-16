@@ -63,7 +63,7 @@ pytest = "~7.4"
 pytest-cov = "~4.1"
 pytest-django = "~4.7"
 pytest-xdist = "~3.4"
-freezegun = "~1.2"
+freezegun = "~1.4"
 tox = "~4.12"
 coverage = { version = "~7.4", extras = [ "toml" ] }
 
