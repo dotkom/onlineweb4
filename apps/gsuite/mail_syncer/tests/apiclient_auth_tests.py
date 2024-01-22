@@ -1,7 +1,8 @@
+from unittest.mock import patch
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
-from mock import patch
 
 from apps.gsuite.auth import build_g_suite_service
 from apps.gsuite.mail_syncer.utils import setup_g_suite_client

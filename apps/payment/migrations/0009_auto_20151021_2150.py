@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("payment", "0008_auto_20151017_2047")]
 
     operations = [

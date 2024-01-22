@@ -8,7 +8,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import SET_NULL, Case, Q, Value, When
+from django.db.models import SET_NULL, Case, F, Q, Value, When
+from django.db.models.functions import TruncSecond
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone
@@ -29,6 +30,65 @@ User = settings.AUTH_USER_MODEL
 # Managers
 
 
+class EventOrderedByClosestActiveThenNewestInactive(models.Manager):
+    """
+    Order by closest event to start if not yet started, then all others are ordered by last ended.
+    """
+
+    def get_queryset(self):
+        now = timezone.now()
+
+        return (
+            super()
+            .get_queryset()
+            .annotate(
+                closest=Case(
+                    When(
+                        Q(event_start__gte=now) & Q(event_end__gte=now),
+                        then="event_start",
+                    ),
+                    default=now + (now - TruncSecond(F("event_end"))),  # Don't even ask
+                    output_field=models.DateTimeField(),
+                )
+            )
+            .annotate(
+                has_passed=Case(
+                    When(
+                        Q(event_end__lte=now),
+                        then=Value(True),
+                    ),
+                    default=Value(False),
+                    output_field=models.BooleanField(),
+                )
+            )
+            .order_by("has_passed", "closest")
+        )
+
+    def get_queryset_for_user(self, user: User):
+        """
+        :return: Queryset filtered by these requirements:
+            event is visible AND (event has NO group restriction OR user having access to restricted event)
+            OR the user is attending the event themselves
+        """
+        group_restriction_query = Q(group_restriction__isnull=True) | Q(
+            group_restriction__groups__in=user.groups.all()
+        )
+        is_attending_query = (
+            (
+                Q(attendance_event__isnull=False)
+                & Q(attendance_event__attendees__user=user)
+            )
+            if not user.is_anonymous
+            else Q()
+        )
+        is_visible_query = Q(visible=True)
+        return (
+            self.get_queryset()
+            .filter(group_restriction_query & is_visible_query | is_attending_query)
+            .distinct()
+        )
+
+
 class EventOrderedByRegistration(models.Manager):
     """
     Order events by registration start if registration start is within 7 days of today.
@@ -46,7 +106,7 @@ class EventOrderedByRegistration(models.Manager):
         DAYS_FORWARD_DELTA = timezone.now() + timedelta(days=DELTA_FUTURE_SETTING)
 
         return (
-            super(EventOrderedByRegistration, self)
+            super()
             .get_queryset()
             .annotate(
                 registration_filtered=Case(
@@ -108,6 +168,7 @@ class Event(models.Model):
     # Managers
     objects = models.Manager()
     by_registration = EventOrderedByRegistration()
+    by_nearest_active_event = EventOrderedByClosestActiveThenNewestInactive()
 
     author = models.ForeignKey(
         User,
@@ -128,18 +189,18 @@ class Event(models.Model):
     ingress_short = models.CharField(
         _("kort ingress"),
         max_length=150,
-        validators=[validators.MinLengthValidator(25)],
+        validators=[validators.MinLengthValidator(1)],
         help_text="En kort ingress som blir vist på forsiden",
     )
     """Short ingress used on the frontpage"""
     ingress = models.TextField(
         _("ingress"),
-        validators=[validators.MinLengthValidator(25)],
+        validators=[validators.MinLengthValidator(1)],
         help_text="En ingress som blir vist før beskrivelsen.",
     )
     """Ingress used in archive and details page"""
     description = models.TextField(
-        _("beskrivelse"), validators=[validators.MinLengthValidator(45)]
+        _("beskrivelse"), validators=[validators.MinLengthValidator(1)]
     )
     """Event description shown on details page"""
     image = models.ForeignKey(
@@ -179,11 +240,16 @@ class Event(models.Model):
     # TODO move payment and feedback stuff to attendance event when dasboard is done
 
     def feedback_users(self):
+        # why is this not on attendance_event?
+        from .Attendance import Attendee
+
         if self.is_attendance_event():
-            return [
-                a.user for a in self.attendance_event.attendees.filter(attended=True)
-            ]
-        return []
+            qs = self.attendance_event.attendees.filter(attended=True)
+        else:
+            qs = Attendee.objects.none()
+        from apps.authentication.models import OnlineUser as User
+
+        return User.objects.filter(pk__in=qs.values_list("user", flat=True))
 
     def feedback_date(self):
         return self.event_end
@@ -204,18 +270,16 @@ class Event(models.Model):
 
     @property
     def images(self):
-        images = ResponsiveImage.objects.none()
-        if self.image:
-            images |= ResponsiveImage.objects.filter(pk=self.image.id)
-        company_image_ids = self.companies.values_list("image")
-        images |= ResponsiveImage.objects.filter(pk__in=company_image_ids)
-        return images.distinct()
-
-    @property
-    def company_event(self):
-        from .Attendance import CompanyEvent
-
-        return CompanyEvent.objects.filter(event=self)
+        # we want to have self.image first, so use dict-keys instead of set since keys are ordered.
+        # it is not entirely clear why we even need to de-deplicate here
+        images = {self.image: None}
+        images |= {c.image: None for c in self.companies.select_related("image")}
+        # if company or we are missing an image, remove it
+        try:
+            del images[None]
+        except KeyError:
+            pass
+        return list(images.keys())
 
     @property
     def organizer_name(self):

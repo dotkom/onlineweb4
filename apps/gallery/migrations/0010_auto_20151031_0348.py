@@ -2,11 +2,10 @@
 from __future__ import unicode_literals
 
 import taggit.managers
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("gallery", "0009_responsiveimage_tags")]
 
     operations = [

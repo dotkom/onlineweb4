@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.models import Group
 from django.utils import timezone
 
-from apps.dashboard.widgets import DatePickerInput, multiple_widget_generator
+from apps.dashboard.widgets import DatePickerInput
 from apps.events.models import Event
 from apps.posters.models import Poster
 
@@ -24,7 +24,7 @@ class AddForm(forms.ModelForm):
         required=False,
         widget=forms.Textarea(
             attrs={
-                "placeholder": "Eventuell informasjon, kommentarer, lenker til bilder, osv..."
+                "placeholder": "Skriv her om du vil bestille plakat og banner eller bare banner. Fyll også inn eventuell informasjon, kommentarer, lenker til bilder, osv..."
             }
         ),
     )
@@ -54,12 +54,8 @@ class AddForm(forms.ModelForm):
             "comments",
             "display_from",
         ]
-        dtp_fields = [("display_from", {})]
 
-        widgetlist = [(DatePickerInput, dtp_fields)]
-
-        # Multiple widget generator merges results from regular widget_generator into a single widget dict
-        widgets = multiple_widget_generator(widgetlist)
+        widgets = {"display_from": DatePickerInput()}
 
 
 class AddPosterForm(AddForm):
@@ -90,12 +86,7 @@ class AddPosterForm(AddForm):
             "comments",
         ]
 
-        dtp_fields = [("display_from", {})]
-
-        widgetlist = [(DatePickerInput, dtp_fields)]
-
-        # Multiple widget generator merges results from regular widget_generator into a single widget dict
-        widgets = multiple_widget_generator(widgetlist)
+        widgets = {"display_from": DatePickerInput()}
 
 
 class AddBongForm(AddForm):
@@ -125,12 +116,7 @@ class AddOtherForm(AddForm):
             "comments",
         ]
 
-        dtp_fields = [("display_from", {})]
-
-        widgetlist = [(DatePickerInput, dtp_fields)]
-
-        # Multiple widget generator merges results from regular widget_generator into a single widget dict
-        widgets = multiple_widget_generator(widgetlist)
+        widgets = {"display_from": DatePickerInput()}
 
 
 class EditPosterForm(AddPosterForm):
@@ -146,22 +132,11 @@ class EditPosterForm(AddPosterForm):
             "comments",
         ]
 
-        dtp_fields = [("display_from", {})]
-
-        widgetlist = [(DatePickerInput, dtp_fields)]
-
-        # Multiple widget generator merges results from regular widget_generator into a single widget dict
-        widgets = multiple_widget_generator(widgetlist)
+        widgets = {"display_from": DatePickerInput()}
 
 
 class EditOtherForm(AddOtherForm):
     class Meta:
         model = Poster
         fields = ["title", "amount", "price", "description", "display_from", "comments"]
-
-        dtp_fields = [("display_from", {})]
-
-        widgetlist = [(DatePickerInput, dtp_fields)]
-
-        # Multiple widget generator merges results from regular widget_generator into a single widget dict
-        widgets = multiple_widget_generator(widgetlist)
+        widgets = {"display_from": DatePickerInput()}

@@ -1,5 +1,3 @@
-import os
-
 from decouple import config
 
 from .base import PROJECT_ROOT_DIRECTORY
@@ -9,7 +7,7 @@ OW4_GSUITE_CREDENTIALS_FILENAME = config(
 )
 OW4_GSUITE_CREDENTIALS_PATH = config(
     "OW4_GSUITE_CREDENTIALS_PATH",
-    default=os.path.join(PROJECT_ROOT_DIRECTORY, OW4_GSUITE_CREDENTIALS_FILENAME),
+    default=PROJECT_ROOT_DIRECTORY / OW4_GSUITE_CREDENTIALS_FILENAME,
 )
 
 OW4_GSUITE_SETTINGS = {
@@ -51,7 +49,6 @@ OW4_GSUITE_SYNC = {
         "trikom": "trikom",
         "tillitsvalgte": "tillitsvalgte",
         "redaksjonen": "redaksjonen",
-        "ekskom": "ekskom",
         "itex": "itex",
         "velkom": "velkom",
         "interessegrupper": "interessegrupper",

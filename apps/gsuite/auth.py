@@ -1,3 +1,4 @@
+import json
 from typing import List, Optional
 
 from django.conf import settings
@@ -20,8 +21,9 @@ def generate_g_suite_credentials(
     :return: Credentials
     """
 
-    credentials = service_account.Credentials.from_service_account_file(
-        json_keyfile_name, scopes=scopes
+    service_account_info = json.load(open(json_keyfile_name))
+    credentials = service_account.Credentials.from_service_account_info(
+        service_account_info["data"]["data"], scopes=scopes
     )
     credentials = credentials.with_subject(
         settings.OW4_GSUITE_SETTINGS.get("DELEGATED_ACCOUNT")

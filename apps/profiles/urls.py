@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.marks.views import MarksViewSet, SuspensionViewSet
@@ -8,60 +8,64 @@ from apps.profiles import views
 from apps.shop.views import UserOrderViewSet
 
 urlpatterns = [
-    url(r"^$", views.index, name="profiles"),
+    re_path(r"^$", views.index, name="profiles"),
     # Show a specific profile.
-    url(
+    re_path(
         r"^view/(?P<username>[a-zA-Z0-9_-]+)/$",
         views.view_profile,
         name="profiles_view",
     ),
-    url(r"^feedback-pending/$", views.feedback_pending, name="feedback_pending"),
-    url(r"^edit/$", views.edit_profile, name="profile_edit"),
-    url(r"^privacy/$", views.privacy, name="profile_privacy"),
-    url(r"^connected_apps/$", views.connected_apps, name="profile_connected_apps"),
-    url(r"^password/$", views.password, name="profile_password"),
-    url(r"^position/$", views.position, name="profile_position"),
-    url(r"^email/$", views.add_email, name="profile_add_email"),
-    url(
+    re_path(r"^feedback-pending/$", views.feedback_pending, name="feedback_pending"),
+    re_path(r"^edit/$", views.edit_profile, name="profile_edit"),
+    re_path(r"^privacy/$", views.privacy, name="profile_privacy"),
+    re_path(r"^connected_apps/$", views.connected_apps, name="profile_connected_apps"),
+    re_path(r"^password/$", views.password, name="profile_password"),
+    re_path(r"^position/$", views.position, name="profile_position"),
+    re_path(r"^email/$", views.add_email, name="profile_add_email"),
+    re_path(
         r"^create_gsuite/$",
         views.GSuiteCreateAccount.as_view(),
         name="profile_create_gsuite_account",
     ),
-    url(
+    re_path(
         r"^reset_gsuite/$",
         views.GSuiteResetPassword.as_view(),
         name="profile_reset_gsuite_account",
     ),
-    # url(r'^internal_services/$', views.internal_services, name='profile_internal_services'),
+    # re_path('^internal_services/$', views.internal_services, name='profile_internal_services'),
     # Ajax views
-    url(r"^deleteposition/$", views.delete_position, name="profile_delete_position"),
-    url(r"^email/delete_email/$", views.delete_email, name="profile_delete_email"),
-    url(r"^email/set_primary/$", views.set_primary, name="profile_set_primary"),
-    url(r"^email/verify_email/$", views.verify_email, name="profile_verify_email"),
-    url(
+    re_path(
+        r"^deleteposition/$", views.delete_position, name="profile_delete_position"
+    ),
+    re_path(r"^email/delete_email/$", views.delete_email, name="profile_delete_email"),
+    re_path(r"^email/set_primary/$", views.set_primary, name="profile_set_primary"),
+    re_path(r"^email/verify_email/$", views.verify_email, name="profile_verify_email"),
+    re_path(
         r"^email/toggle_infomail/$",
         views.toggle_infomail,
         name="profile_toggle_infomail",
     ),
-    url(
+    re_path(
         r"^email/toggle_jobmail/$", views.toggle_jobmail, name="profile_toggle_jobmail"
     ),
-    url(
+    re_path(
         r"^marks/update_mark_rules/$",
         views.update_mark_rules,
         name="profile_update_mark_rules",
     ),
     # Endpoint that exposes a json lump of all users but only id and name.
-    url(
+    re_path(
         r"^api_plain_user_search/$",
         views.api_plain_user_search,
         name="profiles_api_plain_user_search",
     ),
     # Endpoint that exposes a json lump of all users which have set their profile to public.
-    url(r"^api_user_search/$", views.api_user_search, name="profiles_api_user_search"),
-    url(r"^user_search/$", views.user_search, name="profiles_user_search"),
+    re_path(
+        "^api_user_search/$", views.api_user_search, name="profiles_api_user_search"
+    ),
+    re_path(r"^user_search/$", views.user_search, name="profiles_user_search"),
     # Profile index with active tab.
-    url(r"^(?P<active_tab>\w+)/$", views.index, name="profiles_active"),
+    re_path(r"^(?P<active_tab>\w+)/$", views.index, name="profiles_active"),
 ]
 
 router = SharedAPIRootRouter()

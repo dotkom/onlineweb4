@@ -5,6 +5,7 @@ import os
 
 from django.conf import settings
 from django.db import models
+from django.db.models.fields import IntegerField
 from django.utils.translation import gettext_lazy as _
 from taggit.managers import TaggableManager
 
@@ -17,6 +18,10 @@ from .constants import ImageFormat
 class UnhandledImage(models.Model):
     image = models.ImageField(upload_to=gallery_settings.UNHANDLED_IMAGES_PATH)
     thumbnail = models.ImageField(upload_to=gallery_settings.UNHANDLED_THUMBNAIL_PATH)
+    width = models.IntegerField(default=0)
+    height = models.IntegerField(default=0)
+    size = models.IntegerField(default=0)
+    thumbnailSize = models.IntegerField(default=0)
 
     @property
     def filename(self):
@@ -24,15 +29,24 @@ class UnhandledImage(models.Model):
 
     @property
     def sizeof_original(self):
-        return humanize_size(self.image.size)
+        return humanize_size(self.size)
 
     @property
     def sizeof_total(self):
-        return humanize_size(self.image.size + self.thumbnail.size)
+        return humanize_size(self.size + self.size)
 
     @property
     def resolution(self):
-        return "%sx%s" % (self.image.width, self.image.height)
+        return "%sx%s" % (self.width, self.height)
+
+    def save(self, *args, **kwargs):
+        image = self.image
+        thumb = self.thumbnail
+        self.size = image.size
+        self.width = image.width
+        self.height = image.height
+        self.thumbnailSize = thumb.size
+        super().save(*args, **kwargs)
 
     class Meta:
         """
@@ -77,6 +91,7 @@ class BaseResponsiveImage(models.Model):
     preset = models.CharField(
         "Format", max_length=128, choices=ImageFormat.choices, null=False, blank=False
     )
+    total_size = IntegerField(default=0)
 
     def __str__(self):
         """
@@ -113,27 +128,6 @@ class BaseResponsiveImage(models.Model):
             return False
 
         return True
-
-    def sizeof_total_raw(self):
-        """
-        Sums up the total filesize of all the different image versions.
-        """
-
-        total = 0
-        try:
-            total = self.thumbnail.size
-            total += self.image_xs.size
-            total += self.image_sm.size
-            total += self.image_md.size
-            total += self.image_lg.size
-            total += self.image_wide.size
-            total += self.image_original.size
-        except OSError:
-            logging.getLogger(__name__).error(
-                "Orphaned ResponsiveImage object: %d (%s)" % (self.id, self.filename)
-            )
-
-        return total
 
     @property
     def filename(self):
@@ -172,10 +166,19 @@ class BaseResponsiveImage(models.Model):
         """
         Returns a human readable string representation of the total disk usage.
         """
+        return humanize_size(self.total_size)
 
-        total = self.sizeof_total_raw()
-
-        return humanize_size(total)
+    def save(self, *args, **kwargs):
+        total = 0
+        total = self.thumbnail.size
+        total += self.image_xs.size
+        total += self.image_sm.size
+        total += self.image_md.size
+        total += self.image_lg.size
+        total += self.image_wide.size
+        total += self.image_original.size
+        self.total_size = total
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = _("Responsivt Bilde")

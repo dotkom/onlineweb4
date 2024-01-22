@@ -1,8 +1,8 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from apps.contact import views
 
 urlpatterns = [
-    url(r"^$", views.index, name="contact_index"),
-    url(r"^submit/", views.contact_submit, name="submit"),
+    re_path(r"^$", views.index, name="contact_index"),
+    re_path(r"^submit/", views.contact_submit, name="submit"),
 ]

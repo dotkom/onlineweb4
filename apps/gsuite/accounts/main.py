@@ -5,7 +5,6 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from googleapiclient.errors import HttpError
 
-from apps.authentication.utils import create_online_mail_alias
 from apps.gsuite.auth import build_and_authenticate_g_suite_service
 from apps.gsuite.mail_syncer.main import update_g_suite_user
 from apps.gsuite.mail_syncer.utils import get_user_key
@@ -52,11 +51,7 @@ def create_temporary_password():
     return str(uuid.uuid4())[:8]
 
 
-def create_g_suite_account(ow4_user):
-
-    if not ow4_user.online_mail:
-        create_online_mail_alias(ow4_user)
-
+def create_g_suite_account(user):
     directory = setup_g_suite_client()
 
     password = create_temporary_password()
@@ -65,12 +60,12 @@ def create_g_suite_account(ow4_user):
 
     query = directory.users().insert(
         body={
-            "primaryEmail": "{}@{}".format(ow4_user.online_mail, domain),
+            "primaryEmail": f"{user.online_mail}@{domain}",
             "password": password,
             "name": {
-                "givenName": ow4_user.first_name,
-                "familyName": ow4_user.last_name,
-                "fullName": ow4_user.get_full_name(),
+                "givenName": user.first_name,
+                "familyName": user.last_name,
+                "fullName": user.get_full_name(),
             },
             "changePasswordAtNextLogin": True,
         }
@@ -88,21 +83,21 @@ def create_g_suite_account(ow4_user):
         if err.resp.status == 409:
             logger.error(
                 'G Suite account creation: User "{}@online.ntnu.no" already exists.'.format(
-                    ow4_user.online_mail
+                    user.online_mail
                 )
             )
         raise err
 
     logger.info(
         'Created G Suite account for "{user}" with username "{gsuite_username}"'.format(
-            user=ow4_user, gsuite_username=resp.get("primaryEmail")
+            user=user, gsuite_username=resp.get("primaryEmail")
         )
     )
     logger.debug("Created G Suite account, response: {}".format(resp))
 
-    notify_g_suite_user_account(ow4_user, password)
+    notify_g_suite_user_account(user, password)
 
-    update_g_suite_user(domain, ow4_user)
+    update_g_suite_user(domain, user)
 
     return resp
 

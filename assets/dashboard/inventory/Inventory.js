@@ -1,4 +1,4 @@
-import jQuery from 'jquery';
+// import jQuery from 'jquery';
 import { ajax, showStatusMessage, toggleChecked } from 'common/utils';
 import './index.less';
 

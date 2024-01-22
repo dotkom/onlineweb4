@@ -1,5 +1,3 @@
-from typing import List
-
 from django.core import mail
 from django.urls import reverse
 from django_dynamic_fixture import G
@@ -71,7 +69,7 @@ class ShopOrderLinesTestCase(OAuth2TestCase):
             source=TransactionSource.CASH,
         )
 
-    def _perform_purchase(self, order_data: List[dict]):
+    def _perform_purchase(self, order_data: list[dict]):
         data = {"user": self.user.id, "orders": order_data}
         return self.client.post(
             self.get_list_url(), data=data, **self.generate_headers()

@@ -1,5 +1,4 @@
 import jQuery from 'jquery';
-import 'common/datetimepicker';
 import 'common/tablesorter';
 import { ajaxEnableCSRF } from 'common/utils';
 
@@ -61,29 +60,6 @@ const Dashboard = (function PrivateDashboard($) {
 
   // PUBLIC methods below
   return {
-    activateDateTimePickers() {
-      $('.dtp').each(function dtp() {
-        $(this).datetimepicker({
-          locale: 'nb',
-          format: 'YYYY-MM-DD HH:mm:ss',
-        });
-      });
-
-      $('.dp').each(function dp() {
-        $(this).datetimepicker({
-          locale: 'nb',
-          format: 'YYYY-MM-DD',
-        });
-      });
-
-      $('.tp').each(function tp() {
-        $(this).datetimepicker({
-          locale: 'nb',
-          format: 'HH:mm:ss',
-        });
-      });
-    },
-
     // Bind expand/collapsing of sidebar elements
     init() {
       // Methods for sidebar expand
@@ -149,14 +125,6 @@ const Dashboard = (function PrivateDashboard($) {
 
       // Set up AJAX CSRF for Dashboard
       ajaxEnableCSRF($);
-
-      // Check for existence of input fields that require bootstrap datetimepicker
-      // And activate it on these objects.
-      this.activateDateTimePickers();
-
-      window.addEventListener('activateDateTimePickers', () => {
-        this.activateDateTimePickers();
-      });
 
       // Activate tablesorter on all tablesorter class tables
       if ($('.tablesorter').size() > 0) {

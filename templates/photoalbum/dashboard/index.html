@@ -11,7 +11,7 @@ Fotoalbumer
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'photoalbum' 'js' %}
+    {% render_bundle 'photoalbum' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block styles %}

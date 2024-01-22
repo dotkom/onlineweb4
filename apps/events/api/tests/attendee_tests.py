@@ -186,7 +186,6 @@ class AttendeeTestCase(OIDCTestCase):
         )
 
     def test_saves_rfid(self):
-
         response = self.client.post(
             self.get_register_attendance_url(),
             {

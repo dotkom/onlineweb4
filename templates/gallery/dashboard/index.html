@@ -16,7 +16,7 @@ Bilder
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardGallery' 'js' %}
+    {% render_bundle 'dashboardGallery' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block breadcrumbs %}

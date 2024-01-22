@@ -87,6 +87,7 @@ class MembershipApproval(Approval):
         verbose_name_plural = _("medlemskapssøknader")
         permissions = (("view_membershipapproval", "View membership approval"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ("pk",)
 
 
 class CommitteeApplicationPeriodManager(models.Manager):

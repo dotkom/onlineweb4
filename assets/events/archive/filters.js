@@ -1,5 +1,5 @@
-import Urls from 'urls';
-import $ from 'jquery';
+import Urls from 'common/utils/django_reverse';
+// import $ from 'jquery';
 
 class Filters {
   constructor() {

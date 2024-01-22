@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 import Webshop from './Webshop';
 import WebshopGallery from './WebshopGallery';
 

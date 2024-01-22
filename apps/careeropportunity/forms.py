@@ -1,10 +1,10 @@
 from django import forms
 
 from apps.careeropportunity.models import CareerOpportunity
+from apps.dashboard.widgets import DatetimePickerInput
 
 
 class AddCareerOpportunityForm(forms.ModelForm):
-
     title = forms.CharField(
         label="Tittel",
         required=True,
@@ -32,26 +32,23 @@ class AddCareerOpportunityForm(forms.ModelForm):
         widget=forms.TextInput(attrs={"placeholder": "Søknadslenke"}),
     )
     application_email = forms.EmailField(
-        label="Søknadsepost",
+        label="Søknadsepost - brukes kun om søknadslenke mangler",
         required=False,
-        widget=forms.TextInput(
-            attrs={"placeholder": "Søknadsepost - brukes kun om søknadslenke mangler"}
-        ),
     )
     start = forms.DateTimeField(
         label="Start-tid",
         required=True,
-        widget=forms.TextInput(attrs={"placeholder": "Velg start-tid"}),
+        widget=DatetimePickerInput(),
     )
     end = forms.DateTimeField(
         label="Slutt-tid",
         required=True,
-        widget=forms.TextInput(attrs={"placeholder": "Velg slutt-tid"}),
+        widget=DatetimePickerInput(),
     )
     deadline = forms.DateTimeField(
         label="Søknadsfrist",
         required=False,
-        widget=forms.TextInput(attrs={"placeholder": "Velg søknadsfrist"}),
+        widget=DatetimePickerInput(),
     )
     deadline_asap = forms.BooleanField(label="Frist er snarest", required=False)
 

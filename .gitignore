@@ -34,7 +34,7 @@ _tmp
 *.vagrant
 uploaded_media/*
 build/*
-node_modules/*
+node_modules
 .tox
 coverage
 coverage.xml
@@ -47,3 +47,8 @@ webpack-stats-test.json
 jest/
 venv/
 oidc.key
+zappa_settings.py
+requirements.txt
+.env
+.venv
+meta.json

@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("webshop", "0002_orderline_stripe_id")]
 
     operations = [

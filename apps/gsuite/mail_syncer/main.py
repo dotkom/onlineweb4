@@ -1,5 +1,4 @@
 import logging
-from typing import Dict, List
 
 from django.conf import settings
 
@@ -21,7 +20,7 @@ logger = logging.getLogger(__name__)
 def insert_ow4_users_into_g_suite(
     domain: str,
     group_name: str,
-    missing_users: List[Dict[str, str]],
+    missing_users: list[dict[str, str]],
     suppress_http_errors: bool = False,
 ):
     """
@@ -40,7 +39,7 @@ def insert_ow4_users_into_g_suite(
 def remove_excess_g_suite_users(
     domain: str,
     group_name: str,
-    g_suite_excess_users: List[Dict[str, str]],
+    g_suite_excess_users: list[dict[str, str]],
     suppress_http_errors: bool = False,
 ):
     """
@@ -63,7 +62,7 @@ def remove_excess_g_suite_users(
 
 
 def insert_ow4_user_into_groups(
-    domain: str, user: User, group_names: List[str], suppress_http_errors: bool = False
+    domain: str, user: User, group_names: list[str], suppress_http_errors: bool = False
 ):
     """
     Inserts a single OW4 user into a G Suite group.

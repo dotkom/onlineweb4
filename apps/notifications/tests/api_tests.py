@@ -134,7 +134,7 @@ class UserPermissionTestCase(OIDCTestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get("id"), self.permission.id)
+        self.assertEqual(response.json().get("id"), user_permission.id)
 
     def test_user_can_update_user_permission(self):
         user_permission: UserPermission = G(

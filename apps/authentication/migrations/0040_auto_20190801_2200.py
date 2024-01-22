@@ -2,8 +2,7 @@
 
 from django.db import migrations
 
-
-from apps.authentication.constants import GroupType, RoleType
+from apps.authentication.constants import RoleType
 
 
 def load_data(apps, schema_editor):
@@ -18,7 +17,6 @@ def revert_data(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("authentication", "0039_auto_20190801_2159")]
 
     operations = [migrations.RunPython(load_data, revert_data)]

@@ -21,7 +21,11 @@ def feedback_notifier(request):
     if not request.user.is_authenticated:
         return context_extras
 
-    active_feedbacks = FeedbackRelation.objects.filter(active=True)
+    active_feedbacks = (
+        FeedbackRelation.objects.select_related("content_type")
+        .prefetch_related("content_object")
+        .filter(active=True)
+    )
     for active_feedback in active_feedbacks:
         if active_feedback.content_object is None:
             continue
@@ -40,7 +44,7 @@ def feedback_notifier(request):
         # This method returns both bools and a list for some reason. Python crashes with the expression: x in bool,
         # so we do this to fetch once and test twice
         not_answered = active_feedback.not_answered()
-        if not_answered == False or request.user not in not_answered:
+        if request.user.pk not in not_answered:
             continue
 
         context_extras["feedback_pending"].append(active_feedback)

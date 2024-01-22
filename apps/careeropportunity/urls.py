@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.careeropportunity import views
 
 urlpatterns = [
-    url(r"^$", views.index, name="careeropportunity_index"),
-    url(r"^(\d+)/$", views.index, name="careeropportunity_details"),
+    re_path(r"^$", views.index, name="careeropportunity_index"),
+    re_path(r"^(\d+)/$", views.index, name="careeropportunity_details"),
 ]
 
 # API v1

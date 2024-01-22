@@ -1,0 +1,121 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      url:
+        required: true
+        type: string
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      SENTRY_AUTH_TOKEN:
+        required: true
+      SENTRY_ORG:
+        required: true
+      SENTRY_PROJECT:
+        required: true
+
+env:
+  ECR_REPOSITORY: onlineweb4-zappa
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.url }}
+    env:
+      ENVIRONMENT: ${{ inputs.environment }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # should always hit
+      - name: Cache python packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: '.python-version'
+
+      - name: Install Zappa
+        run: pip install zappa==0.58
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Generate Zappa settings
+        run: zappa save-python-settings-file $ENVIRONMENT
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
+          tags: |
+            type=sha
+            type=semver,pattern={{version}}
+
+      - name: Build static
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          target: static-files
+          tags: ow4-static
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: VERSION=${{ steps.meta.outputs.version }}
+
+      - name: Create Sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+        with:
+          environment: ${{ inputs.environment }}
+          version: ${{ steps.meta.outputs.version }}
+
+      - name: Deploy
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: zappa update $ENVIRONMENT -d ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ steps.meta.outputs.version }}
+
+      - name: Sync static files
+        run: |
+          # kinda a cheat to copy files out of the docker image
+          ID=$(docker create ow4-static)
+          docker cp $ID:/srv/app/static static
+          BUCKET_NAME=$( yq ".${ENVIRONMENT}.environment_variables.OW4_S3_BUCKET_NAME" zappa_settings.yml )
+          aws s3 sync static "s3://${BUCKET_NAME}/static" --delete --acl=public-read
+
+      - name: Migrate
+        run: zappa manage $ENVIRONMENT migrate
+

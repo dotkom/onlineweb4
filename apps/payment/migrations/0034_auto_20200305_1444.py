@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("payment", "0033_remove_paymenttransaction_used_stripe")]
 
     operations = [

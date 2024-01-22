@@ -2,7 +2,7 @@
  * Created by myth on 3/10/16.
  */
 
-const MicroEvent = () => {
+const MicroEvent = function() {
   const debug = window.DEBUG;
   const events = {};
 

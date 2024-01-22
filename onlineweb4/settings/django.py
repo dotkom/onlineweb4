@@ -1,12 +1,11 @@
 # -*- coding: utf8 -*-
 import os
-import sys
 
 import dj_database_url
-from decouple import config
+from decouple import Csv, config
 from django.contrib.messages import constants as messages
 
-from .base import PROJECT_ROOT_DIRECTORY, PROJECT_SETTINGS_DIRECTORY
+from .base import PROJECT_ROOT_DIRECTORY
 
 TEST_RUNNER = config(
     "OW4_DJANGO_TEST_RUNNER", default="onlineweb4.runner.PytestTestRunner"
@@ -16,7 +15,7 @@ DEBUG = config("OW4_DJANGO_DEBUG", cast=bool, default=True)
 
 INTERNAL_IPS = ("127.0.0.1",)
 
-ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*")
+ALLOWED_HOSTS = config("OW4_DJANGO_ALLOWED_HOSTS", default="*", cast=Csv())
 
 ADMINS = (("dotkom", "dotkom@online.ntnu.no"),)
 MANAGERS = ADMINS
@@ -76,24 +75,25 @@ BASE_URL = config("OW4_DJANGO_BASE_URL", default="https://online.ntnu.no")
 AUTH_USER_MODEL = "authentication.OnlineUser"
 LOGIN_URL = "/auth/login/"
 
+S3_MEDIA_STORAGE_ENABLED = False
 # Define where media (uploaded) files are stored
 MEDIA_ROOT = config(
     "OW4_DJANGO_MEDIA_ROOT",
-    default=os.path.join(PROJECT_ROOT_DIRECTORY, "uploaded_media"),
+    default=PROJECT_ROOT_DIRECTORY / "uploaded_media",
 )
 MEDIA_URL = "/media/"
 
 # Define where static files are stored
 STATIC_ROOT = config(
-    "OW4_DJANGO_STATIC_ROOT", default=os.path.join(PROJECT_ROOT_DIRECTORY, "static")
+    "OW4_DJANGO_STATIC_ROOT", default=PROJECT_ROOT_DIRECTORY / "static"
 )
 STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT_DIRECTORY, "files/static"),
-    os.path.join(PROJECT_ROOT_DIRECTORY, "assets"),
-    os.path.join(PROJECT_ROOT_DIRECTORY, "bundles"),
+    PROJECT_ROOT_DIRECTORY / "files/static",
+    PROJECT_ROOT_DIRECTORY / "assets",
+    PROJECT_ROOT_DIRECTORY / "bundles",
 )
 
 STATICFILES_FINDERS = (
@@ -131,20 +131,19 @@ TEMPLATES = [
     }
 ]
 
-MIDDLEWARE = (
+MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "middleware.http.Http403Middleware",
     "reversion.middleware.RevisionMiddleware",
     "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "oidc_provider.middleware.SessionManagementMiddleware",
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+]
 
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",  # this is default
@@ -156,8 +155,8 @@ ROOT_URLCONF = "onlineweb4.urls"
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = "onlineweb4.wsgi.application"
-
-INSTALLED_APPS = (
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+INSTALLED_APPS = [
     # Third party dependencies
     "django.contrib.humanize",
     "django_js_reverse",
@@ -167,7 +166,7 @@ INSTALLED_APPS = (
     "sorl.thumbnail",  # Wiki
     "chunks",
     "crispy_forms",
-    "django_extensions",
+    "crispy_bootstrap3",
     "django_dynamic_fixture",
     "oauth2_provider",
     "captcha",
@@ -202,7 +201,6 @@ INSTALLED_APPS = (
     "apps.careeropportunity",
     "apps.companyprofile",
     "apps.contact",
-    "apps.contribution",
     "apps.dashboard",
     "apps.dataporten",
     "apps.gallery",
@@ -210,9 +208,7 @@ INSTALLED_APPS = (
     "apps.hobbygroups",
     "apps.events",
     "apps.marks",
-    "apps.offline",
     "apps.feedback",
-    "apps.mommy",
     "apps.profiles",
     "apps.resourcecenter",
     "apps.mailinglists",
@@ -240,7 +236,7 @@ INSTALLED_APPS = (
     "wiki.plugins.help",
     "wiki.plugins.links",
     "wiki.plugins.globalhistory",
-)
+]
 
 # Make Django messages use bootstrap alert classes
 MESSAGE_TAGS = {

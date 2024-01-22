@@ -1,136 +1,114 @@
-import $ from 'jquery';
-import 'common/jqplot';
+// import $ from 'jquery';
+import * as echarts from 'echarts';
 import { ajaxEnableCSRF, debouncedResize, setStatusMessage } from 'common/utils/';
 
 // The code was loading twice, this is an ugly fix to prevent that.
 let pageInitialized = false;
 
 const initialize = () => {
-  // TODO: Avoid semi global variables like these
-  let fosChart;
-  let mcCharts;
-
   ajaxEnableCSRF($);
 
   function printFosChart(data) {
     if (data.length > 0) {
       $('#field-of-study-header').append('<div class="page-header"><h2>Studieretning</h2></div>');
 
-      const box = '<div class="col-md-8"><div id="fos-graph"></div></div>';
+      const box = '<div class="col-md-8"><div id="fos-graph" style="width: 100%; height: 400px;"></div></div>';
       $('#field-of-study-graph').append(box);
-      fosChart = $.jqplot('fos-graph', [data],
-        {
-          grid: {
-            drawBorder: false,
-            drawGridlines: false,
-            background: '#ffffff',
-            shadow: false,
-          },
-          seriesDefaults:
+
+      var myChart = echarts.init(document.getElementById('fos-graph'));
+      const chartData = data.map((d) => {
+        return {
+          "value": d[1],
+          "name": d[0]
+        }
+      });
+
+      var option = {
+        "title": {
+          "text": 'Studieretning'
+        },
+        "series": [
           {
-            renderer: $.jqplot.PieRenderer,
-            rendererOptions:
-            {
-              showDataLabels: true,
-              dataLabels: 'value',
-              sliceMargin: 10,
-            },
-          },
-          legend:
-          {
-            show: true,
-            location: $(window).width() > 991 ? 'e' : 's',
-            fontSize: '15pt',
-            border: 'none',
-          },
-        });
+            "type": 'pie',
+            "data": chartData
+          }
+        ]
+      };
+
+      myChart.setOption(option);
     }
   }
 
   function printRatingCharts(ratings, titles) {
-    const ratingCharts = [];
-
     if (ratings.length > 0) {
       $('#rating-header').append('<div class="page-header"><h2>Vurderinger</h2></div>');
     }
 
     for (let i = 0; i < titles.length; i += 1) {
-      const box = `<div class="col-md-6 rating-chart"><div id="rating-chart-${i}"></div></div>`;
+      const box = `<div class="col-md-6 rating-chart"><div id="rating-chart-${i}" style="width: 100%; height: 400px;"></div></div>`;
       $('#rating-graphs').append(box);
       const ticks = ratings[i].map((_, index) => index + 1);
       const title = titles[i];
 
-      ratingCharts[i] = $.jqplot(`rating-chart-${i}`, [ratings[i]],
-        {
-          title,
-          seriesDefaults:
+      var myChart = echarts.init(document.getElementById(`rating-chart-${i}`));
+
+      const option = {
+        "title": {
+          "text": title
+        },
+        "xAxis": {
+          "data": ticks,
+        },
+        "yAxis": {},
+        "series": [
           {
-            renderer: $.jqplot.BarRenderer,
-            pointLabels:
-            {
-              show: true,
-              hideZeros: true,
-              formatString: '%d',
-            },
-          },
-          axes:
-          {
-            xaxis:
-            {
-              renderer: $.jqplot.CategoryAxisRenderer,
-              ticks,
-            },
-            yaxis:
-            {
-              tickOptions: { show: false },
-            },
-          },
-          grid:
-          {
-            gridLineColor: '#FFF',
-            drawBorder: false,
-          },
-        });
+            "type": "bar",
+            "data": ratings[i]
+          }
+        ]
+      };
+
+      myChart.setOption(option);
+      window.addEventListener('resize', function () {
+        myChart.resize();
+      });
     }
   }
 
   function printMultipleChoiceCharts(data, questions) {
-    mcCharts = [];
     if (questions.length > 0) {
       $('#multiple-choice-header').append('<div class="page-header"><h2>Flervalgspørsmål</h2></div>');
     }
 
     for (let i = 0; i < questions.length; i += 1) {
-      const box = `<div class="col-md-6"><div id="mc-chart-${i}"></div></div>`;
+      const box = `<div class="col-md-6"><div id="mc-chart-${i}" style="width: 100%; height: 400px;"></div></div>`;
       $('#multiple-choice-graphs').append(box);
       const question = questions[i];
-      mcCharts[i] = $.jqplot(`mc-chart-${i}`, [data[i]],
-        {
-          title: question,
-          grid: {
-            drawBorder: false,
-            drawGridlines: false,
-            background: '#ffffff',
-            shadow: false,
-          },
-          seriesDefaults:
+      var myChart = echarts.init(document.getElementById(`mc-chart-${i}`));
+
+      const chartData = data[i].map((d) => {
+        return {
+          "value": d[1],
+          "name": d[0]
+        }
+      });
+
+      const option = {
+        "title": {
+          "text": question
+        },
+        "series": [
           {
-            renderer: $.jqplot.PieRenderer,
-            rendererOptions:
-            {
-              showDataLabels: true,
-              dataLabels: 'value',
-              sliceMargin: 10,
-            },
-          },
-          legend:
-          {
-            show: true,
-            location: $(window).width() > 991 ? 'e' : 's',
-            fontSize: '15pt',
-            border: 'none',
-          },
-        });
+            "type": 'pie',
+            "data": chartData
+          }
+        ]
+      };
+
+      myChart.setOption(option);
+      window.addEventListener('resize', function () {
+        myChart.resize();
+      });
     }
   }
 
@@ -163,53 +141,6 @@ const initialize = () => {
         printMultipleChoiceCharts(data.replies.mc_answers, data.replies.mc_questions);
       });
 
-      // change the size of different charts when the screen size changes
-      debouncedResize(() => {
-        // Checking if window is less than 992px of width.
-        // If so, location of text is south (s) of the graph. If not, the location is east (e)
-        if ($(window).width() < 992) {
-          for (let i = 0; i < mcCharts.length; i += 1) {
-            mcCharts[i].replot({
-              legend:
-              {
-                location: 's',
-              },
-            });
-          }
-
-          fosChart.replot({
-            legend:
-            {
-              location: 's',
-            },
-          });
-        } else {
-          for (let i = 0; i < mcCharts.length; i += 1) {
-            mcCharts[i].replot({
-              legend:
-              {
-                location: 'e',
-              },
-            });
-          }
-
-          fosChart.replot({
-            legend:
-            {
-              location: 'e',
-            },
-          });
-        }
-
-        // Difficult to replot this section. Better solution needed.
-        /* for(var i = 0; i < ratingCharts.length; i++)
-        {
-            ratingCharts[i].replot({ data: options });
-            console.log('Fikser graf nummer ' + i);
-        }*/
-      });
-
-
       $('tr').each((i, row) => {
         $(row).find('.icon').click(() => {
           const answerId = $(row).find('td.answer-id').text();
@@ -233,15 +164,6 @@ const initialize = () => {
       if ($(window).width() < 992) {
         $('div.specifier').removeClass('whitespaceFix');
       }
-
-      // Doesnt work properly yet. Will need rework.
-      // Should fix height of graph-container if window-width was less than a certain number.
-      /* console.log($(window).width());
-      if($(window).width() < 992){
-          $('#fos-graph').css('height', "500px");
-          console.log("small'ne");
-          console.log($(window).width());
-      }*/
 
       pageInitialized = true;
     }

@@ -20,7 +20,6 @@ from apps.shop.models import Order
 @login_required
 @permission_required("inventory.view_item", return_403=True)
 def index(request):
-
     # Generic check to see if user has access to dashboard. (Is staff or superuser)
     if not has_access(request):
         raise PermissionDenied
@@ -50,7 +49,6 @@ def discontinued(request):
 @login_required
 @permission_required("inventory.add_item", return_403=True)
 def new(request):
-
     if not has_access(request):
         raise PermissionDenied
 
@@ -120,7 +118,6 @@ def item_delete(request, item_pk):
     item = get_object_or_404(Item, pk=item_pk)
 
     if request.method == "POST":
-
         item.delete()
 
         messages.success(request, "Varen %s ble slettet." % item.name)
@@ -219,7 +216,6 @@ def batch_delete(request, item_pk, batch_pk):
     b = get_object_or_404(Batch, pk=batch_pk)
 
     if request.method == "POST":
-
         b.delete()
         messages.success(request, "Batchen ble slettet.")
 
@@ -231,7 +227,6 @@ def batch_delete(request, item_pk, batch_pk):
 @login_required
 @permission_required("inventory.view_itemcategory", return_403=True)
 def category_index(request):
-
     # Generic check to see if user has access to dashboard. (Is staff or superuser)
     if not has_access(request):
         raise PermissionDenied
@@ -257,7 +252,6 @@ def category_details(request, category_pk):
     context["category"] = get_object_or_404(ItemCategory, pk=category_pk)
 
     if request.method == "POST":
-
         form = CategoryForm(request.POST, instance=context["category"])
         if not form.is_valid():
             messages.error(request, "Noen av de påkrevde feltene inneholder feil.")
@@ -276,7 +270,6 @@ def category_details(request, category_pk):
 @login_required
 @permission_required("inventory.add_itemcategory", return_403=True)
 def category_new(request):
-
     if not has_access(request):
         raise PermissionDenied
 
@@ -318,8 +311,6 @@ def category_delete(request, category_pk):
     category.delete()
     messages.success(request, "Kategorien %s ble slettet." % category.name)
     return redirect(category_index)
-
-    raise PermissionDenied
 
 
 @login_required

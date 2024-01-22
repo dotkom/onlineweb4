@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 
-from django.db import migrations, models
+from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("gallery", "0006_auto_20151018_0707")]
 
     operations = [

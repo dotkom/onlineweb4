@@ -182,8 +182,6 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
             logger.error(f"An error occurred during the Stripe charge: {error}")
             raise serializers.ValidationError(error)
 
-        return None
-
     class Meta:
         model = PaymentRelation
         fields = (
@@ -206,7 +204,6 @@ class PaymentRelationUpdateSerializer(serializers.ModelSerializer):
     )
 
     def update(self, instance: PaymentRelation, validated_data):
-
         # Update should only be used to confirm a payment relation. PENDING is the first stage of a payment.
         if instance.status != status.PENDING:
             raise ValidationError("Denne betalingen er allerede betalt og bekreftet")
@@ -373,8 +370,6 @@ class PaymentTransactionCreateSerializer(serializers.ModelSerializer):
             logger.error(f"An error occurred during the Stripe charge: {error}")
             raise ValidationError(error)
 
-        return None
-
     class Meta:
         model = PaymentTransaction
         fields = (
@@ -397,7 +392,6 @@ class PaymentTransactionUpdateSerializer(serializers.ModelSerializer):
     )
 
     def update(self, instance: PaymentTransaction, validated_data):
-
         # Update should only be used to confirm transactions. PENDING is the first stage of a payment.
         if instance.status != status.PENDING:
             raise ValidationError("Denne transaksjonen er allerede betalt og bekreftet")

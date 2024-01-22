@@ -47,7 +47,7 @@ def index(request):
     allowed_events = get_objects_for_user(
         request.user, "events.change_event", accept_global_perms=False
     )
-    events = allowed_events.filter(event_start__gte=timezone.now().date()).order_by(
+    events = allowed_events.filter(event_end__gte=timezone.now()).order_by(
         "event_start"
     )
 
@@ -66,7 +66,7 @@ def past(request):
     allowed_events = get_objects_for_user(
         request.user, "events.change_event", accept_global_perms=False
     )
-    events = allowed_events.filter(event_start__lt=timezone.now().date()).order_by(
+    events = allowed_events.filter(event_start__lt=timezone.now()).order_by(
         "-event_start"
     )
 
@@ -290,7 +290,6 @@ def _payment_prices(attendance_event):
     payment = attendance_event.payment()
 
     if payment and len(payment.prices()) > 1:
-
         for price in payment.prices():
             summary[price] = 0
 
@@ -493,7 +492,6 @@ def event_change_reservation(request, event_id):
 @login_required
 @permission_required("events.view_attendee", return_403=True)
 def attendee_details(request, attendee_id):
-
     context = get_base_context(request)
 
     attendee = get_object_or_404(Attendee, pk=attendee_id)

@@ -3,10 +3,13 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from guardian.shortcuts import assign_perm
 
+from utils.disable_for_loaddata import disable_for_loaddata
+
 from .models import FeedbackRelation, GenericSurvey, RegisterToken
 
 
 @receiver(signal=post_save, sender=GenericSurvey)
+@disable_for_loaddata
 def sync_survey_options_to_feedback_relation(sender, instance: GenericSurvey, **kwargs):
     try:
         feedback_relation = instance.get_feedback_relation()
@@ -25,6 +28,7 @@ def sync_survey_options_to_feedback_relation(sender, instance: GenericSurvey, **
 
 
 @receiver(signal=post_save, sender=GenericSurvey)
+@disable_for_loaddata
 def handle_generic_survey_permissions(sender, instance: GenericSurvey, **kwargs):
     survey_owner_permissions = [
         "feedback.view_genericsurvey",
@@ -38,6 +42,7 @@ def handle_generic_survey_permissions(sender, instance: GenericSurvey, **kwargs)
 
 
 @receiver(signal=post_save, sender=FeedbackRelation)
+@disable_for_loaddata
 def create_feedback_relation_token(sender, instance: FeedbackRelation, **kwargs):
     if not instance.token_objects.exists():
         RegisterToken.objects.create(fbr=instance)

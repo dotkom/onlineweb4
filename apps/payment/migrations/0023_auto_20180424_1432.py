@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from datetime import timedelta
+
 from django.db import migrations
 from django.db.migrations import RunPython
 
@@ -26,7 +27,6 @@ def backward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("payment", "0022_payment_delay_duration")]
 
     operations = [RunPython(forward, backward)]

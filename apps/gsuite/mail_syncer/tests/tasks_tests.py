@@ -1,7 +1,8 @@
+from unittest.mock import patch
+
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django_dynamic_fixture import G
-from mock import patch
 
 from apps.authentication.models import Email, OnlineUser
 from apps.gsuite.mail_syncer.tasks import (

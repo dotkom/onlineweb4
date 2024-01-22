@@ -1,10 +1,6 @@
-import os
-
-from decouple import config
-
 from .base import PROJECT_ROOT_DIRECTORY
 
-LOG_DIR = os.path.join(PROJECT_ROOT_DIRECTORY, "log")
+LOG_DIR = PROJECT_ROOT_DIRECTORY / "log"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -30,12 +26,6 @@ LOGGING = {
             "class": "logging.StreamHandler",
             "formatter": "standard",
         },
-        "file": {
-            "level": "DEBUG",
-            "class": "logging.FileHandler",
-            "formatter": "standard",
-            "filename": config("OW4_LOG_PATH", default="{}/debug.log".format(LOG_DIR)),
-        },
     },
     "loggers": {
         "django.security.DisallowedHost": {"handlers": ["null"], "propagate": False},
@@ -45,15 +35,15 @@ LOGGING = {
             "propagate": True,
         },
         "feedback": {
-            "handlers": ["console", "file"],
+            "handlers": ["console"],
             "level": "DEBUG",
             "propagate": True,
         },
         "syncer": {
-            "handlers": ["console", "file"],
+            "handlers": ["console"],
             "level": "DEBUG",
             "propagate": True,
         },
-        "": {"handlers": ["console", "file"], "level": "DEBUG", "propagate": True},
+        "": {"handlers": ["console"], "level": "DEBUG", "propagate": True},
     },
 }

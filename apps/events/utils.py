@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 import logging
+from zoneinfo import ZoneInfo
 
 import icalendar
 from django.conf import settings
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMessage
 from django.core.signing import BadSignature, Signer
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
-from pytz import timezone as tz
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee, Event, Extras
 from apps.notifications.constants import PermissionType
 from apps.notifications.utils import send_message_to_users
-from apps.payment.models import PaymentDelay, PaymentRelation
+from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTypes
+from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
 def handle_waitlist_bump(event, attendees, payment=None):
@@ -51,12 +51,12 @@ def _handle_waitlist_bump_payment(payment, attendees):
     extended_deadline = timezone.now() + timezone.timedelta(days=2)
     message = ""
 
-    if payment.payment_type == 1:  # Instant
+    if payment.payment_type == PaymentTypes.IMMEDIATE:
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, extended_deadline)
         message += "Dette arrangementet krever betaling og du må betale innen 48 timer."
 
-    elif payment.payment_type == 2:  # Deadline
+    elif payment.payment_type == PaymentTypes.DEADLINE:
         if (
             payment.deadline > extended_deadline
         ):  # More than 2 days left of payment deadline
@@ -71,8 +71,9 @@ def _handle_waitlist_bump_payment(payment, attendees):
                 "Dette arrangementet krever betaling og du har 48 timer på å betale"
             )
 
-    elif payment.payment_type == 3:  # Delay
+    elif payment.payment_type == PaymentTypes.DELAY:
         deadline = timezone.now() + payment.delay
+
         for attendee in attendees:
             payment.create_payment_delay(attendee.user, deadline)
 
@@ -96,7 +97,7 @@ def _handle_waitlist_bump_payment(payment, attendees):
     return message
 
 
-class Calendar(object):
+class Calendar:
     def __init__(self):
         self.cal = icalendar.Calendar()
         # Filename served by webserver
@@ -312,7 +313,7 @@ def handle_attend_event_payment(event: Event, user: User):
     payment = attendance_event.payment()
 
     if payment and not event.attendance_event.is_on_waitlist(user):
-        if payment.payment_type == 3:
+        if payment.payment_type == PaymentTypes.DELAY:
             deadline = timezone.now() + payment.delay
             payment.create_payment_delay(user, deadline)
         else:
@@ -328,7 +329,7 @@ def handle_attend_event_payment(event: Event, user: User):
             "events/email/payment_reminder.txt",
             {
                 "event": event.title,
-                "time": deadline.astimezone(tz("Europe/Oslo")).strftime(
+                "time": deadline.astimezone(ZoneInfo("Europe/Oslo")).strftime(
                     "%-d %B %Y kl. %H:%M"
                 ),
                 "price": payment.price().price,
@@ -373,28 +374,32 @@ def handle_mail_participants(
     if _to_email_value not in _to_email_options:
         return False
     # Who to send emails to
-    send_to_users = _to_email_options[_to_email_value][0]
-
+    user_recipients = _to_email_options[_to_email_value][0]
     signature = f"\n\nVennlig hilsen Linjeforeningen Online.\n(Denne eposten kan besvares til {from_email})"
 
     message = f"{_message}{signature}"
 
     # Send mail
     try:
-        email_addresses = [a.user.primary_email for a in send_to_users]
-        _email_sent = EmailMessage(
+        email = AutoChunkedEmailMessage(
             str(subject),
             str(message),
             from_email,
             [from_email],
-            email_addresses,
+            [a.user.primary_email for a in user_recipients],
             attachments=(_images),
-        ).send()
+        )
+        email.send_in_background(
+            error_callback=lambda e, nse, se: handle_mail_error(
+                e, nse, se, [from_email]
+            )
+        )
+
         logger.info(
             'Sent mail to %s for event "%s".'
             % (_to_email_options[_to_email_value][1], event)
         )
-        return _email_sent, all_attendees, attendees_on_waitlist, attendees_not_paid
+        return all_attendees, attendees_on_waitlist, attendees_not_paid
     except ImproperlyConfigured as e:
         logger.error(
             'Something went wrong while trying to send mail to %s for event "%s"\n%s'

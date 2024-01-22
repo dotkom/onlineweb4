@@ -8,8 +8,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, TableStyle
 
 
-class EventPDF(object):
-
+class EventPDF:
     event = None
     attendees = None
     waiters = None

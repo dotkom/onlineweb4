@@ -1,17 +1,16 @@
-from decouple import config
-
 import sentry_sdk
-from sentry_sdk.integrations.celery import CeleryIntegration
+from decouple import config
+from rest_framework.serializers import ValidationError
+from sentry_sdk.integrations.aws_lambda import AwsLambdaIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
-
 
 OW4_SENTRY_DSN = config("OW4_SENTRY_DSN", default="")
+
 
 sentry_sdk.init(
     dsn=OW4_SENTRY_DSN,
     environment=config("OW4_ENVIRONMENT", default="DEVELOP"),
-    debug=config("OW4_DJANGO_DEBUG", cast=bool, default="False"),
     traces_sample_rate=0.2,
-    integrations=[DjangoIntegration(), CeleryIntegration(), RedisIntegration()],
+    integrations=[DjangoIntegration(), AwsLambdaIntegration(timeout_warning=True)],
+    ignore_errors=[ValidationError],
 )

@@ -6,141 +6,124 @@ authors = ["dotkom <dotkom@online.ntnu.no>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "~3.7"
-Django = "~3.0"
-djangorestframework = "~3.12"
-django-filter = "~2.4"
-pillow = "~8.3"
-markdown2 = "~2.4"
-pytz = "^2021.1"
-python-memcached = "~1.59"
-stripe = "~2.60"
-icalendar = "~4.0"
-google-api-python-client = "~1.10"
-celery = "~4.4"
-PyMuPDF = "~1.18"
-django-filebrowser = "~3.14"
-django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "e6bf109d4fd286964024c140ac1b8f3d86713540" }
-django-crispy-forms = "^1.11"
-django-extensions = "^3.1"
-django-dynamic-fixture = "^3.1"
-django-recaptcha = "~2.0"           # Google ReCaptcha
-django-oauth-toolkit = "^1.5.0"       # OAuth2 authentication support
-django-watson = "~1.5.5"            # Indexed model search lib
-django-reversion = "~4.0"           # Model version history with middleware hooks to all post_save signals
+python = "~3.11"
+Django = "^3.2.23"
+djangorestframework = "~3.14"
+django-filter = "~23.5"
+pillow = "~10.2"
+stripe = "~3.5"
+icalendar = "~5.0"
+google-api-python-client = "~2.113"
+django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
+django-crispy-forms = "~2.0"
+crispy-bootstrap3 = "^2024.1"
+django-dynamic-fixture = "~3.1"
+django-recaptcha = "~3.0"           # Google ReCaptcha
+django-oauth-toolkit = "~1.7"       # OAuth2 authentication support
+django-watson = "~1.6.2"            # Indexed model search lib
+django-reversion = "~5.0"           # Model version history with middleware hooks to all post_save signals
 django-guardian = "~2.4"            # Per Object permissions framework
-django-taggit = "~1.5"              # Generic multi-model tagging library
-APScheduler = "~3.7"                # Scheduler
-redwine = { git = "https://github.com/dotkom/redwine.git", rev = "1.3.2" }
-reportlab = "~3.5"
+django-taggit = "~4.0"              # Generic multi-model tagging library
+redwine = { git = "https://github.com/dotkom/redwine.git", rev = "v1.4.6" }
 pdfdocument = "~4.0"
-Unidecode = "~1.2"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
+Unidecode = "~1.3"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux = "~1.0"
-django-cors-headers = "~3.7"        # Enable CORS for Nibble
+django-cors-headers = "~4.3"        # Enable CORS for Nibble
 django-datetime-widget = { git = "https://github.com/oleast/django-datetime-widget.git", rev = "95a5ba4738853d1ed4081e1e33e1600cba984aad" }
-django-webpack-loader = "~0.7"      # Integration with webpack
-dj-database-url = "~0.5"            # Allows to configure databases using URLs
-python-decouple = "~3.4"            # Configuration and settings management
-django-oidc-provider = "~0.7"       # OpenID Connect Provider
-docutils = "~0.16"                  # Allows django-admindocs to generate documentation
-requests-oauthlib = "~1.3"          # Simplify OAuth2 connections to external apps
-oic = "~1.2"			            # OpenID Connect Client
-python-dateutil = "~2.8"            # Simplify date parsing
-coreapi = "~2.3"                    # API Documentation
-requests = { version = "~2.26", extras = [ "security" ] }
+django-webpack-loader = "~3.0"      # Integration with webpack
+dj-database-url = "~2.1"            # Allows to configure databases using URLs
+python-decouple = "~3.8"            # Configuration and settings management
+django-oidc-provider = "~0.8"       # OpenID Connect Provider
+docutils = "~0.20"                  # Allows django-admindocs to generate documentation
+oic = "~1.6"			            # OpenID Connect Client
+requests = { version = "~2.31", extras = [ "security" ] }
 # Wiki
-wiki = "0.6b1"
+wiki = "^0.10.0"
 
-# Django 1.9 support
-django-appconf = "~1.0"
-
-# non-pip
-# imagemagick                   # From package repository. Tested with version == 8:6.7.7.10.
-# libjpeg-dev					# From package repository.
-# libpq-dev						# From package repository.
-
-# Monitoring
-sentry-sdk = { version = "~1.3", extras = [ "django", "celery" ] }
-
-django-js-reverse = "~0.9"
-
-# downgraded from 2.9 due to https://github.com/psycopg/psycopg2/issues/1293,
-# can probably upgrade when we bump to Django 3.1
-psycopg2-binary = { version = "~2.8.6", optional = true }
-uwsgi = { version = "~2.0", optional = true }
-redis = "~3.5"
-
-pyyaml = "^5.3.1"
+django-js-reverse = "~0.10"
+pyyaml = "^6.0"
 pywebpush = "^1.11.0"
 
+# Monitoring
+sentry-sdk = { version = "~1.39", extras = [ "django" ] }
 
-[tool.poetry.dev-dependencies]
+# AWS
+boto3 =  { version = "~1.34", optional = true }
+django-ses = { version = "~3.5", optional = true }
+zappa = { version = "~0.58", optional = true }
+django-storages = { version = "~1.14", extras = ["s3"], optional = true }
+# psyco postgresql
+psycopg2-binary = { version = "~2.9", optional = true }
+
+
+[tool.poetry.group.dev.dependencies]
 # Testing
-pytest = "~6.2"
-pytest-cov = "~2.12"
-pytest-django = "~4.4"
-factory-boy = "~3.2"
-freezegun = "~1.1"
-mock = "~4.0"
-tox = "~3.24"
+pytest = "~7.4"
+pytest-cov = "~4.1"
+pytest-django = "~4.7"
+pytest-xdist = "~3.4"
+freezegun = "~1.4"
+coverage = { version = "~7.4", extras = [ "toml" ] }
 
 # Linting
-flake8 = "~3.9"
-isort = "~5.9"
-pycodestyle = "~2.7"
-black = "21.7b0"
+ruff = "~0.1"
+isort = "~5.12"
+pycodestyle = "~2.11"
+black = "~23.12"
+pre-commit = "~3.6"
 
 [tool.poetry.extras]
-prod = ["psycopg2-binary", "uwsgi"]
+# only required for running in production on AWS
+prod = [
+    "psycopg2-binary",
+    "boto3",
+    "django-ses",
+    "zappa",
+    "django-storages",
+]
+postgresql = ["psycopg2-binary"]
+s3 = ["django-storages"]
 
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-envlist = tests, flake8, isort, black
-skipsdist = True
-basepython = python3
 
-[testenv]
-basepython = python3
-whitelist_externals =
-    npm
-    py.test
-    isort
-    flake8
-    black
-commands =
-    isort: isort -c apps middleware scripts utils
-    flake8: flake8 apps middleware scripts utils
-    black: black --check apps middleware scripts utils onlineweb4
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = ["F403"]
 
-[testenv:tests]
-passenv =
-    DATABASE_URL
-    OAUTH2_*
-    OW4_*
-setenv =
-    DATABASE_URL = sqlite:///db.db
-    DJANGO_SETTINGS_MODULE = onlineweb4.settings
-    PYTHONPATH = {toxinidir}:{toxinidir}
-    OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats-test.json
-commands =
-    npm run build:test
-    py.test --cov=apps --cov-report xml --ignore=src/
-"""
 
 [tool.isort]
 profile = "black"
-skip = [ ".tox", "onlineweb4/settings/__init__.py", "migrations" ]
-default_section = "THIRDPARTY"
-known_first_party = [ "apps", "utils" ]
+known_first_party = [ "apps", "utils", "onlineweb4" ]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "onlineweb4.settings"
 norecursedirs = [ ".*",  "env*", "tmp*" ]
 python_files = [ "tests.py", "*_tests.py" ]
-addopts = "--nomigrations"
+addopts = "--nomigrations -n auto --dist loadscope"
+filterwarnings = [
+    # for future maintainers: these fields are documented here
+    # https://docs.python.org/3/library/warnings.html#the-warnings-filter
+    # Need to remove outdated library
+    "ignore::DeprecationWarning:.*oidc_provider.*",
+    "ignore:.*:django.utils.deprecation.RemovedInDjango40Warning:oidc_provider.*",
+    # All local ones are dealt with, this cannot be fixed by us
+    "ignore:.*defines default_app_config.*:django.utils.deprecation.RemovedInDjango41Warning",
+    "ignore:Use setlocale\\(\\), getencoding\\(\\) and getlocale\\(\\) instead:DeprecationWarning:.*django.*",
+    "ignore:'cgi' is deprecated and slated for removal in Python 3.13:DeprecationWarning:.*django.*",
+    "ignore:'etree' is deprecated. Use 'xml.etree.ElementTree' instead.:DeprecationWarning:.*wiki.*",
+    # we should probably care about OpenAPI-warnings, but they are extremely noisy
+    "ignore:Schema component \"Event\" has been overriden with a different value.:UserWarning:rest_framework.schemas.openapi",
+    "ignore:You have a duplicated operationId in your OpenAPI schema:UserWarning",
+    "ignore:<class '.*'> is not compatible with schema generation:UserWarning",
+]
+
+[tool.coverage.report]
+omit = [
+    "apps/**/migrations/*",
+    "apps/**/tests/*",
+    "apps/**/test_*.py",
+    "onlineweb4/settings/**",
+]
 
 [build-system]
-requires = ["poetry>=1.0.0"]
+requires = ["poetry_core>=1.0.0"]
 build-backend = "poetry.masonry.api"
 

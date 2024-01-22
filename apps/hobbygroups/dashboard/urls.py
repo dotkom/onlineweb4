@@ -1,5 +1,5 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from apps.hobbygroups.dashboard import views
 
-urlpatterns = [url(r"^.*$", views.index, name="hobbies_dashboard_index")]
+urlpatterns = [re_path(r"^.*$", views.index, name="hobbies_dashboard_index")]

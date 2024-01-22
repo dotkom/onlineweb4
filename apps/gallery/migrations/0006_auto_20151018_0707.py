@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("gallery", "0005_responsiveimage_image_wide")]
 
     operations = [

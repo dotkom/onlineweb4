@@ -93,7 +93,7 @@ class RegisterForm(forms.Form):
     phone = forms.CharField(label=_("Telefon"), max_length=20, required=False)
 
     def clean(self):
-        super(RegisterForm, self).clean()
+        super().clean()
         if self.is_valid():
             cleaned_data = self.cleaned_data
 
@@ -126,23 +126,29 @@ class RegisterForm(forms.Form):
                 )
 
             # Check if it's studmail and if someone else already has it in their profile
-            if re.match(r"[^@]+@stud\.ntnu\.no", email):
-                ntnu_username = email.split("@")[0]
-                user = User.objects.filter(ntnu_username=ntnu_username)
-                if user.count() == 1:
-                    self._errors["email"] = self.error_class(
-                        [
-                            _(
-                                "En bruker med dette NTNU-brukernavnet eksisterer allerede."
-                            )
-                        ]
-                    )
+            if re.match(r"^[^@]+@stud\.ntnu\.no$", email):
+                # Temporarily reject the usage of studmail because of an issue on NTNUs end.
+                self._errors["email"] = self.error_class(
+                    [_("Bruk av NTNU adresser er midlertidig ikke tillatt.")]
+                )
+
+                # Uncomment when NTNU addresses are fixed
+                # ntnu_username = email.split("@")[0]
+                # user = User.objects.filter(ntnu_username=ntnu_username)
+                # if user.count() == 1:
+                #     self._errors["email"] = self.error_class(
+                #         [
+                #             _(
+                #                 "En bruker med dette NTNU-brukernavnet eksisterer allerede."
+                #             )
+                #         ]
+                #     )
 
             # ZIP code digits only
             zip_code = cleaned_data["zip_code"]
             if len(zip_code) != 0:
                 # Check if zip_code is 4 digits long
-                if not re.match(r"\d{4}", zip_code):
+                if not re.match(r"^\d{4}$", zip_code):
                     self._errors["zip_code"] = self.error_class(
                         [_("Postnummer må bestå av fire siffer.")]
                     )
@@ -189,7 +195,7 @@ class ChangePasswordForm(forms.Form):
     )
 
     def clean(self):
-        super(ChangePasswordForm, self).clean()
+        super().clean()
         if self.is_valid():
             cleaned_data = self.cleaned_data
 

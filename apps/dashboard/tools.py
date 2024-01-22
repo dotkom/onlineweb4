@@ -73,7 +73,7 @@ def get_base_context(request):
 
 
 # Mixin for Class Based Views
-class DashboardMixin(object):
+class DashboardMixin:
     """
     The DashboardMixin sets up the needed context data, as well as performs
     generic access checks.
@@ -92,7 +92,7 @@ class DashboardMixin(object):
         if not has_access(request):
             raise PermissionDenied
 
-        return super(DashboardMixin, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """
@@ -102,7 +102,7 @@ class DashboardMixin(object):
         :return: A context dictionary
         """
 
-        context = super(DashboardMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context.update(get_base_context(self.request))
 
         return context

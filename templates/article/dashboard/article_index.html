@@ -11,7 +11,7 @@ Artikler
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardArticle' 'js' %}
+    {% render_bundle 'dashboardArticle' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block styles %}

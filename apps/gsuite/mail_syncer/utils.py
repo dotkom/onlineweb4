@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Optional, Union
 
 from django.conf import settings
 from django.db.models import QuerySet
@@ -338,7 +338,7 @@ def get_ow4_users_for_group(group_name: str) -> QuerySet:
     return User.objects.filter(groups__name__iexact=group_name)
 
 
-def get_appropriate_g_suite_group_names_for_user(domain: str, user: User) -> List[str]:
+def get_appropriate_g_suite_group_names_for_user(domain: str, user: User) -> list[str]:
     """
     Get the G Suite groups a user should be in
     :param domain: The domain in which to get a users missing group memberships.
@@ -355,7 +355,7 @@ def get_appropriate_g_suite_group_names_for_user(domain: str, user: User) -> Lis
     return g_suite_user_groups
 
 
-def get_missing_g_suite_group_names_for_user(domain: str, user: User) -> List[str]:
+def get_missing_g_suite_group_names_for_user(domain: str, user: User) -> list[str]:
     """
     Generates a list of G Suite group names in which the user is not in, but should be.
     :param domain: The domain in which to get a users missing group memberships.
@@ -383,7 +383,7 @@ def get_missing_g_suite_group_names_for_user(domain: str, user: User) -> List[st
     return missing_groups
 
 
-def get_excess_groups_for_user(domain: str, user: User) -> List[str]:
+def get_excess_groups_for_user(domain: str, user: User) -> list[str]:
     """
     Generates a list of excess groups for a given user.
     :param domain: The domain in which to get a users excess group memberships.
@@ -412,7 +412,9 @@ def get_excess_groups_for_user(domain: str, user: User) -> List[str]:
 
 
 def check_amount_of_members_ow4_g_suite(
-    g_suite_members: List[Dict[str, str]], ow4_users: QuerySet, quiet: bool = False
+    g_suite_members: list[dict[str, str]],
+    ow4_users: QuerySet[User],
+    quiet: bool = False,
 ) -> bool:
     """
     Compare the number of users in an OW4 group to a G Suite group.
@@ -441,7 +443,7 @@ def check_amount_of_members_ow4_g_suite(
 
 
 def check_emails_match_each_other(
-    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet
+    g_suite_users: list[dict[str, str]], ow4_users: QuerySet[User]
 ) -> bool:
     """
     Matches emails in two lists of users against each other.
@@ -463,8 +465,8 @@ def check_emails_match_each_other(
 
 
 def get_excess_users_in_g_suite(
-    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet
-) -> List[Dict[str, str]]:
+    g_suite_users: list[dict[str, str]], ow4_users: QuerySet
+) -> list[dict[str, str]]:
     """
     Finds excess users from lists of G Suite users and OW4 users.
     :param g_suite_users: The members of a G Suite group.
@@ -485,8 +487,8 @@ def get_excess_users_in_g_suite(
 
 
 def _get_g_suite_user_from_g_suite_user_list(
-    g_suite_users: List[Dict[str, str]], g_suite_email: str
-) -> Optional[Dict[str, str]]:
+    g_suite_users: list[dict[str, str]], g_suite_email: str
+) -> Optional[dict[str, str]]:
     """
     Tries to find a user from a list of users, matching a given email address.
     :param g_suite_users: The members of a G Suite group.
@@ -510,8 +512,8 @@ def _get_g_suite_user_from_g_suite_user_list(
 
 
 def get_missing_ow4_users_for_g_suite(
-    g_suite_users: List[Dict[str, str]], ow4_users: QuerySet
-) -> List[Dict[str, str]]:
+    g_suite_users: list[dict[str, str]], users: QuerySet[User]
+) -> list[dict[str, str]]:
     """
     Find the OW4 users who are missing given a set of G Suite users.
     :param g_suite_users: The members of a G Suite group.
@@ -519,12 +521,13 @@ def get_missing_ow4_users_for_g_suite(
     :return: A list of users missing from the given G Suite user set.
     """
     missing_users = []
+    domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
 
-    for ow4_user in ow4_users:
+    for user in users:
         if not _get_g_suite_user_from_g_suite_user_list(
-            g_suite_users, ow4_user.get_online_mail()
+            g_suite_users, f"{user.online_mail}@{domain}"
         ):
-            missing_users.append(ow4_user)
+            missing_users.append(user)
 
     logger.debug(
         f"OW4 users missing in G Suite ({len(missing_users)}): {missing_users}"

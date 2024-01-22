@@ -23,7 +23,6 @@ from apps.gallery.util import ResponsiveImageHandler, UploadImageHandler
 
 
 def _create_request_dictionary():
-
     dictionary = {
         "unhandled_images": UnhandledImage.objects.all(),
         "responsive_images": ResponsiveImage.objects.all(),
@@ -49,7 +48,6 @@ def all_images(request):
 @login_required
 @permission_required("gallery.add_responsiveimage")
 def upload(request):
-
     log = logging.getLogger(__name__)
 
     if request.method == "POST":
@@ -80,7 +78,6 @@ def upload(request):
 def unhandled(request):
     if request.is_ajax():
         if request.method == "GET":
-
             images = []
 
             for image in UnhandledImage.objects.all():
@@ -159,7 +156,6 @@ class CropView(PermissionRequiredMixin, View):
 @login_required
 @permission_required("gallery.add_responsiveimage")
 def crop(request):
-
     log = logging.getLogger(__name__)
 
     if request.is_ajax():

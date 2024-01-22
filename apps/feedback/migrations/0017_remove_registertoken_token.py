@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("feedback", "0016_auto_20200131_1714")]
 
     operations = [migrations.RemoveField(model_name="registertoken", name="token")]

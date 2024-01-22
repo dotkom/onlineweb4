@@ -15,7 +15,6 @@ from apps.events.models import (
 )
 from apps.events.tests.utils import attend_user_to_event, generate_event, generate_user
 from apps.online_oidc_provider.test import OIDCTestCase
-from apps.profiles.models import Privacy
 
 from .utils import generate_attendee
 
@@ -26,7 +25,6 @@ class EventsAPITestCase(OIDCTestCase):
     def setUp(self):
         self.committee = G(Group, name="Bedkom")
         self.user = generate_user(username="_user")
-        self.privacy = G(Privacy, user=self.user)
         self.token = self.generate_access_token(self.user)
         self.headers = {**self.headers, **self.generate_headers()}
 
@@ -42,15 +40,16 @@ class EventsAPITestCase(OIDCTestCase):
         self.attendees = [self.attendee1, self.attendee2]
 
     def test_events_list_empty(self):
-        response = self.client.get(self.get_list_url())
+        with self.assertNumQueries(5):
+            response = self.client.get(self.get_list_url())
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_detail(self):
+        with self.assertNumQueries(4):
+            response = self.client.get(self.get_detail_url(self.event.id))
 
-        response = self.client.get(self.get_detail_url(self.event.id))
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_list_exists(self):
         response = self.client.get(self.get_list_url())
@@ -70,9 +69,12 @@ class EventsAPITestCase(OIDCTestCase):
         bedpres_with_evilcorp = generate_event(organizer=self.committee)
         G(CompanyEvent, company=evilcorp, event=bedpres_with_evilcorp)
 
-        response = self.client.get(f"{self.get_list_url()}?companies={onlinecorp.id}")
+        with self.assertNumQueries(5):
+            response = self.client.get(
+                f"{self.get_list_url()}?companies={onlinecorp.id}"
+            )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         events_list = response.json().get("results")
         event_titles_list = list(map(lambda event: event.get("id"), events_list))
@@ -81,20 +83,29 @@ class EventsAPITestCase(OIDCTestCase):
         self.assertNotIn(bedpres_with_evilcorp.id, event_titles_list)
 
     def test_event_with_group_restriction(self):
-        response = self.client.get(self.get_detail_url(self.event.id), **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertNumQueries(14):
+            response = self.client.get(
+                self.get_detail_url(self.event.id), **self.headers
+            )
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         restricted_to_group: Group = G(Group)
         G(GroupRestriction, event=self.event, groups=[restricted_to_group])
 
-        response = self.client.get(self.get_detail_url(self.event.id), **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        with self.assertNumQueries(5):
+            response = self.client.get(
+                self.get_detail_url(self.event.id), **self.headers
+            )
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         attendee = attend_user_to_event(self.event, self.user)
 
-        self.assertIn(attendee, self.event.attendance_event.attendees.all())
-        response = self.client.get(self.get_detail_url(self.event.id), **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertNumQueries(11):
+            self.assertIn(attendee, self.event.attendance_event.attendees.all())
+            response = self.client.get(
+                self.get_detail_url(self.event.id), **self.headers
+            )
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class ExtrasTestCase(OIDCTestCase):

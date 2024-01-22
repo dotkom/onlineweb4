@@ -14,7 +14,7 @@ Bestilling #{{ order.id }} - Online Dashboard
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardWebshop' 'js' %}
+    {% render_bundle 'dashboardWebshop' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block page-header %}

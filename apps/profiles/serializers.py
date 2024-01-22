@@ -73,7 +73,7 @@ class ExposableUserField(serializers.Field):
         self.field_name = kwargs.pop("field_name", None)
         defualt_privacy_field = "expose_{}".format(self.field_name)
         self.privacy_field = kwargs.pop("privacy_field", defualt_privacy_field)
-        super(ExposableUserField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def get_attribute(self, obj):
         return obj
@@ -133,4 +133,5 @@ class PrivacySerializer(serializers.ModelSerializer):
             "expose_phone_number",
             "expose_address",
             "visible_as_attending_events",
+            "allow_pictures",
         )

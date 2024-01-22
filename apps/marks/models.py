@@ -9,7 +9,7 @@ from django.utils.translation import gettext as _
 
 User = settings.AUTH_USER_MODEL
 
-DURATION = 30
+DURATION = 20
 # summer starts 1st June, ends 15th August
 SUMMER = ((6, 1), (8, 15))
 # winter starts 1st December, ends 15th January
@@ -98,11 +98,11 @@ class Mark(models.Model):
     def save(self, *args, **kwargs):
         if not self.added_date:
             self.added_date = timezone.now().date()
-        super(Mark, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def delete(self, **kwargs):
         given_to = [mu.user for mu in self.given_to.all()]
-        super(Mark, self).delete()
+        super().delete()
         for user in given_to:
             _fix_mark_history(user)
 
@@ -128,12 +128,12 @@ class MarkUser(models.Model):
         if not self.expiration_date:
             self.expiration_date = timezone.now().date()
             run_history_update = True
-        super(MarkUser, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if run_history_update:
             _fix_mark_history(self.user)
 
     def delete(self):
-        super(MarkUser, self).delete()
+        super().delete()
         _fix_mark_history(self.user)
 
     def __str__(self):
@@ -162,11 +162,18 @@ def _fix_mark_history(user):
     markusers = MarkUser.objects.filter(user=user).order_by("mark__added_date")
     last_expiry_date = None
     for entry in markusers:
+        # If the creation date is before the 1 of february 2022, the duration of the
+        # mark should be 30 days. The mark rule duration was changed.
+        duration = DURATION
+        mark_change_date = date(2022, 2, 1)
+        if entry.mark.added_date < mark_change_date:
+            duration = 30
+
         # If there's a last_expiry date, it means a mark has been processed already.
         # If that expiration date is within a DURATION of this added date, build on it.
         if (
             last_expiry_date
-            and entry.mark.added_date - timedelta(days=DURATION) < last_expiry_date
+            and entry.mark.added_date - timedelta(days=duration) < last_expiry_date
         ):
             entry.expiration_date = _get_with_duration_and_vacation(last_expiry_date)
         # If there is no last_expiry_date or the last expiry date is over a DURATION old
@@ -184,11 +191,16 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
     Checks whether the span of a marks duration needs to have vacation durations added.
     """
 
-    if type(added_date) == datetime:
+    duration = DURATION
+    mark_change_date = date(2022, 2, 1)
+    if added_date < mark_change_date:
+        duration = 30
+
+    if isinstance(added_date, datetime):
         added_date = added_date.date()
 
     # Add the duration
-    expiry_date = added_date + timedelta(days=DURATION)
+    expiry_date = added_date + timedelta(days=duration)
     # Set up the summer and winter vacations
     summer_start_date = date(added_date.year, SUMMER[0][0], SUMMER[0][1])
     summer_end_date = date(added_date.year, SUMMER[1][0], SUMMER[1][1])
@@ -201,13 +213,13 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
         expiry_date += timedelta(days=(summer_end_date - added_date).days)
     # If the number of days between added_date and the beginning of summer vacation is less
     # than the duration, we need to add the length of summer to the expiry date
-    elif 0 < (summer_start_date - added_date).days < DURATION:
+    elif 0 < (summer_start_date - added_date).days < duration:
         expiry_date += timedelta(days=(summer_end_date - summer_start_date).days)
     # Same for middle of winter vacation, which will be at the end of the year
     elif first_winter_start_date < added_date < first_winter_end_date:
         expiry_date += timedelta(days=(first_winter_end_date - added_date).days)
     # And for before the vacation
-    elif 0 < (first_winter_start_date - added_date).days < DURATION:
+    elif 0 < (first_winter_start_date - added_date).days < duration:
         expiry_date += timedelta(
             days=(first_winter_end_date - first_winter_start_date).days
         )
@@ -219,7 +231,6 @@ def _get_with_duration_and_vacation(added_date=timezone.now()):
 
 
 class Suspension(models.Model):
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(_("tittel"), max_length=64)
     description = models.CharField(_("beskrivelse"), max_length=255)

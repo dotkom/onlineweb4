@@ -36,7 +36,7 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
         """
 
         # We would like to add years to our index to enable filterbuttons
-        context = super(GalleryIndex, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         years = set()
         total_disk_usage = 0
@@ -47,14 +47,14 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
             years.add(img.timestamp.year)
             if img.id:
                 try:
-                    total_disk_usage += img.sizeof_total_raw()
+                    total_disk_usage += img.total_size
                 except OSError as e:
                     getLogger(__name__).error(
                         "GalleryIndex file summation on missing file: %s" % e
                     )
 
         # Filter out potential ResponsiveImage objects that have orphan file references
-        context["images"] = [i for i in context["images"] if i.file_status_ok()]
+        # context["images"] = [i for i in context["images"] if i.file_status_ok()]
 
         # Add query filters and some statistics on disk usage
         context["years"] = years
@@ -95,7 +95,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
             "%s updated ResponsiveImage %d" % (self.request.user, self.object.id)
         )
 
-        return super(GalleryDetail, self).form_valid(form)
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         """
@@ -104,7 +104,7 @@ class GalleryDetail(DashboardPermissionMixin, UpdateView):
 
         messages.error(self.request, "Noen av feltene inneholder feil.")
 
-        return super(GalleryDetail, self).form_invalid(form)
+        return super().form_invalid(form)
 
     def get_success_url(self):
         """

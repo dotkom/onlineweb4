@@ -1,0 +1,22 @@
+name: Generate Dev Container Image (without dependencies)
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '.devcontainer/**/*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/build-devcontainer.yml
+    with:
+      settings-file: docker-compose.no-deps-build.yml

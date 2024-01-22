@@ -1,8 +1,9 @@
+from unittest.mock import patch
+
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django_dynamic_fixture import G
 from googleapiclient.errors import HttpError
-from mock import patch
 
 from apps.authentication.models import OnlineUser
 from apps.gsuite.mail_syncer.tests.test_utils import create_http_error

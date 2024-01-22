@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 
 // Fadeout alerts if they have the data-dismiss property
 export const timeOutAlerts = () => {

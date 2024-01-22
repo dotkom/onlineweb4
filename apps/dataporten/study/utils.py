@@ -1,7 +1,7 @@
 import logging
 
-from dateutil.parser import parse
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 
 from apps.authentication.constants import FieldOfStudyType
 from apps.dataporten.study.courses import GROUP_IDENTIFIERS, MASTER_IDS
@@ -39,15 +39,16 @@ def get_group_name(group):
 
 
 def get_course_finish_date(course):
-    if "membership" in course:
-        if "notAfter" in course["membership"]:
-            # User has finished this course
-            raw_datetime = course.get("membership", {}).get("notAfter", "")
-            try:
-                # Date format: 2014-08-14T22:00:00Z
-                return parse(raw_datetime)
-            except ValueError:
-                logger.error('Failed to parse datetime "%s".' % raw_datetime)
+    if "membership" in course and "notAfter" in course["membership"]:
+        # User has finished this course
+        raw_datetime = course.get("membership", {}).get("notAfter", "")
+
+        # Date format: 2014-08-14T22:00:00Z
+        try:
+            return parse_datetime(raw_datetime)
+        except ValueError:
+            # well formatted but invalid date
+            logger.warning('Failed to parse datetime "%s".' % raw_datetime)
     return None
 
 

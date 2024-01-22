@@ -1,18 +1,17 @@
 # -*- encoding: utf-8 -*-
 
-from django.conf.urls import url
-from django.urls import path
+from django.urls import path, re_path
 
 from apps.approval.dashboard import views
 
 urlpatterns = [
-    url(r"^$", views.index, name="approvals"),
-    url(
+    re_path(r"^$", views.index, name="approvals"),
+    re_path(
         r"^approve_application/$",
         views.approve_application,
         name="approval_approve_application",
     ),
-    url(
+    re_path(
         r"^decline_application/$",
         views.decline_application,
         name="approval_decline_application",

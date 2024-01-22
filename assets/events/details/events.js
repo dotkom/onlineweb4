@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 import Cookies from 'js-cookie';
 import { makeApiRequest, showFlashMessage } from 'common/utils/';
 

@@ -19,7 +19,8 @@ class ResponseTypesTest(OIDCTestCase):
     @staticmethod
     def create_response_types():
         for value, description in RESPONSE_TYPE_CHOICES:
-            ResponseType.objects.create(value=value, description=description)
+            if not ResponseType.objects.filter(value=value).exists():
+                ResponseType.objects.create(value=value, description=description)
 
     def setUp(self):
         self.user: User = generate_user(username="test_user")

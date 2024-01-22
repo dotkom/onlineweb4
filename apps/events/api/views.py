@@ -6,6 +6,7 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from apps.payment.serializers import PaymentReadOnlySerializer
+from apps.profiles.models import Privacy
 
 from ..constants import AttendStatus
 from ..filters import (
@@ -57,25 +58,38 @@ class EventViewSet(viewsets.ModelViewSet):
         "event_start",
         "event_end",
         "id",
-        "is_today",
-        "registration_filtered",
+        "closest",
+        "has_passed",
     )
-    ordering = ("-is_today", "registration_filtered", "id")
+    ordering = ("has_passed", "closest", "id")
 
     def get_queryset(self):
         user = self.request.user
-        return Event.by_registration.get_queryset_for_user(user)
+        return (
+            Event.by_nearest_active_event.get_queryset_for_user(user)
+            .select_related(
+                "image",
+                "organizer",
+                "group_restriction",
+                "attendance_event",
+                "attendance_event__reserved_seats",
+            )
+            .prefetch_related("attendance_event__attendees")
+        )
 
 
 class AttendanceEventViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceEventSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
-    queryset = AttendanceEvent.objects.all()
 
     def get_queryset(self):
         user = self.request.user
         events = Event.by_registration.get_queryset_for_user(user)
-        return super().get_queryset().filter(event__in=events)
+        return (
+            AttendanceEvent.objects.all()
+            .select_related("reserved_seats", "event")
+            .filter(event__in=events)
+        )
 
     @action(
         detail=True,
@@ -85,17 +99,30 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     )
     def register(self, request, pk=None):
         user = request.user
+        privacy: Privacy = user.privacy
         attendance_event: AttendanceEvent = self.get_object()
         # Check if the recaptcha and other request data is valid
         register_serializer = self.get_serializer(data=request.data)
         register_serializer.is_valid(raise_exception=True)
-
         data = register_serializer.validated_data
+        # Set the values to the users default settings if sent data is empty
+        # intentionally uses that bool(None) == False
+        attending_visibility = (
+            specific
+            if (specific := data.get("show_as_attending_event")) is not None
+            else bool(privacy.visible_as_attending_events)
+        )
+        allow_pictures = (
+            specific
+            if (specific := data.get("allow_pictures")) is not None
+            else bool(privacy.allow_pictures)
+        )
+
         attendee = Attendee.objects.create(
             event=attendance_event,
             user=user,
-            show_as_attending_event=data.get("show_as_attending_event"),
-            allow_pictures=data.get("allow_pictures"),
+            show_as_attending_event=attending_visibility,
+            allow_pictures=allow_pictures,
             note=data.get("note"),
         )
 
@@ -128,10 +155,21 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
     )
     def public_attendees(self, request, pk=None):
         attendance_event: AttendanceEvent = self.get_object()
-        attendees = (
-            attendance_event.attending_attendees_qs | attendance_event.waitlist_qs
-        )
-        attendees = attendees.order_by("-show_as_attending_event", "timestamp")
+        attendees = attendance_event.attending_attendees_qs
+        serializer = self.get_serializer(attendees, many=True)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["GET"],
+        permission_classes=(permissions.IsAuthenticated,),
+        serializer_class=PublicAttendeeSerializer,
+        url_path="public-on-waitlist",
+    )
+    def public_on_waitlist(self, request, pk=None):
+        attendance_event: AttendanceEvent = self.get_object()
+        attendees = attendance_event.waitlist_qs
         serializer = self.get_serializer(attendees, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)

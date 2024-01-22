@@ -13,7 +13,6 @@ from apps.companyprofile.models import Company
 from apps.events.models import (
     AttendanceEvent,
     Attendee,
-    CompanyEvent,
     Event,
     FieldOfStudyRule,
     GradeRule,
@@ -39,11 +38,11 @@ class EventModelTest(TestCase):
         self.assertEqual(event.__str__(), "Sjakkturnering")
 
     def test_company_event_method_returns_company_events(self):
-        event = G(Event, title="Sjakkturnering")
-        company1 = G(CompanyEvent, event=event, company=G(Company))
-        company2 = G(CompanyEvent, event=event, company=G(Company))
+        company1 = G(Company)
+        company2 = G(Company)
+        event: Event = G(Event, title="Sjakkturnering", companies=[company1, company2])
 
-        companies = event.company_event
+        companies = event.companies.all()
 
         self.assertIn(company1, companies)
         self.assertIn(company2, companies)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import url
+from django.urls import re_path
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.feedback import views
@@ -9,21 +9,21 @@ base_url = (
 )
 
 urlpatterns = [
-    url(r"^$", views.index, name="feedback_index"),
-    url(base_url + r"$", views.feedback, name="feedback"),
-    url(base_url + r"results/$", views.result, name="result"),
-    url(base_url + r"results/chartdata/$", views.chart_data, name="chart_data"),
-    url(
+    re_path(r"^$", views.index, name="feedback_index"),
+    re_path(base_url + r"$", views.feedback, name="feedback"),
+    re_path(base_url + r"results/$", views.result, name="result"),
+    re_path(base_url + r"results/chartdata/$", views.chart_data, name="chart_data"),
+    re_path(
         base_url + r"results/(?P<token>(\w|\-)+)/$",
         views.results_token,
         name="results_token",
     ),
-    url(
+    re_path(
         base_url + r"results/(?P<token>(\w|\-)+)/chartdata/$",
         views.chart_data_token,
         name="chart_data_token",
     ),
-    url(r"^deleteanswer/$", views.delete_answer, name="delete_anwer"),
+    re_path(r"^deleteanswer/$", views.delete_answer, name="delete_anwer"),
 ]
 
 

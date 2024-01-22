@@ -2,7 +2,6 @@ from django import forms
 from guardian.shortcuts import get_objects_for_user
 
 from apps.authentication.models import OnlineGroup
-from apps.dashboard.widgets import multiple_widget_generator
 from apps.gallery.constants import ImageFormat
 from apps.gallery.widgets import SingleImageInput
 
@@ -35,11 +34,8 @@ class OnlineGroupForm(forms.ModelForm):
             "image",
         ]
 
-        # Fields should be a mapping between field name and an attribute dictionary
-        img_fields = [
-            ("image", {"id": "responsive-image-id", "preset": ImageFormat.GROUP})
-        ]
-        widgetlist = [(SingleImageInput, img_fields)]
-
-        # Multiple widget generator merges results from regular widget_generator into a single widget dict
-        widgets = multiple_widget_generator(widgetlist)
+        widgets = {
+            "image": SingleImageInput(
+                attrs={"id": "responsive-image-id", "preset": ImageFormat.GROUP}
+            )
+        }

@@ -6,11 +6,16 @@ from django.contrib.auth.models import Group
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
-from apps.mommy.registry import Task
-from onlineweb4.celery import app
+
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
 
 
-class SynchronizeGroups(Task):
+class SynchronizeGroups:
     @staticmethod
     def run():
         logger = logging.getLogger("syncer.%s" % __name__)
@@ -31,7 +36,6 @@ class SynchronizeGroups(Task):
 
     @staticmethod
     def add_users(sync, logger):
-
         # FORWARD SYNC
         # Syncing users from source groups to destination groups
 
@@ -63,7 +67,6 @@ class SynchronizeGroups(Task):
 
     @staticmethod
     def remove_users(sync, logger):
-
         # BACKWARDS SYNC
         # Removing users from destination group(s) if they are not in the source group(s)
 
@@ -108,8 +111,8 @@ class SynchronizeGroups(Task):
                             )
 
 
-@app.task(bind=True)
-def assign_permission_from_group_admins(self, group_id: int):
+@task
+def assign_permission_from_group_admins(group_id: int):
     """
     Assign permission to handle groups recursively for all members of a group and sub groups.
     This task should be run when there are changes to which users should manage the group.

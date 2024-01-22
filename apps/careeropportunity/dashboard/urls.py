@@ -1,18 +1,18 @@
 # -*- encoding: utf-8 -*-
 
-from django.conf.urls import url
+from django.urls import re_path
 
 from apps.careeropportunity.dashboard import views
 
 urlpatterns = [
-    url(r"^$", views.index, name="careeropportunity_dashboard_index"),
-    url(r"^add/$", views.detail, name="careeropportunity_dashboard_add"),
-    url(
+    re_path(r"^$", views.index, name="careeropportunity_dashboard_index"),
+    re_path(r"^add/$", views.detail, name="careeropportunity_dashboard_add"),
+    re_path(
         r"^(?P<opportunity_id>\d+)/detail",
         views.detail,
         name="careeropportunity_dashboard_edit",
     ),
-    url(
+    re_path(
         r"^(?P<opportunity_id>\d+)/delete",
         views.delete,
         name="careeropportunity_dashboard_delete",

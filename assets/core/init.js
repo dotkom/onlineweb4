@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 
 const addAnimation = () => {
   const svg = document.querySelectorAll('.mn-svg');
@@ -46,7 +46,7 @@ export default () => {
   }
 
   const pathname = window.location.pathname;
-  if (pathname === '/article/archive' || pathname === '/offline/') {
+  if (pathname === '/article/archive') {
     $(".mn-nav a[href='/events/']").parent().addClass('active');
   }
 

@@ -175,7 +175,6 @@ def unattend_event(request, event_id):
 
     # Delete payment delays connected to the user and event
     if payment:
-
         payments = PaymentRelation.objects.filter(
             payment=payment, user=request.user, refunded=False
         )
@@ -436,11 +435,17 @@ class EventViewSet(
         "event_start",
         "event_end",
         "id",
-        "is_today",
-        "registration_filtered",
+        "has_passed",
+        "closest",
     )
-    ordering = ("-is_today", "registration_filtered", "id")
+    ordering = ("has_passed", "closest", "id")
 
     def get_queryset(self):
         user = self.request.user
-        return Event.by_registration.get_queryset_for_user(user)
+        return Event.by_nearest_active_event.get_queryset_for_user(user).select_related(
+            "image",
+            "organizer",
+            "group_restriction",
+            "attendance_event",
+            "attendance_event__reserved_seats",
+        )

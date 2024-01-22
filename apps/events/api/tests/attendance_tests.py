@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from django_dynamic_fixture import G
@@ -11,7 +13,6 @@ from apps.events.tests.utils import (
     pay_for_event,
 )
 from apps.online_oidc_provider.test import OIDCTestCase
-from apps.profiles.models import Privacy
 from onlineweb4.fields.recaptcha import mock_validate_recaptcha
 
 from ...models import Extras, StatusCode
@@ -24,7 +25,6 @@ class AttendanceEventTestCase(OIDCTestCase):
     def setUp(self):
         self.committee = G(Group, name="Arrkom")
         self.user = generate_user(username="_user")
-        self.privacy = G(Privacy, user=self.user)
         self.token = self.generate_access_token(self.user)
         self.headers = {
             **self.generate_headers(),
@@ -65,8 +65,14 @@ class AttendanceEventTestCase(OIDCTestCase):
         return self.get_action_url("payment", event_id)
 
     def test_anonymous_user_can_get_list(self):
-        response = self.client.get(self.get_list_url(), **self.bare_headers)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertNumQueries(10):
+            response = self.client.get(self.get_list_url(), **self.bare_headers)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_not_extra_queries_for_logged_in(self):
+        with self.assertNumQueries(26):
+            response = self.client.get(self.get_list_url(), **self.headers)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_anonymous_user_can_get_detail(self):
         response = self.client.get(
@@ -102,17 +108,95 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.assertTrue(attendance.is_attendee(self.user))
 
     @mock_validate_recaptcha()
-    def test_show_as_attending_event_is_set_false_by_default(self, _):
+    def test_signup_settings_override_defaults(self, _):
+        test_cases: list[Tuple[dict[str, bool]]] = [
+            (
+                {
+                    "show_as_attending_event": True,
+                    "allow_pictures": True,
+                },
+                {
+                    "show_as_attending_event": True,
+                    "allow_pictures": True,
+                },
+                {
+                    "show_as_attending_event": True,
+                    "allow_pictures": True,
+                },
+            ),
+            (
+                {
+                    "show_as_attending_event": False,
+                    "allow_pictures": False,
+                },
+                {
+                    "show_as_attending_event": True,
+                    "allow_pictures": True,
+                },
+                {
+                    "show_as_attending_event": True,
+                    "allow_pictures": True,
+                },
+            ),
+            (
+                {
+                    "show_as_attending_event": True,
+                    "allow_pictures": True,
+                },
+                {
+                    "show_as_attending_event": False,
+                    "allow_pictures": False,
+                },
+                {
+                    "show_as_attending_event": False,
+                    "allow_pictures": False,
+                },
+            ),
+            (
+                {
+                    "show_as_attending_event": True,
+                    "allow_pictures": True,
+                },
+                {},
+                {
+                    "show_as_attending_event": True,
+                    "allow_pictures": True,
+                },
+            ),
+        ]
+
         attendance = self.event.attendance_event
         attendance.guest_attendance = True
         attendance.save()
+        for user_settings, registration, expected in test_cases:
+            with self.subTest():
+                privacy = G(
+                    "profiles.Privacy",
+                    allow_pictures=user_settings["allow_pictures"],
+                    visible_as_attending_events=user_settings[
+                        "show_as_attending_event"
+                    ],
+                )
+                user = privacy.user
 
-        response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg, **self.headers
-        )
+                self.token = self.generate_access_token(user)
+                self.headers |= self.generate_headers()
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertFalse(response.json().get("show_as_attending_event"))
+                response = self.client.post(
+                    self.get_register_url(self.event.id),
+                    self.recaptcha_arg | registration,
+                    **self.headers,
+                )
+
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                self.assertEqual(
+                    response.json().get("show_as_attending_event"),
+                    expected["show_as_attending_event"],
+                )
+                self.assertEqual(
+                    response.json().get("allow_pictures"),
+                    expected["allow_pictures"],
+                )
 
     @mock_validate_recaptcha()
     def test_user_can_set_show_as_attending_on_registration(self, _):
@@ -324,9 +408,10 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.attendee1.save()
         self.attendee2.save()
 
-        response = self.client.get(
-            self.get_public_attendees_url(self.event.id), **self.headers
-        )
+        with self.assertNumQueries(8):
+            response = self.client.get(
+                self.get_public_attendees_url(self.event.id), **self.headers
+            )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         attendee1_data = [

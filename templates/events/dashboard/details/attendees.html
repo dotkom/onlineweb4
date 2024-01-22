@@ -34,9 +34,8 @@
                                     <th>Møtt</th>
                                 {% if event.attendance_event.has_extras %}
                                     <th>Extra</th>
-                                {% else %}
-                                    <th>Allergier</th>
                                 {% endif %}
+                                <th>Allergier</th>
                                 <th>Fjern</th>
                             </tr>
                         </thead>
@@ -72,11 +71,10 @@
                                 <td>
                                     {% if attendee.extras %}{{ attendee.extras }}{% else %}-{% endif %}
                                 </td>
-                                {% else %}
+                                {% endif %}
                                 <td>
                                     {% if attendee.user.allergies %}{{ attendee.user.allergies }}{% else %}-{% endif %}
                                 </td>
-                                {% endif %}
                                 <td>
                                     <a href="#modal-delete-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
                                         <i class="fa fa-times fa-lg red"></i>

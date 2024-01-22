@@ -26,10 +26,13 @@ User = settings.AUTH_USER_MODEL
 logger = logging.getLogger(__name__)
 
 
+class PaymentTypes(models.IntegerChoices):
+    IMMEDIATE = 1
+    DEADLINE = 2
+    DELAY = 3
+
+
 class Payment(models.Model):
-
-    TYPE_CHOICES = ((1, _("Umiddelbar")), (2, _("Frist")), (3, _("Utsettelse")))
-
     # Make sure these exist in settings if they are to be used.
     STRIPE_KEY_CHOICES = (
         ("arrkom", "arrkom"),
@@ -49,7 +52,7 @@ class Payment(models.Model):
     )
     """Which Stripe key to use for payments"""
 
-    payment_type = models.SmallIntegerField(_("type"), choices=TYPE_CHOICES)
+    payment_type = models.SmallIntegerField(_("type"), choices=PaymentTypes.choices)
     """
         Which payment type to use for payments.
         Can be one of the following:

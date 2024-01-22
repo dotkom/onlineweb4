@@ -2,7 +2,7 @@
 
 from django import forms
 
-from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
+from apps.dashboard.widgets import DatetimePickerInput
 from apps.gallery.forms import DocumentForm
 from apps.photoalbum.models import Album, Photo
 
@@ -14,10 +14,7 @@ class AlbumCreateOrUpdateForm(forms.ModelForm):
 
         labels = {"tags": "Tags"}
 
-        dtp_fields = (("published_date", {}),)
-        widgetlist = [(DatetimePickerInput, dtp_fields)]
-
-        widgets = multiple_widget_generator(widgetlist)
+        widgets = {"published_date": DatetimePickerInput()}
 
 
 class PhotoCreateForm(forms.ModelForm, DocumentForm):

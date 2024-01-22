@@ -13,7 +13,7 @@
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'articleArchive' 'js' %}
+    {% render_bundle 'articleArchive' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 
@@ -26,9 +26,6 @@
                 </li>
                 <li class="top-menu-link active">
                     <a class="active" href="{% url 'article_archive' %}">Artikler</a>
-                </li>
-                <li class="top-menu-link">
-                    <a href="{% url 'offline' %}">Offline</a>
                 </li>
             </ul>
         </div>

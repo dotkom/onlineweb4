@@ -27,7 +27,6 @@ def reverse_mark_rule_acceptance(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [("marks", "0007_auto_20191009_1244")]
 
     operations = [

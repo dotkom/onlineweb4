@@ -53,9 +53,9 @@ class ApplicationConsent(models.Model):
     """
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name=_(u"User"), on_delete=models.CASCADE
+        settings.AUTH_USER_MODEL, verbose_name=_("User"), on_delete=models.CASCADE
     )
-    date_given = models.DateTimeField(auto_now_add=True, verbose_name=_(u"Date Given"))
+    date_given = models.DateTimeField(auto_now_add=True, verbose_name=_("Date Given"))
     client = models.ForeignKey(
         Client, on_delete=models.PROTECT
     )  # Prevent client deletions to always allow users to know where their data may have gone.

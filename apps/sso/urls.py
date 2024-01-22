@@ -1,4 +1,5 @@
-from django.conf.urls import include, url
+from django.conf.urls import include
+from django.urls import re_path
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.sso import endpoints, views
@@ -6,14 +7,14 @@ from apps.sso import endpoints, views
 app_name = "sso"
 
 urlpatterns = [
-    url(r"^$", views.index, name="index"),
-    url(r"^user/", endpoints.oauth2_provider_userinfo, name="user"),
-    url(
+    re_path(r"^$", views.index, name="index"),
+    re_path(r"^user/", endpoints.oauth2_provider_userinfo, name="user"),
+    re_path(
         r"^authorize/",
         views.AuthorizationView.as_view(),
         name="oauth2_provider_authorize",
     ),
-    url(r"^", include("oauth2_provider.urls", "oauth2_provider")),
+    re_path(r"^", include("oauth2_provider.urls", "oauth2_provider")),
 ]
 
 

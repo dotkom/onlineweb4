@@ -9,7 +9,6 @@ from apps.marks.models import MarkRuleSet
 
 
 class CaptchaForm(forms.Form):
-
     phone_number = forms.CharField(
         label=_("Telefonnummer er påkrevd for å være påmeldt et arrangement."),
         error_messages={"required": _("Telefonnummer er påkrevd!")},
@@ -38,7 +37,7 @@ class CaptchaForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.user: User = kwargs.pop("user", None)
-        super(CaptchaForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Removing mark rules field if user has already accepted the rules
         if self.user and self.user.is_authenticated:
@@ -57,7 +56,7 @@ class CaptchaForm(forms.Form):
                 del self.fields["captcha"]
 
     def clean(self):
-        super(CaptchaForm, self).clean()
+        super().clean()
         cleaned_data = self.cleaned_data
 
         if "mark_rules" in self.fields:

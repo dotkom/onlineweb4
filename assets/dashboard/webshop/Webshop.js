@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 
 const postDeleteForm = (url) => {
   $(`<form method="POST" action="${url}">` +

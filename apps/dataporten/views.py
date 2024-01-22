@@ -1,4 +1,5 @@
 import logging
+from urllib.parse import urlparse
 
 from django.conf import settings
 from django.contrib import messages
@@ -27,10 +28,11 @@ DATAPORTEN_SCOPES = settings.DATAPORTEN.get("STUDY", {}).get("SCOPES")
 @login_required()
 def study(request):
     """This view redirects the user to Dataporten to request authorization for fetching information about the
-    user's groups membership, which can be used to verify eligibility for membership of Online."""
+    user's groups membership, which can be used to verify eligibility for membership of Online.
+    """
 
     # If the user already is a member we can return early. However, if we're in testing, we want to skip the check.
-    if settings.DATAPORTEN.get("STUDY").get("ENABLED") and request.user.is_member:
+    if request.user.is_member and not settings.DATAPORTEN.get("STUDY").get("TESTING"):
         messages.info(request, "Du er allerede registrert som medlem.")
         return redirect("profiles_active", active_tab="membership")
 
@@ -73,8 +75,8 @@ def study(request):
     return redirect(login_url)
 
 
-@login_required()  # noqa: C901
-def study_callback(request):
+@login_required()
+def study_callback(request):  # noqa: C901
     """This view fetches information from Dataporten to verify the eligibility. This is done by fetching
     the /me/groups-API from Dataporten and further processing the fetched groups to find group membership.
 
@@ -193,9 +195,9 @@ def study_callback(request):
         )
 
     # If the request came from OWF, redirect there.
-    if request.session["dataporten_study_referer"] and request.session[
-        "dataporten_study_referer"
-    ].startswith("https://online.ntnu.no"):
-        return redirect("https://online.ntnu.no/profile/settings/membership")
+    if request.session["dataporten_study_referer"]:
+        host = urlparse(request.session["dataporten_study_referer"])
+        if host and host.hostname and host.hostname.endswith("online.ntnu.no"):
+            return redirect("https://online.ntnu.no/profile/settings/membership")
 
     return redirect("profiles_active", active_tab="membership")

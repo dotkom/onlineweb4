@@ -44,6 +44,9 @@ class ProfileForm(forms.ModelForm):
 
 
 class PrivacyForm(forms.ModelForm):
+    allow_pictures = forms.BooleanField(initial=False)
+    visible_as_attending_events = forms.BooleanField(initial=False)
+
     class Meta:
         model = Privacy
         exclude = ["user", "expose_nickname"]
@@ -65,7 +68,7 @@ class PositionForm(forms.ModelForm):
         }
 
     def clean(self):
-        super(PositionForm, self).clean()
+        super().clean()
 
         period_start = self.cleaned_data["period_start"]
         period_end = self.cleaned_data["period_end"]
@@ -87,7 +90,7 @@ class PositionForm(forms.ModelForm):
 
 class MembershipSettingsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(MembershipSettingsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["started_date"].widget.attrs["class"] = "hasDatePicker"
 
     class Meta:
@@ -99,15 +102,15 @@ class MembershipSettingsForm(forms.ModelForm):
 
 class InternalServicesForm(forms.Form):
     ow4_password = forms.CharField(
-        widget=forms.PasswordInput(), label=_(u"Online passord")
+        widget=forms.PasswordInput(), label=_("Online passord")
     )
     services_password = forms.CharField(
-        widget=forms.PasswordInput(), label=_(u"Ønsket service passord")
+        widget=forms.PasswordInput(), label=_("Ønsket service passord")
     )
     current_user = None
 
     def clean(self):
-        super(InternalServicesForm, self).clean()
+        super().clean()
         if self.is_valid():
             cleaned_data = self.cleaned_data
 
@@ -119,7 +122,7 @@ class InternalServicesForm(forms.Form):
 
             if user is None or user.id != self.current_user.id:
                 self._errors["ow4_password"] = self.error_class(
-                    [_(u"Passordet er ikke korrekt.")]
+                    [_("Passordet er ikke korrekt.")]
                 )
 
             return cleaned_data

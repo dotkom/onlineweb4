@@ -23,9 +23,9 @@ class ListOrStringListField(serializers.Field):
         return value.split()
 
     def to_internal_value(self, data):
-        if type(data) == list:
+        if isinstance(data, list):
             return " ".join(data)
-        elif type(data) == str:
+        elif isinstance(data, str):
             return data.replace("\r\n", " ")
         else:
             raise ValidationError("Incorrect format")

@@ -1,10 +1,17 @@
 import json
 import logging
 
-from celery import shared_task
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from googleapiclient.errors import HttpError
+
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
+
 
 from apps.gsuite.mail_syncer.utils import insert_email_into_g_suite_group
 
@@ -71,7 +78,7 @@ def remove_user_from_group_pass_if_not_subscribed(
             raise err
 
 
-@shared_task
+@task
 def update_mailing_list(g_suite_mailing_list, email, added):
     domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
     if added:

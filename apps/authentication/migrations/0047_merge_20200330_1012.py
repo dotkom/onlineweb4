@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("authentication", "0046_remove_onlineuser_saldo"),
         ("authentication", "0046_auto_20200330_0924"),

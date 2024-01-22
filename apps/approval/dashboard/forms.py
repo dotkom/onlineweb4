@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
-from apps.dashboard.widgets import DatetimePickerInput, multiple_widget_generator
+from apps.dashboard.widgets import DatetimePickerInput
 
 from ..models import CommitteeApplicationPeriod
 
@@ -35,10 +35,10 @@ class CommitteeApplicationPeriodForm(forms.ModelForm):
         model = CommitteeApplicationPeriod
         fields = ("title", "start", "deadline", "deadline_delta", "committees")
 
-        dtp_fields = (("start", {}), ("deadline", {}))
-        widgetlist = [(DatetimePickerInput, dtp_fields)]
-
-        widgets = multiple_widget_generator(widgetlist)
+        widgets = {
+            "start": DatetimePickerInput(),
+            "deadline": DatetimePickerInput(),
+        }
 
 
 class ApplicationPeriodParticipantsUpdateForm(forms.Form):

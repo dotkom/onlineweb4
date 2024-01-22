@@ -1,5 +1,4 @@
-import moment from 'moment';
-import $ from 'jquery';
+// import $ from 'jquery';
 import { makeApiRequest } from 'common/utils';
 
 function ArticleArchiveWidget() {
@@ -82,7 +81,7 @@ function ArticleArchiveWidget() {
                     </div>
                     <div class="col-md-8">
                       <div class="pull-right article-detail-meta">
-                        <span>${moment(articles[i].published_date).format('DD.MM.YYYY')}</span>
+                        <span>${new Intl.DateTimeFormat("nb-NO", { dateStyle: "short"}).format(new Date(articles[i].published_date))}</span>
                       </div>
                       <a href="/article/${articles[i].id}/${articles[i].slug}">
                         <h3>${articles[i].heading}</h3>

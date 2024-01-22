@@ -1,5 +1,5 @@
-from django.conf.urls import url
+from django.urls import re_path
 
 from apps.splash import views
 
-urlpatterns = [url(r"^events.ics$", views.calendar_export, name="splash_calendar")]
+urlpatterns = [re_path(r"^events.ics$", views.calendar_export, name="splash_calendar")]

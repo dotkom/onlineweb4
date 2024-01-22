@@ -20,7 +20,7 @@
         var selected_extra = "{{ attendee.extras }}";
         var all_extras = [{% for e in attendance_event.extras.all %}"{{e}}", {%endfor%}];
     </script>
-    {% render_bundle 'eventsDetails' 'js' %}
+    {% render_bundle 'eventsDetails' 'js' attrs='async type="module"' %}
 {% endblock %}
 
 {% block content %}

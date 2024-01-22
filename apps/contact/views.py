@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from django.shortcuts import redirect, render
@@ -14,13 +15,11 @@ def index(request):
 
 
 def contact_submit(request):
-
     log = logging.getLogger(__name__)
 
     if request.method == "POST":
         form = ContactForm(request.POST)
         if form.is_valid():
-
             name = form.cleaned_data["contact_name"]
             content = form.cleaned_data["content"]
             from_email = form.cleaned_data["contact_email"]
@@ -50,7 +49,12 @@ def contact_submit(request):
                 )
             )
 
-            EmailMessage(subject, content, from_email, to_email).send()
+            EmailMessage(
+                subject,
+                f"E-post: {from_email}\n{content}",
+                settings.DEFAULT_FROM_EMAIL,
+                to_email,
+            ).send()
             messages.success(request, "Meldingen ble sendt")
         else:
             messages.error(

@@ -1,5 +1,4 @@
-import moment from 'moment';
-import jQuery from 'jquery';
+// import jQuery from 'jquery';
 import { ajax, showStatusMessage } from 'common/utils';
 /**
  * Created by myth on 10/18/15.
@@ -88,7 +87,7 @@ const Article = (function PrivateArticle($) {
         let html = '';
         for (let i = 0; i < items.results.length; i += 1) {
           const item = items.results[i];
-          const t = moment(item.published_date);
+          const t = new Date(item.published_date);
 
           html += `
             <tr>
@@ -96,7 +95,7 @@ const Article = (function PrivateArticle($) {
                 <a href="${item.id}">${item.heading}</a>
               </td>
               <td>${item.authors}</td>
-              <td>${t.format('YYYY-MM-DD HH:MM:SS')}</td>
+              <td>${new Intl.DateTimeFormat("nb-NO", { dateStyle: "short", timeStyle: "medium" }).format(t)}</td>
               <td>
                 <a href="/dashboard/article/${item.id}/edit/">
                   <i class="fa fa-edit fa-lg"></i>

@@ -12,7 +12,7 @@ Søknadsgodkjenning - Online
 
 {% block js %}
     {{ block.super }}
-    {% render_bundle 'dashboardApproval' 'js' %}
+    {% render_bundle 'dashboardApproval' 'js' attrs='async type="module"' %}
 {% endblock js %}
 
 {% block page-header %}
@@ -64,7 +64,7 @@ Søknadsgodkjenning
         </div>
         <div class="col-md-2 cell">
             {% if app.has_documentation %}
-                <div class="visible-xs visible-sm">1. </div><a href="/media/{{app.documentation}}" target="_blank">Dokumentasjon</a>
+                <div class="visible-xs visible-sm">1. </div><a href="{{ MEDIA_URL }}{{app.documentation}}" target="_blank">Dokumentasjon</a>
             {% else %}
                 -
             {% endif %}
@@ -110,6 +110,7 @@ Søknadsgodkjenning
                         <th>Behandlet</th>
                         <th>Resultat</th>
                         <th>Behandlet av</th>
+                        <th>Ekstra dokumentasjon</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -119,6 +120,13 @@ Søknadsgodkjenning
                         <td>{{ p.processed_date|date:'Y-m-d H:i:s' }}</td>
                         <td>{% if p.approved %}Godkjent{% else %}Avslått{% endif %}</td>
                         <td>{{ p.approver }}</td>
+                        <td>
+                            {% if p.has_documentation %}
+                                <div class="visible-xs visible-sm">1. </div><a href="{{ MEDIA_URL }}{{p.documentation}}" target="_blank">Dokumentasjon</a>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

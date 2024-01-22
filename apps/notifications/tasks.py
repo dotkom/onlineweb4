@@ -2,12 +2,17 @@ import json
 import logging
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import send_mail
 from pywebpush import WebPushException, webpush
 from rest_framework import serializers
 
-from onlineweb4.celery import app as celery_app
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
+
 
 from .constants import (
     NOTIFICATION_BADGE_URL,
@@ -110,12 +115,8 @@ class NotificationDataSerializer(serializers.ModelSerializer):
         )
 
 
-@celery_app.task(
-    bind=True,
-    autoretry_for=(ObjectDoesNotExist,),
-    retry_kwargs={"max_retries": 3, "countdown": 60},
-)
-def dispatch_push_notification_task(_, notification_id: int):
+@task
+def dispatch_push_notification_task(notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient
     notification_data = NotificationDataSerializer(notification).data
@@ -131,12 +132,8 @@ def dispatch_push_notification_task(_, notification_id: int):
     notification.save()
 
 
-@celery_app.task(
-    bind=True,
-    autoretry_for=(ObjectDoesNotExist,),
-    retry_kwargs={"max_retries": 3, "countdown": 60},
-)
-def dispatch_email_notification_task(_, notification_id: int):
+@task
+def dispatch_email_notification_task(notification_id: int):
     notification = Notification.objects.get(pk=notification_id)
     user = notification.recipient
 

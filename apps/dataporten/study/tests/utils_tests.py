@@ -1,8 +1,8 @@
 import json
 import os
 
-from dateutil.parser import parse
 from django.test import TestCase
+from django.utils.dateparse import parse_datetime
 from freezegun import freeze_time
 
 from apps.authentication.constants import FieldOfStudyType
@@ -57,7 +57,7 @@ class DataProcessingTestCase(TestCase):
 
     def test_get_course_finish_date(self):
         course = load_course(ITGK_EXPIRED)
-        expiry_date = parse(course.get("membership").get("notAfter"))
+        expiry_date = parse_datetime(course.get("membership").get("notAfter"))
 
         self.assertEqual(expiry_date, get_course_finish_date(course))
 

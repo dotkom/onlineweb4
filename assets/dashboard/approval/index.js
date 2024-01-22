@@ -1,4 +1,4 @@
-import $ from 'jquery';
+// import $ from 'jquery';
 import { showStatusMessage } from 'common/utils';
 import './less/approval.less';
 

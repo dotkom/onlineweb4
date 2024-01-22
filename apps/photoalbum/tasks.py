@@ -2,16 +2,23 @@ import logging
 
 from PIL import Image
 
+try:
+    from zappa.asynchronous import task
+except ImportError:
+    # Zappa is only required if we are running on Lambda
+    def task(func):
+        return func
+
+
 from apps.gallery.util import ResponsiveImageHandler
-from onlineweb4.celery import app
 
 from .models import Photo
 
 logger = logging.getLogger(__name__)
 
 
-@app.task(bind=True)
-def create_responsive_photo_task(self, photo_id: int):
+@task
+def create_responsive_photo_task(photo_id: int):
     photo = Photo.objects.get(pk=photo_id)
     raw_image = photo.raw_image
 
