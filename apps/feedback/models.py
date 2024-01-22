@@ -32,7 +32,7 @@ class FeedbackRelationManager(models.Manager):
         queryset = (
             self.get_queryset().filter(active=True).prefetch_related("content_object")
         )
-        can_answer_ids = [fbr.can_answer(user) for fbr in queryset.all()]
+        can_answer_ids = [fbr.id for fbr in queryset.all() if fbr.can_answer(user)]
         return queryset.filter(pk__in=can_answer_ids)
 
 
