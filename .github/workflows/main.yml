@@ -14,14 +14,20 @@ env:
 jobs:
   test-python:
     runs-on: ubuntu-latest
-    # TODO: fix postgresql tests, oidc_provider fails
-    # services:
-    #  db:
-    #    image: postgres:latest
-    #    environment:
-    #      POSTGRES_USER: postgres
-    #      POSTGRES_DB: onlineweb4
-    #      POSTGRES_PASSWORD: postgres
+    services:
+      postgres:
+        image: postgres:13-alpine
+        env:
+          POSTGRES_USER: ow4user
+          POSTGRES_DB: ow4db
+          POSTGRES_PASSWORD: ow4password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout
@@ -49,7 +55,7 @@ jobs:
         run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
-        run: poetry install --no-interaction --no-ansi
+        run: poetry install --no-interaction --no-ansi -E postgresql
 
       - name: Install node dependencies
         run: npm ci
@@ -66,7 +72,7 @@ jobs:
           OW4_DJANGO_STRIPE_PRIVATE_KEY_PROKOM: ${{ secrets.STRIPE_PRIVATE_KEY_PROKOM }}
           OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM: ${{ secrets.STRIPE_PRIVATE_KEY_TRIKOM }}
           # TODO: see service todo
-          # DATABASE_URL: postgres://postgres:postgres@db:5432/onlineweb4
+          DATABASE_URL: postgres://ow4user:ow4password@localhost:5432/ow4db
         run: poetry run py.test --cov=apps --cov-report xml
 
       - uses: codecov/codecov-action@v3
