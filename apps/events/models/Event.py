@@ -244,9 +244,7 @@ class Event(models.Model):
         from .Attendance import Attendee
 
         if self.is_attendance_event():
-            qs = self.attendance_event.attendees.filter(attended=True).values_list(
-                "user", flat=True
-            )
+            qs = self.attendance_event.attendees.filter(attended=True)
         else:
             qs = Attendee.objects.none()
         from apps.authentication.models import OnlineUser as User

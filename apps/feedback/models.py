@@ -297,10 +297,11 @@ class GenericSurvey(models.Model):
         )
 
     def feedback_users(self):
-        if self.allowed_users.exists():
-            return self.allowed_users.values_list("id", flat=True)
-        else:
-            return OnlineUser.objects.values_list("id", flat=True)
+        return (
+            self.allowed_users
+            if self.allowed_users.exists()
+            else OnlineUser.objects.all()
+        )
 
     def feedback_email(self):
         if (
@@ -320,7 +321,7 @@ class GenericSurvey(models.Model):
 
     def feedback_info(self):
         info = OrderedDict()
-        info[_("Antall mulig svar")] = len(self.feedback_users())
+        info[_("Antall mulig svar")] = self.feedback_users().count()
         return info
 
     class Meta:
