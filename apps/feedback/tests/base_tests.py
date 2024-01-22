@@ -136,7 +136,7 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         message = generate_message(feedback_relation, self.logger)
 
         not_answered = [self.user2.email]
-        self.assertEqual(set(message.attended_mails), set(not_answered))
+        self.assertEqual(message.attended_mails, not_answered)
 
     def test_everyone_answered(self):
         feedback_relation = self.create_feedback_relation()
