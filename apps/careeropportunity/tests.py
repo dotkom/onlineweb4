@@ -48,7 +48,7 @@ class CompanyAPITestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_client_can_get_careeropportunity_by_id(self):
-        response = self.client.get(self.get_detail_url(self.company.id))
+        response = self.client.get(self.get_detail_url(self.opportunity.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("title"), self.opportunity.title)
