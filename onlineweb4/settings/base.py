@@ -7,7 +7,7 @@ from decouple import config
 
 from apps.sso.settings import OAUTH2_SCOPES
 
-from django.conf import settings
+from settings.zappa import settings
 
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = Path(globals()["__file__"]).parent
