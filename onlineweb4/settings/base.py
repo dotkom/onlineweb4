@@ -7,8 +7,6 @@ from decouple import config
 
 from apps.sso.settings import OAUTH2_SCOPES
 
-from settings.zappa import settings
-
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = Path(globals()["__file__"]).parent
 # Root directory. Contains manage.py
@@ -74,7 +72,6 @@ OAUTH2_PROVIDER = {
     "OAUTH2_VALIDATOR_CLASS": "apps.sso.validator.Validator",
     "OIDC_ENABLED": True,
     "PKCE": True,
-    "OIDC_RSA_PRIVATE_KEY": settings.OIDC_RSA_PRIVATE_KEY,
     "SCOPES": OAUTH2_SCOPES,
     "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
     "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
