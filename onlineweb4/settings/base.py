@@ -7,6 +7,8 @@ from decouple import config
 
 from apps.sso.settings import OAUTH2_SCOPES
 
+from django.conf import settings
+
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = Path(globals()["__file__"]).parent
 # Root directory. Contains manage.py
@@ -67,18 +69,12 @@ SLACK_INVITER = {
 }
 
 # SSO / OAuth2 settings
-
-OIDC_RSA_PRIVATE_KEY = ""  # Default case
-if os.path.isfile("oidc.key"):
-    with open("oidc.key", "r") as f:
-        OIDC_RSA_PRIVATE_KEY = f.read()
-
 OAUTH2_PROVIDER_APPLICATION_MODEL = "sso.Client"
 OAUTH2_PROVIDER = {
     "OAUTH2_VALIDATOR_CLASS": "apps.sso.validator.Validator",
     "OIDC_ENABLED": True,
     "PKCE": True,
-    "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
+    "OIDC_RSA_PRIVATE_KEY": settings.OIDC_RSA_PRIVATE_KEY,
     "SCOPES": OAUTH2_SCOPES,
     "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
     "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
