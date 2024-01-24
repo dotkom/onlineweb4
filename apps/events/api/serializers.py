@@ -61,7 +61,7 @@ class EventSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         if (
             user.is_authenticated
-            and hasattr(instance, "attendance_event") is not None
+            and hasattr(instance, "attendance_event")
             and (attendance_event := instance.attendance_event)
         ):
             return {
