@@ -59,7 +59,11 @@ class EventSerializer(serializers.ModelSerializer):
 
     def get_attendee_info(self, instance: Event):
         user = self.context["request"].user
-        if user.is_authenticated and (attendance_event := instance.attendance_event):
+        if (
+            user.is_authenticated
+            and hasattr(instance, "attendance_event") is not None
+            and (attendance_event := instance.attendance_event)
+        ):
             return {
                 "is_attendee": attendance_event.is_attendee(user),
                 "is_on_waitlist": attendance_event.is_on_waitlist(user),
