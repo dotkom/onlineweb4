@@ -325,6 +325,8 @@ class Event(models.Model):
         )
 
     def clean(self):
+        if self.event_end < self.event_start:
+            raise ValidationError({"event_end": ["Event må starte før det kan slutte"]})
         if not self.organizer:
             raise ValidationError({"organizer": ["Arrangementet krever en arrangør."]})
 
