@@ -32,7 +32,6 @@ django-datetime-widget = { git = "https://github.com/oleast/django-datetime-widg
 django-webpack-loader = "~3.0"      # Integration with webpack
 dj-database-url = "~2.1"            # Allows to configure databases using URLs
 python-decouple = "~3.8"            # Configuration and settings management
-django-oidc-provider = "~0.8"       # OpenID Connect Provider
 docutils = "~0.20"                  # Allows django-admindocs to generate documentation
 oic = "~1.6"			            # OpenID Connect Client
 requests = { version = "~2.31", extras = [ "security" ] }
@@ -104,9 +103,6 @@ addopts = "--nomigrations -n auto --dist loadscope"
 filterwarnings = [
     # for future maintainers: these fields are documented here
     # https://docs.python.org/3/library/warnings.html#the-warnings-filter
-    # Need to remove outdated library
-    "ignore::DeprecationWarning:.*oidc_provider.*",
-    "ignore:.*:django.utils.deprecation.RemovedInDjango40Warning:oidc_provider.*",
     # All local ones are dealt with, this cannot be fixed by us
     "ignore:.*defines default_app_config.*:django.utils.deprecation.RemovedInDjango41Warning",
     "ignore:Use setlocale\\(\\), getencoding\\(\\) and getlocale\\(\\) instead:DeprecationWarning:.*django.*",

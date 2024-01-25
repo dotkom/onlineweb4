@@ -142,7 +142,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "reversion.middleware.RevisionMiddleware",
-    "oidc_provider.middleware.SessionManagementMiddleware",
     "mozilla_django_oidc.middleware.SessionRefresh",
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -185,7 +184,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "datetimewidget",
     "webpack_loader",
-    "oidc_provider",
     "mozilla_django_oidc",
     # Django apps
     "django.contrib.admin",
@@ -217,7 +215,6 @@ INSTALLED_APPS = [
     "apps.resourcecenter",
     "apps.mailinglists",
     "apps.notifications",
-    "apps.online_oidc_provider",
     "apps.inventory",
     "apps.payment",
     "apps.permissions",

@@ -774,20 +774,6 @@ files = [
 django = ">=2.2,<4.3"
 
 [[package]]
-name = "django-oidc-provider"
-version = "0.8.2"
-description = "OpenID Connect Provider implementation for Django."
-optional = false
-python-versions = "*"
-files = [
-    {file = "django-oidc-provider-0.8.2.tar.gz", hash = "sha256:01f792a3997118be9a32d1596300171aa13b55d120666bc0a51e75edcf810ef5"},
-    {file = "django_oidc_provider-0.8.2-py2.py3-none-any.whl", hash = "sha256:2716dc27bf933b9a04f20530de39a183b5abaf746eab02e3fb6fb13358a23b6d"},
-]
-
-[package.dependencies]
-pyjwkest = ">=1.3.0"
-
-[[package]]
 name = "django-recaptcha"
 version = "3.0.0"
 description = "Django recaptcha form field/widget app."
@@ -2763,4 +2749,4 @@ s3 = ["django-storages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "bfd634d5639e858e5e0d4c16b086b7cc8f9fc2bd9d989ce7626b9d2455d7d1a1"
+content-hash = "b493a3664fd260a2dd0d4ebf5e7df08aa93aa1afbe9d6e82779dc05b67ef6359"
