@@ -156,6 +156,37 @@ class OnlineUser(AbstractUser):
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
     )
 
+    cognito_subject = models.UUIDField(
+        _("Cognito User Id"), blank=True, null=True, unique=True
+    )
+
+    def set_password(self, raw_password):
+        super().set_password(raw_password)
+        if (sub := self.cognito_subject) and settings.COGNITO_USER_POOL_ID:
+            import boto3
+
+            client = boto3.client("cognito-idp")
+            client.admin_set_user_password(
+                UserPoolId=settings.COGNITO_USER_POOL_ID,
+                Username=str(sub),
+                Password=raw_password,
+                Permanent=True,
+            )
+
+    def check_password(self, password) -> bool:
+        valid = super().check_password(password)
+        if valid and settings.COGNITO_USER_POOL_ID and (sub := self.cognito_subject):
+            import boto3
+
+            client = boto3.client("cognito-idp")
+            client.admin_set_user_password(
+                UserPoolId=settings.COGNITO_USER_POOL_ID,
+                Username=str(sub),
+                Password=password,
+                Permanent=True,
+            )
+        return valid
+
     @property
     def is_member(self):
         """
