@@ -163,9 +163,6 @@ if "apps.notifications" in settings.INSTALLED_APPS:
         re_path(r"^notifications/", include("apps.notifications.urls")),
     ]
 
-if "apps.online_oidc_provider" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^oidc/", include("apps.online_oidc_provider.urls"))]
-
 if "apps.inventory" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^dashboard/inventory/", include("apps.inventory.dashboard.urls"))
@@ -231,11 +228,6 @@ if "rest_framework" in settings.INSTALLED_APPS:
 
     urlpatterns += [
         re_path(r"^api/v1/", include(SharedAPIRootRouter.shared_router.urls))
-    ]
-
-if "oidc_provider" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^openid/", include("oidc_provider.urls", namespace="oidc_provider"))
     ]
 
 # http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
