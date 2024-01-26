@@ -160,6 +160,10 @@ class OnlineUser(AbstractUser):
         _("Cognito User Id"), blank=True, null=True, unique=True
     )
 
+    has_set_cognito_password = models.BooleanField(
+        _("User has set cognito password"), default=False
+    )
+
     def set_password(self, raw_password):
         super().set_password(raw_password)
         if (sub := self.cognito_subject) and settings.COGNITO_USER_POOL_ID:
@@ -173,6 +177,11 @@ class OnlineUser(AbstractUser):
                 Permanent=True,
             )
 
+            self.has_set_cognito_password = True
+            self.save()
+
+        
+
     def check_password(self, password) -> bool:
         valid = super().check_password(password)
         if valid and settings.COGNITO_USER_POOL_ID and (sub := self.cognito_subject):
@@ -185,6 +194,10 @@ class OnlineUser(AbstractUser):
                 Password=password,
                 Permanent=True,
             )
+
+            self.has_set_cognito_password = True
+            self.save()
+
         return valid
 
     @property
