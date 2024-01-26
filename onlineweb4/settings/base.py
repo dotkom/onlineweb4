@@ -144,3 +144,18 @@ SECURE_PROXY_SSL_HEADER = (
 VIMEO_API_TOKEN = config("OW4_VIMEO_API_TOKEN", default=None)
 
 COGNITO_USER_POOL_ID = config("OW4_COGNITO_USER_POOL_ID", default="")
+
+AWS_COGNITO_REGION = "eu-north-1"
+
+# we explicitly do not allow creation of JWT-tokens with simplejwt, we only want to verify that the ones we get from cognito are valid
+SIMPLE_JWT = {
+    # https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html#amazon-cognito-user-pools-using-tokens-manually-inspect
+    "JWK_URL": f"https://cognito-idp.{AWS_COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}/.well-known/jwks.json",
+    "ISSUER": f"https://cognito-idp.{AWS_COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}",
+    # the field on the user which is the ID
+    "USER_ID_FIELD": "cognito_subject",
+    # the value in the token that is the ID
+    "USER_ID_CLAIM": "sub",
+    "ALGORITHM": "RS256",
+    "TOKEN_TYPE_CLAIM": "token_use",
+}
