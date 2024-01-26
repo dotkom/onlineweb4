@@ -180,8 +180,6 @@ class OnlineUser(AbstractUser):
             self.has_set_cognito_password = True
             self.save()
 
-        
-
     def check_password(self, password) -> bool:
         valid = super().check_password(password)
         if valid and settings.COGNITO_USER_POOL_ID and (sub := self.cognito_subject):

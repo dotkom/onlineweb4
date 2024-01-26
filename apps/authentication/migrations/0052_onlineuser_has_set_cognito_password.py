@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('authentication', '0051_onlineuser_cognito_subject'),
+        ("authentication", "0051_onlineuser_cognito_subject"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='onlineuser',
-            name='has_set_cognito_password',
-            field=models.BooleanField(default=False, verbose_name='User has set cognito password'),
+            model_name="onlineuser",
+            name="has_set_cognito_password",
+            field=models.BooleanField(
+                default=False, verbose_name="User has set cognito password"
+            ),
         ),
     ]
