@@ -1,76 +1,19 @@
 # API v1
 import logging
 
-from django.conf import settings
-from django.contrib import auth, messages
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import FormView
-from oauth2_provider.contrib.rest_framework import OAuth2Authentication, TokenHasScope
-from rest_framework import mixins, status, viewsets
-from rest_framework.decorators import action
+from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from apps.authentication.models import Email
-from apps.authentication.models import OnlineUser as User
 from apps.inventory.models import Item
-from apps.payment.models import PaymentTransaction
-from apps.payment.transaction_constants import TransactionSource
 from apps.shop.forms import SetRFIDForm
 from apps.shop.models import MagicToken, OrderLine
-from apps.shop.serializers import (
-    ItemSerializer,
-    OrderLineSerializer,
-    TransactionSerializer,
-    UserOrderLineSerializer,
-    UserSerializer,
-)
-from apps.shop.utils import create_magic_token
-
-
-class OrderLineViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
-    queryset = OrderLine.objects.all()
-    serializer_class = OrderLineSerializer
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ["shop.readwrite"]
-
-    @action(detail=False, url_path="userorders")
-    def user_orders(self, request):
-        """
-        Endpoint for fetching a users orders history
-        Intended for the nibble kiosk
-        """
-        pk = self.request.query_params.get("pk")
-        if not pk:
-            return Response(
-                "Request must include a 'pk' query parameter where 'pk' is the users user id",
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        user = get_object_or_404(User, pk=pk)
-        # Only include the latest purchases
-        amount = 50
-        orders = OrderLine.objects.filter(user=user).order_by("-datetime")[:amount]
-        serializer = UserOrderLineSerializer(orders, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class TransactionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
-    queryset = PaymentTransaction.objects.all()
-    serializer_class = TransactionSerializer
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ["shop.readwrite"]
-
-    def perform_create(self, serializer):
-        """
-        Transactions created by this view are strictly allowed to handle cash additions.
-        """
-        serializer.save(source=TransactionSource.CASH)
+from apps.shop.serializers import ItemSerializer, UserOrderLineSerializer
 
 
 class UserOrderViewSet(
@@ -83,17 +26,6 @@ class UserOrderViewSet(
         return OrderLine.objects.filter(user=self.request.user)
 
 
-class UserViewSet(
-    viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin, APIView
-):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ["shop.readwrite"]
-    filterset_fields = ("rfid",)
-
-
 class InventoryViewSet(
     viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin
 ):
@@ -101,68 +33,6 @@ class InventoryViewSet(
     serializer_class = ItemSerializer
     permission_classes = (AllowAny,)
     pagination_class = None
-
-
-class SetRFIDView(APIView):
-    authentication_classes = [OAuth2Authentication]
-    permission_classes = [TokenHasScope]
-    required_scopes = ["shop.readwrite"]
-
-    def post(self, request):
-        username = request.data.get("username", "").lower()
-        password = request.data.get("password", "")
-        request_magic_link = request.data.get("magic_link", False)
-        send_magic_link_email = request.data.get("send_email", True)
-
-        if not username:
-            return Response(
-                "Missing authentication details", status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if "@" in username:
-            email = Email.objects.filter(email=username)
-            if email:
-                username = email[0].user.username
-
-        user = auth.authenticate(username=username, password=password)
-
-        rfid = request.data.get("rfid", "")
-
-        if not rfid:
-            return Response(
-                "Missing RFID from request payload", status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if user and rfid:
-            if user.rfid == rfid:
-                return Response("OK", status=status.HTTP_200_OK)
-
-            user.rfid = rfid
-            user.save()
-            return Response("OK", status=status.HTTP_200_OK)
-
-        if not user and username and rfid and request_magic_link:
-            onlineuser = None
-            try:
-                onlineuser = User.objects.get(username=username)
-            except User.DoesNotExist:
-                return Response(
-                    "User does not exist", status=status.HTTP_400_BAD_REQUEST
-                )
-
-            magic_token = create_magic_token(
-                onlineuser, rfid, send_token_by_email=send_magic_link_email
-            )
-            data = {
-                "token": str(magic_token.token),
-                "url": "{}{}".format(
-                    settings.BASE_URL,
-                    reverse("shop_set_rfid", args=[str(magic_token.token)]),
-                ),
-            }
-            return Response(data=data, status=status.HTTP_201_CREATED)
-
-        return Response("Invalid user credentials", status=status.HTTP_400_BAD_REQUEST)
 
 
 @method_decorator(login_required, name="dispatch")
