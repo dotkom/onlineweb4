@@ -1,0 +1,65 @@
+{% extends 'sso/sso_base.html' %}
+
+<!--{% load chunks %}-->
+{% load zip_lists %}
+
+<!--{% load render_bundle from webpack_loader %}-->
+
+{% block styles %}
+  {{ block.super }}
+  {% render_bundle 'sso' 'css' %}
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+  {% render_bundle 'sso' 'js' attrs='async type="module"' %}
+{% endblock %}
+
+{% block content %}
+<section id="sso-container">
+    <div id="sso-panel">
+    {% if not error %}
+        <div id="sso-panel-header">
+            <img src="{{ STATIC_URL }}img/online_o.svg" alt="Online">
+            <div id="sso-blue-header-top"></div>
+        </div>
+        <div id="sso-panel-body">
+            <h4>Appens tilganger</h4>
+            <form id="sso-authorization-form" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.is_hidden %}
+                        {{ field }}
+                    {% endif %}
+                {% endfor %}
+                <section class="sso-permissions">
+                    <p>Denne appen vil ha tilgang til</p>
+                    <ul>
+                        {% for scope, scope_name in scopes_descriptions|zip_lists:scopes %}
+                            <li><span style="font-weight: bold;">{{scope_name|title}}</span> - {{ scope }}</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                <div id="sso-control-buttons">
+                    <input type="submit" class="btn btn-large btn-success" name="allow" value="Godta" />
+                    <input type="submit" class="btn btn-large btn-danger" value="Avslå" />
+                </div>
+            </form>
+            <section id="sso-app-display">
+                {% if application.logo %}
+                <img src="{{ application.logo.url }}"/>
+                {% endif %}
+                <h4>{{ application.name }} </h4>
+            </section>
+        </div>
+    {% else %}
+        <div id="sso-panel-header">
+            <h3>En feil skjedde</h3>
+        </div>
+        <div id="sso-panel-body">
+            {{ error.description }}
+        </div>
+    {% endif %}
+    </div>
+</section>
+{% endblock %}
