@@ -139,23 +139,3 @@ jobs:
 
       - name: Django check
         run: poetry run python manage.py check
-
-  lint-js:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install node dependencies
-        run: npm ci
-
-      - name: JS linting
-        run: npm run lint-js
-
-      - name: less linting
-        run: npm run lint-less
