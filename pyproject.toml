@@ -19,7 +19,6 @@ django-crispy-forms = "~2.0"
 crispy-bootstrap3 = "^2024.1"
 django-dynamic-fixture = "~3.1"
 django-recaptcha = "~3.0"           # Google ReCaptcha
-django-oauth-toolkit = "~1.7"       # OAuth2 authentication support
 django-watson = "~1.6.2"            # Indexed model search lib
 django-reversion = "~5.0"           # Model version history with middleware hooks to all post_save signals
 django-guardian = "~2.4"            # Per Object permissions framework

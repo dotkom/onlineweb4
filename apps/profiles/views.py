@@ -15,12 +15,10 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
 from googleapiclient.errors import HttpError
-from oauth2_provider.models import AccessToken
 from rest_framework import filters, mixins, permissions, response, viewsets
 from watson import search as watson
 
@@ -92,10 +90,6 @@ def _create_profile_context(request):
         "orders": Order.objects.filter(order_line__user=request.user).order_by(
             "-order_line__datetime"
         ),
-        # SSO / OAuth2 approved apps
-        "connected_apps": AccessToken.objects.filter(
-            user=request.user, expires__gte=timezone.now()
-        ).order_by("expires"),
         # marks
         "mark_rule_set": MarkRuleSet.get_current_rule_set(),
         "mark_rules_accepted": request.user.mark_rules_accepted,
@@ -203,36 +197,6 @@ def privacy(request):
         else:
             privacy_form.save()
             messages.success(request, _("Personvern ble endret"))
-
-    return render(request, "profiles/index.html", context)
-
-
-@login_required()
-def connected_apps(request):
-    """
-    Tab controller for the connected 3rd party apps pane
-    :param request: Django request object
-    :return: An HttpResponse
-    """
-
-    context = _create_profile_context(request)
-    context["active_tab"] = "connected_apps"
-
-    if request.method == "POST":
-        if "token_id" not in request.POST:
-            messages.error(
-                request, _("Det ble ikke oppgitt noen tilgangsnøkkel i forespørselen.")
-            )
-        else:
-            try:
-                pk = int(request.POST["token_id"])
-                token = get_object_or_404(AccessToken, pk=pk)
-                token.delete()
-                messages.success(request, _("Tilgangsnøkkelen ble slettet."))
-            except ValueError:
-                messages.error(
-                    request, _("Tilgangsnøkkelen inneholdt en ugyldig verdi.")
-                )
 
     return render(request, "profiles/index.html", context)
 

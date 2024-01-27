@@ -139,7 +139,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "reversion.middleware.RevisionMiddleware",
-    "oauth2_provider.middleware.OAuth2TokenMiddleware",
     "oidc_provider.middleware.SessionManagementMiddleware",
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -148,7 +147,6 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",  # this is default
     "guardian.backends.ObjectPermissionBackend",
-    "oauth2_provider.backends.OAuth2Backend",
 )
 
 ROOT_URLCONF = "onlineweb4.urls"
@@ -168,7 +166,6 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap3",
     "django_dynamic_fixture",
-    "oauth2_provider",
     "captcha",
     "pdfdocument",
     "watson",
@@ -220,7 +217,6 @@ INSTALLED_APPS = [
     "apps.photoalbum",
     "apps.posters",
     "apps.slack",
-    "apps.sso",
     "apps.splash",
     "apps.shop",
     "apps.webshop",

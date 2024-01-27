@@ -5,8 +5,6 @@ from pathlib import Path
 
 from decouple import config
 
-from apps.sso.settings import OAUTH2_SCOPES
-
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = Path(globals()["__file__"]).parent
 # Root directory. Contains manage.py
@@ -66,19 +64,6 @@ SLACK_INVITER = {
     "token": config("OW4_DJANGO_SLACK_INVITER_TOKEN", default="xoxp-1234_fake"),
 }
 
-# SSO / OAuth2 settings
-OAUTH2_PROVIDER_APPLICATION_MODEL = "sso.Client"
-OAUTH2_PROVIDER = {
-    "OAUTH2_VALIDATOR_CLASS": "apps.sso.validator.Validator",
-    "OIDC_ENABLED": True,
-    "PKCE": True,
-    "SCOPES": OAUTH2_SCOPES,
-    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
-    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
-    "REFRESH_TOKEN_EXPIRE_SECONDS": 43200,
-    "OIDC_RSA_PRIVATE_KEY": config("OW4_OIDC_RSA_PRIVATE_KEY", default=""),
-}
-
 
 def get_stats_file() -> str:
     if existing := os.getenv("OW4_WEBPACK_LOADER_STATS_FILE"):
@@ -130,7 +115,7 @@ IMPORT_DDF_MODELS = False
 CORS_ORIGIN_ALLOW_ALL = config(
     "OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True
 )
-CORS_URLS_REGEX = r"^(/api/v1/.*|/sso/.*|/openid/.*)$"  # Enables CORS on all /api/v1/, /sso/user/ and all /openid/ endpoints
+CORS_URLS_REGEX = r"^(/api/v1/.*|/openid/.*)$"  # Enables CORS on all /api/v1/, and all /openid/ endpoints
 
 
 # Google reCaptcha settings

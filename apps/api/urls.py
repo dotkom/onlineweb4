@@ -1,10 +1,8 @@
-from django.urls import path, re_path
-from oauth2_provider.views.base import TokenView
+from django.urls import path
 
 from apps.api import views as api_views
 
 urlpatterns = [
-    re_path(r"^v1/auth/$", TokenView.as_view(), name="oauth2_provider_token"),
     path("v1/docs/", api_views.SwaggerUIView.as_view(), name="swagger-ui"),
     path(
         "v1/openapi-schema",

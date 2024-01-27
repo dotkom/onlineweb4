@@ -40,7 +40,6 @@ from apps.payment.models import (
 from apps.profiles.serializers import PrivacySerializer
 from apps.shop.models import Order as ShopOrder
 from apps.shop.models import OrderLine as ShopOrderLine
-from apps.sso.serializers import SSOApplicationConsentSerializer
 from apps.webshop.models import Order as WebshopOrder
 from apps.webshop.models import OrderLine as WebshopOrderLine
 from apps.webshop.models import Product as WebshopProduct
@@ -401,9 +400,6 @@ class UserDataSerializer(serializers.ModelSerializer):
 
     # OpenID / Oauth
     user_consents = UserConsentReadOnlySerializer(many=True, source="userconsent_set")
-    application_consents = SSOApplicationConsentSerializer(
-        many=True, source="applicationconsent_set"
-    )
 
     def get_name(self, user: OnlineUser):
         return user.get_full_name()
@@ -471,11 +467,8 @@ class UserDataSerializer(serializers.ModelSerializer):
             "marks",
             "suspensions",
             # OpenID / Oauth
-            "oauth2_provider_grant",  # Oauth2_provider_grant is oauth login attempts
             "oidc_clients_set",
-            "sso_client",
             "user_consents",
-            "application_consents",
             # Wiki
             "wiki_attachment_revisions",
             "wiki_article_revisions",
