@@ -182,15 +182,6 @@ if "apps.posters" in settings.INSTALLED_APPS:
 if "apps.profiles" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^profile/", include("apps.profiles.urls"))]
 
-if "apps.photoalbum" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^photoalbum/", include("apps.photoalbum.urls")),
-        re_path(
-            r"^dashboard/photoalbum/",
-            include("apps.photoalbum.dashboard.urls", namespace="dashboard-photoalbum"),
-        ),
-    ]
-
 if (
     "apps.resourcecenter" in settings.INSTALLED_APPS
     and "apps.mailinglists" in settings.INSTALLED_APPS

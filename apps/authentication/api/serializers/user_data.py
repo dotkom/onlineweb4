@@ -29,7 +29,6 @@ from apps.marks.serializers import (
     RuleAcceptanceSerializer,
     SuspensionSerializer,
 )
-from apps.online_oidc_provider.serializers import UserConsentReadOnlySerializer
 from apps.payment.models import (
     Payment,
     PaymentDelay,
@@ -398,9 +397,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     # Other
     object_revisions = RevisionSerializer(many=True, source="revision_set")
 
-    # OpenID / Oauth
-    user_consents = UserConsentReadOnlySerializer(many=True, source="userconsent_set")
-
     def get_name(self, user: OnlineUser):
         return user.get_full_name()
 
@@ -466,9 +462,6 @@ class UserDataSerializer(serializers.ModelSerializer):
             "accepted_mark_rule_sets",
             "marks",
             "suspensions",
-            # OpenID / Oauth
-            "oidc_clients_set",
-            "user_consents",
             # Wiki
             "wiki_attachment_revisions",
             "wiki_article_revisions",
@@ -487,10 +480,6 @@ class UserDataSerializer(serializers.ModelSerializer):
             # Purchases
             "orderline_set",
             "shop_order_lines",
-            # Photoalbum
-            "photo_tags",
-            "uploaded_photos",
-            "created_albums",
             # Approval
             "applications",
             "approved_applications",
