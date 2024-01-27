@@ -22,7 +22,6 @@ let entryPoints = [
     { out: 'dashboardHobbies', in: 'assets/dashboard/hobbies/index.jsx' },
     { out: 'dashboardInventory', in: 'assets/dashboard/inventory/index.js' },
     { out: 'dashboardMarks', in: 'assets/dashboard/marks/index.js' },
-    { out: 'dashboardPhotoAlbum', in: 'assets/dashboard/photoalbum/index.js' },
     { out: 'dashboardPosters', in: 'assets/dashboard/posters/index.js' },
     { out: 'dashboardResources', in: 'assets/dashboard/resources/index.jsx' },
     { out: 'dashboardWebshop', in: 'assets/dashboard/webshop/index.js' },

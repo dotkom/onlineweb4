@@ -4,9 +4,10 @@ from django.test import TestCase
 from django.urls import reverse
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.companyprofile.models import Company
-from apps.online_oidc_provider.test import OIDCTestCase
+from onlineweb4.testing import GetUrlMixin
 
 from .models import CareerOpportunity
 
@@ -31,7 +32,7 @@ class CareerOpportunityURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class CompanyAPITestCase(OIDCTestCase):
+class CompanyAPITestCase(GetUrlMixin, APITestCase):
     basename = "careeropportunity"
 
     def setUp(self):

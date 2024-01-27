@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import (
@@ -15,7 +16,6 @@ from apps.marks.models import (
     RuleAcceptance,
     _get_with_duration_and_vacation,
 )
-from apps.online_oidc_provider.test import OIDCTestCase
 
 
 class MarksTest(TestCase):
@@ -137,12 +137,11 @@ class MarkRuleAcceptanceTest(TestCase):
         self.assertFalse(self.user.mark_rules_accepted)
 
 
-class MarkRuleSetAPITest(OIDCTestCase):
+class MarkRuleSetAPITest(APITestCase):
     def setUp(self) -> None:
         super().setUp()
         self.user: User = G(User, username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("mark_rule_sets-list")
         self.id_url = lambda _id: reverse("mark_rule_sets-detail", args=[_id])
@@ -150,22 +149,22 @@ class MarkRuleSetAPITest(OIDCTestCase):
         self.rule_set: MarkRuleSet = G(MarkRuleSet, version="1.0.0")
 
     def test_marks_rule_sets_api_returns_ok_without_auth(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_un_authenticated_user_can_view_mark_rules(self):
-        response = self.client.get(self.id_url(self.rule_set.id), **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.id_url(self.rule_set.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class MarkRuleAcceptanceAPITest(OIDCTestCase):
+class MarkRuleAcceptanceAPITest(APITestCase):
     def setUp(self):
         super().setUp()
         self.user: User = G(User, username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("mark_rule_acceptance-list")
         self.id_url = lambda _id: reverse("mark_rule_acceptance-detail", args=[_id])
@@ -178,19 +177,20 @@ class MarkRuleAcceptanceAPITest(OIDCTestCase):
         )
 
     def test_marks_rule_acceptance_api_returns_unauthorized_without_auth(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_marks_rule_acceptance_api_returns_ok_with_auth(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_authenticated_user_can_view_mark_acceptance(self):
         self.create_rule_acceptance()
 
-        response = self.client.get(self.id_url(self.rule_acceptance.id), **self.headers)
+        response = self.client.get(self.id_url(self.rule_acceptance.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -199,14 +199,12 @@ class MarkRuleAcceptanceAPITest(OIDCTestCase):
         rule_acceptance: RuleAcceptance = G(
             RuleAcceptance, user=other_user, rule_set=self.rule_set
         )
-        response = self.client.get(self.id_url(rule_acceptance.id), **self.headers)
+        response = self.client.get(self.id_url(rule_acceptance.id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_user_can_accept_mark_rules(self):
-        response = self.client.post(
-            self.url, {"rule_set": self.rule_set.id}, **self.headers
-        )
+        response = self.client.post(self.url, {"rule_set": self.rule_set.id})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -214,9 +212,7 @@ class MarkRuleAcceptanceAPITest(OIDCTestCase):
         other_user: User = G(User)
 
         response = self.client.post(
-            self.url,
-            {"user": other_user.id, "rule_set": self.rule_set.id},
-            **self.headers
+            self.url, {"user": other_user.id, "rule_set": self.rule_set.id}
         )
 
         rule_acceptance = RuleAcceptance.objects.filter(

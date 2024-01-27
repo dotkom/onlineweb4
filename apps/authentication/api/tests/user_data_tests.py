@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from django.urls import reverse
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
@@ -13,15 +14,13 @@ from apps.events.tests.utils import (
     generate_event,
     generate_user,
 )
-from apps.online_oidc_provider.test import OIDCTestCase
 
 
-class EmailTestCase(OIDCTestCase):
+class EmailTestCase(APITestCase):
     def setUp(self):
         self.user: User = generate_user(username="test_user")
         self.other_user: User = generate_user(username="other_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("user_emails-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
@@ -30,30 +29,29 @@ class EmailTestCase(OIDCTestCase):
         self.other_email = self.other_user.email_object
 
     def test_emails_view_returns_200(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_un_authenticated_user_gets_401(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_emails(self):
-        response = self.client.get(self.id_url(self.email.id), **self.headers)
+        response = self.client.get(self.id_url(self.email.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("id"), self.email.id)
 
     def test_user_cannot_view_other_users_emails(self):
-        response = self.client.get(self.id_url(self.other_email.id), **self.headers)
+        response = self.client.get(self.id_url(self.other_email.id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_user_can_create_an_email(self):
-        response = self.client.post(
-            self.url, {"email": "test@example.com"}, **self.headers
-        )
+        response = self.client.post(self.url, {"email": "test@example.com"})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn(
@@ -62,11 +60,11 @@ class EmailTestCase(OIDCTestCase):
 
     def test_user_cannot_create_an_email_with_an_existing_address(self):
         address = "test@example.com"
-        first_response = self.client.post(self.url, {"email": address}, **self.headers)
+        first_response = self.client.post(self.url, {"email": address})
 
         self.assertEqual(first_response.status_code, status.HTTP_201_CREATED)
 
-        second_response = self.client.post(self.url, {"email": address}, **self.headers)
+        second_response = self.client.post(self.url, {"email": address})
 
         self.assertEqual(second_response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -79,9 +77,7 @@ class EmailTestCase(OIDCTestCase):
 
         email: Email = G(Email, user=self.user, verified=False)
 
-        response = self.client.patch(
-            self.id_url(email.id), {"primary": True}, **self.headers
-        )
+        response = self.client.patch(self.id_url(email.id), {"primary": True})
 
         self.email.refresh_from_db()
         email.refresh_from_db()
@@ -96,9 +92,7 @@ class EmailTestCase(OIDCTestCase):
 
         email: Email = G(Email, user=self.user, verified=False)
 
-        response = self.client.patch(
-            self.id_url(email.id), {"primary": False}, **self.headers
-        )
+        response = self.client.patch(self.id_url(email.id), {"primary": False})
 
         self.email.refresh_from_db()
         email.refresh_from_db()
@@ -114,9 +108,7 @@ class EmailTestCase(OIDCTestCase):
 
     def test_user_cannot_verify_emails_without_token(self):
         email: Email = G(Email, user=self.user, verified=False)
-        response = self.client.patch(
-            self.id_url(email.id), {"verified": True}, **self.headers
-        )
+        response = self.client.patch(self.id_url(email.id), {"verified": True})
 
         email.refresh_from_db()
 
@@ -127,9 +119,7 @@ class EmailTestCase(OIDCTestCase):
         address = "test@example.com"
         other_address = "test@test.io"
         email: Email = G(Email, user=self.user, verified=False, email=address)
-        self.client.patch(
-            self.id_url(email.id), {"email": other_address}, **self.headers
-        )
+        self.client.patch(self.id_url(email.id), {"email": other_address})
 
         email.refresh_from_db()
 
@@ -137,12 +127,11 @@ class EmailTestCase(OIDCTestCase):
         self.assertNotEqual(email.email, other_address)
 
 
-class PositionsTestCase(OIDCTestCase):
+class PositionsTestCase(APITestCase):
     def setUp(self):
         self.user: User = generate_user(username="test_user")
         self.other_user: User = generate_user(username="other_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("user_positions-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
@@ -164,28 +153,29 @@ class PositionsTestCase(OIDCTestCase):
         }
 
     def test_positions_view_returns_200(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_un_authenticated_user_gets_401(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_positions(self):
-        response = self.client.get(self.id_url(self.position.id), **self.headers)
+        response = self.client.get(self.id_url(self.position.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("id"), self.position.id)
 
     def test_user_cannot_view_other_users_positions(self):
-        response = self.client.get(self.id_url(self.other_position.id), **self.headers)
+        response = self.client.get(self.id_url(self.other_position.id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_user_can_create_a_position(self):
-        response = self.client.post(self.url, self.position_data, **self.headers)
+        response = self.client.post(self.url, self.position_data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
@@ -194,7 +184,7 @@ class PositionsTestCase(OIDCTestCase):
 
     def test_user_can_only_create_positions_for_themselves(self):
         response = self.client.post(
-            self.url, {**self.position_data, "user": self.other_user.id}, **self.headers
+            self.url, {**self.position_data, "user": self.other_user.id}
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -205,7 +195,6 @@ class PositionsTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {**self.position_data, "period_end": str(date_before_period_start)},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -222,7 +211,6 @@ class PositionsTestCase(OIDCTestCase):
                 "period_end": str(self.period_start),
                 "period_start": str(self.period_start),
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -242,35 +230,31 @@ class PositionsTestCase(OIDCTestCase):
                 ),  # Both are currently required to make a change
                 "period_end": new_period_end,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("period_end"), new_period_end)
 
     def test_user_can_delete_a_position(self):
-        response = self.client.delete(self.id_url(self.position.id), **self.headers)
+        response = self.client.delete(self.id_url(self.position.id))
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertNotIn(self.position, self.user.positions.all())
 
     def test_user_cannot_delete_other_users_positions(self):
         other_position = self.other_position
-        response = self.client.delete(
-            self.id_url(self.other_position.id), **self.headers
-        )
+        response = self.client.delete(self.id_url(self.other_position.id))
         other_position.refresh_from_db()
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(self.other_position, other_position)
 
 
-class SpecialPositionsTestCase(OIDCTestCase):
+class SpecialPositionsTestCase(APITestCase):
     def setUp(self):
         self.user: User = generate_user(username="test_user")
         self.other_user: User = generate_user(username="other_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("user_special_positions-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
@@ -280,36 +264,32 @@ class SpecialPositionsTestCase(OIDCTestCase):
         )
 
     def test_special_positions_returns_200(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_un_authenticated_user_gets_401(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_view_their_own_special_positions(self):
-        response = self.client.get(
-            self.id_url(self.special_position.id), **self.headers
-        )
+        response = self.client.get(self.id_url(self.special_position.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("id"), self.special_position.id)
 
     def test_user_cannot_view_other_users_special_positions(self):
-        response = self.client.get(
-            self.id_url(self.other_special_position.id), **self.headers
-        )
+        response = self.client.get(self.id_url(self.other_special_position.id))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-class TestDumpData(OIDCTestCase):
+class TestDumpData(APITestCase):
     def setUp(self):
         self.user: User = generate_user(username="test_user")
         self.other_user: User = generate_user(username="other_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.id_url = lambda _id: f"/api/v1/users/{str(_id)}/dump-data/"
 
@@ -324,7 +304,7 @@ class TestDumpData(OIDCTestCase):
         }
 
     def test_dump_data_contains_name(self):
-        response = self.client.get(self.id_url(self.user.id), **self.headers)
+        response = self.client.get(self.id_url(self.user.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("name"), self.user.get_full_name())
 
@@ -332,7 +312,7 @@ class TestDumpData(OIDCTestCase):
         self.event = generate_event()
         self.attendee1 = attend_user_to_event(user=self.user, event=self.event)
 
-        response = self.client.get(self.id_url(self.user.id), **self.headers)
+        response = self.client.get(self.id_url(self.user.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json().get("attendees")), 1)
 
@@ -340,7 +320,7 @@ class TestDumpData(OIDCTestCase):
         self.event = generate_company_event()
         attend_user_to_event(user=self.user, event=self.event)
 
-        response = self.client.get(self.id_url(self.user.id), **self.headers)
+        response = self.client.get(self.id_url(self.user.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.json().get("attendees")[0].get("companies"),

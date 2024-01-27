@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.events.tests.utils import (
     attend_user_to_event,
@@ -12,27 +13,21 @@ from apps.events.tests.utils import (
     generate_user,
     pay_for_event,
 )
-from apps.online_oidc_provider.test import OIDCTestCase
 from onlineweb4.fields.recaptcha import mock_validate_recaptcha
+from onlineweb4.testing import GetUrlMixin
 
 from ...models import Extras, StatusCode
 from .utils import generate_attendee
 
 
-class AttendanceEventTestCase(OIDCTestCase):
+class AttendanceEventTestCase(GetUrlMixin, APITestCase):
     basename = "events_attendance_events"
 
     def setUp(self):
         self.committee = G(Group, name="Arrkom")
         self.user = generate_user(username="_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {
-            **self.generate_headers(),
-            "Accepts": "application/json",
-            "Content-Type": "application/json",
-            "content_type": "application/json",
-            "format": "json",
-        }
+        self.client.force_authenticate(user=self.user)
+
         self.recaptcha_arg = {"recaptcha": "--mock-recaptcha--"}
 
         self.event = generate_event(organizer=self.committee)
@@ -65,19 +60,19 @@ class AttendanceEventTestCase(OIDCTestCase):
         return self.get_action_url("payment", event_id)
 
     def test_anonymous_user_can_get_list(self):
+        self.client.force_authenticate(user=None)
         with self.assertNumQueries(10):
-            response = self.client.get(self.get_list_url(), **self.bare_headers)
+            response = self.client.get(self.get_list_url())
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_not_extra_queries_for_logged_in(self):
-        with self.assertNumQueries(24):
-            response = self.client.get(self.get_list_url(), **self.headers)
+        with self.assertNumQueries(22):
+            response = self.client.get(self.get_list_url())
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_anonymous_user_can_get_detail(self):
-        response = self.client.get(
-            self.get_detail_url(self.event.id), **self.bare_headers
-        )
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.get_detail_url(self.event.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @mock_validate_recaptcha()
@@ -87,9 +82,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         )
 
         response = self.client.post(
-            self.get_register_url(event_without_attendance.id),
-            self.recaptcha_arg,
-            **self.headers,
+            self.get_register_url(event_without_attendance.id), self.recaptcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -101,7 +94,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         attendance.save()
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg, **self.headers
+            self.get_register_url(self.event.id), self.recaptcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -178,14 +171,11 @@ class AttendanceEventTestCase(OIDCTestCase):
                     ],
                 )
                 user = privacy.user
-
-                self.token = self.generate_access_token(user)
-                self.headers |= self.generate_headers()
+                self.client.force_authenticate(user=user)
 
                 response = self.client.post(
                     self.get_register_url(self.event.id),
                     self.recaptcha_arg | registration,
-                    **self.headers,
                 )
 
                 self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -207,7 +197,6 @@ class AttendanceEventTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_url(self.event.id),
             {"show_as_attending_event": True, **self.recaptcha_arg},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -220,7 +209,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         attendance.save()
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg, **self.headers
+            self.get_register_url(self.event.id), self.recaptcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -235,7 +224,6 @@ class AttendanceEventTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_url(self.event.id),
             {"allow_pictures": True, **self.recaptcha_arg},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -246,9 +234,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         attendance.guest_attendance = True
         attendance.save()
 
-        response = self.client.post(
-            self.get_register_url(self.event.id), {}, **self.headers
-        )
+        response = self.client.post(self.get_register_url(self.event.id), {})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(attendance.is_attendee(self.user))
@@ -261,7 +247,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         attend_user_to_event(attendance.event, self.user)
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg, **self.headers
+            self.get_register_url(self.event.id), self.recaptcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -278,7 +264,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         attendance.save()
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg, **self.headers
+            self.get_register_url(self.event.id), self.recaptcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -296,7 +282,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         attendance.save()
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg, **self.headers
+            self.get_register_url(self.event.id), self.recaptcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -313,9 +299,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.event.save()
         attend_user_to_event(self.event, self.user)
 
-        response = self.client.delete(
-            self.get_unregister_url(self.event.id), **self.headers
-        )
+        response = self.client.delete(self.get_unregister_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(self.event.attendance_event.is_attendee(self.user))
@@ -327,9 +311,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.event.attendance_event.save()
         attend_user_to_event(self.event, self.user)
 
-        response = self.client.delete(
-            self.get_unregister_url(self.event.id), **self.headers
-        )
+        response = self.client.delete(self.get_unregister_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(self.event.attendance_event.is_attendee(self.user))
@@ -347,9 +329,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.event.save()
         attend_user_to_event(self.event, self.user)
 
-        response = self.client.delete(
-            self.get_unregister_url(self.event.id), **self.headers
-        )
+        response = self.client.delete(self.get_unregister_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(self.event.attendance_event.is_attendee(self.user))
@@ -368,10 +348,10 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.event.event_start = timezone.now() + timezone.timedelta(days=3)
         self.event.attendance_event.save()
         self.event.save()
-        self.client.delete(self.get_unregister_url(self.event.id), **self.headers)
+        self.client.delete(self.get_unregister_url(self.event.id))
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg, **self.headers
+            self.get_register_url(self.event.id), self.recaptcha_arg
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -387,7 +367,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         attendance.save()
 
         register_response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg, **self.headers
+            self.get_register_url(self.event.id), self.recaptcha_arg
         )
 
         self.assertEqual(register_response.status_code, status.HTTP_201_CREATED)
@@ -395,9 +375,7 @@ class AttendanceEventTestCase(OIDCTestCase):
 
         pay_for_event(self.event, self.user)
 
-        attendee_response = self.client.get(
-            self.get_attendee_url(self.event.id), **self.headers
-        )
+        attendee_response = self.client.get(self.get_attendee_url(self.event.id))
 
         self.assertEqual(attendee_response.status_code, status.HTTP_200_OK)
         self.assertTrue(attendee_response.json().get("has_paid"))
@@ -408,10 +386,8 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.attendee1.save()
         self.attendee2.save()
 
-        with self.assertNumQueries(6):
-            response = self.client.get(
-                self.get_public_attendees_url(self.event.id), **self.headers
-            )
+        with self.assertNumQueries(4):
+            response = self.client.get(self.get_public_attendees_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         attendee1_data = [
@@ -430,9 +406,8 @@ class AttendanceEventTestCase(OIDCTestCase):
         )
 
     def test_public_attendees_list_only_works_for_authenticated_users(self):
-        response = self.client.get(
-            self.get_public_attendees_url(self.event.id), **self.bare_headers
-        )
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.get_public_attendees_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -442,40 +417,38 @@ class AttendanceEventTestCase(OIDCTestCase):
             payment_type=1,
             deadline=timezone.now() + timezone.timedelta(days=1),
         )
-        response = self.client.get(self.get_payment_url(self.event.id), **self.headers)
+        response = self.client.get(self.get_payment_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_attendance_payment_info_fail_on_event_without_payment(self):
-        response = self.client.get(self.get_payment_url(self.event.id), **self.headers)
+        response = self.client.get(self.get_payment_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_attendance_payment_info_only_works_for_authenticated_users(self):
+        self.client.force_authenticate(user=None)
         generate_payment(
             self.event,
             payment_type=1,
             deadline=timezone.now() + timezone.timedelta(days=1),
         )
-        response = self.client.get(
-            self.get_payment_url(self.event.id), **self.bare_headers
-        )
+        response = self.client.get(self.get_payment_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_can_get_extras(self):
         self.event.attendance_event.extras.add(G(Extras))
         self.event.attendance_event.extras.add(G(Extras))
-        response = self.client.get(self.get_extras_url(self.event.id), **self.headers)
+        response = self.client.get(self.get_extras_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json()), 2)
 
     def test_extras_only_works_for_authenticated_users(self):
+        self.client.force_authenticate(user=None)
         self.event.attendance_event.extras.add(G(Extras))
         self.event.attendance_event.extras.add(G(Extras))
-        response = self.client.get(
-            self.get_extras_url(self.event.id), **self.bare_headers
-        )
+        response = self.client.get(self.get_extras_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

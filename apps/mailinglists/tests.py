@@ -1,13 +1,16 @@
+from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm
 from rest_framework import status
 from rest_framework.reverse import reverse
+from rest_framework.test import APITestCase
 
 from apps.mailinglists.models import MailEntity, MailGroup
-from apps.online_oidc_provider.test import OIDCTestCase
 
 
-class MailTestMixin(OIDCTestCase):
+class MailTestMixin(APITestCase):
     def setUp(self):
+        self.user = G("authentication.OnlineUser")
+        self.client.force_authenticate(user=self.user)
         self.beta = MailEntity.objects.create(
             email="hs@beta.ntnu.no",
             name="Beta Linjeforening",
@@ -52,7 +55,6 @@ class MailGroupTests(MailTestMixin):
                 "domain": MailGroup.Domains.ONLINE_NTNU_NO,
                 "description": "En haug i Trondheim",
             },
-            **self.headers,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         mailinglist = response.data
@@ -64,6 +66,7 @@ class MailGroupTests(MailTestMixin):
         self.assertEqual(mail.public, mailinglist.get("public"))
 
     def test_anon_get(self):
+        self.client.force_authenticate(user=None)
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -72,7 +75,7 @@ class MailGroupTests(MailTestMixin):
     def test_authenticated_get(self):
         assign_perm("mailinglists.view_mailgroup", self.user)
 
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)
@@ -92,7 +95,7 @@ class MailEntityTests(MailTestMixin):
     def test_authenticated_get(self):
         assign_perm("mailinglists.view_mailentity", self.user)
 
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 4)
@@ -100,7 +103,7 @@ class MailEntityTests(MailTestMixin):
     def test_get_associated_entities(self):
         assign_perm("mailinglists.view_mailentity", self.user)
 
-        response = self.client.get(f"{self.url}?groups={self.group.id}", **self.headers)
+        response = self.client.get(f"{self.url}?groups={self.group.id}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 2)

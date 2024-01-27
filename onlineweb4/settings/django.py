@@ -214,7 +214,6 @@ INSTALLED_APPS = [
     "apps.inventory",
     "apps.payment",
     "apps.permissions",
-    "apps.photoalbum",
     "apps.posters",
     "apps.slack",
     "apps.splash",

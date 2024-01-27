@@ -3,11 +3,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser
 from apps.companyprofile.models import Company
 from apps.events.models import CompanyEvent, GroupRestriction
-from apps.online_oidc_provider.test import OIDCTestCase
 
 from .utils import attend_user_to_event, generate_event, generate_user
 
@@ -17,12 +17,11 @@ def generate_attendee(event, username, rfid):
     return attend_user_to_event(event, user)
 
 
-class EventsAPITestCase(OIDCTestCase):
+class EventsAPITestCase(APITestCase):
     def setUp(self):
         self.committee = G(Group, name="Bedkom")
         self.user = generate_user(username="_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.headers, **self.generate_headers()}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("events-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
@@ -78,21 +77,21 @@ class EventsAPITestCase(OIDCTestCase):
         self.assertNotIn(bedpres_with_evilcorp.id, event_titles_list)
 
     def test_event_with_group_restriction(self):
-        with self.assertNumQueries(8):
-            response = self.client.get(self.id_url(self.event.id), **self.headers)
+        with self.assertNumQueries(6):
+            response = self.client.get(self.id_url(self.event.id))
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         restricted_to_group: Group = G(Group)
         G(GroupRestriction, event=self.event, groups=[restricted_to_group])
 
-        with self.assertNumQueries(3):
-            response = self.client.get(self.id_url(self.event.id), **self.headers)
+        with self.assertNumQueries(1):
+            response = self.client.get(self.id_url(self.event.id))
             self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         attendee = attend_user_to_event(self.event, self.user)
 
         self.assertIn(attendee, self.event.attendance_event.attendees.all())
 
-        with self.assertNumQueries(8):
-            response = self.client.get(self.id_url(self.event.id), **self.headers)
+        with self.assertNumQueries(6):
+            response = self.client.get(self.id_url(self.event.id))
             self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser as User
 from apps.feedback.models import (
@@ -16,7 +17,7 @@ from apps.feedback.models import (
     RatingQuestion,
     TextQuestion,
 )
-from apps.online_oidc_provider.test import OIDCTestCase
+from onlineweb4.testing import GetUrlMixin
 
 from .base_tests import FeedbackTestCaseMixin
 
@@ -31,9 +32,11 @@ def add_content_type_permission_to_group(group: Group, model):
         group.permissions.add(permission)
 
 
-class FeedbackAPITestCase(FeedbackTestCaseMixin, OIDCTestCase):
+class FeedbackAPITestCase(GetUrlMixin, FeedbackTestCaseMixin, APITestCase):
     def setUp(self):
         super().setUp()
+        self.user = G(User)
+        self.client.force_authenticate(user=self.user)
 
         self.feedback: Feedback = G(Feedback)
 
@@ -76,27 +79,28 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         return self.get_action_url("submit", id)
 
     def test_url_returns_401_without_login(self):
-        response = self.client.get(self.get_list_url(), **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_url_returns_ok_with_login(self):
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_cannot_retrieve_a_relation_when_they_cannot_answer(self):
         relation = self.create_feedback_relation()
-        response = self.client.get(self.get_detail_url(relation.id), **self.headers)
+        response = self.client.get(self.get_detail_url(relation.id))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_user_can_retrieve_a_relation_when_they_can_answer(self):
         relation = self.create_feedback_relation(user=self.user)
-        response = self.client.get(self.get_detail_url(relation.id), **self.headers)
+        response = self.client.get(self.get_detail_url(relation.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_retrieve_a_relation_when_they_have_answered(self):
         relation = self.create_feedback_relation()
         relation.answered.add(self.user)
-        response = self.client.get(self.get_detail_url(relation.id), **self.headers)
+        response = self.client.get(self.get_detail_url(relation.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_users_can_answer_with_a_rating_question(self):
@@ -105,7 +109,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(relation.id),
             {"rating_answers": [{"question": rating_question.id, "answer": 1}]},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -116,7 +119,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(relation.id),
             {"rating_answers": [{"question": rating_question.id, "answer": 7}]},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -127,7 +129,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(relation.id),
             {"text_answers": [{"question": question.id, "answer": "Dette er et svar"}]},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -138,7 +139,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(relation.id),
             {"text_answers": [{"question": question.id, "answer": ""}]},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -153,7 +153,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
                     {"question": question.id, "answer": question.choices.first().choice}
                 ]
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -171,7 +170,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
                     }
                 ]
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -195,7 +193,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
                     }
                 ],
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -210,7 +207,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(relation.id),
             {"rating_answers": [{"question": rating_question.id, "answer": 1}]},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -222,7 +218,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(relation.id),
             {"rating_answers": [{"question": rating_question.id, "answer": 1}]},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -237,7 +232,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
                 "rating_answers": [{"question": rating_question.id, "answer": 1}],
                 "text_answers": [{"question": text_question.id, "answer": ""}],
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -253,7 +247,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
                     {"question": rating_question.id, "answer": 2},
                 ]
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -264,7 +257,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(survey.get_feedback_relation().id),
             {"text_answers": [{"question": question.id, "answer": "Dette er et svar"}]},
-            **self.headers,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -274,7 +266,6 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(survey.get_feedback_relation().id),
             {"text_answers": [{"question": question.id, "answer": "Dette er et svar"}]},
-            **self.headers,
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -284,12 +275,11 @@ class FeedbackRelationTest(FeedbackAPITestCase):
         response = self.client.post(
             self.get_submit_url(survey.get_feedback_relation().id),
             {"text_answers": [{"question": question.id, "answer": "Dette er et svar"}]},
-            **self.headers,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
-class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
+class TextQuestionTestCase(FeedbackAPITestCase, APITestCase):
     basename = "feedback_question_text"
 
     def setUp(self):
@@ -302,22 +292,23 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
         self.feedback_relation = self.create_feedback_relation(user=self.user)
 
     def test_cannot_view_without_login(self):
-        response = self.client.get(self.get_list_url(), **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_cannot_view_without_permission(self):
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_can_list_questions(self):
         self.group.user_set.add(self.user)
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_admin_user_can_retrieve_questions(self):
         self.group.user_set.add(self.user)
         question = self.create_text_question()
-        response = self.client.get(self.get_detail_url(question.id), **self.headers)
+        response = self.client.get(self.get_detail_url(question.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -330,7 +321,6 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
                 "label": "this is a label",
                 "display": True,
             },
-            **self.headers,
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -344,7 +334,6 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
                 "label": "this is a label",
                 "display": True,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -353,7 +342,7 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
         self.group.user_set.add(self.user)
         question = self.create_text_question()
         response = self.client.patch(
-            self.get_detail_url(question.id), {"display": False}, **self.headers
+            self.get_detail_url(question.id), {"display": False}
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -362,13 +351,13 @@ class TextQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
     def test_permitted_user_can_delete_question(self):
         self.group.user_set.add(self.user)
         question = self.create_text_question()
-        response = self.client.delete(self.get_detail_url(question.id), **self.headers)
+        response = self.client.delete(self.get_detail_url(question.id))
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(TextQuestion.objects.filter(pk=question.id).count(), 0)
 
 
-class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
+class RatingQuestionTestCase(FeedbackAPITestCase, APITestCase):
     basename = "feedback_question_rating"
 
     def setUp(self):
@@ -379,23 +368,24 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
         self.feedback_relation = self.create_feedback_relation(user=self.user)
 
     def test_cannot_view_without_login(self):
-        response = self.client.get(self.get_list_url(), **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_admin_can_list_questions(self):
         self.group.user_set.add(self.user)
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_cannot_retrieve_without_permission(self):
         question = self.create_rating_question()
-        response = self.client.get(self.get_detail_url(question.id), **self.headers)
+        response = self.client.get(self.get_detail_url(question.id))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_admin_user_can_retrieve_questions(self):
         self.group.user_set.add(self.user)
         question = self.create_rating_question()
-        response = self.client.get(self.get_detail_url(question.id), **self.headers)
+        response = self.client.get(self.get_detail_url(question.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -408,7 +398,6 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
                 "label": "this is a label",
                 "display": True,
             },
-            **self.headers,
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -422,7 +411,6 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
                 "label": "this is a label",
                 "display": True,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -431,7 +419,7 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
         self.group.user_set.add(self.user)
         question = self.create_rating_question()
         response = self.client.patch(
-            self.get_detail_url(question.id), {"display": False}, **self.headers
+            self.get_detail_url(question.id), {"display": False}
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -440,17 +428,19 @@ class RatingQuestionTestCase(FeedbackAPITestCase, OIDCTestCase):
     def test_permitted_user_can_delete_question(self):
         self.group.user_set.add(self.user)
         question = self.create_rating_question()
-        response = self.client.delete(self.get_detail_url(question.id), **self.headers)
+        response = self.client.delete(self.get_detail_url(question.id))
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(RatingQuestion.objects.filter(pk=question.id).count(), 0)
 
 
-class GenericSurveyTestCase(OIDCTestCase):
+class GenericSurveyTestCase(GetUrlMixin, APITestCase):
     basename = "feedback_generic_surveys"
 
     def setUp(self):
         super().setUp()
+        self.user = G(User)
+        self.client.force_authenticate(user=self.user)
         self.group: Group = G(Group)
         add_content_type_permission_to_group(self.group, GenericSurvey)
         self.feedback: Feedback = G(Feedback)
@@ -465,35 +455,36 @@ class GenericSurveyTestCase(OIDCTestCase):
         return survey
 
     def test_cannot_view_without_login(self):
-        response = self.client.get(self.get_list_url(), **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_cannot_view_without_permission(self):
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_permitted_can_list_surveys(self):
         self.group.user_set.add(self.user)
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_owner_user_can_retrieve_their_own_survey(self):
         self.group.user_set.add(self.user)
         survey = self.create_survey()
-        response = self.client.get(self.get_detail_url(survey.id), **self.headers)
+        response = self.client.get(self.get_detail_url(survey.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_other_user_cannot_retrieve_survey_without_ownership(self):
         self.group.user_set.add(self.user)
         survey = self.create_survey(G(User), G(Group))
-        response = self.client.get(self.get_detail_url(survey.id), **self.headers)
+        response = self.client.get(self.get_detail_url(survey.id))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         survey.owner_group = self.group
         survey.save()
 
-        response = self.client.get(self.get_detail_url(survey.id), **self.headers)
+        response = self.client.get(self.get_detail_url(survey.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_create_survey(self):
@@ -503,7 +494,7 @@ class GenericSurveyTestCase(OIDCTestCase):
             "feedback": self.feedback.id,
             "deadline": (timezone.datetime.now() + timezone.timedelta(days=7)).date(),
         }
-        response = self.client.post(self.get_list_url(), survey_data, **self.headers)
+        response = self.client.post(self.get_list_url(), survey_data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_user_can_update_survey(self):
@@ -513,9 +504,7 @@ class GenericSurveyTestCase(OIDCTestCase):
             "deadline": (timezone.datetime.now() + timezone.timedelta(days=14)).date()
         }
 
-        response = self.client.patch(
-            self.get_detail_url(survey.id), survey_data, **self.headers
-        )
+        response = self.client.patch(self.get_detail_url(survey.id), survey_data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_updating_survey_does_not_change_owner(self):
@@ -523,9 +512,7 @@ class GenericSurveyTestCase(OIDCTestCase):
         survey = self.create_survey(G(User), self.group)
         survey_data = {"title": "A way better title"}
 
-        response = self.client.patch(
-            self.get_detail_url(survey.id), survey_data, **self.headers
-        )
+        response = self.client.patch(self.get_detail_url(survey.id), survey_data)
         survey.refresh_from_db()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(self.user, survey.owner)
