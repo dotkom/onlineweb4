@@ -1,11 +1,10 @@
 from rest_framework.permissions import (
+    DjangoModelPermissions,
     DjangoModelPermissionsOrAnonReadOnly,
     IsAuthenticated,
 )
 from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.viewsets import ModelViewSet
-
-from apps.api.permissions import TokenHasScopeOrUserHasModelPermissionsOrWriteOnly
 
 from ..models import (
     CommitteeApplication,
@@ -18,6 +17,23 @@ from .serializers import (
     CommitteeApplicationSerializer,
     MembershipApprovalSerializer,
 )
+
+
+class UserHasModelPermissionsOrWriteOnly(DjangoModelPermissions):
+    perms_map = {
+        "GET": ["%(app_label)s.view_%(model_name)s"],
+        "OPTIONS": [],
+        "HEAD": [],
+        "POST": ["%(app_label)s.add_%(model_name)s"],
+        "PUT": ["%(app_label)s.change_%(model_name)s"],
+        "PATCH": ["%(app_label)s.change_%(model_name)s"],
+        "DELETE": ["%(app_label)s.delete_%(model_name)s"],
+    }
+
+    def has_permission(self, request, view):
+        if request.method == "POST":
+            return True
+        return super().has_permission(request, view)
 
 
 class CommitteeApplicationPeriodViewSet(ModelViewSet):
@@ -37,7 +53,7 @@ class CommitteeApplicationViewSet(ModelViewSet):
     schema = AutoSchema(tags=["Committee Application"])
     serializer_class = CommitteeApplicationSerializer
     queryset = CommitteeApplication.objects.all()
-    permission_classes = [TokenHasScopeOrUserHasModelPermissionsOrWriteOnly]
+    permission_classes = [UserHasModelPermissionsOrWriteOnly]
 
     def perform_create(self, serializer):
         if self.request.user and self.request.user.is_authenticated:

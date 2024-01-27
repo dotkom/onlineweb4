@@ -18,7 +18,6 @@ urlpatterns = [
     re_path(r"^feedback-pending/$", views.feedback_pending, name="feedback_pending"),
     re_path(r"^edit/$", views.edit_profile, name="profile_edit"),
     re_path(r"^privacy/$", views.privacy, name="profile_privacy"),
-    re_path(r"^connected_apps/$", views.connected_apps, name="profile_connected_apps"),
     re_path(r"^password/$", views.password, name="profile_password"),
     re_path(r"^position/$", views.position, name="profile_position"),
     re_path(r"^email/$", views.add_email, name="profile_add_email"),

@@ -34,7 +34,6 @@ let entryPoints = [
     { out: 'hobbygroups', in: 'assets/hobbygroups/index.js' },
     { out: 'mailinglists', in: 'assets/mailinglists/index.js' },
     { out: 'profiles', in: 'assets/profiles/index.js' },
-    { out: 'sso', in: 'assets/sso/index.js' },
     { out: 'resourcecenter', in: 'assets/resourcecenter/index.js' },
     { out: 'webshop', in: 'assets/webshop/index.js' },
     { out: 'wiki', in: 'assets/wiki/index.js' },

@@ -70,7 +70,7 @@ class AttendanceEventTestCase(OIDCTestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_not_extra_queries_for_logged_in(self):
-        with self.assertNumQueries(26):
+        with self.assertNumQueries(24):
             response = self.client.get(self.get_list_url(), **self.headers)
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -408,7 +408,7 @@ class AttendanceEventTestCase(OIDCTestCase):
         self.attendee1.save()
         self.attendee2.save()
 
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(6):
             response = self.client.get(
                 self.get_public_attendees_url(self.event.id), **self.headers
             )

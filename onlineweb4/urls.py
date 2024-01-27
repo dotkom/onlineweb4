@@ -216,18 +216,6 @@ if "apps.splash" in settings.INSTALLED_APPS:
         re_path(r"^splash/", include("apps.splash.api.urls")),
     ]
 
-if "apps.sso" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^sso/", include("apps.sso.urls")),
-        re_path(
-            r"^sso/", include("oauth2_provider.urls", namespace="oauth2_provider")
-        ),  # Shadow URL path to allow overrides in apps.sso.urls.
-        re_path(
-            r"^dashboard/auth/sso/",
-            include("apps.sso.dashboard.urls", namespace="dashboard"),
-        ),
-    ]
-
 if "apps.webshop" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^webshop/", include("apps.webshop.urls")),

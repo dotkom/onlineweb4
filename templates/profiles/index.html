@@ -45,9 +45,6 @@ Min side - Online
                         <li class="{% if 'privacy' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'privacy' %}" data-section="privacy">Personvern</a>
                         </li>
-                        <li class="{% if 'connected_apps' == active_tab %}active{% endif %}">
-                            <a href="{% url 'profiles_active' 'connected_apps' %}" data-section="connected_apps">Apptilkoblinger</a>
-                        </li>
                         <li class="{% if 'marks' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker &amp; suspensjoner</a>
                         </li>
@@ -86,9 +83,6 @@ Min side - Online
                         </section>
                         <section id="privacy">
                             {% include "profiles/privacy.html" %}
-                        </section>
-                        <section id="connected_apps">
-                            {% include "profiles/connected_apps.html" %}
                         </section>
                         <section id="marks">
                             {% include "profiles/marks.html" %}

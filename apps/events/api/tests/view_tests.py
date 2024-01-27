@@ -83,7 +83,7 @@ class EventsAPITestCase(OIDCTestCase):
         self.assertNotIn(bedpres_with_evilcorp.id, event_titles_list)
 
     def test_event_with_group_restriction(self):
-        with self.assertNumQueries(14):
+        with self.assertNumQueries(12):
             response = self.client.get(
                 self.get_detail_url(self.event.id), **self.headers
             )
@@ -92,7 +92,7 @@ class EventsAPITestCase(OIDCTestCase):
         restricted_to_group: Group = G(Group)
         G(GroupRestriction, event=self.event, groups=[restricted_to_group])
 
-        with self.assertNumQueries(5):
+        with self.assertNumQueries(3):
             response = self.client.get(
                 self.get_detail_url(self.event.id), **self.headers
             )
@@ -100,7 +100,7 @@ class EventsAPITestCase(OIDCTestCase):
 
         attendee = attend_user_to_event(self.event, self.user)
 
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(9):
             self.assertIn(attendee, self.event.attendance_event.attendees.all())
             response = self.client.get(
                 self.get_detail_url(self.event.id), **self.headers

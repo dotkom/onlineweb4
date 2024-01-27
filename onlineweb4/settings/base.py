@@ -5,8 +5,6 @@ from pathlib import Path
 
 from decouple import config
 
-from apps.sso.settings import OAUTH2_SCOPES
-
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = Path(globals()["__file__"]).parent
 # Root directory. Contains manage.py
@@ -66,19 +64,6 @@ SLACK_INVITER = {
     "token": config("OW4_DJANGO_SLACK_INVITER_TOKEN", default="xoxp-1234_fake"),
 }
 
-# SSO / OAuth2 settings
-OAUTH2_PROVIDER_APPLICATION_MODEL = "sso.Client"
-OAUTH2_PROVIDER = {
-    "OAUTH2_VALIDATOR_CLASS": "apps.sso.validator.Validator",
-    "OIDC_ENABLED": True,
-    "PKCE": True,
-    "SCOPES": OAUTH2_SCOPES,
-    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
-    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
-    "REFRESH_TOKEN_EXPIRE_SECONDS": 43200,
-    "OIDC_RSA_PRIVATE_KEY": config("OW4_OIDC_RSA_PRIVATE_KEY", default=""),
-}
-
 
 def get_stats_file() -> str:
     if existing := os.getenv("OW4_WEBPACK_LOADER_STATS_FILE"):
@@ -130,7 +115,7 @@ IMPORT_DDF_MODELS = False
 CORS_ORIGIN_ALLOW_ALL = config(
     "OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True
 )
-CORS_URLS_REGEX = r"^(/api/v1/.*|/sso/.*|/openid/.*)$"  # Enables CORS on all /api/v1/, /sso/user/ and all /openid/ endpoints
+CORS_URLS_REGEX = r"^(/api/v1/.*|/openid/.*)$"  # Enables CORS on all /api/v1/, and all /openid/ endpoints
 
 
 # Google reCaptcha settings
@@ -159,3 +144,18 @@ SECURE_PROXY_SSL_HEADER = (
 VIMEO_API_TOKEN = config("OW4_VIMEO_API_TOKEN", default=None)
 
 COGNITO_USER_POOL_ID = config("OW4_COGNITO_USER_POOL_ID", default="")
+
+AWS_COGNITO_REGION = "eu-north-1"
+
+# we explicitly do not allow creation of JWT-tokens with simplejwt, we only want to verify that the ones we get from cognito are valid
+SIMPLE_JWT = {
+    # https://docs.aws.amazon.com/cognito/latest/developerguide/amazon-cognito-user-pools-using-tokens-verifying-a-jwt.html#amazon-cognito-user-pools-using-tokens-manually-inspect
+    "JWK_URL": f"https://cognito-idp.{AWS_COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}/.well-known/jwks.json",
+    "ISSUER": f"https://cognito-idp.{AWS_COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}",
+    # the field on the user which is the ID
+    "USER_ID_FIELD": "cognito_subject",
+    # the value in the token that is the ID
+    "USER_ID_CLAIM": "sub",
+    "ALGORITHM": "RS256",
+    "TOKEN_TYPE_CLAIM": "token_use",
+}

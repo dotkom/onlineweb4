@@ -14,9 +14,14 @@ class OidcOauth2Auth(authentication.BaseAuthentication):
         try:
             oauth2_token = Token.objects.get(access_token=access_token)
         except Token.DoesNotExist:
-            raise exceptions.AuthenticationFailed("The oauth2 token is invalid")
+            return None
 
         if oauth2_token.has_expired():
             raise exceptions.AuthenticationFailed("The oauth2 token has expired")
 
         return oauth2_token.user, None
+
+    def authenticate_header(self, request):
+        # https://www.django-rest-framework.org/api-guide/authentication/#custom-authentication
+        # Should actually give a link to where one could log in
+        return "Plz log in"
