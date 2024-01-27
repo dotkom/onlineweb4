@@ -6,9 +6,9 @@ from django.test import TestCase
 from django.urls import reverse
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.companyprofile.models import Company
-from apps.online_oidc_provider.test import OIDCTestCase
 
 
 class CompanyTests(TestCase):
@@ -32,7 +32,7 @@ class CompanyProfileURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class CompanyAPITestCase(OIDCTestCase):
+class CompanyAPITestCase(APITestCase):
     def setUp(self):
         self.url = reverse("companies-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"

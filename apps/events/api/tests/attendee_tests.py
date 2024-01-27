@@ -2,26 +2,29 @@ from django.contrib.auth.models import Group
 from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser
 from apps.events.constants import AttendStatus
 from apps.events.tests.utils import attend_user_to_event, generate_event
-from apps.online_oidc_provider.test import OIDCTestCase
+from onlineweb4.testing import GetUrlMixin
 
 from .utils import generate_attendee, generate_valid_rfid
 
 
-class AttendeeTestCase(OIDCTestCase):
+class AttendeeTestCase(GetUrlMixin, APITestCase):
     basename = "events_attendees"
 
     def setUp(self):
+        self.user = G(OnlineUser)
         self.committee: Group = G(Group, name="Arrkom")
         assign_perm("events.change_attendee", self.committee)
         self.user.groups.add(self.committee)
+        self.client.force_authenticate(user=self.user)
 
         self.event = generate_event(organizer=self.committee)
-        self.attendee1 = generate_attendee(self.event, "test1", "0123")
-        self.attendee2 = generate_attendee(self.event, "test2", "3210")
+        self.attendee1 = generate_attendee(self.event, "test1", "01234578")
+        self.attendee2 = generate_attendee(self.event, "test2", "32109876")
         self.attendees = [self.attendee1, self.attendee2]
 
     def get_register_attendance_url(self):
@@ -43,7 +46,7 @@ class AttendeeTestCase(OIDCTestCase):
         self.attendee1.save()
 
         response = self.client.patch(
-            self.get_administrate_url(self.attendee1.id), {"paid": True}, **self.headers
+            self.get_administrate_url(self.attendee1.id), {"paid": True}
         )
         self.attendee1.refresh_from_db()
 
@@ -57,7 +60,7 @@ class AttendeeTestCase(OIDCTestCase):
         attendee.save()
 
         response = self.client.patch(
-            self.get_administrate_url(self.attendee1.id), {"paid": True}, **self.headers
+            self.get_administrate_url(self.attendee1.id), {"paid": True}
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -70,7 +73,7 @@ class AttendeeTestCase(OIDCTestCase):
         attendee.save()
 
         response = self.client.patch(
-            self.get_administrate_url(self.attendee1.id), {"paid": True}, **self.headers
+            self.get_administrate_url(self.attendee1.id), {"paid": True}
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -82,7 +85,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.patch(
             self.get_administrate_url(self.attendee1.id),
             {"show_as_attending_event": True},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -93,9 +95,7 @@ class AttendeeTestCase(OIDCTestCase):
         self.attendee1.save()
 
         response = self.client.patch(
-            self.get_change_url(self.attendee1.id),
-            {"show_as_attending_event": True},
-            **self.headers,
+            self.get_change_url(self.attendee1.id), {"show_as_attending_event": True}
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -106,9 +106,7 @@ class AttendeeTestCase(OIDCTestCase):
         attendee.save()
 
         response = self.client.patch(
-            self.get_change_url(attendee.id),
-            {"show_as_attending_event": True},
-            **self.headers,
+            self.get_change_url(attendee.id), {"show_as_attending_event": True}
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -120,7 +118,7 @@ class AttendeeTestCase(OIDCTestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_missing_data_returns_bad_request(self):
-        response = self.client.post(self.get_register_attendance_url(), **self.headers)
+        response = self.client.post(self.get_register_attendance_url())
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -128,7 +126,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "username": self.attendee1.user.username},
-            **self.headers,
         )
 
         self.refresh_attendees()
@@ -144,7 +141,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "rfid": self.attendee1.user.rfid},
-            **self.headers,
         )
 
         self.refresh_attendees()
@@ -163,7 +159,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "rfid": self.attendee1.user.rfid},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -176,7 +171,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "rfid": "fake_rfid"},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -193,7 +187,6 @@ class AttendeeTestCase(OIDCTestCase):
                 "username": self.attendee1.user.username,
                 "rfid": "new_rfid",
             },
-            **self.headers,
         )
 
         self.refresh_attendees()
@@ -208,7 +201,6 @@ class AttendeeTestCase(OIDCTestCase):
                 "username": self.attendee1.user.username + "fake",
                 "rfid": "new_rfid",
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -225,7 +217,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "username": self.attendee2.user.username},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -242,7 +233,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "rfid": self.attendee2.user.rfid},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -263,7 +253,6 @@ class AttendeeTestCase(OIDCTestCase):
                 "rfid": self.attendee2.user.rfid,
                 "approved": True,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -277,9 +266,7 @@ class AttendeeTestCase(OIDCTestCase):
         self.event.attendance_event.save()
 
         response = self.client.post(
-            self.get_register_attendance_url(),
-            {"event": self.event.id, "rfid": ""},
-            **self.headers,
+            self.get_register_attendance_url(), {"event": self.event.id, "rfid": ""}
         )
 
         self.refresh_attendees()
@@ -297,8 +284,7 @@ class AttendeeTestCase(OIDCTestCase):
 
         response = self.client.post(
             self.get_register_attendance_url(),
-            {"event": self.event.id, "rfid": self.attendee1.user.rfid},
-            **self.headers,
+            {"event": self.event.id},
         )
 
         self.refresh_attendees()
@@ -323,7 +309,6 @@ class AttendeeTestCase(OIDCTestCase):
                 "username": self.attendee1.user.username,
                 "rfid": rfid,
             },
-            **self.headers,
         )
 
         self.refresh_attendees()
@@ -344,17 +329,16 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "username": self.attendee1.user.username},
-            **self.headers,
         )
 
         self.refresh_attendees()
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_not_authenticated_user_registering_attendance(self):
+        self.client.force_authenticate(user=None)
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "username": self.attendee1.user.username},
-            **self.bare_headers,
         )
 
         self.refresh_attendees()
@@ -368,7 +352,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"event": self.event.id, "rfid": non_attending_user.rfid},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -381,7 +364,6 @@ class AttendeeTestCase(OIDCTestCase):
         response = self.client.post(
             self.get_register_attendance_url(),
             {"username": self.attendee1.user.username},
-            **self.headers,
         )
 
         self.refresh_attendees()
