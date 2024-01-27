@@ -13,7 +13,7 @@ django-filter = "~23.5"
 pillow = "~10.2"
 stripe = "~3.5"
 icalendar = "~5.0"
-google-api-python-client = "~2.113"
+google-api-python-client = "~2.115"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
 django-crispy-forms = "~2.0"
 crispy-bootstrap3 = "^2024.1"
@@ -63,13 +63,13 @@ psycopg2-binary = { version = "~2.9", optional = true }
 pytest = "~7.4"
 pytest-cov = "~4.1"
 pytest-django = "~4.7"
-pytest-xdist = "~3.4"
+pytest-xdist = "~3.5"
 freezegun = "~1.4"
 coverage = { version = "~7.4", extras = [ "toml" ] }
 
 # Linting
 ruff = "~0.1"
-isort = "~5.12"
+isort = "~5.13"
 pycodestyle = "~2.11"
 black = "~23.12"
 pre-commit = "~3.6"
