@@ -4,8 +4,6 @@ import json
 
 from decouple import config
 
-from .base import OAUTH2_PROVIDER
-
 DEBUG = False
 TEMPLATE_DEBUG = False
 
@@ -27,8 +25,6 @@ DATABASES = {
         "PORT": "5432",
     },
 }
-
-OAUTH2_PROVIDER["OIDC_RSA_PRIVATE_KEY"] = env["OIDC_RSA_PRIVATE_KEY"]
 
 SECRET_KEY = env["SECRET_KEY"]
 
