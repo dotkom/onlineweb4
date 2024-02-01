@@ -233,6 +233,9 @@ if "rest_framework" in settings.INSTALLED_APPS:
         re_path(r"^api/v1/", include(SharedAPIRootRouter.shared_router.urls))
     ]
 
+if "mozilla_django_oidc" in settings.INSTALLED_APPS:
+    urlpatterns += [re_path(r"^auth0/", include("mozilla_django_oidc.urls"))]
+
 if "oidc_provider" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^openid/", include("oidc_provider.urls", namespace="oidc_provider"))

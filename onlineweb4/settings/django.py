@@ -73,7 +73,10 @@ SESSION_COOKIE_AGE = 31540000
 BASE_URL = config("OW4_DJANGO_BASE_URL", default="https://online.ntnu.no")
 
 AUTH_USER_MODEL = "authentication.OnlineUser"
-LOGIN_URL = "/auth/login/"
+LOGIN_URL = "/auth0/authenticate"
+
+LOGIN_REDIRECT_URL = BASE_URL
+LOGOUT_REDIRECT_URL = BASE_URL
 
 S3_MEDIA_STORAGE_ENABLED = False
 # Define where media (uploaded) files are stored
@@ -140,6 +143,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "oidc_provider.middleware.SessionManagementMiddleware",
+    "mozilla_django_oidc.middleware.SessionRefresh",
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -147,6 +151,8 @@ MIDDLEWARE = [
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",  # this is default
     "guardian.backends.ObjectPermissionBackend",
+    # to use Auth0 with non-api
+    "apps.authentication.backends.Auth0OIDCAB",
 )
 
 ROOT_URLCONF = "onlineweb4.urls"
@@ -180,6 +186,7 @@ INSTALLED_APPS = [
     "datetimewidget",
     "webpack_loader",
     "oidc_provider",
+    "mozilla_django_oidc",
     # Django apps
     "django.contrib.admin",
     "django.contrib.admindocs",
