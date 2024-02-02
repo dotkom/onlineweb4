@@ -56,14 +56,6 @@ USER_SEARCH_GROUPS = [
     48,  # FeminIT
 ]
 
-SLACK_INVITER = {
-    # e.g. onlinentnu
-    "team_name": config("OW4_DJANGO_SLACK_INVITER_TEAM_NAME", default="team_name_here"),
-    # Token generated using OAuth2: https://api.slack.com/docs/oauth
-    # Scopes needed: client+admin
-    "token": config("OW4_DJANGO_SLACK_INVITER_TOKEN", default="xoxp-1234_fake"),
-}
-
 
 def get_stats_file() -> str:
     if existing := os.getenv("OW4_WEBPACK_LOADER_STATS_FILE"):

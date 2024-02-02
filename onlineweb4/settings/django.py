@@ -219,7 +219,6 @@ INSTALLED_APPS = [
     "apps.payment",
     "apps.permissions",
     "apps.posters",
-    "apps.slack",
     "apps.splash",
     "apps.shop",
     "apps.webshop",

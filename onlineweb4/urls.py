@@ -196,9 +196,6 @@ if (
         ),
     ]
 
-if "apps.slack" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^slack/", include("apps.slack.urls"))]
-
 if "apps.splash" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^splash/", include("apps.splash.urls")),
