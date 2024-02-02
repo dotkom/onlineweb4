@@ -2,7 +2,6 @@
 import re
 
 from django import forms
-from django.contrib import auth
 from django.utils.translation import gettext as _
 
 from apps.authentication.models import OnlineUser, Position
@@ -98,31 +97,3 @@ class MembershipSettingsForm(forms.ModelForm):
         fields = ["field_of_study", "started_date"]
 
         widgets = {"started_date": forms.TextInput(attrs={"placeholder": "YYYY-MM-DD"})}
-
-
-class InternalServicesForm(forms.Form):
-    ow4_password = forms.CharField(
-        widget=forms.PasswordInput(), label=_("Online passord")
-    )
-    services_password = forms.CharField(
-        widget=forms.PasswordInput(), label=_("Ønsket service passord")
-    )
-    current_user = None
-
-    def clean(self):
-        super().clean()
-        if self.is_valid():
-            cleaned_data = self.cleaned_data
-
-            # User object relation here
-            user = auth.authenticate(
-                username=self.current_user.username,
-                password=cleaned_data["ow4_password"],
-            )
-
-            if user is None or user.id != self.current_user.id:
-                self._errors["ow4_password"] = self.error_class(
-                    [_("Passordet er ikke korrekt.")]
-                )
-
-            return cleaned_data

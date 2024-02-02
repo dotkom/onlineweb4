@@ -5,7 +5,6 @@ from django_dynamic_fixture import G
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.events.tests.utils import (
@@ -49,82 +48,6 @@ class EmailTestCase(APITestCase):
         response = self.client.get(self.id_url(self.other_email.id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_user_can_create_an_email(self):
-        response = self.client.post(self.url, {"email": "test@example.com"})
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertIn(
-            response.json().get("id"), [email.id for email in self.user.get_emails()]
-        )
-
-    def test_user_cannot_create_an_email_with_an_existing_address(self):
-        address = "test@example.com"
-        first_response = self.client.post(self.url, {"email": address})
-
-        self.assertEqual(first_response.status_code, status.HTTP_201_CREATED)
-
-        second_response = self.client.post(self.url, {"email": address})
-
-        self.assertEqual(second_response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            second_response.json().get("email"),
-            ["Det eksisterer allerede en bruker med denne e-postadressen"],
-        )
-
-    def test_user_can_change_primary_email(self):
-        self.assertTrue(self.email.primary)
-
-        email: Email = G(Email, user=self.user, verified=False)
-
-        response = self.client.patch(self.id_url(email.id), {"primary": True})
-
-        self.email.refresh_from_db()
-        email.refresh_from_db()
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(email.primary)
-        """ Make sure the other email is not primary anymore """
-        self.assertFalse(self.email.primary)
-
-    def test_user_cannot_remove_primary_email_without_selecting_a_new_primary(self):
-        self.assertTrue(self.email.primary)
-
-        email: Email = G(Email, user=self.user, verified=False)
-
-        response = self.client.patch(self.id_url(email.id), {"primary": False})
-
-        self.email.refresh_from_db()
-        email.refresh_from_db()
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(
-            response.json().get("primary"),
-            ["Kan bare endre primærepost ved å sette en annen som primær"],
-        )
-        self.assertFalse(email.primary)
-        """ Make sure the other email is still primary """
-        self.assertTrue(self.email.primary)
-
-    def test_user_cannot_verify_emails_without_token(self):
-        email: Email = G(Email, user=self.user, verified=False)
-        response = self.client.patch(self.id_url(email.id), {"verified": True})
-
-        email.refresh_from_db()
-
-        self.assertFalse(response.json().get("verified"))
-        self.assertFalse(email.verified)
-
-    def test_user_cannot_change_the_address_of_an_existing_email(self):
-        address = "test@example.com"
-        other_address = "test@test.io"
-        email: Email = G(Email, user=self.user, verified=False, email=address)
-        self.client.patch(self.id_url(email.id), {"email": other_address})
-
-        email.refresh_from_db()
-
-        self.assertEqual(email.email, address)
-        self.assertNotEqual(email.email, other_address)
 
 
 class PositionsTestCase(APITestCase):

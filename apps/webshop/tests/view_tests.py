@@ -72,13 +72,6 @@ class WebshopProductDetail(TestCase, WebshopTestMixin):
         order = order_line.orders.get(product=self.product)
         self.assertEqual(order.quantity, 3)
 
-    def test_order_not_logged_in(self):
-        response = self.client.post(self.url, {"quantity": 1})
-
-        self.assertRedirects(
-            response, "{}?next={}".format(reverse("auth_login"), self.url)
-        )
-
     def test_order_deadline_reached(self):
         self.product.deadline = "2010-12-12 00:00Z"
         self.product.save()

@@ -10,9 +10,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.serializers import (
     AnonymizeUserSerializer,
-    EmailCreateSerializer,
     EmailReadOnlySerializer,
-    EmailUpdateSerializer,
     GroupMemberCreateSerializer,
     GroupMemberReadOnlySerializer,
     GroupMemberUpdateSerializer,
@@ -20,12 +18,10 @@ from apps.authentication.serializers import (
     GroupRoleReadOnlySerializer,
     OnlineGroupCreateOrUpdateSerializer,
     OnlineGroupReadOnlySerializer,
-    PasswordUpdateSerializer,
     PermissionReadOnlySerializer,
     PositionCreateAndUpdateSerializer,
     PositionReadOnlySerializer,
     SpecialPositionSerializer,
-    UserCreateSerializer,
     UserReadOnlySerializer,
     UserUpdateSerializer,
 )
@@ -56,23 +52,12 @@ class UserViewSet(
     filterset_class = UserFilter
     queryset = User.objects.all()
     serializer_classes = {
-        "create": UserCreateSerializer,
         "update": UserUpdateSerializer,
         "read": UserReadOnlySerializer,
-        "change_password": PasswordUpdateSerializer,
         "anonymize_user": AnonymizeUserSerializer,
         "dump_data": UserDataSerializer,
         "user_permissions": PermissionReadOnlySerializer,
     }
-
-    @action(detail=True, methods=["put"])
-    def change_password(self, request, pk=None):
-        user: User = self.get_object()
-        serializer = self.get_serializer(user, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
     # See templates/events/index.html. This is exposing this logic in the api.
     @action(detail=True, methods=["get"], url_path="personalized_calendar_link")
@@ -142,28 +127,14 @@ class PermissionsViewSet(viewsets.ReadOnlyModelViewSet):
         return permissions
 
 
-class EmailViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
+class EmailViewSet(MultiSerializerMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAuthenticated,)
     serializer_classes = {
-        "create": EmailCreateSerializer,
-        "update": EmailUpdateSerializer,
         "read": EmailReadOnlySerializer,
     }
 
     def get_queryset(self):
         return Email.objects.filter(user=self.request.user)
-
-    def destroy(self, request, *args, **kwargs):
-        instance: Email = self.get_object()
-        if instance.primary:
-            return Response(
-                {
-                    "message": "Du kan ikke slette en primær-epost. Du må først velge en annen epost som "
-                    "primær for å kunne slette denne."
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        return super().destroy(request, *args, **kwargs)
 
 
 class PositionViewSet(MultiSerializerMixin, viewsets.ModelViewSet):

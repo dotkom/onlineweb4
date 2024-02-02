@@ -3,12 +3,10 @@ import random
 import string
 
 from django.contrib.auth.models import Group, Permission
-from django.contrib.auth.password_validation import validate_password
 from django.utils.timezone import datetime
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import serializers
 
-from apps.authentication.fields import OnlineUserEmailField
 from apps.authentication.models import (
     Email,
     GroupMember,
@@ -18,10 +16,8 @@ from apps.authentication.models import (
 )
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
-from apps.authentication.utils import send_register_verification_email
 from apps.gallery.models import ResponsiveImage
 from apps.gallery.serializers import ResponsiveImageSerializer
-from onlineweb4.fields.recaptcha import RecaptchaField
 
 
 class UserNameSerializer(serializers.ModelSerializer):
@@ -37,45 +33,6 @@ class UserReadOnlySerializer(serializers.ModelSerializer):
         model = User
         fields = ("id", "first_name", "last_name", "rfid", "username")
         read_only = True
-
-
-class PasswordUpdateSerializer(serializers.ModelSerializer):
-    current_password = serializers.CharField()
-    new_password = serializers.CharField()
-    new_password_confirm = serializers.CharField()
-
-    def validate_current_password(self, password):
-        request = self.context.get("request")
-        if not request:
-            raise serializers.ValidationError("Serializer missing request")
-
-        user: User = request.user
-        if user.has_usable_password() and not user.check_password(password):
-            raise serializers.ValidationError("Nåværende passord stemmer ikke")
-
-        return password
-
-    def validate_new_password(self, password):
-        if password:
-            validate_password(password)
-        return password
-
-    def validate(self, attrs):
-        new_password = attrs.get("new_password")
-        new_password_confirm = attrs.get("new_password_confirm")
-        if new_password != new_password_confirm:
-            raise serializers.ValidationError("Passordene stemmer ikke overens")
-        return attrs
-
-    def update(self, instance: User, validated_data: dict):
-        new_password = validated_data.get("new_password")
-        instance.set_password(new_password)
-        instance.save()
-        return instance
-
-    class Meta:
-        model = User
-        fields = ("current_password", "new_password", "new_password_confirm")
 
 
 class AnonymizeUserSerializer(serializers.ModelSerializer):
@@ -169,55 +126,6 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
         fields = ("username", "password")
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
-    recaptcha = RecaptchaField()
-    email = OnlineUserEmailField(required=True)
-
-    def validate_password(self, password: str):
-        validate_password(password)
-        return password
-
-    def create(self, validated_data):
-        """
-        The recaptcha field is not part of the model, but will still need to be validated.
-        All serializer fields will be put into 'Model#create', and 'recaptcha' is removed for the serializer not
-        to try and create it on the model-
-        """
-        validated_data.pop("recaptcha")
-
-        """ Create user with serializer method """
-        created_user = super().create(validated_data)
-
-        """ Set default values and related objects to user """
-        created_user.is_active = False
-        email = Email.objects.create(
-            user=created_user, email=validated_data.get("email").lower(), primary=True
-        )
-        created_user.set_password(created_user.password)
-        created_user.save()
-
-        send_register_verification_email(
-            user=created_user,
-            email_obj=email,
-            request=self.context.get("request", None),
-        )
-
-        return created_user
-
-    class Meta:
-        model = User
-        fields = (
-            "first_name",
-            "last_name",
-            "password",
-            "email",
-            "username",
-            "recaptcha",
-            "id",
-        )
-        extra_kwargs = {"password": {"write_only": True}}
-
-
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -306,54 +214,6 @@ class EmailReadOnlySerializer(serializers.ModelSerializer):
         fields = ("id", "email", "primary", "verified")
         extra_kwargs = {"user": {"write_only": True}}
         read_only = True
-
-
-class EmailCreateSerializer(serializers.ModelSerializer):
-    verified = serializers.BooleanField(default=False)
-    primary = serializers.BooleanField(default=False)
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    email = OnlineUserEmailField(required=True)
-
-    class Meta:
-        model = Email
-        fields = ("id", "email", "primary", "verified", "user")
-        read_only_fields = ("primary", "verified", "user")
-
-
-class EmailUpdateSerializer(serializers.ModelSerializer):
-    primary = serializers.BooleanField()
-
-    def validate_primary(self, obj: bool):
-        """
-        User cannot set an email as non-primary by itself.
-        It can only be done by setting another email as primary.
-        """
-        if not obj:
-            raise serializers.ValidationError(
-                "Kan bare endre primærepost ved å sette en annen som primær"
-            )
-        return obj
-
-    def update(self, instance: Email, validated_data):
-        request = self.context.get("request", None)
-        if not request.user:
-            raise serializers.ValidationError(
-                "Du må være logget inn for å oppdatere epost"
-            )
-
-        """ Set old primary email as inactive if this instance is set as primary """
-        if validated_data.get("primary", None):
-            primary_email: Email = request.user.email_object
-            if primary_email:
-                primary_email.primary = False
-                primary_email.save()
-
-        return super().update(instance, validated_data)
-
-    class Meta:
-        model = Email
-        fields = ("id", "email", "primary", "verified")
-        read_only_fields = ("email", "verified")
 
 
 class GroupReadOnlySerializer(serializers.ModelSerializer):

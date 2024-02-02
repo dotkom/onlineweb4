@@ -366,27 +366,6 @@ class Email(models.Model):
         ordering = ("user", "email")
 
 
-class RegisterToken(models.Model):
-    user = models.ForeignKey(
-        OnlineUser, related_name="register_user", on_delete=models.CASCADE
-    )
-    email = models.EmailField(_("epost"), max_length=254)
-    token = models.CharField(_("token"), max_length=32, unique=True)
-    created = models.DateTimeField(
-        _("opprettet dato"), editable=False, auto_now_add=True
-    )
-
-    @property
-    def is_valid(self):
-        valid_period = datetime.timedelta(days=1)
-        now = timezone.now()
-        return now < self.created + valid_period
-
-    class Meta:
-        permissions = (("view_registertoken", "View RegisterToken"),)
-        default_permissions = ("add", "change", "delete")
-
-
 class Membership(models.Model):
     """
     Holds usernames that are considered valid members of Online and the time they expire.
