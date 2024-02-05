@@ -75,7 +75,7 @@ jobs:
           DATABASE_URL: postgres://ow4user:ow4password@localhost:5432/ow4db
         run: poetry run py.test --cov=apps --cov-report xml
 
-      - uses: codecov/codecov-action@v3
+      - uses: codecov/codecov-action@v4
 
   lint-python:
     runs-on: ubuntu-latest
