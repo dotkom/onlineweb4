@@ -156,9 +156,9 @@ class FeedbackRelation(models.Model):
                 ~Q(pk__in=self.answered.all())
             )
         else:
-            from apps.events.models import Attendee
+            from apps.authentication.models import OnlineUser
 
-            return Attendee.objects.none()
+            return OnlineUser.objects.none()
 
     def content_email(self):
         if hasattr(self.content_object, "feedback_mail"):
