@@ -141,7 +141,7 @@ def dispatch_email_notification_task(notification_id: int):
         subject=notification.title,
         message=notification.body,
         from_email=notification.from_email,
-        recipient_list=[user.primary_email],
+        recipient_list=[user.email],
         fail_silently=False,
     )
 

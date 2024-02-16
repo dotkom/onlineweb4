@@ -298,7 +298,7 @@ def generate_json(request, event_id):
                 "first_name": a.user.first_name,
                 "last_name": a.user.last_name,
                 "year": a.user.year,
-                "email": a.user.primary_email,
+                "email": a.user.email,
                 "phone_number": a.user.phone_number,
                 "allergies": a.user.allergies,
             }

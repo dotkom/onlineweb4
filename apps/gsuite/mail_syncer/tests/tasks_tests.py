@@ -48,7 +48,7 @@ class GSuiteSignalsTestCase(TestCase):
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             insert_user_into_group_pass_if_already_member(
-                self.domain, group_name, user.primary_email
+                self.domain, group_name, user.email
             )
             mocked_logger.assert_called_with(
                 f'Email address "{email}" was already subscribed to mailing list "{group_name}"!'
@@ -76,7 +76,7 @@ class GSuiteSignalsTestCase(TestCase):
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             remove_user_from_group_pass_if_not_subscribed(
-                self.domain, group_name, user.primary_email
+                self.domain, group_name, user.email
             )
             mocked_logger.assert_called_with(
                 f'Email address "{email}" was not subscribed to mailing list "{group_name}"!'

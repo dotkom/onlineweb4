@@ -458,7 +458,7 @@ class PaymentReceipt(models.Model):
             "payment_id": payment_id,
             "items": receipt_items,
             "total_amount": total_amount,
-            "to_mail": [user.primary_email for user in to_users],
+            "to_mail": [user.email for user in to_users],
             "from_mail": from_mail,
         }
 

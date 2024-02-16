@@ -359,7 +359,7 @@ class GSuiteCreateAccount(View):
             messages.success(
                 request,
                 "Opprettet en G Suite konto til deg. Sjekk primærepostadressen din ({}) for instruksjoner.".format(
-                    request.user.primary_email
+                    request.user.email
                 ),
             )
         except HttpError as err:
