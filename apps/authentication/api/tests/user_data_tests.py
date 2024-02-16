@@ -15,41 +15,6 @@ from apps.events.tests.utils import (
 )
 
 
-class EmailTestCase(APITestCase):
-    def setUp(self):
-        self.user: User = generate_user(username="test_user")
-        self.other_user: User = generate_user(username="other_user")
-        self.client.force_authenticate(user=self.user)
-
-        self.url = reverse("user_emails-list")
-        self.id_url = lambda _id: self.url + str(_id) + "/"
-
-        self.email = self.user.email_object
-        self.other_email = self.other_user.email_object
-
-    def test_emails_view_returns_200(self):
-        response = self.client.get(self.url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_un_authenticated_user_gets_401(self):
-        self.client.force_authenticate(user=None)
-        response = self.client.get(self.url)
-
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_user_can_view_their_own_emails(self):
-        response = self.client.get(self.id_url(self.email.id))
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json().get("id"), self.email.id)
-
-    def test_user_cannot_view_other_users_emails(self):
-        response = self.client.get(self.id_url(self.other_email.id))
-
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-
 class PositionsTestCase(APITestCase):
     def setUp(self):
         self.user: User = generate_user(username="test_user")

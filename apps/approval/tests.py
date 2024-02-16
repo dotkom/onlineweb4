@@ -9,7 +9,7 @@ from guardian.shortcuts import assign_perm
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.authentication.models import Email, OnlineGroup
+from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
@@ -88,9 +88,12 @@ class EmailTest(TransactionTestCase):
     # Create an approval
     def setUp(self):
         self.applicant = G(
-            User, username="sokeren", first_name="Søker", last_name="Søkersen"
+            User,
+            username="sokeren",
+            first_name="Søker",
+            last_name="Søkersen",
+            email="test@example.com",
         )
-        G(Email, user=self.applicant, email="test@example.com")
         self.approval = G(MembershipApproval, applicant=self.applicant)
         self.logger = logging.getLogger(__name__)
 

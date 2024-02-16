@@ -10,7 +10,7 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
-from apps.authentication.models import Email, GroupRole, OnlineGroup, OnlineUser
+from apps.authentication.models import GroupRole, OnlineGroup, OnlineUser
 from apps.authentication.validators import validate_rfid
 
 
@@ -88,10 +88,6 @@ class AuthenticationTest(TestCase):
         self.user.started_date = self.now.date() - timedelta(days=365)
         self.user.field_of_study = FieldOfStudyType.SOCIAL_MEMBER
         self.assertEqual(0, self.user.year)
-
-    def test_email_primary_on_creation(self):
-        email = G(Email, user=self.user, email="test@test.com")
-        self.assertTrue(email.primary)
 
 
 class UserGroupSyncTestCase(TestCase):

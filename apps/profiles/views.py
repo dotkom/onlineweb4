@@ -18,10 +18,9 @@ from watson import search as watson
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
 from apps.authentication.constants import GroupType
-from apps.authentication.models import Email, OnlineGroup
+from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position
-from apps.authentication.serializers import EmailReadOnlySerializer
 from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import (
     create_g_suite_account,
@@ -432,13 +431,3 @@ class ProfileViewSet(viewsets.ViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=user)
             return response.Response(serializer.data)
-
-
-class UserEmailAddressesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """TODO: Support creation of mail, and updating of primary mail"""
-
-    serializer_class = EmailReadOnlySerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        return Email.objects.filter(user=self.request.user)

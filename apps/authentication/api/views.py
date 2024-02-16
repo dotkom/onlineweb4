@@ -5,12 +5,11 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
+from apps.authentication.models import GroupMember, GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.serializers import (
     AnonymizeUserSerializer,
-    EmailReadOnlySerializer,
     GroupMemberCreateSerializer,
     GroupMemberReadOnlySerializer,
     GroupMemberUpdateSerializer,
@@ -125,16 +124,6 @@ class PermissionsViewSet(viewsets.ReadOnlyModelViewSet):
             ) | Permission.objects.filter(user=user)
             permissions.distinct().order_by("content_type")
         return permissions
-
-
-class EmailViewSet(MultiSerializerMixin, viewsets.ReadOnlyModelViewSet):
-    permission_classes = (IsAuthenticated,)
-    serializer_classes = {
-        "read": EmailReadOnlySerializer,
-    }
-
-    def get_queryset(self):
-        return Email.objects.filter(user=self.request.user)
 
 
 class PositionViewSet(MultiSerializerMixin, viewsets.ModelViewSet):

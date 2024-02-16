@@ -13,7 +13,6 @@ from apps.approval.models import (
 from apps.article.serializers import ArticleSerializer
 from apps.authentication.models import GroupMember
 from apps.authentication.serializers import (
-    EmailReadOnlySerializer,
     GroupRoleReadOnlySerializer,
     SpecialPositionSerializer,
 )
@@ -351,7 +350,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     gender = serializers.SerializerMethodField()
     privacy = PrivacySerializer()
     member = MembershipSerializer()
-    email_objects = EmailReadOnlySerializer(many=True, source="get_emails")
     # Articles
     created_articles = ArticleSerializer(many=True)
     # Feedback
@@ -438,11 +436,9 @@ class UserDataSerializer(serializers.ModelSerializer):
             "nickname",
             "compiled",
             "ntnu_username",
-            "primary_email",
+            "email",
             "privacy",
             "online_mail",
-            "email",
-            "email_objects",
             "started_date",
             "image",
             "member",

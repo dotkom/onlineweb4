@@ -215,20 +215,6 @@ class OnlineUser(AbstractUser):
         full_name = "%s %s" % (self.first_name, self.last_name)
         return full_name.strip()
 
-    @property
-    def primary_email(self) -> str:
-        email_object = self.email_object
-        if email_object:
-            return email_object.email
-        return None
-
-    @property
-    def email_object(self) -> "Email":
-        return self.get_emails().filter(primary=True).first()
-
-    def get_emails(self):
-        return Email.objects.filter(user=self)
-
     def get_active_suspensions(self):
         return self.suspension_set.filter(active=True)
 

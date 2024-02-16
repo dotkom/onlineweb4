@@ -73,7 +73,4 @@ router.register("profile/marks", MarksViewSet, basename="profile-marks")
 router.register(
     "profile/suspensions", SuspensionViewSet, basename="profile-suspensions"
 )
-router.register(
-    "profile/emails", views.UserEmailAddressesViewSet, basename="profile-emails"
-)
 router.register("profile", views.ProfileViewSet, basename="profile")

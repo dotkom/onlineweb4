@@ -8,7 +8,6 @@ from django.test import TransactionTestCase
 from django.utils import timezone
 from django_dynamic_fixture import G
 
-from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.notifications.constants import PermissionType
@@ -37,8 +36,8 @@ class PaymentTest(TransactionTestCase):
             ntnu_username="ola123ntnu",
             first_name="ola",
             last_name="nordmann",
+            email="ola123@nordmann.no",
         )
-        G(Email, user=self.user, primary=True)
 
         self.event_payment = G(
             Payment,
