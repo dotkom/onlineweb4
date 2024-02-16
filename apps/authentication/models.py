@@ -279,6 +279,24 @@ class OnlineUser(AbstractUser):
 
             self.online_mail = create_online_mail_alias(self)
 
+        if (
+            self.pk
+            and (old := OnlineUser.objects.filter(pk=self.pk).first())
+            and self.email != old.email
+        ):
+            from apps.gsuite.mail_syncer.tasks import update_mailing_list
+            from onlineweb4.settings.gsuite import MAILING_LIST_USER_FIELDS_TO_LIST_NAME
+
+            jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
+            infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
+
+            if self.jobmail:
+                update_mailing_list(jobmail, email=old.email, added=False)
+                update_mailing_list(jobmail, email=self.email, added=True)
+            if self.infomail:
+                update_mailing_list(infomail, email=old.email, added=False)
+                update_mailing_list(infomail, email=self.email, added=True)
+
         super().save(*args, **kwargs)
 
     def serializable_object(self):
