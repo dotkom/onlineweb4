@@ -130,6 +130,13 @@ def handle_add_attendee(event: Event, user_id: int):
     attendee = Attendee(user=user, event=event.attendance_event)
     attendee.save()
 
+    # log event
+    EventUserAction(
+        user=user,
+        event=event,
+        action_type=EventUserAction.ActionType.REGISTER,
+    ).save()
+
     resp = _get_event_context(event, resp)
     return {"message": f"{user} ble meldt på {event}", "status": 200, **resp}
 
