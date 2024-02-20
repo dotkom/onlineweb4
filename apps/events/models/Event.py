@@ -157,6 +157,22 @@ class EventOrderedByRegistration(models.Manager):
         )
 
 
+# Store all actions users take in regards to events.
+class EventUserAction(models.Model):
+    event = models.ForeignKey("Event", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    type = models.CharField(
+        max_length=15,
+        choices=[
+            ("register", "register"),
+            ("unregister", "unregister")
+            #  , ("pay", "pay"), ("chose_extra", "chose_extra"), ("sent_feedback", "sent_feedback") TODO: these should be added, but we start with register/unregister for now.
+        ],
+    )
+
+
 class Event(models.Model):
     """
     Base class for Event-objects.

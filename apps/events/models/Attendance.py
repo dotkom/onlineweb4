@@ -16,6 +16,7 @@ from guardian.shortcuts import assign_perm
 
 from apps.authentication.models import OnlineGroup
 from apps.companyprofile.models import Company
+from apps.events.models import EventUserAction
 from apps.marks.models import get_expiration_date
 from apps.payment import status as payment_status
 from apps.payment.mixins import PaymentMixin
@@ -567,6 +568,12 @@ class AttendanceEvent(PaymentMixin, models.Model):
         else:
             Attendee.objects.create(event=self, user=user, paid=True)
 
+            EventUserAction(
+                user=user,
+                event=self,
+                action_type=EventUserAction.ActionType.REGISTER,
+            ).save()
+
     def on_payment_refunded(self, payment_relation):
         Attendee.objects.get(event=self, user=payment_relation.user).delete()
 
@@ -769,6 +776,13 @@ class Attendee(models.Model):
 
         if not self.has_paid:
             self._clean_payment_delays()
+
+        # log event
+        EventUserAction(
+            user=self.user,
+            event=self.event,
+            action_type=EventUserAction.ActionType.UNREGISTER,
+        ).save()
 
         # TODO: Not delete attendee unless payments have been refunded?
         self.delete()

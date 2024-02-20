@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from apps.events.models import AttendanceEvent, Attendee
+from apps.events.models import AttendanceEvent, Attendee, EventUserAction
 from apps.marks.models import Mark, MarkUser, Suspension
 from apps.payment.models import Payment, PaymentDelay, PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
@@ -291,3 +291,10 @@ def unattend(payment_delay):
     Attendee.objects.get(
         event=payment_delay.payment.content_object, user=payment_delay.user
     ).delete()
+
+    # log event
+    EventUserAction(
+        user=payment_delay.user,
+        event=payment_delay.payment.content_object,
+        action_type=EventUserAction.ActionType.UNREGISTER,
+    ).save()
