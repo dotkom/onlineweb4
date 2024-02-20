@@ -17,7 +17,7 @@ from watson import search as watson
 
 from apps.events.filters import EventFilter
 from apps.events.forms import CaptchaForm
-from apps.events.models import AttendanceEvent, Attendee, Event
+from apps.events.models import AttendanceEvent, Attendee, Event, EventUserAction
 from apps.events.pdf_generator import EventPDF
 from apps.events.serializers import EventSerializer
 from apps.events.utils import (
@@ -127,6 +127,13 @@ def attend_event(request, event_id):
         attendee.save()
         messages.success(request, _("Du er nå meldt på arrangementet."))
 
+        # log event
+        EventUserAction(
+            user=request.user,
+            event=attendance_event,
+            action_type=EventUserAction.ActionType.REGISTER,
+        ).save()
+
         if attendance_event.payment():
             handle_attend_event_payment(event, request.user)
 
@@ -192,6 +199,13 @@ def unattend_event(request, event_id):
         delays = PaymentDelay.objects.filter(payment=payment, user=request.user)
         for delay in delays:
             delay.delete()
+
+        # log event
+    EventUserAction(
+        user=request.user,
+        event=attendance_event,
+        action_type=EventUserAction.ActionType.UNREGISTER,
+    ).save()
 
     Attendee.objects.get(event=attendance_event, user=request.user).delete()
 
