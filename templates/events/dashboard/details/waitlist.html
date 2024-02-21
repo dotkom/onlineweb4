@@ -19,6 +19,7 @@
                                 {% if event.attendance_event.has_extras %}
                                 <th>Extra</th>
                                 {% endif %}
+                                <th>Allergier</th>
                                 <th>Fjern</th>
                             </tr>
                         </thead>
@@ -45,6 +46,9 @@
                                     {% if attendee.extras %}{{ attendee.extras }}{% else %}-{% endif %}
                                 </td>
                                 {% endif %}
+                                <td>
+                                    {% if attendee.user.allergies %}{{ attendee.user.allergies }}{% else %}-{% endif %}
+                                </td>
                                 <td>
                                     <a href="#modal-delete-waitlist-attendee" data-toggle="modal" data-id="{{ attendee.id }}" data-name="{{ attendee.user.get_full_name }}" class="remove-user">
                                         <i class="fa fa-times fa-lg red"></i>
