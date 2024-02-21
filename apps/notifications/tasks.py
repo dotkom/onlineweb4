@@ -28,7 +28,7 @@ VAPID_PRIVATE_KEY = settings.WEB_PUSH_PRIVATE_KEY
 WEB_PUSH_ENABLED = settings.WEB_PUSH_ENABLED
 
 VAPID_CLAIMS = {
-    "sub": "mailto:dotkom@online.ntnu.no",
+    "sub": "mailto:hjelp@online.ntnu.no",
 }
 
 

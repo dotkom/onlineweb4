@@ -62,7 +62,7 @@ def approve_application(request):
                     {
                         "message": _(
                             """Kan ikke finne en søknad med denne IDen (%s).
-Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no."""
+Om feilen vedvarer etter en refresh, kontakt hjelp@online.ntnu.no."""
                         )
                         % application_id
                     }
@@ -161,7 +161,7 @@ def decline_application(request):
                         "message": _(
                             """
 Kan ikke finne en søknad med denne IDen (%s).
-Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no."""
+Om feilen vedvarer etter en refresh, kontakt hjelp@online.ntnu.no."""
                         )
                         % application_id
                     }

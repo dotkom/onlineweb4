@@ -16,7 +16,7 @@ const approveApplication = (applicationId, row) => {
         const responseJson = JSON.parse(response.responseText);
         showStatusMessage(responseJson.message, 'alert-danger');
       } else {
-        showStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+        showStatusMessage('En uventet error ble oppdaget. Kontakt hjelp@online.ntnu.no for assistanse.', 'alert-danger');
       }
     },
     crossDomain: false,
@@ -37,7 +37,7 @@ const declineApplication = (applicationId, message, row) => {
         const responseJson = JSON.parse(response.responseText);
         showStatusMessage(responseJson.message, 'alert-danger');
       } else {
-        showStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+        showStatusMessage('En uventet error ble oppdaget. Kontakt hjelp@online.ntnu.no for assistanse.', 'alert-danger');
       }
     },
     crossDomain: false,

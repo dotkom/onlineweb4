@@ -5,7 +5,7 @@ from django import forms
 class ContactForm(forms.Form):
     mail_choices = (
         ("hovedstyret@online.ntnu.no", "Hovedstyret"),
-        ("dotkom@online.ntnu.no", "Drifts- og utviklingskomiteen"),
+        ("hjelp@online.ntnu.no", "Drifts- og utviklingskomiteen"),
     )
     contact_receiver = forms.ChoiceField(
         required=True, label="Hvem ønsker du å kontakte?", choices=mail_choices

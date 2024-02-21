@@ -16,7 +16,7 @@ const assignToJob = (orderId, row) => {
         const jsonResponse = JSON.parse(response.responseText);
         setStatusMessage(jsonResponse.message, 'alert-danger');
       } else {
-        setStatusMessage('En uventet error ble oppdaget. Kontakt dotkom@online.ntnu.no for assistanse.', 'alert-danger');
+        setStatusMessage('En uventet error ble oppdaget. Kontakt hjelp@online.ntnu.no for assistanse.', 'alert-danger');
       }
     },
     crossDomain: false,
