@@ -130,7 +130,6 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
             handle_attend_event_payment(attendance_event.event, user)
 
         attendee_serializer = AttendeeSerializer(attendee)
-
         return Response(data=attendee_serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
