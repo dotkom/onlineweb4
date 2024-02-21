@@ -21,7 +21,6 @@ from ..models import (
     AttendanceEvent,
     Attendee,
     Event,
-    EventUserAction,
     Extras,
     FieldOfStudyRule,
     GradeRule,
@@ -132,13 +131,6 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
 
         attendee_serializer = AttendeeSerializer(attendee)
 
-        # log event
-        EventUserAction(
-            user=user,
-            event=attendance_event.event,
-            action_type=EventUserAction.ActionType.REGISTER,
-        ).save()
-
         return Response(data=attendee_serializer.data, status=status.HTTP_201_CREATED)
 
     @action(
@@ -152,13 +144,6 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         attendee = Attendee.objects.get(event=attendance_event, user=user)
         # Attendees un-attend with themselves as the admin user.
         attendee.unattend(user)
-
-        # log event
-        EventUserAction(
-            user=user,
-            event=attendance_event.event,
-            action_type=EventUserAction.ActionType.UNREGISTER,
-        ).save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

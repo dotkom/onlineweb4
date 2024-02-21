@@ -2,7 +2,7 @@
 from django.urls import reverse
 
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import Attendee, Event, EventUserAction
+from apps.events.models import Attendee, Event
 
 
 def _get_attendee(attendee_id):
@@ -130,13 +130,6 @@ def handle_add_attendee(event: Event, user_id: int):
     attendee = Attendee(user=user, event=event.attendance_event)
     attendee.save()
 
-    # log event
-    EventUserAction(
-        user=user,
-        event=event,
-        action_type=EventUserAction.ActionType.REGISTER,
-    ).save()
-
     resp = _get_event_context(event, resp)
     return {"message": f"{user} ble meldt på {event}", "status": 200, **resp}
 
@@ -152,13 +145,6 @@ def handle_remove_attendee(event: Event, attendee_id: int, admin_user: User):
         }
     attendee = attendee[0]
     attendee.unattend(admin_user)
-
-    # log event
-    EventUserAction(
-        user=admin_user,
-        event=event,
-        action_type=EventUserAction.ActionType.UNREGISTER,
-    ).save()
 
     resp = _get_event_context(event, resp)
     return {

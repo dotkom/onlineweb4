@@ -14,7 +14,7 @@ from .Attendance import (
     Reservee,
     StatusCode,
 )
-from .Event import Event, EventOrderedByRegistration, EventUserAction
+from .Event import Event, EventOrderedByRegistration
 from .Extras import Extras
 
 __all__ = [
@@ -31,7 +31,6 @@ __all__ = [
     Reservee,
     StatusCode,
     Event,
-    EventUserAction,
     EventOrderedByRegistration,
     Extras,
 ]
