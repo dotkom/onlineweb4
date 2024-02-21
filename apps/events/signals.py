@@ -7,12 +7,12 @@ from .models import Attendee, EventUserAction
 @receiver(signal=pre_save, sender=Attendee)
 def handle_payment_relation_status_change(sender, instance: Attendee, **kwargs):
     EventUserAction.objects.create(
-        user=instance.user, event=instance.event, type="register"
+        user=instance.user, event=instance.event.event, type="register"
     )
 
 
 @receiver(signal=pre_delete, sender=Attendee)
 def handle_payment_transaction_status_change(sender, instance: Attendee, **kwargs):
     EventUserAction.objects.create(
-        user=instance.user, event=instance.event, type="unregister"
+        user=instance.user, event=instance.event.event, type="unregister"
     )
