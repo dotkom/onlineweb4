@@ -10,8 +10,7 @@
 
 ### Frontend
 
-The frontend code is located in the `assets` folder.
-It's a mixture of old jQuery code and newer React code.
+The frontend code is located in the `assets` folder. It's a mixture of old jQuery code and newer React code.
 The code is built with [webpack](http://webpack.js.org/) and transpiled using [Babel](https://babeljs.io/).
 
 ### Backend
