@@ -149,16 +149,3 @@ OIDC_OP_USER_ENDPOINT = f"{AUTH0_DOMAIN}/userinfo"
 OIDC_OP_LOGOUT_URL_METHOD = "apps.authentication.backends.provider_logout"
 # we need it for logout
 OIDC_STORE_ID_TOKEN = True
-# we explicitly do not allow creation of JWT-tokens with simplejwt, we only want to verify that the ones we get are valid
-SIMPLE_JWT = {
-    "JWK_URL": f"{AUTH0_DOMAIN}/.well-known/jwks.json",
-    "ISSUER": f"{AUTH0_DOMAIN}/",
-    "AUDIENCE": "https://online.ntnu.no",
-    # the field on the user which is the ID
-    "USER_ID_FIELD": "auth0_subject",
-    # the value in the token that is the ID
-    "USER_ID_CLAIM": "sub",
-    "ALGORITHM": "RS256",
-    "TOKEN_TYPE_CLAIM": None,
-    "JTI_CLAIM": None,
-}
