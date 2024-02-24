@@ -1,6 +1,21 @@
+from urllib.parse import urlencode
+
+from django.conf import settings
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 
-from .models import OnlineUser
+
+def provider_logout(request):
+    # this is in accordance with
+    # https://auth0.com/docs/authenticate/login/logout/log-users-out-of-auth0#oidc-logout-endpoint-parameters
+
+    params = {
+        "id_token_hint": request.session["oidc_id_token"],
+        "client_id": settings.AUTH0_CLIENT_ID,
+        "post_logout_redirect_uri": settings.BASE_URL,
+        # federated might be relevant if we support FEIDE
+    }
+    redirect_url = f"{settings.AUTH0_DOMAIN}/oidc/logout?{urlencode(params)}"
+    return redirect_url
 
 
 class Auth0OIDCAB(OIDCAuthenticationBackend):
@@ -10,10 +25,10 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
             return self.UserModel.objects.none()
 
         try:
-            user = OnlineUser.objects.get(auth0_subject=sub)
+            user = self.UserModel.objects.get(auth0_subject=sub)
             return [user]
 
-        except OnlineUser.DoesNotExist:
+        except self.UserModel.DoesNotExist:
             return self.UserModel.objects.none()
 
     def get_userinfo(self, access_token, id_token, payload):

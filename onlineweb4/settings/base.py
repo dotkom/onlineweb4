@@ -146,7 +146,9 @@ OIDC_OP_USER_ENDPOINT = f"{AUTH0_DOMAIN}/userinfo"
 # https://github.com/mozilla/mozilla-django-oidc/issues/340
 # not supported
 # OIDC_OP_AUDIENCE = "https://online.ntnu.no"
-
+OIDC_OP_LOGOUT_URL_METHOD = "apps.authentication.backends.provider_logout"
+# we need it for logout
+OIDC_STORE_ID_TOKEN = True
 # we explicitly do not allow creation of JWT-tokens with simplejwt, we only want to verify that the ones we get are valid
 SIMPLE_JWT = {
     "JWK_URL": f"{AUTH0_DOMAIN}/.well-known/jwks.json",
