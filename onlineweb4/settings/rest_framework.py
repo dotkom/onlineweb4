@@ -3,7 +3,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "apps.api.utils.PrefixRemovedAutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         # allow accesssing API with JWT from our Authorization Server
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "mozilla_django_oidc.contrib.drf.OIDCAuthentication",
         # Allows users to be logged in to browsable API
         "rest_framework.authentication.SessionAuthentication",
     ),
