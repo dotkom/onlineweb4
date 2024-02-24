@@ -36,11 +36,16 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
         """Returns a User instance if 1 user is found. Creates a user if not found
         and configured to do so. Returns nothing if multiple users are matched."""
 
-        # this is modified from the source, since we do not want to call /userinfo on _every_ API-call
-        # this is kinda weird to have here, but ensures the access_token is verified in both DRF and elsewhere
-        a_token_payload = self.verify_token(access_token)
-        if "https://online.ntnu.no" not in a_token_payload.get("aud", []):
-            raise SuspiciousOperation("Wrong audience, this token is not meant for us")
+        userinfo = payload
+        # payload = parsed id_token
+        if userinfo is None:
+            # this is modified from the source, since we do not want to call /userinfo on _every_ API-call
+            # this is kinda weird to have here, but ensures the access_token is verified in both DRF and elsewhere
+            userinfo = self.verify_token(access_token)
+            if "https://online.ntnu.no" not in payload.get("aud", []):
+                raise SuspiciousOperation(
+                    "Wrong audience, this token is not meant for us"
+                )
 
         # user_info = self.get_userinfo(access_token, id_token, payload)
         # claims_verified = self.verify_claims(user_info)
@@ -48,11 +53,11 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
         #     msg = "Claims verification failed"
         #     raise SuspiciousOperation(msg)
 
-        users = self.filter_users_by_claims(a_token_payload)
+        users = self.filter_users_by_claims(userinfo)
 
         if len(users) == 1:
             if id_token is not None:
-                return self.update_user(users[0], self.verify_token(id_token))
+                return self.update_user(users[0], userinfo)
             else:
                 return users[0]
         elif len(users) > 1:
@@ -61,13 +66,17 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
             msg = "Multiple users returned"
             raise SuspiciousOperation(msg)
         elif self.get_settings("OIDC_CREATE_USER", True):
-            user_info = self.get_userinfo(access_token, id_token, payload)
+            user_info = (
+                userinfo
+                if id_token is not None
+                else self.get_userinfo(access_token, id_token, payload)
+            )
             user = self.create_user(user_info)
             return user
         else:
             LOGGER.debug(
                 "Login failed: No user with %s found, and " "OIDC_CREATE_USER is False",
-                a_token_payload.get("sub"),
+                userinfo.get("sub"),
             )
             return None
 
