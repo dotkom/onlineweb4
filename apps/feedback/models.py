@@ -311,7 +311,7 @@ class GenericSurvey(models.Model):
         ):
             return self.owner_group.online_group.email
         else:
-            return self.owner.primary_email
+            return self.owner.email
 
     def feedback_title(self):
         return self.title

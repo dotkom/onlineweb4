@@ -6,19 +6,11 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.test import TestCase, override_settings
-from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
-from rest_framework import status
 
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
-from apps.authentication.models import (
-    Email,
-    GroupRole,
-    OnlineGroup,
-    OnlineUser,
-    RegisterToken,
-)
+from apps.authentication.models import GroupRole, OnlineGroup, OnlineUser
 from apps.authentication.validators import validate_rfid
 
 
@@ -27,16 +19,6 @@ class AuthenticationTest(TestCase):
         self.logger = logging.getLogger(__name__)
         self.user = G(OnlineUser, username="testuser")
         self.now = timezone.now()
-
-    def test_token_active(self):
-        self.logger.debug("Testing that the token is active, with dynamic fixtures")
-        self.registertoken = G(RegisterToken, created=self.now)
-        self.assertTrue(self.registertoken.is_valid)
-
-    def test_token_not_active(self):
-        self.logger.debug("Testing that the token is not active, with dynamic fixtures")
-        self.registertoken = G(RegisterToken, created=self.now - timedelta(days=1))
-        self.assertFalse(self.registertoken.is_valid)
 
     def test_year_zero_if_no_field_of_study(self):
         self.user.started_date = self.now.date()
@@ -107,10 +89,6 @@ class AuthenticationTest(TestCase):
         self.user.field_of_study = FieldOfStudyType.SOCIAL_MEMBER
         self.assertEqual(0, self.user.year)
 
-    def test_email_primary_on_creation(self):
-        email = G(Email, user=self.user, email="test@test.com")
-        self.assertTrue(email.primary)
-
 
 class UserGroupSyncTestCase(TestCase):
     def setUp(self):
@@ -148,29 +126,6 @@ class UserGroupSyncTestCase(TestCase):
             self.user.groups.remove(self.source_group)
 
         self.assertNotIn(self.destination_group, self.user.groups.all())
-
-
-class AuthenticationURLTestCase(TestCase):
-    def test_auth_login_view(self):
-        url = reverse("auth_login")
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_auth_register_view(self):
-        url = reverse("auth_register")
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_auth_recover_view(self):
-        url = reverse("auth_recover")
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class RfidValidatorTestCase(TestCase):

@@ -11,7 +11,7 @@ from django.utils import timezone as timezone
 from django.utils.translation import gettext_lazy as _
 from django_dynamic_fixture import G
 
-from apps.authentication.models import Email, OnlineGroup
+from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
 from apps.feedback.models import (
@@ -35,10 +35,14 @@ class FeedbackTestCaseMixin:
         self.logger = logging.getLogger()
 
         # Setup users
-        self.user1: User = G(User, username="user1", is_active=True, is_staff=True)
-        Email.objects.create(user=self.user1, email="user1@gmail.com", primary=True)
-        self.user2: User = G(User, username="user2")
-        Email.objects.create(user=self.user2, email="user2@gmail.com", primary=True)
+        self.user1: User = G(
+            User,
+            username="user1",
+            is_active=True,
+            is_staff=True,
+            email="user1@gmail.com",
+        )
+        self.user2: User = G(User, username="user2", email="user2@gmail.com")
 
         self.user1.set_password("Herpaderp123")
         self.user1.save()

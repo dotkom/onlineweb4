@@ -58,7 +58,7 @@
                 <li>
                     <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-user" data-toggle="dropdown"></a>
                     <span class="username_menu hidden-xs hidden-sm hidden-md">
-                        {{ user.username }}
+                        {{ user.email }}
                     </span>
 
                     <ul class="dropdown-menu login-box" role="menu">
@@ -79,7 +79,12 @@
                         <li><a href="{% url 'contact_index' %}">Kontakt oss</a></li>
                         <li><a href="{% url 'profiles_user_search' %}">Finn brukere</a></li>
                         <li class="divider"></li>
-                        <li><a href="{% url 'auth_logout' %}">Logg ut</a></li>
+                        <li>
+                        <form action="{% url 'oidc_logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Logg ut</button>
+                        </form>
+                        </li>
                     </ul>
                 </li>
             {% else %}
@@ -87,25 +92,9 @@
                     <a href="#login_menu" class="dropdown-toggle dropdown-signin login glyphicon glyphicon-lock" data-toggle="dropdown"></a>
                     <ul class="dropdown-menu login-box" role="menu">
                         <li>
-                            <form class="navbar-form" method="POST" action="{% url 'auth_login' %}">
-                                {% csrf_token %}
-                                <fieldset class="textbox">
-                                    <div class="input-group">
-                                        <label for="id_username">Brukernavn</label>
-                                        <input type="text" name="username" id="id_username" class="form-control">
-                                    </div>
-                                    <div class="input-group">
-                                        <label for="id_password">Passord</label>
-                                        <input type="password" name="password" id="id_password" class="form-control">
-                                    </div>
-                                </fieldset>
-                                <input type="hidden" name="next" value="{{ request.get_full_path }}" />
-                                <button type="submit" class="btn btn-primary">Logg inn</button>
-                            </form>
-                            <div id="login-form-btn-group">
-                                <a class="btn btn-default" href="{% url 'auth_register' %}">Registrer</a>
-                                <a class="btn btn-default" href="{% url 'auth_recover' %}">Glemt passord</a>
-                            </div>
+                            <a href="{% url 'oidc_authentication_init' %}">
+                            <button type="submit" class="btn btn-primary">Logg inn</button>
+                            </a>
                         </li>
                     </ul>
                 </li>

@@ -1,44 +1,4 @@
 from django.shortcuts import render
-from rest_framework import viewsets
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
-
-from .filters import MailEntityFilter, MailGroupFilter
-from .models import MailEntity, MailGroup
-from .serializers import MailEntitySerializer, MailGroupSerializer
-
-
-class MailGroupViewSet(viewsets.ModelViewSet):
-    """
-    Mailingslists used by many Student-related organizations.
-    """
-
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    serializer_class = MailGroupSerializer
-    filterset_class = MailGroupFilter
-    queryset = MailGroup.objects.all()
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if not self.request.user.has_perm("mailinglists.view_mailgroup"):
-            queryset = queryset.filter(public=True)
-        return queryset
-
-
-class MailEntityViewSet(viewsets.ModelViewSet):
-    """
-    The individual mails we use on our mailingslist.
-    """
-
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    serializer_class = MailEntitySerializer
-    filterset_class = MailEntityFilter
-    queryset = MailEntity.objects.all()
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if not self.request.user.has_perm("mailinglists.view_mailentity"):
-            queryset = queryset.filter(public=True)
-        return queryset
 
 
 def index(request):

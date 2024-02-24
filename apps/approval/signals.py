@@ -45,7 +45,7 @@ def notify_membership_applicant_handler(
     if (
         not created
         and instance.processed
-        and instance.applicant.primary_email
+        and instance.applicant.email
         and settings.APPROVAL_SETTINGS.get("SEND_APPLICANT_NOTIFICATION_EMAIL", False)
     ):
         send_approval_status_update(instance)

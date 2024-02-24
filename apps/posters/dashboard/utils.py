@@ -50,7 +50,7 @@ def _handle_poster_add(request, form, order_type):
     message = render_to_string("posters/email/new_order_notification.txt", context)
 
     from_email = settings.EMAIL_PROKOM
-    to_emails = [settings.EMAIL_PROKOM, request.user.primary_email]
+    to_emails = [settings.EMAIL_PROKOM, request.user.email]
 
     try:
         email_sent = EmailMessage(subject, message, from_email, to_emails, []).send()

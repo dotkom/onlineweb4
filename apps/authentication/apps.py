@@ -8,13 +8,11 @@ class AuthenticationConfig(AppConfig):
     def ready(self):
         super().ready()
 
-        from reversion import revisions as reversion
         from watson import search as watson
 
         import apps.authentication.signals  # noqa: F401
-        from apps.authentication.models import OnlineUser, RegisterToken
+        from apps.authentication.models import OnlineUser
 
-        reversion.register(RegisterToken)
         watson.register(
             OnlineUser, fields=("first_name", "last_name", "ntnu_username", "nickname")
         )

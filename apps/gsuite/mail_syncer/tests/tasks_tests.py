@@ -4,7 +4,7 @@ from django.conf import settings
 from django.test import TestCase, override_settings
 from django_dynamic_fixture import G
 
-from apps.authentication.models import Email, OnlineUser
+from apps.authentication.models import OnlineUser
 from apps.gsuite.mail_syncer.tasks import (
     _get_error_message_from_httperror,
     insert_user_into_group_pass_if_already_member,
@@ -31,10 +31,8 @@ class GSuiteSignalsTestCase(TestCase):
     def test_insert_user_pass_if_already_in_group_passing(
         self, mocked_insert, mocked_logger
     ):
-        user = G(OnlineUser, infomail=False)
-        email_addr = "example@example.org"
-        email = G(Email, email=email_addr, verified=True, primary=True)
-        user.email_user.add(email)
+        email = "example@example.org"
+        user = G(OnlineUser, infomail=False, email=email)
         group_name = list(settings.OW4_GSUITE_SYNC.get("GROUPS").keys())[0]
 
         ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
@@ -48,7 +46,7 @@ class GSuiteSignalsTestCase(TestCase):
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             insert_user_into_group_pass_if_already_member(
-                self.domain, group_name, user.primary_email
+                self.domain, group_name, user.email
             )
             mocked_logger.assert_called_with(
                 f'Email address "{email}" was already subscribed to mailing list "{group_name}"!'
@@ -59,10 +57,8 @@ class GSuiteSignalsTestCase(TestCase):
     def test_remove_user_from_group_pass_if_not_subscribed(
         self, mocked_remove, mocked_logger
     ):
-        user = G(OnlineUser, infomail=False)
-        email_addr = "example@example.org"
-        email = G(Email, email=email_addr, verified=True, primary=True)
-        user.email_user.add(email)
+        email = "example@example.org"
+        user = G(OnlineUser, infomail=False, email=email)
         group_name = list(settings.OW4_GSUITE_SYNC.get("GROUPS").keys())[0]
 
         ow4_gsuite_sync = self.ow4_gsuite_sync.copy()
@@ -76,7 +72,7 @@ class GSuiteSignalsTestCase(TestCase):
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             remove_user_from_group_pass_if_not_subscribed(
-                self.domain, group_name, user.primary_email
+                self.domain, group_name, user.email
             )
             mocked_logger.assert_called_with(
                 f'Email address "{email}" was not subscribed to mailing list "{group_name}"!'

@@ -10,7 +10,7 @@
 	<div class="col-md-2">
 		{% gravatar_url user 120 as gravatar_url %}
         <img class="img-thumbnail dashboard-image" src="{{ gravatar_url }}" alt="" style="margin-bottom:20px" />
-        <a href="{% url 'profiles_view' user.username %}" class="btn btn-primary btn-sm pull-right official-link">
+        <a href="{% url 'profiles_view' user.pk %}" class="btn btn-primary btn-sm pull-right official-link">
 			Offentlig profil 
 			<i class="glyphicon glyphicon-chevron-right"></i>
 		</a>

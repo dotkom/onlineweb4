@@ -417,16 +417,12 @@ svg, rect {
     padding-top: 0;
     padding-bottom: 0;
     border: none;
-
-    button[type=submit] {
-      margin: 10px 0 0 0;
-    }
   }
 
   border-radius: 0;
 }
 
-.dropdown-menu > li > p {
+.dropdown-menu > li > :is(p, form) {
   display: block;
   padding: 3px 20px;
   clear: both;
@@ -436,6 +432,3 @@ svg, rect {
   white-space: nowrap;
 }
 
-label[for='id_password'] {
-  padding-top: 10px;
-}

@@ -1,17 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
-import logging
-import re
-import uuid
-from smtplib import SMTPException
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import Group
-from django.core.mail import send_mail
-from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -25,11 +18,9 @@ from watson import search as watson
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
 from apps.authentication.constants import GroupType
-from apps.authentication.forms import NewEmailForm
-from apps.authentication.models import Email, OnlineGroup
+from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Position, RegisterToken
-from apps.authentication.serializers import EmailReadOnlySerializer
+from apps.authentication.models import Position
 from apps.dashboard.tools import has_access
 from apps.gsuite.accounts.main import (
     create_g_suite_account,
@@ -38,12 +29,7 @@ from apps.gsuite.accounts.main import (
 from apps.marks.models import Mark, MarkRuleSet, Suspension
 from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
 from apps.profiles.filters import PublicProfileFilter
-from apps.profiles.forms import (
-    InternalServicesForm,
-    PositionForm,
-    PrivacyForm,
-    ProfileForm,
-)
+from apps.profiles.forms import PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
 from apps.profiles.serializers import (
     PrivacySerializer,
@@ -111,10 +97,6 @@ def _create_profile_context(request):
                 True,
             ),
         ],
-        # password
-        "password_change_form": PasswordChangeForm(request.user),
-        # email
-        "new_email": NewEmailForm(),
         # approvals
         "field_of_study_application": FieldOfStudyApplicationForm(),
         "has_active_approvals": MembershipApproval.objects.filter(
@@ -157,7 +139,6 @@ def _create_profile_context(request):
                 True,
             ),
         ],
-        "internal_services_form": InternalServicesForm(),
         "in_comittee": has_access(request),
         "DATAPORTEN_ENABLED": "apps.dataporten" in settings.INSTALLED_APPS,
     }
@@ -197,24 +178,6 @@ def privacy(request):
         else:
             privacy_form.save()
             messages.success(request, _("Personvern ble endret"))
-
-    return render(request, "profiles/index.html", context)
-
-
-@login_required
-def password(request):
-    context = _create_profile_context(request)
-    context["active_tab"] = "password"
-
-    if request.method == "POST":
-        password_change_form = PasswordChangeForm(user=request.user, data=request.POST)
-        context["password_change_form"] = password_change_form
-
-        if not password_change_form.is_valid():
-            messages.error(request, _("Passordet ditt ble ikke endret"))
-        else:
-            password_change_form.save()
-            messages.success(request, _("Passordet ditt ble endret"))
 
     return render(request, "profiles/index.html", context)
 
@@ -282,216 +245,6 @@ def update_mark_rules(request):
                 return HttpResponse(status=403, content=return_status)
             return HttpResponse(status=212, content=return_status)
     return HttpResponse(status=405)
-
-
-@login_required
-def add_email(request):
-    context = _create_profile_context(request)
-    context["active_tab"] = "email"
-
-    if request.method == "POST":
-        form = NewEmailForm(request.POST)
-        if form.is_valid():
-            cleaned = form.cleaned_data
-            email_string = cleaned["new_email"].lower()
-
-            # Check if the email already exists
-            if Email.objects.filter(email=cleaned["new_email"]).count() > 0:
-                messages.error(
-                    request, _("Eposten %s er allerede registrert.") % email_string
-                )
-                return redirect("profiles")
-
-            # Check if it's studmail and if someone else already has it in their profile
-            if re.match(r"[^@]+@stud\.ntnu\.no", email_string):
-                ntnu_username = email_string.split("@")[0]
-                user = User.objects.filter(ntnu_username=ntnu_username)
-                if user.count() == 1:
-                    if user[0] != request.user:
-                        messages.error(
-                            request,
-                            _(
-                                "En bruker med dette NTNU-brukernavnet eksisterer allerede."
-                            ),
-                        )
-                        return redirect("profiles")
-
-            # Create the email
-            email = Email(email=email_string, user=request.user)
-            email.save()
-
-            # Send the verification mail
-            _send_verification_mail(request, email.email)
-
-            messages.success(
-                request,
-                _("Eposten ble lagret. Du må sjekke din innboks for å verifisere den."),
-            )
-
-    return render(request, "profiles/index.html", context)
-
-
-@login_required
-def delete_email(request):
-    if request.is_ajax():
-        if request.method == "POST":
-            email_string = request.POST.get("email")
-            email = get_object_or_404(Email, email=email_string)
-
-            # Check if the email belongs to the registered user
-            if email.user != request.user:
-                return HttpResponse(
-                    status=412,
-                    content=json.dumps(
-                        {
-                            "message": _(
-                                "%s er ikke en eksisterende epostaddresse på din profil."
-                            )
-                            % email.email
-                        }
-                    ),
-                )
-
-            # Users cannot delete their primary email, to avoid them deleting all their emails
-            if email.primary:
-                return HttpResponse(
-                    status=412,
-                    content=json.dumps(
-                        {"message": _("Kan ikke slette primær-epostadresse.")}
-                    ),
-                )
-
-            email.delete()
-            return HttpResponse(status=200)
-    return HttpResponse(status=404)
-
-
-@login_required
-def set_primary(request):
-    if request.is_ajax():
-        if request.method == "POST":
-            email_string = request.POST.get("email")
-            email = get_object_or_404(Email, email=email_string)
-
-            # Check if the email belongs to the registered user
-            if email.user != request.user:
-                return HttpResponse(
-                    status=412,
-                    content=json.dumps(
-                        {
-                            "message": _(
-                                "%s er ikke en eksisterende epostaddresse på din profil."
-                            )
-                            % email.email
-                        }
-                    ),
-                )
-
-            # Check if it was already primary
-            if email.primary:
-                return HttpResponse(
-                    status=412,
-                    content=json.dumps(
-                        {
-                            "message": _(
-                                "%s er allerede satt som primær-epostaddresse."
-                            )
-                            % email.email
-                        }
-                    ),
-                )
-
-            # Deactivate the old primary, if there was one
-            primary_email = request.user.email_object
-            if primary_email:
-                primary_email.primary = False
-                primary_email.save()
-            # Activate new primary
-            email.primary = True
-            email.save()
-
-            return HttpResponse(status=200)
-    raise Http404
-
-
-@login_required
-def verify_email(request):
-    if request.is_ajax():
-        if request.method == "POST":
-            email_string = request.POST.get("email")
-            email = get_object_or_404(Email, email=email_string)
-
-            # Check if the email belongs to the registered user
-            if email.user != request.user:
-                return HttpResponse(
-                    status=412,
-                    content=json.dumps(
-                        {
-                            "message": _(
-                                "%s er ikke en eksisterende epostaddresse på din profil."
-                            )
-                            % email.email
-                        }
-                    ),
-                )
-
-            # Check if it was already verified
-            if email.verified:
-                return HttpResponse(
-                    status=412,
-                    content=json.dumps(
-                        {"message": _("%s er allerede verifisert.") % email.email}
-                    ),
-                )
-
-            # Send the verification mail
-            _send_verification_mail(request, email.email)
-
-            return HttpResponse(status=200)
-    raise Http404
-
-
-def _send_verification_mail(request, email):
-    log = logging.getLogger(__name__)
-    # Create the registration token
-    token = uuid.uuid4().hex
-    try:
-        rt = RegisterToken(user=request.user, email=email, token=token)
-        rt.save()
-        log.info("Successfully registered token for %s" % request.user)
-    except IntegrityError as ie:
-        log.error("Failed to register token for %s due to %s" % (request.user, ie))
-        raise ie
-
-    email_message = (
-        _(
-            """
-En ny epost har blitt registrert på din profil på online.ntnu.no.
-
-For å kunne ta eposten i bruk kreves det at du verifiserer den. Du kan gjore dette
-ved å besøke lenken under.
-
-http://%s/auth/verify/%s/
-
-Denne lenken vil være gyldig i 24 timer. Dersom du behøver å få tilsendt en ny lenke
-kan dette gjøres ved å klikke på knappen for verifisering på din profil.
-"""
-        )
-        % (request.META["HTTP_HOST"], token)
-    )
-
-    try:
-        send_mail(
-            _("Verifiser din epost %s") % email,
-            email_message,
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-        )
-    except SMTPException:
-        messages.error(
-            request, "Det oppstod en kritisk feil, epostadressen er ugyldig!"
-        )
-        return redirect("home")
 
 
 @login_required
@@ -584,8 +337,8 @@ def search_for_plain_users(query, limit=10):
 
 
 @login_required
-def view_profile(request, username):
-    user = get_object_or_404(User, username=username)
+def view_profile(request, pk):
+    user = get_object_or_404(User, pk=pk)
     if user.privacy.visible_for_other_users or user == request.user:
         return render(request, "profiles/view_profile.html", {"user_profile": user})
 
@@ -605,7 +358,7 @@ class GSuiteCreateAccount(View):
             messages.success(
                 request,
                 "Opprettet en G Suite konto til deg. Sjekk primærepostadressen din ({}) for instruksjoner.".format(
-                    request.user.primary_email
+                    request.user.email
                 ),
             )
         except HttpError as err:
@@ -678,13 +431,3 @@ class ProfileViewSet(viewsets.ViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=user)
             return response.Response(serializer.data)
-
-
-class UserEmailAddressesViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """TODO: Support creation of mail, and updating of primary mail"""
-
-    serializer_class = EmailReadOnlySerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get_queryset(self):
-        return Email.objects.filter(user=self.request.user)

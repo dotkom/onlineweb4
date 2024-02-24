@@ -7,52 +7,8 @@
 </div>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-10">
-        <p>Her er en oversikt over e-postadresser som er tilknyttet din konto. Adressen som er markert som primær brukes til alle våre e-postlister, gjenoppretning av passord og andre varsler som sendes fra oss.</p>
-        <p>Etter at du har valgt en ny primæradresse kan det ta opptil én time før endringen er registert i alle mailinglister, mens adresse for andre varsler og gjenoppretning oppdateres umiddelbart.</p>
-    </div>
-</div>
-<div class="row emails">
-    <div class="col-xs-12 col-sm-12 col-md-10">
-        {% for email in user.get_emails %}
-        <div class="row email-row">
-            <div class="col-xs-4 col-sm-8 col-md-8">
-                <p class="email">{{ email }}</p>
-            </div>
-            <div class="col-sm-4 col-md-4">
-                <div class="btn-group pull-right">
-                {% if email.verified %}
-                    {% if email.primary %}
-                        <button type="button" class="btn btn-sm btn-success primary active" disabled>
-                    {% else %}
-                        <button type="button" class="btn btn-sm btn-default primary">
-                    {% endif %}
-                        {% if email.primary %}Primær{% else %}Sett primær{% endif %}
-                    </button>
-                {% endif %}
-                {% if not email.verified %}
-                    <button type="button" class="btn btn-sm btn-primary verify">Send ny lenke</button>
-                {% endif %}
-                    <button type="button" class="btn btn-sm btn-danger delete">Slett</button>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-<div class="row new-email">
-    <div class="col-xs-12 col-sm-12 col-md-10">
-        <div class="new-email-form" style="display:none;">
-            <form method="post" action="{% url 'profile_add_email' %}">
-            <div class="col-sm-8 col-md-8">
-                {% csrf_token %}
-                <input type="text" name="new_email" value="Ny Epostadresse" id="addnewemailinput" class="emptyonclick" />
-            </div>
-            <div class="col-sm-4 col-md-4">
-                <button type="submit" class="btn btn-success btn-sm add pull-right">Legg til</button>
-            </div>
-            </form>
-        </div>
-        <button type="button" class="btn btn-success btn-sm add-new-email">Legg til ny epostadresse</button>
+        <p>Vi har nå bare en e-postadresse! Du kan endre denne på <a href="https://online.ntnu.no/profile/settings/mail" rel="noopener">https://online.ntnu.no/profile/settings/mail</a></p>
+        <p>Etter at du byttet e-postadresse kan det ta opptil én time før endringen er registert i alle mailinglister, mens adresse for andre varsler og gjenoppretning oppdateres umiddelbart.</p>
     </div>
 </div>
 {% if user.is_staff %}

@@ -156,47 +156,9 @@ class OnlineUser(AbstractUser):
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
     )
 
-    cognito_subject = models.UUIDField(
-        _("Cognito User Id"), blank=True, null=True, unique=True
+    auth0_subject = models.CharField(
+        _("Auth0 User Id"), blank=True, null=True, unique=True, max_length=50
     )
-
-    has_set_cognito_password = models.BooleanField(
-        _("User has set cognito password"), default=False
-    )
-
-    def set_password(self, raw_password):
-        super().set_password(raw_password)
-        if (sub := self.cognito_subject) and settings.COGNITO_USER_POOL_ID:
-            import boto3
-
-            client = boto3.client("cognito-idp")
-            client.admin_set_user_password(
-                UserPoolId=settings.COGNITO_USER_POOL_ID,
-                Username=str(sub),
-                Password=raw_password,
-                Permanent=True,
-            )
-
-            self.has_set_cognito_password = True
-            self.save()
-
-    def check_password(self, password) -> bool:
-        valid = super().check_password(password)
-        if valid and settings.COGNITO_USER_POOL_ID and (sub := self.cognito_subject):
-            import boto3
-
-            client = boto3.client("cognito-idp")
-            client.admin_set_user_password(
-                UserPoolId=settings.COGNITO_USER_POOL_ID,
-                Username=str(sub),
-                Password=password,
-                Permanent=True,
-            )
-
-            self.has_set_cognito_password = True
-            self.save()
-
-        return valid
 
     @property
     def is_member(self):
@@ -253,20 +215,6 @@ class OnlineUser(AbstractUser):
         full_name = "%s %s" % (self.first_name, self.last_name)
         return full_name.strip()
 
-    @property
-    def primary_email(self) -> str:
-        email_object = self.email_object
-        if email_object:
-            return email_object.email
-        return None
-
-    @property
-    def email_object(self) -> "Email":
-        return self.get_emails().filter(primary=True).first()
-
-    def get_emails(self):
-        return Email.objects.filter(user=self)
-
     def get_active_suspensions(self):
         return self.suspension_set.filter(active=True)
 
@@ -301,7 +249,7 @@ class OnlineUser(AbstractUser):
         return min(start_year + years_passed, start_year + length_of_study)
 
     def get_absolute_url(self):
-        return reverse("profiles_view", kwargs={"username": self.username})
+        return reverse("profiles_view", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.get_full_name()
@@ -316,6 +264,43 @@ class OnlineUser(AbstractUser):
             from apps.authentication.utils import create_online_mail_alias
 
             self.online_mail = create_online_mail_alias(self)
+
+        if (
+            self.pk
+            and (old := OnlineUser.objects.filter(pk=self.pk).first())
+            and self.email != old.email
+        ):
+            from auth0.authentication import GetToken
+            from auth0.management import Auth0
+
+            from apps.gsuite.mail_syncer.tasks import update_mailing_list
+            from onlineweb4.settings.gsuite import MAILING_LIST_USER_FIELDS_TO_LIST_NAME
+
+            jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
+            infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
+
+            if self.jobmail:
+                update_mailing_list(jobmail, email=old.email, added=False)
+                update_mailing_list(jobmail, email=self.email, added=True)
+            if self.infomail:
+                update_mailing_list(infomail, email=old.email, added=False)
+                update_mailing_list(infomail, email=self.email, added=True)
+
+            domain = settings.AUTH0_DOMAIN
+
+            get_token = GetToken(
+                domain,
+                settings.AUTH0_CLIENT_ID,
+                client_secret=settings.AUTH0_CLIENT_SECRET,
+            )
+            token = get_token.client_credentials(f"https://{domain}/api/v2/")
+            mgmt_api_token = token["access_token"]
+
+            auth0 = Auth0(domain, mgmt_api_token)
+            auth0.users.update(self.auth0_subject, {"email": self.email})
+            auth0.tickets.create_email_verification(
+                {"user_id": self.auth0_subject, "client_id": settings.AUTH0_CLIENT_ID}
+            )
 
         super().save(*args, **kwargs)
 
@@ -402,27 +387,6 @@ class Email(models.Model):
         permissions = (("view_email", "View Email"),)
         default_permissions = ("add", "change", "delete")
         ordering = ("user", "email")
-
-
-class RegisterToken(models.Model):
-    user = models.ForeignKey(
-        OnlineUser, related_name="register_user", on_delete=models.CASCADE
-    )
-    email = models.EmailField(_("epost"), max_length=254)
-    token = models.CharField(_("token"), max_length=32, unique=True)
-    created = models.DateTimeField(
-        _("opprettet dato"), editable=False, auto_now_add=True
-    )
-
-    @property
-    def is_valid(self):
-        valid_period = datetime.timedelta(days=1)
-        now = timezone.now()
-        return now < self.created + valid_period
-
-    class Meta:
-        permissions = (("view_registertoken", "View RegisterToken"),)
-        default_permissions = ("add", "change", "delete")
 
 
 class Membership(models.Model):

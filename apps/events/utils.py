@@ -386,7 +386,7 @@ def handle_mail_participants(
             str(message),
             from_email,
             [from_email],
-            [a.user.primary_email for a in user_recipients],
+            [a.user.email for a in user_recipients],
             attachments=(_images),
         )
         email.send_in_background(

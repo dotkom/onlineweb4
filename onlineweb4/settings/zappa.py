@@ -63,8 +63,6 @@ STRIPE_PRIVATE_KEYS = {
     "fagkom": env["STRIPE_PRIVKEY_FAGKOM"],
 }
 
-SLACK_INVITER = {"team_name": "onlinentnu", "token": env["SLACK_TOKEN"]}
-
 APPROVAL_SETTINGS = {
     "SEND_APPLICANT_NOTIFICATION_EMAIL": True,
     "SEND_APPROVER_NOTIFICATION_EMAIL": True,
