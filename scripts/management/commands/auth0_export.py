@@ -60,7 +60,6 @@ def create_auth0_user(u: OnlineUser):
 
     id = str(uuid4())
     u.auth0_subject = f"auth0|{id}"
-    u.save()
 
     auth0_user = {
         "user_id": id,
@@ -87,7 +86,7 @@ def create_auth0_user(u: OnlineUser):
     if num := extract_phone_number(u):
         auth0_user["mfa_factors"] = [{"phone": {"value": num}}]
 
-    return auth0_user
+    return (u, auth0_user)
 
 
 class Command(BaseCommand):
@@ -97,7 +96,9 @@ class Command(BaseCommand):
         ]
         users = [u for u in users if u is not None]
         N = 700
-        for i in range(3):
-            file = json.dumps(users[i * N : i * N + N])
-            with open(f"auth0_users{i}.json", "w") as f:
+        for i in range(int(OnlineUser.objects.count() / 700)):
+            chunk = users[i * N : i * N + N]
+            OnlineUser.objects.bulk_update([u for (u, _) in chunk], ["auth0_subject"])
+            file = json.dumps([a0u for (_, a0u) in chunk])
+            with open(f"auth0_users_staging_{i}.json", "w") as f:
                 f.write(file)
