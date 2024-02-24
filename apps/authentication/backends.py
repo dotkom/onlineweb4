@@ -42,7 +42,7 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
             # this is modified from the source, since we do not want to call /userinfo on _every_ API-call
             # this is kinda weird to have here, but ensures the access_token is verified in both DRF and elsewhere
             userinfo = self.verify_token(access_token)
-            if "https://online.ntnu.no" not in payload.get("aud", []):
+            if "https://online.ntnu.no" not in userinfo.get("aud", []):
                 raise SuspiciousOperation(
                     "Wrong audience, this token is not meant for us"
                 )
