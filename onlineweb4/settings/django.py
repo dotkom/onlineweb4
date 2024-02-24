@@ -70,7 +70,9 @@ SECRET_KEY = config("OW4_DJANGO_SECRET_KEY", default="override-this-in-local.py"
 SESSION_COOKIE_AGE = 31540000
 
 # Override this to change what is the base url of the web server, e.g. localhost or staging.
-BASE_URL = config("OW4_DJANGO_BASE_URL", default="https://online.ntnu.no")
+BASE_URL = config(
+    "OW4_DJANGO_BASE_URL", default="http://localhost:8000"
+)  # https://online.ntnu.no")
 
 AUTH_USER_MODEL = "authentication.OnlineUser"
 LOGIN_URL = "/auth0/authenticate"
