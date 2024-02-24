@@ -337,8 +337,8 @@ def search_for_plain_users(query, limit=10):
 
 
 @login_required
-def view_profile(request, username):
-    user = get_object_or_404(User, username=username)
+def view_profile(request, pk):
+    user = get_object_or_404(User, pk=pk)
     if user.privacy.visible_for_other_users or user == request.user:
         return render(request, "profiles/view_profile.html", {"user_profile": user})
 

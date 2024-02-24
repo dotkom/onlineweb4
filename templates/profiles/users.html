@@ -41,7 +41,7 @@
 					{% for user in group.user_set.all %}
 						{% if user.privacy.visible_for_other_users %}
 							<div class="row">
-								<a href="{% url 'profiles_view' user.username %}">
+								<a href="{% url 'profiles_view' user.pk %}">
 									<div class="col-md-12 row-space-sm">
 										<div class="col-md-2 profile-picture">
 											{% gravatar_url user 120 as gravatar_url %}

@@ -249,7 +249,7 @@ class OnlineUser(AbstractUser):
         return min(start_year + years_passed, start_year + length_of_study)
 
     def get_absolute_url(self):
-        return reverse("profiles_view", kwargs={"username": self.username})
+        return reverse("profiles_view", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.get_full_name()

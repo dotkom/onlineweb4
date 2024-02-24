@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 
-from django.urls import re_path
+from django.urls import path, re_path
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.marks.views import MarksViewSet, SuspensionViewSet
@@ -10,8 +10,8 @@ from apps.shop.views import UserOrderViewSet
 urlpatterns = [
     re_path(r"^$", views.index, name="profiles"),
     # Show a specific profile.
-    re_path(
-        r"^view/(?P<username>[a-zA-Z0-9_-]+)/$",
+    path(
+        "view/<int:pk>/",
         views.view_profile,
         name="profiles_view",
     ),
