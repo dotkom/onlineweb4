@@ -131,26 +131,26 @@ SECURE_PROXY_SSL_HEADER = (
 
 VIMEO_API_TOKEN = config("OW4_VIMEO_API_TOKEN", default=None)
 
-AUTH0_DOMAIN = config("AUTH0_DOMAIN", default="")
+AUTH0_DOMAIN = config("AUTH0_ISSUER", default="")
 AUTH0_CLIENT_ID = config("AUTH0_CLIENT_ID", default="")
 AUTH0_CLIENT_SECRET = config("AUTH0_CLIENT_SECRET", default="")
 
 # this OIDC is for non-API-auth
-OIDC_OP_JWKS_ENDPOINT = f"https://{AUTH0_DOMAIN}/.well-known/jwks.json"
+OIDC_OP_JWKS_ENDPOINT = f"{AUTH0_DOMAIN}/.well-known/jwks.json"
 OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_RP_CLIENT_ID = AUTH0_CLIENT_ID
 OIDC_RP_CLIENT_SECRET = AUTH0_CLIENT_SECRET
-OIDC_OP_AUTHORIZATION_ENDPOINT = f"https://{AUTH0_DOMAIN}/authorize"
-OIDC_OP_TOKEN_ENDPOINT = f"https://{AUTH0_DOMAIN}/oauth/token"
-OIDC_OP_USER_ENDPOINT = f"https://{AUTH0_DOMAIN}/userinfo"
+OIDC_OP_AUTHORIZATION_ENDPOINT = f"{AUTH0_DOMAIN}/authorize"
+OIDC_OP_TOKEN_ENDPOINT = f"{AUTH0_DOMAIN}/oauth/token"
+OIDC_OP_USER_ENDPOINT = f"{AUTH0_DOMAIN}/userinfo"
 # https://github.com/mozilla/mozilla-django-oidc/issues/340
 # not supported
 # OIDC_OP_AUDIENCE = "https://online.ntnu.no"
 
 # we explicitly do not allow creation of JWT-tokens with simplejwt, we only want to verify that the ones we get are valid
 SIMPLE_JWT = {
-    "JWK_URL": f"https://{AUTH0_DOMAIN}/.well-known/jwks.json",
-    "ISSUER": f"https://{AUTH0_DOMAIN}/",
+    "JWK_URL": f"{AUTH0_DOMAIN}/.well-known/jwks.json",
+    "ISSUER": f"{AUTH0_DOMAIN}/",
     "AUDIENCE": "https://online.ntnu.no",
     # the field on the user which is the ID
     "USER_ID_FIELD": "auth0_subject",
