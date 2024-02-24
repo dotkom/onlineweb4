@@ -41,7 +41,7 @@ urlpatterns = [
     re_path(r"^events.ics$", views.calendar_export, name="events_ics"),
     re_path(r"^(?P<event_id>\d+).ics$", views.calendar_export, name="event_ics"),
     re_path(
-        r"^user/(?P<user>[\w:-]+).ics$",
+        r"^user/(?P<user>[\w.@+-:]+).ics$",
         views.calendar_export,
         name="events_personal_ics",
     ),
