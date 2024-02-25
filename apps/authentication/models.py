@@ -265,42 +265,34 @@ class OnlineUser(AbstractUser):
 
             self.online_mail = create_online_mail_alias(self)
 
-        if (
-            self.pk
-            and (old := OnlineUser.objects.filter(pk=self.pk).first())
-            and self.email != old.email
-        ):
-            from auth0.authentication import GetToken
-            from auth0.management import Auth0
+        if self.pk and (old := OnlineUser.objects.filter(pk=self.pk).first()):
+            auth0 = None
+            if self.email != old.email:
+                from apps.gsuite.mail_syncer.tasks import update_mailing_list
+                from onlineweb4.settings.gsuite import (
+                    MAILING_LIST_USER_FIELDS_TO_LIST_NAME,
+                )
 
-            from apps.gsuite.mail_syncer.tasks import update_mailing_list
-            from onlineweb4.settings.gsuite import MAILING_LIST_USER_FIELDS_TO_LIST_NAME
+                from .auth0 import auth0_client
 
-            jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
-            infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
+                jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
+                infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
 
-            if self.jobmail:
-                update_mailing_list(jobmail, email=old.email, added=False)
-                update_mailing_list(jobmail, email=self.email, added=True)
-            if self.infomail:
-                update_mailing_list(infomail, email=old.email, added=False)
-                update_mailing_list(infomail, email=self.email, added=True)
+                if self.jobmail:
+                    update_mailing_list(jobmail, email=old.email, added=False)
+                    update_mailing_list(jobmail, email=self.email, added=True)
+                if self.infomail:
+                    update_mailing_list(infomail, email=old.email, added=False)
+                    update_mailing_list(infomail, email=self.email, added=True)
 
-            domain = settings.AUTH0_DOMAIN
-
-            get_token = GetToken(
-                domain,
-                settings.AUTH0_CLIENT_ID,
-                client_secret=settings.AUTH0_CLIENT_SECRET,
-            )
-            token = get_token.client_credentials(f"https://{domain}/api/v2/")
-            mgmt_api_token = token["access_token"]
-
-            auth0 = Auth0(domain, mgmt_api_token)
-            auth0.users.update(self.auth0_subject, {"email": self.email})
-            auth0.tickets.create_email_verification(
-                {"user_id": self.auth0_subject, "client_id": settings.AUTH0_CLIENT_ID}
-            )
+                auth0 = auth0_client()
+                auth0.users.update(self.auth0_subject, {"email": self.email})
+                auth0.tickets.create_email_verification(
+                    {
+                        "user_id": self.auth0_subject,
+                        "client_id": settings.AUTH0_CLIENT_ID,
+                    }
+                )
 
         super().save(*args, **kwargs)
 
