@@ -3,7 +3,9 @@ import unicodedata
 from urllib.parse import urlencode
 
 from django.conf import settings
+from django.contrib.auth import logout
 from django.core.exceptions import SuspiciousOperation
+from josepy.errors import DeserializationError
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 
 from apps.authentication.auth0 import auth0_client
@@ -14,6 +16,12 @@ from .models import OnlineUser
 def provider_logout(request):
     # this is in accordance with
     # https://auth0.com/docs/authenticate/login/logout/log-users-out-of-auth0#oidc-logout-endpoint-parameters
+
+    if "oidc_id_token" not in request.session:
+        # we probably have an old token from previous auth-regime
+        # we need to clear their cookies and previous session, which this hopefully will do
+        logout(request)
+        return f"{settings.BASE_URL}"
 
     params = {
         "id_token_hint": request.session["oidc_id_token"],
@@ -45,7 +53,12 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
         if userinfo is None:
             # this is modified from the source, since we do not want to call /userinfo on _every_ API-call
             # this is kinda weird to have here, but ensures the access_token is verified in both DRF and elsewhere
-            userinfo = self.verify_token(access_token)
+            try:
+                userinfo = self.verify_token(access_token)
+            except DeserializationError:
+                LOGGER.debug("Login failed: invalid access token")
+                return None
+
             if "https://online.ntnu.no" not in userinfo.get("aud", []):
                 raise SuspiciousOperation(
                     "Wrong audience, this token is not meant for us"
