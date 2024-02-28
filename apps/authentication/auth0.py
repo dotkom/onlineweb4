@@ -4,14 +4,14 @@ from django.conf import settings
 
 
 def auth0_client():
-    domain = settings.AUTH0_DOMAIN
+    issuer = settings.AUTH0_ISSUER
 
     get_token = GetToken(
-        domain,
+        issuer,
         settings.AUTH0_CLIENT_ID,
         client_secret=settings.AUTH0_CLIENT_SECRET,
     )
-    token = get_token.client_credentials(f"https://{domain}/api/v2/")
+    token = get_token.client_credentials(f"{issuer}/api/v2/")
     mgmt_api_token = token["access_token"]
 
-    return Auth0(domain, mgmt_api_token)
+    return Auth0(issuer, mgmt_api_token)

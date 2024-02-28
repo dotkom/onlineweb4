@@ -21,7 +21,7 @@ def provider_logout(request):
         "post_logout_redirect_uri": settings.BASE_URL,
         # federated might be relevant if we support FEIDE
     }
-    redirect_url = f"{settings.AUTH0_DOMAIN}/oidc/logout?{urlencode(params)}"
+    redirect_url = f"{settings.AUTH0_ISSUER}/oidc/logout?{urlencode(params)}"
     return redirect_url
 
 
