@@ -294,6 +294,28 @@ class OnlineUser(AbstractUser):
                     }
                 )
 
+            if self.first_name != old.first_name and len(self.first_name) > 0:
+                # auth0 does not allow zero-length names
+                auth0 = auth0 if auth0 is not None else auth0_client()
+                auth0.users.update(self.auth0_subject, {"given_name": self.first_name})
+
+            if self.last_name != old.last_name and len(self.first_name) > 0:
+                auth0 = auth0 if auth0 is not None else auth0_client()
+                auth0.users.update(self.auth0_subject, {"family_name": self.last_name})
+
+            if self.phone_number != old.phone_number:
+                # this should technically perform more validation, number might be invalid
+                auth0 = auth0 if auth0 is not None else auth0_client()
+                auth0.users.update(
+                    self.auth0_subject, {"user_metadata": {"phone": self.phone_number}}
+                )
+
+            if self.gender != old.gender:
+                auth0 = auth0 if auth0 is not None else auth0_client()
+                auth0.users.update(
+                    self.auth0_subject, {"user_metadata": {"gender": self.gender}}
+                )
+
         super().save(*args, **kwargs)
 
     def serializable_object(self):
