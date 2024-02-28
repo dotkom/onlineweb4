@@ -6,6 +6,8 @@ from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 
+from apps.authentication.auth0 import auth0_client
+
 
 def provider_logout(request):
     # this is in accordance with
@@ -100,6 +102,10 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
             username=generate_username(claims["email"]),
         )
         user.save()
+        auth0 = auth0_client()
+        auth0.users.update(
+            user.auth0_subject, {"app_metadata": {"ow4_userid": user.pk}}
+        )
 
         return user
 
