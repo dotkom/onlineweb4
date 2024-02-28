@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.core.signing import Signer
+from django.urls import reverse
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -28,16 +30,13 @@ from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.permissions.drf_permissions import DjangoObjectPermissionOrAnonReadOnly
 
 from .filters import OnlineGroupFilter, UserFilter
-from .permissions import IsSelfOrSuperUser
 from .serializers.user_data import UserDataSerializer
 
 
 class UserViewSet(
     MultiSerializerMixin,
     viewsets.GenericViewSet,
-    mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
-    mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
 ):
     """
@@ -47,7 +46,7 @@ class UserViewSet(
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, UserReadOnlySerializer)
 
-    permission_classes = (IsSelfOrSuperUser,)
+    permission_classes = (IsAuthenticated,)
     filterset_class = UserFilter
     queryset = User.objects.all()
     serializer_classes = {
@@ -59,41 +58,42 @@ class UserViewSet(
     }
 
     # See templates/events/index.html. This is exposing this logic in the api.
-    @action(detail=True, methods=["get"], url_path="personalized_calendar_link")
-    def personalized_calendar_link(self, request, pk=None):
-        user: User = self.get_object()
-        username = user.username
+    @action(detail=False, methods=["get"])
+    def personalized_calendar_link(self, request):
+        username = request.user.username
         signer = Signer()
         signed_value = signer.sign(username)
 
-        link = f"http://old.online.ntnu.no/events/user/{signed_value}.ics"
+        link = settings.BASE_URL + reverse(
+            "events_personal_ics", kwargs={"user": signed_value}
+        )
         return Response(data={"link": link}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["put"])
-    def anonymize_user(self, request, pk=None):
-        user: User = self.get_object()
+    @action(detail=False, methods=["put"])
+    def anonymize_user(self, request):
+        user: User = request.user
         serializer = self.get_serializer(user, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(data=None, status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=["get"], url_path="dump-data")
-    def dump_data(self, request, pk: int):
-        user: User = self.get_object()
+    @action(detail=False, methods=["get"], url_path="dump-data")
+    def dump_data(self, request):
+        user = request.user
         serializer = self.get_serializer(user)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["get"], url_path="permissions")
-    def user_permissions(self, request, pk):
+    @action(detail=False, methods=["get"], url_path="permissions")
+    def user_permissions(self, request):
         """
         Returns all permissions for a given user.
         Codename is "action_object", e.g. "delete_profile".
         Content_type is ID of object type.
         If you want to group permissions, you can group on object type and map the ID to the object from the codename string.
         """
-        user = self.get_object()
+        user = request.user
         if user.is_superuser:
             permissions = Permission.objects.all().order_by("content_type")
         else:

@@ -179,7 +179,7 @@ class TestDumpData(APITestCase):
         self.other_user: User = generate_user(username="other_user")
         self.client.force_authenticate(user=self.user)
 
-        self.id_url = lambda _id: f"/api/v1/users/{str(_id)}/dump-data/"
+        self.url = reverse("users-dump-data")
 
         self.period_start = date(2017, 3, 1)
         self.period_end = self.period_start + timedelta(days=366)
@@ -192,7 +192,7 @@ class TestDumpData(APITestCase):
         }
 
     def test_dump_data_contains_name(self):
-        response = self.client.get(self.id_url(self.user.id))
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("name"), self.user.get_full_name())
 
@@ -200,7 +200,7 @@ class TestDumpData(APITestCase):
         self.event = generate_event()
         self.attendee1 = attend_user_to_event(user=self.user, event=self.event)
 
-        response = self.client.get(self.id_url(self.user.id))
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.json().get("attendees")), 1)
 
@@ -208,7 +208,7 @@ class TestDumpData(APITestCase):
         self.event = generate_company_event()
         attend_user_to_event(user=self.user, event=self.event)
 
-        response = self.client.get(self.id_url(self.user.id))
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.json().get("attendees")[0].get("companies"),
