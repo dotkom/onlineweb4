@@ -8,6 +8,8 @@ from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 
 from apps.authentication.auth0 import auth0_client
 
+from .models import OnlineUser
+
 
 def provider_logout(request):
     # this is in accordance with
@@ -109,7 +111,20 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
 
         return user
 
-    def update_user(self, user, claims):
+    def update_user(self, user: OnlineUser, claims):
         # if email was updated in Auth0-dashboard instead of through OW
-        user.email = claims.get("email")
+        # changed = False
+        # if user.email == claims.get("email"):
+        #     user.email = claims.get("email")
+        #     changed = True
+        # TODO: move source of truth to auth0
+        # if given_name := claims.get("given_name"):
+        #     user.first_name = given_name
+        # if family_name := claims.get("family_name"):
+        #     user.first_name = family_name
+        # if gender := claims.get("gender"):
+        #     user.gender = gender
+        # if changed:
+        #     user.save()
+
         return super().update_user(user, claims)
