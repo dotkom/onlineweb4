@@ -75,6 +75,7 @@ ADMINS = (("dotKom", "utvikling@online.ntnu.no"),)
 
 AUTH0_ISSUER = env["AUTH0_ISSUER"]
 AUTH0_CLIENT_ID = env["AUTH0_CLIENT_ID"]
+AUTH0_MGMT_TENANT = env["AUTH0_MGMT_TENANT"]
 AUTH0_CLIENT_SECRET = env["AUTH0_CLIENT_SECRET"]
 
 # this OIDC is for non-API-auth
