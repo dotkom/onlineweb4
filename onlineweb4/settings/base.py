@@ -132,6 +132,7 @@ SECURE_PROXY_SSL_HEADER = (
 VIMEO_API_TOKEN = config("OW4_VIMEO_API_TOKEN", default=None)
 
 AUTH0_ISSUER = config("AUTH0_ISSUER", default="")
+AUTH0_MGMT_TENANT = config("AUTH0_MGMT_TENANT", default="")
 AUTH0_CLIENT_ID = config("AUTH0_CLIENT_ID", default="")
 AUTH0_CLIENT_SECRET = config("AUTH0_CLIENT_SECRET", default="")
 
