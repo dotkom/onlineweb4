@@ -46,6 +46,6 @@ def toggle_mailing_lists(sender, instance: User, **kwargs):
 
             update_mailing_list(
                 g_suite_mailing_list,
-                instance.primary_email,
+                instance.email,
                 getattr(instance, mailing_list),
             )

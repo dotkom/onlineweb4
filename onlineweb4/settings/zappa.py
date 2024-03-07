@@ -28,6 +28,7 @@ DATABASES = {
 
 SECRET_KEY = env["SECRET_KEY"]
 
+
 DATAPORTEN = {
     "STUDY": {
         "TESTING": config("OW4_DP_STUDY_TESTING", cast=bool, default=True),
@@ -62,8 +63,6 @@ STRIPE_PRIVATE_KEYS = {
     "fagkom": env["STRIPE_PRIVKEY_FAGKOM"],
 }
 
-SLACK_INVITER = {"team_name": "onlinentnu", "token": env["SLACK_TOKEN"]}
-
 APPROVAL_SETTINGS = {
     "SEND_APPLICANT_NOTIFICATION_EMAIL": True,
     "SEND_APPROVER_NOTIFICATION_EMAIL": True,
@@ -73,6 +72,19 @@ AWS_SES_REGION_NAME = "eu-north-1"
 AWS_SES_REGION_ENDPOINT = f"email.{AWS_SES_REGION_NAME}.amazonaws.com"
 SESSION_COOKIE_SAMESITE = None
 ADMINS = (("dotKom", "utvikling@online.ntnu.no"),)
+
+AUTH0_ISSUER = env["AUTH0_ISSUER"]
+AUTH0_CLIENT_ID = env["AUTH0_CLIENT_ID"]
+AUTH0_MGMT_TENANT = env["AUTH0_MGMT_TENANT"]
+AUTH0_CLIENT_SECRET = env["AUTH0_CLIENT_SECRET"]
+
+# this OIDC is for non-API-auth
+OIDC_OP_JWKS_ENDPOINT = f"{AUTH0_ISSUER}/.well-known/jwks.json"
+OIDC_RP_CLIENT_ID = AUTH0_CLIENT_ID
+OIDC_RP_CLIENT_SECRET = AUTH0_CLIENT_SECRET
+OIDC_OP_AUTHORIZATION_ENDPOINT = f"{AUTH0_ISSUER}/authorize"
+OIDC_OP_TOKEN_ENDPOINT = f"{AUTH0_ISSUER}/oauth/token"
+OIDC_OP_USER_ENDPOINT = f"{AUTH0_ISSUER}/userinfo"
 
 
 # Override "spam-settings" for django-wiki

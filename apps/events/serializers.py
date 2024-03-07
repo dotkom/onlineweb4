@@ -61,7 +61,7 @@ class CompanyEventSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     absolute_url = serializers.CharField(source="get_absolute_url", read_only=True)
     attendance_event = AttendanceEventSerializer()
-    company_event = CompanyEventSerializer(many=True)
+    company_event = CompanyEventSerializer(many=True, source="company_events")
     image = ResponsiveImageSerializer()
 
     class Meta:

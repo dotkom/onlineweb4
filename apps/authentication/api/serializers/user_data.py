@@ -13,7 +13,6 @@ from apps.approval.models import (
 from apps.article.serializers import ArticleSerializer
 from apps.authentication.models import GroupMember
 from apps.authentication.serializers import (
-    EmailReadOnlySerializer,
     GroupRoleReadOnlySerializer,
     SpecialPositionSerializer,
 )
@@ -29,7 +28,6 @@ from apps.marks.serializers import (
     RuleAcceptanceSerializer,
     SuspensionSerializer,
 )
-from apps.online_oidc_provider.serializers import UserConsentReadOnlySerializer
 from apps.payment.models import (
     Payment,
     PaymentDelay,
@@ -40,7 +38,6 @@ from apps.payment.models import (
 from apps.profiles.serializers import PrivacySerializer
 from apps.shop.models import Order as ShopOrder
 from apps.shop.models import OrderLine as ShopOrderLine
-from apps.sso.serializers import SSOApplicationConsentSerializer
 from apps.webshop.models import Order as WebshopOrder
 from apps.webshop.models import OrderLine as WebshopOrderLine
 from apps.webshop.models import Product as WebshopProduct
@@ -353,7 +350,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     gender = serializers.SerializerMethodField()
     privacy = PrivacySerializer()
     member = MembershipSerializer()
-    email_objects = EmailReadOnlySerializer(many=True, source="get_emails")
     # Articles
     created_articles = ArticleSerializer(many=True)
     # Feedback
@@ -399,12 +395,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     # Other
     object_revisions = RevisionSerializer(many=True, source="revision_set")
 
-    # OpenID / Oauth
-    user_consents = UserConsentReadOnlySerializer(many=True, source="userconsent_set")
-    application_consents = SSOApplicationConsentSerializer(
-        many=True, source="applicationconsent_set"
-    )
-
     def get_name(self, user: OnlineUser):
         return user.get_full_name()
 
@@ -446,11 +436,9 @@ class UserDataSerializer(serializers.ModelSerializer):
             "nickname",
             "compiled",
             "ntnu_username",
-            "primary_email",
+            "email",
             "privacy",
             "online_mail",
-            "email",
-            "email_objects",
             "started_date",
             "image",
             "member",
@@ -470,12 +458,6 @@ class UserDataSerializer(serializers.ModelSerializer):
             "accepted_mark_rule_sets",
             "marks",
             "suspensions",
-            # OpenID / Oauth
-            "oauth2_provider_grant",  # Oauth2_provider_grant is oauth login attempts
-            "oidc_clients_set",
-            "sso_client",
-            "user_consents",
-            "application_consents",
             # Wiki
             "wiki_attachment_revisions",
             "wiki_article_revisions",
@@ -494,10 +476,6 @@ class UserDataSerializer(serializers.ModelSerializer):
             # Purchases
             "orderline_set",
             "shop_order_lines",
-            # Photoalbum
-            "photo_tags",
-            "uploaded_photos",
-            "created_albums",
             # Approval
             "applications",
             "approved_applications",

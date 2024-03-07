@@ -5,22 +5,15 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.db.models.signals import (
-    m2m_changed,
-    post_delete,
-    post_save,
-    pre_delete,
-    pre_save,
-)
+from django.db.models.signals import m2m_changed, post_delete, post_save, pre_delete
 from django.dispatch import receiver
 
-from apps.authentication.models import Email, GroupMember, GroupRole, OnlineGroup
+from apps.authentication.models import GroupMember, GroupRole, OnlineGroup
 from apps.authentication.tasks import (
     SynchronizeGroups,
     assign_permission_from_group_admins,
 )
 from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_user
-from apps.gsuite.mail_syncer.tasks import update_mailing_list
 from utils.disable_for_loaddata import disable_for_loaddata
 
 User = get_user_model()
@@ -132,29 +125,6 @@ def set_staff_status(sender, instance: GroupMember, created=False, **kwargs):
     should_user_be_staff = user.is_committee
     user.is_staff = should_user_be_staff
     user.save()
-
-
-@receiver(pre_save, sender=Email)
-@disable_for_loaddata
-def re_subscribe_primary_email_to_lists(sender, instance: Email, **kwargs):
-    user: User = instance.user
-    jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
-    infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
-    if instance.pk:
-        stored_instance: Email = Email.objects.get(pk=instance.pk)
-
-        # Handle case when the instance is changed to primary
-        if instance.primary and not stored_instance.primary:
-            if user.jobmail:
-                update_mailing_list(jobmail, email=instance.email, added=True)
-            if user.infomail:
-                update_mailing_list(infomail, email=instance.email, added=True)
-        # Handle case when the instance is changed from primary
-        elif not instance.primary and stored_instance.primary:
-            if user.jobmail:
-                update_mailing_list(jobmail, email=instance.email, added=False)
-            if user.infomail:
-                update_mailing_list(infomail, email=instance.email, added=False)
 
 
 @disable_for_loaddata

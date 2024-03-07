@@ -85,6 +85,7 @@ if "apps.autoconfig" in settings.INSTALLED_APPS:
 
 if "apps.authentication" in settings.INSTALLED_APPS:
     urlpatterns += [
+        # our config is kinda wack for API-s, this is only here to import the file that sets stuff for SharedAPIRouter
         re_path(r"^auth/", include("apps.authentication.urls")),
         re_path(r"^dashboard/auth/", include("apps.authentication.dashboard.urls")),
     ]
@@ -163,9 +164,6 @@ if "apps.notifications" in settings.INSTALLED_APPS:
         re_path(r"^notifications/", include("apps.notifications.urls")),
     ]
 
-if "apps.online_oidc_provider" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^oidc/", include("apps.online_oidc_provider.urls"))]
-
 if "apps.inventory" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^dashboard/inventory/", include("apps.inventory.dashboard.urls"))
@@ -181,15 +179,6 @@ if "apps.posters" in settings.INSTALLED_APPS:
 
 if "apps.profiles" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^profile/", include("apps.profiles.urls"))]
-
-if "apps.photoalbum" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^photoalbum/", include("apps.photoalbum.urls")),
-        re_path(
-            r"^dashboard/photoalbum/",
-            include("apps.photoalbum.dashboard.urls", namespace="dashboard-photoalbum"),
-        ),
-    ]
 
 if (
     "apps.resourcecenter" in settings.INSTALLED_APPS
@@ -207,25 +196,10 @@ if (
         ),
     ]
 
-if "apps.slack" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^slack/", include("apps.slack.urls"))]
-
 if "apps.splash" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^splash/", include("apps.splash.urls")),
         re_path(r"^splash/", include("apps.splash.api.urls")),
-    ]
-
-if "apps.sso" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^sso/", include("apps.sso.urls")),
-        re_path(
-            r"^sso/", include("oauth2_provider.urls", namespace="oauth2_provider")
-        ),  # Shadow URL path to allow overrides in apps.sso.urls.
-        re_path(
-            r"^dashboard/auth/sso/",
-            include("apps.sso.dashboard.urls", namespace="dashboard"),
-        ),
     ]
 
 if "apps.webshop" in settings.INSTALLED_APPS:
@@ -254,10 +228,8 @@ if "rest_framework" in settings.INSTALLED_APPS:
         re_path(r"^api/v1/", include(SharedAPIRootRouter.shared_router.urls))
     ]
 
-if "oidc_provider" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^openid/", include("oidc_provider.urls", namespace="oidc_provider"))
-    ]
+if "mozilla_django_oidc" in settings.INSTALLED_APPS:
+    urlpatterns += [re_path(r"^auth0/", include("mozilla_django_oidc.urls"))]
 
 # http://docs.djangoproject.com/en/1.3/howto/static-files/#staticfiles-development
 if settings.DEBUG:

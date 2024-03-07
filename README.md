@@ -10,8 +10,7 @@
 
 ### Frontend
 
-The frontend code is located in the `assets` folder.
-It's a mixture of old jQuery code and newer React code.
+The frontend code is located in the `assets` folder. It's a mixture of old jQuery code and newer React code.
 The code is built with [webpack](http://webpack.js.org/) and transpiled using [Babel](https://babeljs.io/).
 
 ### Backend
@@ -257,8 +256,9 @@ Some endpoints require user authentication. See [OAuth/OIDC](#oauthoidc).
 
 Onlineweb4 has an Oauth2/OIDC-provider built-in, allowing external projects to authenticate users through Onlineweb4.  
 [Auth0: Which flow should I use?](https://auth0.com/docs/authorization/which-oauth-2-0-flow-should-i-use)  
-[Digital Ocean: Introduction to Oauth 2](https://www.digitalocean.com/community/tutorials/an-introduction-to-oauth-2)  
+[Digital Ocean: Introduction to Oauth 2](https://www.digitalocean.com/community/tutorials/an-intr
 [Auth0: Authorization Flow with PKCE - Single Page Apps](https://auth0.com/docs/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce)
+[PKCE: What it is and how to use it with OAuth 2.0](https://www.loginradius.com/blog/async/pkce/)
 
 ### For production setup
 

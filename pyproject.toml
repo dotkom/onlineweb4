@@ -7,20 +7,18 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "~3.11"
-Django = "^3.2.23"
+Django = "^3.2.24"
 djangorestframework = "~3.14"
-django-filter = "~23.4"
-pillow = "~10.1"
-python-memcached = "~1.59"
-stripe = "~2.67"
+django-filter = "~23.5"
+pillow = "~10.2"
+stripe = "~3.5"
 icalendar = "~5.0"
-google-api-python-client = "~2.108"
+google-api-python-client = "~2.113"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
 django-crispy-forms = "~2.0"
-crispy-bootstrap3 = "^2022.1"
+crispy-bootstrap3 = "^2024.1"
 django-dynamic-fixture = "~3.1"
 django-recaptcha = "~3.0"           # Google ReCaptcha
-django-oauth-toolkit = "~1.7"       # OAuth2 authentication support
 django-watson = "~1.6.2"            # Indexed model search lib
 django-reversion = "~5.0"           # Model version history with middleware hooks to all post_save signals
 django-guardian = "~2.4"            # Per Object permissions framework
@@ -31,10 +29,9 @@ Unidecode = "~1.3"                  # Translates every unicode symbol to the clo
 django-markdown-deux = "~1.0"
 django-cors-headers = "~4.3"        # Enable CORS for Nibble
 django-datetime-widget = { git = "https://github.com/oleast/django-datetime-widget.git", rev = "95a5ba4738853d1ed4081e1e33e1600cba984aad" }
-django-webpack-loader = "~2.0"      # Integration with webpack
+django-webpack-loader = "~3.0"      # Integration with webpack
 dj-database-url = "~2.1"            # Allows to configure databases using URLs
 python-decouple = "~3.8"            # Configuration and settings management
-django-oidc-provider = "~0.8"       # OpenID Connect Provider
 docutils = "~0.20"                  # Allows django-admindocs to generate documentation
 oic = "~1.6"			            # OpenID Connect Client
 requests = { version = "~2.31", extras = [ "security" ] }
@@ -46,33 +43,34 @@ pyyaml = "^6.0"
 pywebpush = "^1.11.0"
 
 # Monitoring
-sentry-sdk = { version = "~1.36", extras = [ "django" ] }
+sentry-sdk = { version = "~1.39", extras = [ "django" ] }
 
 # AWS
-boto3 =  { version = "~1.29", optional = true }
+boto3 =  { version = "~1.34", optional = true }
 django-ses = { version = "~3.5", optional = true }
 zappa = { version = "~0.58", optional = true }
 django-storages = { version = "~1.14", extras = ["s3"], optional = true }
 # psyco postgresql
 psycopg2-binary = { version = "~2.9", optional = true }
+mozilla-django-oidc = "^4.0.0"
+auth0-python = "^4.7.0"
 
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 # Testing
 pytest = "~7.4"
 pytest-cov = "~4.1"
 pytest-django = "~4.7"
 pytest-xdist = "~3.4"
-freezegun = "~1.2"
-tox = "~4.11"
-coverage = { version = "~7.3", extras = [ "toml" ] }
+freezegun = "~1.4"
+coverage = { version = "~7.4", extras = [ "toml" ] }
 
 # Linting
-flake8 = "~6.1"
+ruff = "~0.1"
 isort = "~5.12"
 pycodestyle = "~2.11"
-black = "~23.11"
-pre-commit = "~3.5"
+black = "~23.12"
+pre-commit = "~3.6"
 
 [tool.poetry.extras]
 # only required for running in production on AWS
@@ -84,42 +82,12 @@ prod = [
     "django-storages",
 ]
 postgresql = ["psycopg2-binary"]
+s3 = ["django-storages"]
 
 
-[tool.tox]
-legacy_tox_ini = """
-[tox]
-envlist = tests, flake8, isort, black
-skipsdist = True
-basepython = python3
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = ["F403"]
 
-[testenv]
-basepython = python3
-allowlist_externals =
-    npm
-    py.test
-    isort
-    flake8
-    black
-commands =
-    isort: isort -c apps scripts utils onlineweb4
-    flake8: flake8 apps scripts utils onlineweb4
-    black: black --check apps scripts utils onlineweb4
-
-[testenv:tests]
-passenv =
-    DATABASE_URL
-    OAUTH2_*
-    OW4_*
-setenv =
-    DATABASE_URL = sqlite:///db.db
-    DJANGO_SETTINGS_MODULE = onlineweb4.settings
-    PYTHONPATH = {toxinidir}:{toxinidir}
-    OW4_WEBPACK_LOADER_STATS_FILE = webpack-stats.json
-commands =
-    npm run build
-    py.test --cov=apps --cov-report xml
-"""
 
 [tool.isort]
 profile = "black"
@@ -133,12 +101,13 @@ addopts = "--nomigrations -n auto --dist loadscope"
 filterwarnings = [
     # for future maintainers: these fields are documented here
     # https://docs.python.org/3/library/warnings.html#the-warnings-filter
-    # Need to remove outdated library
-    "ignore::DeprecationWarning:.*oidc_provider.*",
-    "ignore:.*:django.utils.deprecation.RemovedInDjango40Warning:oidc_provider.*",
     # All local ones are dealt with, this cannot be fixed by us
     "ignore:.*defines default_app_config.*:django.utils.deprecation.RemovedInDjango41Warning",
+    "ignore:Use setlocale\\(\\), getencoding\\(\\) and getlocale\\(\\) instead:DeprecationWarning:.*django.*",
+    "ignore:'cgi' is deprecated and slated for removal in Python 3.13:DeprecationWarning:.*django.*",
+    "ignore:'etree' is deprecated. Use 'xml.etree.ElementTree' instead.:DeprecationWarning:.*wiki.*",
     # we should probably care about OpenAPI-warnings, but they are extremely noisy
+    "ignore:Schema component \"Event\" has been overriden with a different value.:UserWarning:rest_framework.schemas.openapi",
     "ignore:You have a duplicated operationId in your OpenAPI schema:UserWarning",
     "ignore:<class '.*'> is not compatible with schema generation:UserWarning",
 ]
@@ -147,6 +116,7 @@ filterwarnings = [
 omit = [
     "apps/**/migrations/*",
     "apps/**/tests/*",
+    "apps/**/tests.py",
     "apps/**/test_*.py",
     "onlineweb4/settings/**",
 ]

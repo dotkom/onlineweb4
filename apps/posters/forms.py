@@ -24,7 +24,7 @@ class AddForm(forms.ModelForm):
         required=False,
         widget=forms.Textarea(
             attrs={
-                "placeholder": "Eventuell informasjon, kommentarer, lenker til bilder, osv..."
+                "placeholder": "Skriv her om du vil bestille plakat og banner eller bare banner. Fyll også inn eventuell informasjon, kommentarer, lenker til bilder, osv..."
             }
         ),
     )

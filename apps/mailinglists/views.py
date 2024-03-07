@@ -1,44 +1,4 @@
 from django.shortcuts import render
-from rest_framework import viewsets
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
-
-from .filters import MailEntityFilter, MailGroupFilter
-from .models import MailEntity, MailGroup
-from .serializers import MailEntitySerializer, MailGroupSerializer
-
-
-class MailGroupViewSet(viewsets.ModelViewSet):
-    """
-    Mailingslists used by many Student-related organizations.
-    """
-
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    serializer_class = MailGroupSerializer
-    filterset_class = MailGroupFilter
-    queryset = MailGroup.objects.all()
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if not self.request.user.has_perm("mailinglists.view_mailgroup"):
-            queryset = queryset.filter(public=True)
-        return queryset
-
-
-class MailEntityViewSet(viewsets.ModelViewSet):
-    """
-    The individual mails we use on our mailingslist.
-    """
-
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    serializer_class = MailEntitySerializer
-    filterset_class = MailEntityFilter
-    queryset = MailEntity.objects.all()
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        if not self.request.user.has_perm("mailinglists.view_mailentity"):
-            queryset = queryset.filter(public=True)
-        return queryset
 
 
 def index(request):
@@ -120,6 +80,7 @@ def index(request):
                 },
                 {"name": "Nabla", "email": "nabla@nabla.ntnu.no"},
                 {"name": "Nucleus", "email": "nucleuslinjeforening@gmail.com"},
+                {"name": "Nutrix", "email": "post@nutrix.no"},
                 {"name": "Omega", "email": "hs@omega.ntnu.no"},
                 {"name": "Online", "email": "online@online.ntnu.no"},
                 {"name": "Pareto", "email": "pareto.linjeforening@gmail.com"},
@@ -148,7 +109,6 @@ def index(request):
                     "name": "MiT (ligger også på Gløshaugen)",
                     "email": "leder@maskining.no",
                 },
-                {"name": "Nutrix", "email": "nutrixlinjeforening@gmail.com"},
                 {"name": "SALT", "email": "post@saltntnu.no"},
                 {
                     "name": "Tim & Shænko (ligger også på Gløshaugen)",
@@ -289,7 +249,7 @@ def index(request):
                 {"name": "Mannhullet", "email": "formann@mannhullet.no"},
                 {"name": "Nabla", "email": "leder@nabla.ntnu.no"},
                 {"name": "Nucleus", "email": "nucleus.leder@gmail.com"},
-                {"name": "Nutix", "email": "leder@nutrix.no"},
+                {"name": "Nutrix", "email": "leder@nutrix.no"},
                 {"name": "Omega", "email": "stormeister@omega.ntnu.no"},
                 {"name": "Online", "email": "leder@online.ntnu.no"},
                 {"name": "Pareto", "email": "pareto.leder@gmail.com"},

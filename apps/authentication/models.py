@@ -156,6 +156,10 @@ class OnlineUser(AbstractUser):
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
     )
 
+    auth0_subject = models.CharField(
+        _("Auth0 User Id"), blank=True, null=True, unique=True, max_length=50
+    )
+
     @property
     def is_member(self):
         """
@@ -211,20 +215,6 @@ class OnlineUser(AbstractUser):
         full_name = "%s %s" % (self.first_name, self.last_name)
         return full_name.strip()
 
-    @property
-    def primary_email(self) -> str:
-        email_object = self.email_object
-        if email_object:
-            return email_object.email
-        return None
-
-    @property
-    def email_object(self) -> "Email":
-        return self.get_emails().filter(primary=True).first()
-
-    def get_emails(self):
-        return Email.objects.filter(user=self)
-
     def get_active_suspensions(self):
         return self.suspension_set.filter(active=True)
 
@@ -259,7 +249,7 @@ class OnlineUser(AbstractUser):
         return min(start_year + years_passed, start_year + length_of_study)
 
     def get_absolute_url(self):
-        return reverse("profiles_view", kwargs={"username": self.username})
+        return reverse("profiles_view", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.get_full_name()
@@ -274,6 +264,57 @@ class OnlineUser(AbstractUser):
             from apps.authentication.utils import create_online_mail_alias
 
             self.online_mail = create_online_mail_alias(self)
+
+        if self.pk and (old := OnlineUser.objects.filter(pk=self.pk).first()):
+            auth0 = None
+            if self.email != old.email:
+                from apps.gsuite.mail_syncer.tasks import update_mailing_list
+                from onlineweb4.settings.gsuite import (
+                    MAILING_LIST_USER_FIELDS_TO_LIST_NAME,
+                )
+
+                from .auth0 import auth0_client
+
+                jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
+                infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
+
+                if self.jobmail:
+                    update_mailing_list(jobmail, email=old.email, added=False)
+                    update_mailing_list(jobmail, email=self.email, added=True)
+                if self.infomail:
+                    update_mailing_list(infomail, email=old.email, added=False)
+                    update_mailing_list(infomail, email=self.email, added=True)
+
+                auth0 = auth0_client()
+                auth0.users.update(self.auth0_subject, {"email": self.email})
+                auth0.tickets.create_email_verification(
+                    {
+                        "user_id": self.auth0_subject,
+                        "client_id": settings.AUTH0_CLIENT_ID,
+                    }
+                )
+
+            if self.first_name != old.first_name and len(self.first_name) > 0:
+                # auth0 does not allow zero-length names
+                auth0 = auth0 if auth0 is not None else auth0_client()
+                auth0.users.update(self.auth0_subject, {"given_name": self.first_name})
+
+            if self.last_name != old.last_name and len(self.first_name) > 0:
+                auth0 = auth0 if auth0 is not None else auth0_client()
+                auth0.users.update(self.auth0_subject, {"family_name": self.last_name})
+
+            if self.phone_number != old.phone_number:
+                # this should technically perform more validation, number might be invalid
+                auth0 = auth0 if auth0 is not None else auth0_client()
+                auth0.users.update(
+                    self.auth0_subject, {"user_metadata": {"phone": self.phone_number}}
+                )
+
+            if self.gender != old.gender:
+                auth0 = auth0 if auth0 is not None else auth0_client()
+                auth0.users.update(
+                    self.auth0_subject, {"user_metadata": {"gender": self.gender}}
+                )
 
         super().save(*args, **kwargs)
 
@@ -360,27 +401,6 @@ class Email(models.Model):
         permissions = (("view_email", "View Email"),)
         default_permissions = ("add", "change", "delete")
         ordering = ("user", "email")
-
-
-class RegisterToken(models.Model):
-    user = models.ForeignKey(
-        OnlineUser, related_name="register_user", on_delete=models.CASCADE
-    )
-    email = models.EmailField(_("epost"), max_length=254)
-    token = models.CharField(_("token"), max_length=32, unique=True)
-    created = models.DateTimeField(
-        _("opprettet dato"), editable=False, auto_now_add=True
-    )
-
-    @property
-    def is_valid(self):
-        valid_period = datetime.timedelta(days=1)
-        now = timezone.now()
-        return now < self.created + valid_period
-
-    class Meta:
-        permissions = (("view_registertoken", "View RegisterToken"),)
-        default_permissions = ("add", "change", "delete")
 
 
 class Membership(models.Model):

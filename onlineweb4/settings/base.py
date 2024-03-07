@@ -5,8 +5,6 @@ from pathlib import Path
 
 from decouple import config
 
-from apps.sso.settings import OAUTH2_SCOPES
-
 # Directory that contains this file.
 PROJECT_SETTINGS_DIRECTORY = Path(globals()["__file__"]).parent
 # Root directory. Contains manage.py
@@ -57,33 +55,6 @@ USER_SEARCH_GROUPS = [
     36,  # Online-IL
     48,  # FeminIT
 ]
-
-SLACK_INVITER = {
-    # e.g. onlinentnu
-    "team_name": config("OW4_DJANGO_SLACK_INVITER_TEAM_NAME", default="team_name_here"),
-    # Token generated using OAuth2: https://api.slack.com/docs/oauth
-    # Scopes needed: client+admin
-    "token": config("OW4_DJANGO_SLACK_INVITER_TOKEN", default="xoxp-1234_fake"),
-}
-
-# SSO / OAuth2 settings
-
-OIDC_RSA_PRIVATE_KEY = ""  # Default case
-if os.path.isfile("oidc.key"):
-    with open("oidc.key", "r") as f:
-        OIDC_RSA_PRIVATE_KEY = f.read()
-
-OAUTH2_PROVIDER_APPLICATION_MODEL = "sso.Client"
-OAUTH2_PROVIDER = {
-    "OAUTH2_VALIDATOR_CLASS": "apps.sso.validator.Validator",
-    "OIDC_ENABLED": True,
-    "PKCE": True,
-    "OIDC_RSA_PRIVATE_KEY": OIDC_RSA_PRIVATE_KEY,
-    "SCOPES": OAUTH2_SCOPES,
-    "ACCESS_TOKEN_EXPIRE_SECONDS": 3600,
-    "AUTHORIZATION_CODE_EXPIRE_SECONDS": 60,
-    "REFRESH_TOKEN_EXPIRE_SECONDS": 43200,
-}
 
 
 def get_stats_file() -> str:
@@ -136,7 +107,7 @@ IMPORT_DDF_MODELS = False
 CORS_ORIGIN_ALLOW_ALL = config(
     "OW4_DJANGO_CORS_ORIGIN_ALLOW_ALL", cast=bool, default=True
 )
-CORS_URLS_REGEX = r"^(/api/v1/.*|/sso/user/|/openid/.*)$"  # Enables CORS on all /api/v1/, /sso/user/ and all /openid/ endpoints
+CORS_URLS_REGEX = r"^(/api/v1/.*|/openid/.*)$"  # Enables CORS on all /api/v1/, and all /openid/ endpoints
 
 
 # Google reCaptcha settings
@@ -153,13 +124,30 @@ NOCAPTCHA = config("OW4_DJANGO_NOCAPTCHA", cast=bool, default=True)
 RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=True)
 
 
-# oidc_provider - OpenID Connect Provider
-OIDC_USERINFO = "apps.online_oidc_provider.claims.userinfo"
-OIDC_EXTRA_SCOPE_CLAIMS = "apps.online_oidc_provider.claims.Onlineweb4ScopeClaims"
-
 USE_X_FORWARDED_HOST = config("OW4_DJANGO_DEVELOPMENT_HTTPS", cast=bool, default=False)
 SECURE_PROXY_SSL_HEADER = (
     ("HTTP_X_FORWARDED_PROTO", "https") if USE_X_FORWARDED_HOST else None
 )
 
 VIMEO_API_TOKEN = config("OW4_VIMEO_API_TOKEN", default=None)
+
+AUTH0_ISSUER = config("AUTH0_ISSUER", default="")
+AUTH0_MGMT_TENANT = config("AUTH0_MGMT_TENANT", default="")
+AUTH0_CLIENT_ID = config("AUTH0_CLIENT_ID", default="")
+AUTH0_CLIENT_SECRET = config("AUTH0_CLIENT_SECRET", default="")
+
+# this OIDC is for non-API-auth
+OIDC_OP_JWKS_ENDPOINT = f"{AUTH0_ISSUER}/.well-known/jwks.json"
+OIDC_RP_SIGN_ALGO = "RS256"
+OIDC_RP_CLIENT_ID = AUTH0_CLIENT_ID
+OIDC_RP_CLIENT_SECRET = AUTH0_CLIENT_SECRET
+OIDC_OP_AUTHORIZATION_ENDPOINT = f"{AUTH0_ISSUER}/authorize"
+OIDC_OP_TOKEN_ENDPOINT = f"{AUTH0_ISSUER}/oauth/token"
+OIDC_OP_USER_ENDPOINT = f"{AUTH0_ISSUER}/userinfo"
+# https://github.com/mozilla/mozilla-django-oidc/issues/340
+# not supported
+# OIDC_OP_AUDIENCE = "https://online.ntnu.no"
+OIDC_OP_LOGOUT_URL_METHOD = "apps.authentication.backends.provider_logout"
+# we need it for logout
+OIDC_STORE_ID_TOKEN = True
+OIDC_RP_SCOPES = "openid email profile"

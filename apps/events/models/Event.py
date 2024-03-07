@@ -157,6 +157,22 @@ class EventOrderedByRegistration(models.Manager):
         )
 
 
+# Store all actions users take in regards to events.
+class EventUserAction(models.Model):
+    event = models.ForeignKey("Event", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    type = models.CharField(
+        max_length=15,
+        choices=[
+            ("register", "register"),
+            ("unregister", "unregister")
+            #  , ("pay", "pay"), ("chose_extra", "chose_extra"), ("sent_feedback", "sent_feedback") TODO: these should be added, but we start with register/unregister for now.
+        ],
+    )
+
+
 class Event(models.Model):
     """
     Base class for Event-objects.
@@ -240,11 +256,16 @@ class Event(models.Model):
     # TODO move payment and feedback stuff to attendance event when dasboard is done
 
     def feedback_users(self):
+        # why is this not on attendance_event?
+        from .Attendance import Attendee
+
         if self.is_attendance_event():
-            return [
-                a.user for a in self.attendance_event.attendees.filter(attended=True)
-            ]
-        return []
+            qs = self.attendance_event.attendees.filter(attended=True)
+        else:
+            qs = Attendee.objects.none()
+        from apps.authentication.models import OnlineUser as User
+
+        return User.objects.filter(pk__in=qs.values_list("user", flat=True))
 
     def feedback_date(self):
         return self.event_end
@@ -265,18 +286,16 @@ class Event(models.Model):
 
     @property
     def images(self):
-        images = ResponsiveImage.objects.none()
-        if self.image:
-            images |= ResponsiveImage.objects.filter(pk=self.image.id)
-        company_image_ids = self.companies.values_list("image")
-        images |= ResponsiveImage.objects.filter(pk__in=company_image_ids)
-        return images.distinct()
-
-    @property
-    def company_event(self):
-        from .Attendance import CompanyEvent
-
-        return CompanyEvent.objects.filter(event=self)
+        # we want to have self.image first, so use dict-keys instead of set since keys are ordered.
+        # it is not entirely clear why we even need to de-deplicate here
+        images = {self.image: None}
+        images |= {c.image: None for c in self.companies.select_related("image")}
+        # if company or we are missing an image, remove it
+        try:
+            del images[None]
+        except KeyError:
+            pass
+        return list(images.keys())
 
     @property
     def organizer_name(self):
@@ -322,6 +341,8 @@ class Event(models.Model):
         )
 
     def clean(self):
+        if self.event_end < self.event_start:
+            raise ValidationError({"event_end": ["Event må starte før det kan slutte"]})
         if not self.organizer:
             raise ValidationError({"organizer": ["Arrangementet krever en arrangør."]})
 

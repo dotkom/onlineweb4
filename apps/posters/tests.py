@@ -5,7 +5,6 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django_dynamic_fixture import G
 
-from apps.authentication.models import Email
 from apps.authentication.models import OnlineUser as User
 from apps.events.tests.utils import add_to_group, create_committee_group
 from apps.posters.models import Poster
@@ -43,8 +42,7 @@ class AddPosterTestCase(TestCase):
     def test_create_poster_order(self):
         url = reverse("posters_add", kwargs={"order_type": 3})
 
-        user = G(User, username="test_user")
-        G(Email, user=user, primary=True, verified=True)
+        user = G(User, username="test_user", email="test@user.no")
 
         user.is_staff = True
         user.is_active = True

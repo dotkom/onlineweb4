@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("sso", "0002_auto_20171127_1304"),
         ("authentication", "0001_initial"),
     ]
 

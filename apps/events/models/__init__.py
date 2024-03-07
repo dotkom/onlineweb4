@@ -14,5 +14,24 @@ from .Attendance import (
     Reservee,
     StatusCode,
 )
-from .Event import Event, EventOrderedByRegistration
+from .Event import Event, EventOrderedByRegistration, EventUserAction
 from .Extras import Extras
+
+__all__ = [
+    FieldOfStudyRule,
+    GradeRule,
+    Rule,
+    RuleBundle,
+    UserGroupRule,
+    AttendanceEvent,
+    Attendee,
+    CompanyEvent,
+    GroupRestriction,
+    Reservation,
+    Reservee,
+    StatusCode,
+    Event,
+    EventUserAction,
+    EventOrderedByRegistration,
+    Extras,
+]

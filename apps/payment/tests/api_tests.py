@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.events.tests.utils import (
     attend_user_to_event,
@@ -14,7 +15,6 @@ from apps.events.tests.utils import (
     generate_user,
     pay_for_event,
 )
-from apps.online_oidc_provider.test import OIDCTestCase
 from apps.payment import status as payment_status
 from apps.payment.models import PaymentRelation
 
@@ -41,12 +41,11 @@ def mock_payment_intent_confirm():
 
 
 @stripe_test
-class PaymentRelationTestCase(OIDCTestCase):
+class PaymentRelationTestCase(APITestCase):
     def setUp(self):
         self.committee = G(Group, name="Arrkom")
         self.user = generate_user(username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("payment_relations-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
@@ -94,7 +93,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -110,7 +108,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.secure_payment_method.id,
             },
-            **self.headers,
         )
 
         current_payment_status = response.json().get("status")
@@ -129,7 +126,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.secure_payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(initial_response.status_code, status.HTTP_201_CREATED)
@@ -147,7 +143,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_intent_id": "--some-fake-id--",
                 # Fake id works since actual validation has been disabled by the mock_payment_intent_confirm decorator
             },
-            **self.headers,
         )
 
         current_payment_status = confirm_response.json().get("status")
@@ -156,14 +151,14 @@ class PaymentRelationTestCase(OIDCTestCase):
         self.assertEqual(current_payment_status, payment_status.DONE)
 
     def test_user_has_access_to_view_payments(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_view_their_own_payments(self):
         payment_relation = pay_for_event(self.event, self.user)
 
-        response = self.client.get(self.id_url(payment_relation.id), **self.headers)
+        response = self.client.get(self.id_url(payment_relation.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("payment").get("id"), self.payment.id)
@@ -173,13 +168,14 @@ class PaymentRelationTestCase(OIDCTestCase):
         attend_user_to_event(self.event, other_user)
         payment_relation = pay_for_event(self.event, other_user)
 
-        response = self.client.get(self.id_url(payment_relation.id), **self.headers)
+        response = self.client.get(self.id_url(payment_relation.id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.json().get("detail"), "Ikke funnet.")
 
     def test_unauthenticated_client_cannot_access_payments(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
@@ -190,7 +186,6 @@ class PaymentRelationTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"payment": self.payment.id, "payment_price": self.payment.price().id},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -208,7 +203,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": fake_payment_method_id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -228,7 +222,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": payment_2.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -247,7 +240,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.attendee.refresh_from_db()
@@ -266,7 +258,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.secure_payment_method.id,
             },
-            **self.headers,
         )
 
         self.attendee.refresh_from_db()
@@ -297,7 +288,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -315,7 +305,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": second_price.id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -328,7 +317,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
@@ -340,7 +328,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response_2.status_code, status.HTTP_400_BAD_REQUEST)
@@ -358,7 +345,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response_1.status_code, status.HTTP_201_CREATED)
@@ -370,7 +356,6 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": second_price.id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response_2.status_code, status.HTTP_400_BAD_REQUEST)
@@ -386,11 +371,10 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
         payment_relation_id = create_response.json().get("id")
 
-        response = self.client.delete(self.id_url(payment_relation_id), **self.headers)
+        response = self.client.delete(self.id_url(payment_relation_id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
@@ -405,11 +389,10 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
         payment_relation_id = create_response.json().get("id")
 
-        self.client.delete(self.id_url(payment_relation_id), **self.headers)
+        self.client.delete(self.id_url(payment_relation_id))
 
         payment_relation = PaymentRelation.objects.get(pk=payment_relation_id)
 
@@ -425,11 +408,10 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.secure_payment_method.id,
             },
-            **self.headers,
         )
         payment_relation_id = create_response.json().get("id")
 
-        response = self.client.delete(self.id_url(payment_relation_id), **self.headers)
+        response = self.client.delete(self.id_url(payment_relation_id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
@@ -449,11 +431,10 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
         payment_relation_id = create_response.json().get("id")
 
-        response = self.client.delete(self.id_url(payment_relation_id), **self.headers)
+        response = self.client.delete(self.id_url(payment_relation_id))
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -471,11 +452,10 @@ class PaymentRelationTestCase(OIDCTestCase):
                 "payment_price": self.payment.price().id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
         payment_relation_id = create_response.json().get("id")
 
-        response = self.client.delete(self.id_url(payment_relation_id), **self.headers)
+        response = self.client.delete(self.id_url(payment_relation_id))
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -484,11 +464,10 @@ class PaymentRelationTestCase(OIDCTestCase):
 
 
 @stripe_test
-class PaymentTransactionTestCase(OIDCTestCase):
+class PaymentTransactionTestCase(APITestCase):
     def setUp(self):
         self.user = generate_user(username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("payment_transactions-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
@@ -515,12 +494,13 @@ class PaymentTransactionTestCase(OIDCTestCase):
         self.amount = 100
 
     def test_user_has_access_to_view_transactions(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_unauthenticated_clients_cannot_access_transactions(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
@@ -531,7 +511,6 @@ class PaymentTransactionTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"amount": self.amount, "payment_method_id": self.payment_method.id},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -544,7 +523,6 @@ class PaymentTransactionTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"amount": self.amount, "payment_method_id": self.secure_payment_method.id},
-            **self.headers,
         )
 
         current_payment_status = response.json().get("status")
@@ -559,7 +537,6 @@ class PaymentTransactionTestCase(OIDCTestCase):
         initial_response = self.client.post(
             self.url,
             {"amount": self.amount, "payment_method_id": self.secure_payment_method.id},
-            **self.headers,
         )
 
         self.assertEqual(initial_response.status_code, status.HTTP_201_CREATED)
@@ -577,7 +554,6 @@ class PaymentTransactionTestCase(OIDCTestCase):
                 "payment_intent_id": "--some-fake-id--",
                 # Fake id works since actual validation has been disabled by the mock_payment_intent_confirm decorator
             },
-            **self.headers,
         )
 
         current_payment_status = confirm_response.json().get("status")
@@ -603,7 +579,6 @@ class PaymentTransactionTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"amount": self.amount, "payment_method_id": self.payment_method.id},
-            **self.headers,
         )
 
         self.user.refresh_from_db()
@@ -619,7 +594,6 @@ class PaymentTransactionTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"amount": self.amount, "payment_method_id": self.secure_payment_method.id},
-            **self.headers,
         )
 
         self.user.refresh_from_db()
@@ -634,7 +608,6 @@ class PaymentTransactionTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"amount": wrong_amount, "payment_method_id": self.payment_method.id},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -644,7 +617,7 @@ class PaymentTransactionTestCase(OIDCTestCase):
         )
 
     def test_transaction_fails_without_payment_method_id(self):
-        response = self.client.post(self.url, {"amount": self.amount}, **self.headers)
+        response = self.client.post(self.url, {"amount": self.amount})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -657,7 +630,6 @@ class PaymentTransactionTestCase(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"amount": self.amount, "payment_method_id": fake_payment_method_id},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -669,16 +641,13 @@ class PaymentTransactionTestCase(OIDCTestCase):
         create_response = self.client.post(
             self.url,
             {"amount": self.amount, "payment_method_id": self.payment_method.id},
-            **self.headers,
         )
 
         self.assertEqual(create_response.status_code, status.HTTP_201_CREATED)
 
         transaction_id = create_response.json().get("id")
 
-        delete_response = self.client.delete(
-            self.id_url(transaction_id), **self.headers
-        )
+        delete_response = self.client.delete(self.id_url(transaction_id))
 
         self.assertEqual(delete_response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
@@ -688,22 +657,22 @@ class PaymentTransactionTestCase(OIDCTestCase):
 
 
 @stripe_test
-class PaymentDelayTestCase(OIDCTestCase):
+class PaymentDelayTestCase(APITestCase):
     def setUp(self):
         self.user = generate_user(username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("payment_delays-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
 
     def test_user_can_access_payment_delays(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_unauthenticated_clients_cannot_access_payment_delays(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
@@ -712,22 +681,22 @@ class PaymentDelayTestCase(OIDCTestCase):
 
 
 @stripe_test
-class PaymentPriceTestCase(OIDCTestCase):
+class PaymentPriceTestCase(APITestCase):
     def setUp(self):
         self.user = generate_user(username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("payment_prices-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
 
     def test_user_can_access_payment_prices(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_unauthenticated_clients_cannot_access_payment_delays(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(

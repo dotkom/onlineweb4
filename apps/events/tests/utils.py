@@ -4,7 +4,7 @@ from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm, get_perms_for_model
 
 from apps.authentication.constants import GroupType
-from apps.authentication.models import Email, GroupMember, OnlineGroup, OnlineUser
+from apps.authentication.models import GroupMember, OnlineGroup, OnlineUser
 from apps.companyprofile.models import Company
 from apps.events.models.Attendance import CompanyEvent
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
@@ -70,11 +70,15 @@ def add_payment_delay(payment: Payment, user: OnlineUser) -> PaymentDelay:
     return G(PaymentDelay, payment=payment, user=user)
 
 
-def generate_user(username: str) -> OnlineUser:
+def generate_user(username: str, *args, **kwargs) -> OnlineUser:
     user = G(
-        OnlineUser, username=username, ntnu_username=username, phone_number="12345678"
+        OnlineUser,
+        username=username,
+        ntnu_username=username,
+        phone_number="12345678",
+        *args,
+        **kwargs
     )
-    G(Email, user=user)
     return user
 
 

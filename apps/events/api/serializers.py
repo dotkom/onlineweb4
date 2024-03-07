@@ -57,14 +57,13 @@ class EventSerializer(serializers.ModelSerializer):
     companies = serializers.StringRelatedField(many=True)
     attendee_info = serializers.SerializerMethodField()
 
-    def get_attendee_info(self, obj):
+    def get_attendee_info(self, instance: Event):
         user = self.context["request"].user
-        if user.is_authenticated:
-            try:
-                attendance_event = AttendanceEvent.objects.get(event__id=obj.id)
-            except AttendanceEvent.DoesNotExist:
-                return
-
+        if (
+            user.is_authenticated
+            and hasattr(instance, "attendance_event")
+            and (attendance_event := instance.attendance_event)
+        ):
             return {
                 "is_attendee": attendance_event.is_attendee(user),
                 "is_on_waitlist": attendance_event.is_on_waitlist(user),

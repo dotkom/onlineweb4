@@ -4,24 +4,13 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView,
-)
-from guardian.decorators import permission_required
+from django.urls import reverse
+from django.views.generic import CreateView
 from guardian.shortcuts import get_objects_for_user
-from watson.views import SearchView
 
-from apps.authentication.forms import UserUpdateForm
-from apps.authentication.models import GroupRole, Membership, OnlineGroup
-from apps.authentication.models import OnlineUser as User
+from apps.authentication.models import GroupRole, OnlineGroup
 from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
 
 from .forms import OnlineGroupForm
@@ -161,89 +150,3 @@ class GroupCreateView(DashboardPermissionMixin, CreateView):
         online_group.group = django_group
         online_group.save()
         return super().form_valid(form)
-
-
-@login_required
-@permission_required("authentication.view_membership", return_403=True)
-def members_index(request):
-    """
-    Index overview for memberships in dashboard
-    """
-
-    if not has_access(request):
-        raise PermissionDenied
-
-    def merge_names(members):
-        for i in members:
-            user = list(User.objects.filter(ntnu_username=i.username))
-            if user:
-                i.full_name = user[0].get_full_name()
-        return members
-
-    context = get_base_context(request)
-    members = Membership.objects.all()
-    context["members"] = merge_names(members)
-
-    return render(request, "auth/dashboard/user_list.html", context)
-
-
-class UserListView(DashboardPermissionMixin, ListView):
-    model = User
-    queryset = User.objects.all().exclude(id=-1)
-    paginate_by = 25
-    paginator_class = Paginator
-    permission_required = "authentication.view_onlineuser"
-    template_name = "auth/dashboard/user_list.html"
-
-
-class UserSearchView(DashboardPermissionMixin, SearchView):
-    model = User
-    queryset = User.objects.all().exclude(id=-1)
-    paginate_by = 25
-    paginator_class = Paginator
-    permission_required = "authentication.view_onlineuser"
-    template_name = "auth/dashboard/user_list.html"
-    empty_query_redirect = reverse_lazy("user_list")
-
-
-class UserDetailView(DashboardPermissionMixin, DetailView):
-    model = User
-    context_object_name = "user"
-    permission_required = "authentication.view_onlineuser"
-    pk_url_kwarg = "user_id"
-    template_name = "auth/dashboard/user_detail.html"
-
-
-class UserUpdateView(DashboardPermissionMixin, UpdateView):
-    form_class = UserUpdateForm
-    model = User
-    context_object_name = "user"
-    permission_required = "authentication.change_onlineuser"
-    pk_url_kwarg = "user_id"
-    template_name = "auth/dashboard/user_edit.html"
-
-    def get_success_url(self):
-        return reverse(
-            "dashboard_user_detail", kwargs={"user_id": self.kwargs.get("user_id")}
-        )
-
-
-class UserDeleteView(DashboardPermissionMixin, DeleteView):
-    model = User
-    permission_required = "authentication.delete_onlineuser"
-    pk_url_kwarg = "user_id"
-    success_url = reverse_lazy("user_list")
-
-
-@login_required
-@permission_required("authentication.add_membership", return_403=True)
-def members_new(request):
-    """
-    Create new membership form and handling
-    """
-    if not has_access(request):
-        raise PermissionDenied
-
-    context = get_base_context(request)
-
-    return render(request, "auth/dashboard/members_new.html", context)

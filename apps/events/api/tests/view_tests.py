@@ -2,6 +2,7 @@ from django.contrib.auth.models import Group
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.companyprofile.models import Company
 from apps.events.models import (
@@ -14,19 +15,18 @@ from apps.events.models import (
     UserGroupRule,
 )
 from apps.events.tests.utils import attend_user_to_event, generate_event, generate_user
-from apps.online_oidc_provider.test import OIDCTestCase
+from onlineweb4.testing import GetUrlMixin
 
 from .utils import generate_attendee
 
 
-class EventsAPITestCase(OIDCTestCase):
+class EventsAPITestCase(GetUrlMixin, APITestCase):
     basename = "events_events"
 
     def setUp(self):
         self.committee = G(Group, name="Bedkom")
         self.user = generate_user(username="_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.headers, **self.generate_headers()}
+        self.client.force_authenticate(user=self.user)
 
         self.event = generate_event(organizer=self.committee)
         self.event.attendance_event.registration_start = timezone.now()
@@ -40,14 +40,16 @@ class EventsAPITestCase(OIDCTestCase):
         self.attendees = [self.attendee1, self.attendee2]
 
     def test_events_list_empty(self):
-        response = self.client.get(self.get_list_url())
+        with self.assertNumQueries(11):
+            response = self.client.get(self.get_list_url())
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_detail(self):
-        response = self.client.get(self.get_detail_url(self.event.id))
+        with self.assertNumQueries(10):
+            response = self.client.get(self.get_detail_url(self.event.id))
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_list_exists(self):
         response = self.client.get(self.get_list_url())
@@ -67,9 +69,12 @@ class EventsAPITestCase(OIDCTestCase):
         bedpres_with_evilcorp = generate_event(organizer=self.committee)
         G(CompanyEvent, company=evilcorp, event=bedpres_with_evilcorp)
 
-        response = self.client.get(f"{self.get_list_url()}?companies={onlinecorp.id}")
+        with self.assertNumQueries(7):
+            response = self.client.get(
+                f"{self.get_list_url()}?companies={onlinecorp.id}"
+            )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         events_list = response.json().get("results")
         event_titles_list = list(map(lambda event: event.get("id"), events_list))
@@ -78,27 +83,31 @@ class EventsAPITestCase(OIDCTestCase):
         self.assertNotIn(bedpres_with_evilcorp.id, event_titles_list)
 
     def test_event_with_group_restriction(self):
-        response = self.client.get(self.get_detail_url(self.event.id), **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertNumQueries(10):
+            response = self.client.get(self.get_detail_url(self.event.id))
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         restricted_to_group: Group = G(Group)
         G(GroupRestriction, event=self.event, groups=[restricted_to_group])
 
-        response = self.client.get(self.get_detail_url(self.event.id), **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        with self.assertNumQueries(1):
+            response = self.client.get(self.get_detail_url(self.event.id))
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         attendee = attend_user_to_event(self.event, self.user)
 
-        self.assertIn(attendee, self.event.attendance_event.attendees.all())
-        response = self.client.get(self.get_detail_url(self.event.id), **self.headers)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        with self.assertNumQueries(7):
+            self.assertIn(attendee, self.event.attendance_event.attendees.all())
+            response = self.client.get(self.get_detail_url(self.event.id))
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class ExtrasTestCase(OIDCTestCase):
+class ExtrasTestCase(GetUrlMixin, APITestCase):
     basename = "events_extras"
     model = Extras
 
     def setUp(self):
+        self.user = generate_user(username="_user")
         self.committee = G(Group, name="Bedkom")
         self.user.groups.add(self.committee)
         self.object = G(self.model)
@@ -122,11 +131,12 @@ class ExtrasTestCase(OIDCTestCase):
         self.assertIn(self.object.id, object_id_list)
 
 
-class RuleBundleTestCase(OIDCTestCase):
+class RuleBundleTestCase(GetUrlMixin, APITestCase):
     basename = "events_rule_bundles"
     model = RuleBundle
 
     def setUp(self):
+        self.user = generate_user(username="_user")
         self.committee = G(Group, name="Bedkom")
         self.user.groups.add(self.committee)
         self.object = G(self.model)
@@ -150,11 +160,12 @@ class RuleBundleTestCase(OIDCTestCase):
         self.assertIn(self.object.id, object_id_list)
 
 
-class FieldOfStudyRuleTestCase(OIDCTestCase):
+class FieldOfStudyRuleTestCase(GetUrlMixin, APITestCase):
     basename = "events_field_of_study_rules"
     model = FieldOfStudyRule
 
     def setUp(self):
+        self.user = generate_user(username="_user")
         self.committee = G(Group, name="Bedkom")
         self.user.groups.add(self.committee)
         self.object = G(self.model)
@@ -178,11 +189,12 @@ class FieldOfStudyRuleTestCase(OIDCTestCase):
         self.assertIn(self.object.id, object_id_list)
 
 
-class GradeRuleTestCase(OIDCTestCase):
+class GradeRuleTestCase(GetUrlMixin, APITestCase):
     basename = "events_grade_rules"
     model = GradeRule
 
     def setUp(self):
+        self.user = generate_user(username="_user")
         self.committee = G(Group, name="Bedkom")
         self.user.groups.add(self.committee)
         self.object = G(self.model)
@@ -206,11 +218,12 @@ class GradeRuleTestCase(OIDCTestCase):
         self.assertIn(self.object.id, object_id_list)
 
 
-class UserGroupRuleTestCase(OIDCTestCase):
+class UserGroupRuleTestCase(GetUrlMixin, APITestCase):
     basename = "events_user_group_rules"
     model = UserGroupRule
 
     def setUp(self):
+        self.user = generate_user(username="_user")
         self.committee = G(Group, name="Bedkom")
         self.user.groups.add(self.committee)
         self.object = G(self.model)

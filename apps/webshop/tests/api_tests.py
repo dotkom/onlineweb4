@@ -4,47 +4,46 @@ from django.urls import reverse
 from django.utils import timezone
 from django_dynamic_fixture import G
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 from apps.events.tests.utils import generate_user
-from apps.online_oidc_provider.test import OIDCTestCase
 from apps.payment.tests.utils import stripe_test
 from apps.webshop.models import Order, OrderLine, Product, ProductSize
 
 
 @stripe_test
-class WebshopProductTests(OIDCTestCase):
+class WebshopProductTests(APITestCase):
     def setUp(self):
         self.user = generate_user(username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("webshop_products-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
         self.product1: Product = G(Product)
 
     def test_product_list_returns_ok_without_login(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_view_product_list(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_view_product_details(self):
-        response = self.client.get(self.id_url(self.product1.id), **self.headers)
+        response = self.client.get(self.id_url(self.product1.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("id"), self.product1.id)
 
 
 @stripe_test
-class WebshopOrderLineTests(OIDCTestCase):
+class WebshopOrderLineTests(APITestCase):
     def setUp(self):
         self.user = generate_user(username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("webshop_orderlines-list")
         self.id_url = lambda _id: f"{self.url}{_id}/"
@@ -74,17 +73,18 @@ class WebshopOrderLineTests(OIDCTestCase):
         self.order_line1: OrderLine = G(OrderLine, user=self.user)
 
     def test_unauthenticated_user_is_denied_access(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_can_view_order_line_list(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_view_their_own_order_lines(self):
-        response = self.client.get(self.id_url(self.order_line1.id), **self.headers)
+        response = self.client.get(self.id_url(self.order_line1.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("id"), self.order_line1.id)
@@ -97,7 +97,7 @@ class WebshopOrderLineTests(OIDCTestCase):
             line.paid = True
             line.save()
 
-        response = self.client.post(self.url, **self.headers)
+        response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
@@ -110,7 +110,7 @@ class WebshopOrderLineTests(OIDCTestCase):
         user_order_lines = OrderLine.objects.filter(user=self.user)
         amount_of_user_order_lines = user_order_lines.count()
 
-        response = self.client.post(self.url, **self.headers)
+        response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -137,7 +137,6 @@ class WebshopOrderLineTests(OIDCTestCase):
                 "payment_price": payment_price.id,
                 "payment_method_id": self.payment_method.id,
             },
-            **self.headers,
         )
         self.order_line1.refresh_from_db()
 
@@ -145,11 +144,10 @@ class WebshopOrderLineTests(OIDCTestCase):
         self.assertEqual(self.order_line1.paid, True)
 
 
-class WebshopOrderTests(OIDCTestCase):
+class WebshopOrderTests(APITestCase):
     def setUp(self):
         self.user = generate_user(username="test_user")
-        self.token = self.generate_access_token(self.user)
-        self.headers = {**self.generate_headers(), **self.bare_headers}
+        self.client.force_authenticate(user=self.user)
 
         self.url = reverse("webshop_orders-list")
         self.id_url = lambda _id: self.url + str(_id) + "/"
@@ -170,36 +168,35 @@ class WebshopOrderTests(OIDCTestCase):
         self.order: Order = G(Order, order_line=self.get_order_line().id)
 
     def test_unauthenticated_user_is_denied_access(self):
-        response = self.client.get(self.url, **self.bare_headers)
+        self.client.force_authenticate(user=None)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_user_can_view_order_list(self):
-        response = self.client.get(self.url, **self.headers)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_user_can_view_their_own_orders(self):
-        response = self.client.get(self.id_url(self.order.id), **self.headers)
+        response = self.client.get(self.id_url(self.order.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json().get("id"), self.order.id)
 
     def test_user_can_create_orders(self):
-        response = self.client.post(
-            self.url, {"product": self.product1.id}, **self.headers
-        )
+        response = self.client.post(self.url, {"product": self.product1.id})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_user_cannot_create_order_without_data(self):
-        response = self.client.post(self.url, **self.headers)
+        response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json().get("product"), ["Dette feltet er påkrevd."])
 
     def test_user_cannot_create_order_without_a_product(self):
-        response = self.client.post(self.url, **self.headers)
+        response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json().get("product"), ["Dette feltet er påkrevd."])
@@ -210,7 +207,6 @@ class WebshopOrderTests(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"product": self.product1.id, "size": product_size_l.id},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -222,7 +218,6 @@ class WebshopOrderTests(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"product": self.product1.id, "size": unsupported_size.id},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -236,9 +231,7 @@ class WebshopOrderTests(OIDCTestCase):
     ):
         G(ProductSize, size="L", product=self.product1)
 
-        response = self.client.post(
-            self.url, {"product": self.product1.id}, **self.headers
-        )
+        response = self.client.post(self.url, {"product": self.product1.id})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -250,7 +243,6 @@ class WebshopOrderTests(OIDCTestCase):
         response = self.client.post(
             self.url,
             {"product": self.product1.id, "size": self.product_size_l.id},
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -262,9 +254,7 @@ class WebshopOrderTests(OIDCTestCase):
     def test_user_cannot_add_the_same_product_twice(self):
         G(Order, product=self.product1, order_line=self.get_order_line())
 
-        response = self.client.post(
-            self.url, {"product": self.product1.id}, **self.headers
-        )
+        response = self.client.post(self.url, {"product": self.product1.id})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -276,9 +266,7 @@ class WebshopOrderTests(OIDCTestCase):
         self.product1.active = False
         self.product1.save()
 
-        response = self.client.post(
-            self.url, {"product": self.product1.id}, **self.headers
-        )
+        response = self.client.post(self.url, {"product": self.product1.id})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -290,9 +278,7 @@ class WebshopOrderTests(OIDCTestCase):
         self.product1.deadline = timezone.now() - timezone.timedelta(days=7)
         self.product1.save()
 
-        response = self.client.post(
-            self.url, {"product": self.product1.id}, **self.headers
-        )
+        response = self.client.post(self.url, {"product": self.product1.id})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -304,9 +290,7 @@ class WebshopOrderTests(OIDCTestCase):
         self.product1.stock = 0
         self.product1.save()
 
-        response = self.client.post(
-            self.url, {"product": self.product1.id}, **self.headers
-        )
+        response = self.client.post(self.url, {"product": self.product1.id})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
@@ -328,9 +312,7 @@ class WebshopOrderTests(OIDCTestCase):
         self.product_size_m.save()
 
         response = self.client.post(
-            self.url,
-            {"product": self.product1.id, "size": self.product_size_m.id},
-            **self.headers,
+            self.url, {"product": self.product1.id, "size": self.product_size_m.id}
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

@@ -7,12 +7,12 @@ from django.utils import timezone
 from django_dynamic_fixture import G
 from guardian.shortcuts import assign_perm
 from rest_framework import status
+from rest_framework.test import APITestCase
 
-from apps.authentication.models import Email, OnlineGroup
+from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
-from apps.online_oidc_provider.test import OIDCTestCase
 
 from .api.serializers import MembershipApprovalSerializer
 from .models import CommitteeApplication, CommitteeApplicationPeriod, MembershipApproval
@@ -88,9 +88,12 @@ class EmailTest(TransactionTestCase):
     # Create an approval
     def setUp(self):
         self.applicant = G(
-            User, username="sokeren", first_name="Søker", last_name="Søkersen"
+            User,
+            username="sokeren",
+            first_name="Søker",
+            last_name="Søkersen",
+            email="test@example.com",
         )
-        G(Email, user=self.applicant, email="test@example.com")
         self.approval = G(MembershipApproval, applicant=self.applicant)
         self.logger = logging.getLogger(__name__)
 
@@ -140,8 +143,11 @@ class EmailTest(TransactionTestCase):
         )
 
 
-class CommitteeApplicationPeriodTestCase(OIDCTestCase):
+class CommitteeApplicationPeriodTestCase(APITestCase):
     def setUp(self):
+        self.user = G(User)
+        self.client.force_authenticate(user=self.user)
+
         self.now = timezone.now()
         self.one_week_ago = self.now - timezone.timedelta(days=7)
         self.two_days_ago = self.now - timezone.timedelta(days=2)
@@ -176,7 +182,6 @@ class CommitteeApplicationPeriodTestCase(OIDCTestCase):
                 "deadline": self.one_week_from_now,
                 "committees": self.committees,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -190,7 +195,6 @@ class CommitteeApplicationPeriodTestCase(OIDCTestCase):
                 "deadline": self.two_days_ago,
                 "committees": self.committees,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -204,7 +208,6 @@ class CommitteeApplicationPeriodTestCase(OIDCTestCase):
                 "deadline": timezone.now() + timezone.timedelta(hours=23),
                 "committees": self.committees,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -224,7 +227,6 @@ class CommitteeApplicationPeriodTestCase(OIDCTestCase):
                 "deadline": self.one_week_from_now,
                 "committees": self.committees,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -244,7 +246,6 @@ class CommitteeApplicationPeriodTestCase(OIDCTestCase):
                 "deadline": self.two_days_from_now,
                 "committees": self.committees,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -262,14 +263,16 @@ class CommitteeApplicationPeriodTestCase(OIDCTestCase):
                 "deadline": self.one_week_from_now,
                 "committees": self.committees,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
-class CommitteeApplicationTestCase(OIDCTestCase):
+class CommitteeApplicationTestCase(APITestCase):
     def setUp(self):
+        self.user = G(User)
+        self.client.force_authenticate(user=self.user)
+
         self.now = timezone.now()
         self.one_week_ago = self.now - timezone.timedelta(days=7)
         self.two_days_ago = self.now - timezone.timedelta(days=2)
@@ -300,25 +303,27 @@ class CommitteeApplicationTestCase(OIDCTestCase):
         return reverse("committeeapplications-detail", args=[_id])
 
     def test_non_authenticated_user_cannot_get_applications(self):
+        self.client.force_authenticate(user=None)
         response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_authenticated_without_perms_cannot_get_applications(self):
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_permitted_user_can_get_applications_list(self):
         assign_perm("approval.view_committeeapplication", self.user)
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_permitted_user_can_get_applications_detail(self):
         assign_perm("approval.view_committeeapplication", self.user)
         application = G(CommitteeApplication)
-        response = self.client.get(self.get_detail_url(application.id), **self.headers)
+        response = self.client.get(self.get_detail_url(application.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_anyone_can_create_an_application(self):
+        self.client.force_authenticate(user=None)
         response = self.client.post(
             self.get_list_url(),
             {
@@ -328,11 +333,12 @@ class CommitteeApplicationTestCase(OIDCTestCase):
                 "name": "Test Testesen",
                 "email": "test@example.com",
             },
-            **self.bare_headers,
+            format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_non_login_application_fails_without_name_and_email(self):
+        self.client.force_authenticate(user=None)
         response = self.client.post(
             self.get_list_url(),
             {
@@ -340,11 +346,11 @@ class CommitteeApplicationTestCase(OIDCTestCase):
                 "application_period": self.application_period.id,
                 "committees": self.committees_data,
             },
-            **self.bare_headers,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_non_login_application_fails_without_name(self):
+        self.client.force_authenticate(user=None)
         response = self.client.post(
             self.get_list_url(),
             {
@@ -353,12 +359,12 @@ class CommitteeApplicationTestCase(OIDCTestCase):
                 "application_period": self.application_period.id,
                 "email": "test@example.com",
             },
-            **self.bare_headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_non_login_application_fails_without_email(self):
+        self.client.force_authenticate(user=None)
         response = self.client.post(
             self.get_list_url(),
             {
@@ -367,7 +373,6 @@ class CommitteeApplicationTestCase(OIDCTestCase):
                 "application_period": self.application_period.id,
                 "name": "Test Testesen",
             },
-            **self.bare_headers,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -379,7 +384,6 @@ class CommitteeApplicationTestCase(OIDCTestCase):
                 "committees": self.committees_data,
                 "application_period": self.application_period.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -396,7 +400,6 @@ class CommitteeApplicationTestCase(OIDCTestCase):
                 "committees": self.committees_data,
                 "application_period": self.application_period.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -409,13 +412,16 @@ class CommitteeApplicationTestCase(OIDCTestCase):
                 "committees": [{"group": self.committee3.id, "priority": 1}],
                 "application_period": self.application_period.id,
             },
-            **self.headers,
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-class MembershipApprovalTestCase(OIDCTestCase):
+class MembershipApprovalTestCase(APITestCase):
+    def setUp(self):
+        self.user = G(User)
+        self.client.force_authenticate(user=self.user)
+
     def get_list_url(self):
         return reverse("membership-application-list")
 
@@ -423,13 +429,14 @@ class MembershipApprovalTestCase(OIDCTestCase):
         return reverse("membership-application-detail", args=[_id])
 
     def test_non_authenticated_user_cannot_get_applications(self):
+        self.client.force_authenticate(user=None)
         response = self.client.get(self.get_list_url())
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_user_can_only_get_own_application(self):
         application = G(MembershipApproval, applicant=self.user)
         not_our_application = G(MembershipApproval)
-        response = self.client.get(self.get_list_url(), **self.headers)
+        response = self.client.get(self.get_list_url())
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.json().get("results")

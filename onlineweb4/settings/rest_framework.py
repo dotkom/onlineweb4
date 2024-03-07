@@ -2,11 +2,8 @@
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "apps.api.utils.PrefixRemovedAutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        # Allows users to be logged in with open-id through django-oauth-toolkit
-        # Has to be listed before OidcOauth2Auth!!
-        "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
-        # Allows user to be logged in with open-id
-        "apps.online_oidc_provider.authentication.OidcOauth2Auth",
+        # allow accesssing API with JWT from our Authorization Server
+        "mozilla_django_oidc.contrib.drf.OIDCAuthentication",
         # Allows users to be logged in to browsable API
         "rest_framework.authentication.SessionAuthentication",
     ),
@@ -25,6 +22,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.BrowsableAPIRenderer",
         "rest_framework.renderers.AdminRenderer",
     ],
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_METADATA_CLASS": "utils.metadata.ActionMeta",
     "DEFAULT_PAGINATION_CLASS": "utils.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,

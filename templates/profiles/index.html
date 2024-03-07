@@ -45,14 +45,8 @@ Min side - Online
                         <li class="{% if 'privacy' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'privacy' %}" data-section="privacy">Personvern</a>
                         </li>
-                        <li class="{% if 'connected_apps' == active_tab %}active{% endif %}">
-                            <a href="{% url 'profiles_active' 'connected_apps' %}" data-section="connected_apps">Apptilkoblinger</a>
-                        </li>
                         <li class="{% if 'marks' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'marks' %}" data-section="marks">Prikker &amp; suspensjoner</a>
-                        </li>
-                        <li class="{% if 'password' == active_tab %}active{% endif %}">
-                            <a href="{% url 'profiles_active' 'password' %}" data-section="password">Passord</a>
                         </li>
                         <li class="{% if 'email' == active_tab %}active{% endif %}">
                             <a href="{% url 'profiles_active' 'email' %}" data-section="email">Epost-innstillinger</a>
@@ -87,14 +81,8 @@ Min side - Online
                         <section id="privacy">
                             {% include "profiles/privacy.html" %}
                         </section>
-                        <section id="connected_apps">
-                            {% include "profiles/connected_apps.html" %}
-                        </section>
                         <section id="marks">
                             {% include "profiles/marks.html" %}
-                        </section>
-                        <section id="password">
-                            {% include "profiles/change_password.html" %}
                         </section>
                         <section id="email">
                             {% include "profiles/email.html" %}

@@ -38,7 +38,7 @@ jobs:
 
       # should always hit
       - name: Cache python packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pypoetry
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
@@ -46,7 +46,7 @@ jobs:
             ${{ runner.os }}-poetry-
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version-file: '.python-version'
 
@@ -62,7 +62,7 @@ jobs:
 
       - name: Login to Amazon ECR
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Generate Zappa settings
         run: zappa save-python-settings-file $ENVIRONMENT
@@ -77,7 +77,7 @@ jobs:
             type=semver,pattern={{version}}
 
       - name: Build static
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: false
@@ -85,7 +85,7 @@ jobs:
           tags: ow4-static
 
       - name: Build and push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
