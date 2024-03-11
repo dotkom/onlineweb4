@@ -71,7 +71,7 @@ Brukerprofiler
             {% for user in object_list %}
             {% if query %}{% with user=user.object %}
                 <tr>
-                    <td><a href="{% url 'dashboard_user_detail' user.id %}">{{ user.get_full_name }}</a></td>
+                    <td><a href="{% url 'admin:onlineuser_change' user.id %}">{{ user.get_full_name }}</a></td>
                     <td>{% if user.ntnu_username %}{{ user.ntnu_username }}{% else %}-{% endif %}</td>
                     {% if user.member %}
                     <td>{{ user.member.registered|date:'Y-m-d' }}</td>
@@ -89,7 +89,7 @@ Brukerprofiler
                 </tr>
             {% endwith %}{% else %}
                 <tr>
-                    <td><a href="{% url 'dashboard_user_detail' user.id %}">{{ user.get_full_name }}</a></td>
+                    <td><a href="{% url 'admin:onlineuser_change' user.id %}">{{ user.get_full_name }}</a></td>
                     <td>{% if user.ntnu_username %}{{ user.ntnu_username }}{% else %}-{% endif %}</td>
                     {% if user.member %}
                     <td>{{ user.member.registered|date:'Y-m-d' }}</td>
