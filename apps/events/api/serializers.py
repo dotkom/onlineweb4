@@ -168,15 +168,10 @@ class AttendeeSerializer(serializers.ModelSerializer):
         if self.instance:
             attendance: AttendanceEvent = self.instance.event
             allowedExtras = Extras.objects.filter(attendanceevent=attendance)
+            now = timezone.now()
 
-            if timezone.now() > attendance.registration_end:
-                raise serializers.ValidationError(
-                    "Det er ikke mulig å endre ekstravalg etter påmeldingsfristen"
-                )
-            if timezone.now() > attendance.unattend_deadline:
-                raise serializers.ValidationError(
-                    "Det er ikke mulig å endre ekstravalg etter avmeldingsfristen"
-                )
+            if now > attendance.unattend_deadline and attendance.registration_end < now:
+                raise serializers.ValidationError("Du kan ikke lenger endre påmelding")
 
             if extra and extra not in allowedExtras:
                 raise serializers.ValidationError(
