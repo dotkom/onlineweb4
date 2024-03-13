@@ -266,14 +266,14 @@ class OnlineUser(AbstractUser):
             self.online_mail = create_online_mail_alias(self)
 
         if self.pk and (old := OnlineUser.objects.filter(pk=self.pk).first()):
+            from .auth0 import auth0_client
+
             auth0 = None
             if self.email != old.email:
                 from apps.gsuite.mail_syncer.tasks import update_mailing_list
                 from onlineweb4.settings.gsuite import (
                     MAILING_LIST_USER_FIELDS_TO_LIST_NAME,
                 )
-
-                from .auth0 import auth0_client
 
                 jobmail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("jobmail")
                 infomail = MAILING_LIST_USER_FIELDS_TO_LIST_NAME.get("infomail")
