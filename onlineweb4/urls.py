@@ -217,10 +217,6 @@ if "apps.chunksapi" in settings.INSTALLED_APPS:
 if "apps.payment" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^payment/", include("apps.payment.urls"))]
 
-# redwine
-if "redwine" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^redwine/", include("redwine.urls"))]
-
 if "rest_framework" in settings.INSTALLED_APPS:
     from apps.api.utils import SharedAPIRootRouter
 

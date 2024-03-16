@@ -1,4 +1,3 @@
-from redwine.models import Penalty
 from rest_framework import serializers
 from reversion.models import Revision
 from wiki.models.article import Article as WikiArticle
@@ -161,31 +160,6 @@ class GroupMemberSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupMember
         fields = ("group_name", "added", "is_on_leave", "is_retired", "roles")
-
-
-class PenaltySerializer(serializers.ModelSerializer):
-    to = serializers.SerializerMethodField()
-    giver = serializers.SerializerMethodField()
-
-    def get_to(self, penalty: Penalty):
-        return penalty.to.get_full_name()
-
-    def get_giver(self, penalty: Penalty):
-        return penalty.giver.get_full_name()
-
-    class Meta:
-        model = Penalty
-        fields = (
-            "to",
-            "giver",
-            "amount",
-            "committee",
-            "reason",
-            "date",
-            "deleted",
-            "item",
-            "item_name",
-        )
 
 
 class PaymentTransactionSerializer(serializers.ModelSerializer):
@@ -362,9 +336,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     group_memberships = GroupMemberSerializer(many=True)
     positions = PositionReadOnlySerializer(many=True)
     special_positions = SpecialPositionSerializer(many=True)
-    # Redwine
-    penalties = PenaltySerializer(many=True)
-    given_penalties = PenaltySerializer(many=True, source="penaltygiver")
     # Payments
     payment_delays = PaymentDelaySerializer(many=True, source="paymentdelay_set")
     payment_relations = PaymentRelationSerializer(
@@ -466,9 +437,6 @@ class UserDataSerializer(serializers.ModelSerializer):
             "group_memberships",
             "positions",
             "special_positions",
-            # Redwine
-            "penalties",
-            "given_penalties",
             # Payments
             "payment_delays",
             "payment_relations",

@@ -226,8 +226,6 @@ INSTALLED_APPS = [
     "apps.webshop",
     "apps.chunksapi",
     "scripts",
-    # External apps
-    "redwine",
     # Wiki
     "wiki",
     "wiki.plugins.attachments",

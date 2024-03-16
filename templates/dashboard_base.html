@@ -199,13 +199,6 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if request.user.is_superuser %}
-                    <li>
-                        <a href="/redwine/">
-                            <i class="fa fa-trophy blue"></i> <span>Redwine</span>
-                        </a>
-                    </li>
-                    {% endif %}
                     {% if 'resourcecenter.change_resource' in user_permissions %}
                     <li>
                         <a href="/dashboard/resources">
