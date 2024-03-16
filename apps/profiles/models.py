@@ -9,12 +9,12 @@ User = settings.AUTH_USER_MODEL
 
 class Privacy(models.Model):
     visible_for_other_users = models.BooleanField(
-        _("profil synlig for andre brukere"), default=True
+        _("profil synlig for andre brukere"), default=False
     )
-    expose_nickname = models.BooleanField(_("vis kallenavn"), default=True)
-    expose_email = models.BooleanField(_("vis epost"), default=True)
-    expose_phone_number = models.BooleanField(_("vis telefonnummer"), default=True)
-    expose_address = models.BooleanField(_("vis addresse"), default=True)
+    expose_nickname = models.BooleanField(_("vis kallenavn"), default=False)
+    expose_email = models.BooleanField(_("vis epost"), default=False)
+    expose_phone_number = models.BooleanField(_("vis telefonnummer"), default=False)
+    expose_address = models.BooleanField(_("vis addresse"), default=False)
     visible_as_attending_events = models.BooleanField(
         _("vis på påmeldingsarrangement"), default=None, null=True
     )
