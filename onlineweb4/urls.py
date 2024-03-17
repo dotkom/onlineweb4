@@ -80,9 +80,6 @@ if "apps.article" in settings.INSTALLED_APPS:
         re_path(r"^dashboard/article/", include("apps.article.dashboard.urls")),
     ]
 
-if "apps.autoconfig" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^mail/", include("apps.autoconfig.urls"))]
-
 if "apps.authentication" in settings.INSTALLED_APPS:
     urlpatterns += [
         # our config is kinda wack for API-s, this is only here to import the file that sets stuff for SharedAPIRouter
