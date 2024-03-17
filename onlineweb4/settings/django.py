@@ -145,6 +145,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "reversion.middleware.RevisionMiddleware",
     "mozilla_django_oidc.middleware.SessionRefresh",
+    # add user id
+    "onlineweb4.settings.sentry.sentry_middleware",
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -201,7 +203,6 @@ INSTALLED_APPS = [
     "apps.approval",
     "apps.article",
     "apps.authentication",
-    "apps.autoconfig",
     "apps.careeropportunity",
     "apps.companyprofile",
     "apps.contact",
