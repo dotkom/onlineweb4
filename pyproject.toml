@@ -35,7 +35,7 @@ docutils = "~0.20"                  # Allows django-admindocs to generate docume
 oic = "~1.6"			            # OpenID Connect Client
 requests = { version = "~2.31", extras = [ "security" ] }
 # Wiki
-wiki = "^0.10.0"
+wiki = "^0.10.1"
 
 django-js-reverse = "~0.10"
 pyyaml = "^6.0"
