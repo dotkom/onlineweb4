@@ -150,4 +150,4 @@ OIDC_OP_USER_ENDPOINT = f"{AUTH0_ISSUER}/userinfo"
 OIDC_OP_LOGOUT_URL_METHOD = "apps.authentication.backends.provider_logout"
 # we need it for logout
 OIDC_STORE_ID_TOKEN = True
-OIDC_RP_SCOPES = "openid email profile"
+OIDC_RP_SCOPES = "openid email profile offline_access"
