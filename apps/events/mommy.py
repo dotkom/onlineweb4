@@ -13,7 +13,7 @@ from utils.email import AutoChunkedEmailMessage, handle_mail_error
 def set_event_marks():
     logger = logging.getLogger()
     logger.info("Attendance mark setting started")
-    locale.setlocale(locale.LC_ALL, "no_NO.UTF-8")
+    locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
 
     # Gets all active attendance events thats suposed to give automatic marks
     attendance_events = active_events()
