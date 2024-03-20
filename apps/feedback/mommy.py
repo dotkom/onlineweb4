@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import locale
 import logging
 
 from django.conf import settings
@@ -15,7 +14,6 @@ from utils.email import AutoChunkedEmailMessage, handle_mail_error
 def feedback_mail():
     logger = logging.getLogger("feedback")
     logger.info("Feedback job started")
-    locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
     active_feedbacks = FeedbackRelation.objects.filter(active=True)
 
     for feedback in active_feedbacks:
