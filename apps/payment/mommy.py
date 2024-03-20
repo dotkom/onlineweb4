@@ -37,7 +37,7 @@ def payment_reminder():
 
         if deadline_diff <= 0:
             if not_paid(payment):
-                send_deadline_passed_mail(payment)
+                send_deadline_passed_mail_payment(payment)
                 notify_committee(payment)
                 set_marks(payment)
                 suspend(payment)
@@ -119,7 +119,7 @@ def notify_committee(payment):
 
     receivers = [payment.responsible_mail()]
 
-    EmailMessage(subject, content, "online@online.ntnu.no", [], receivers).send()
+    EmailMessage(subject, content, "online@online.ntnu.no", receivers).send()
 
 
 def not_paid(payment):
@@ -223,7 +223,27 @@ def handle_suspensions(payment_delay):
     suspension.save()
 
 
-def send_deadline_passed_mail(payment_delay, unattend_deadline_passed=True):
+def send_deadline_passed_mail_payment(payment: Payment):
+    subject = _("Betalingsfrist utgått: ") + payment.description()
+
+    content = render_to_string(
+        "payment/email/reminder_deadline_passed.txt",
+        {
+            "payment_description": payment.description(),
+            "payment_url": settings.BASE_URL
+            + payment.content_object.event.get_absolute_url(),
+            "payment_email": payment.responsible_mail(),
+        },
+    )
+
+    receivers = not_paid_mail_addresses(payment)
+
+    EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
+
+
+def send_deadline_passed_mail(
+    payment_delay: PaymentDelay, unattend_deadline_passed=True
+):
     payment = payment_delay.payment
 
     subject = _("Betalingsfrist utgått: ") + payment.description()
