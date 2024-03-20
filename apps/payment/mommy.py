@@ -21,7 +21,7 @@ def payment_reminder():
     logging.basicConfig()
     # logger = logging.getLogger()
     # logger.info("Event payment job started")
-    locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
+    locale.setlocale(locale.LC_ALL, "no_NO.UTF-8")
 
     event_payments = Payment.objects.filter(
         payment_type=PaymentTypes.DEADLINE,
@@ -174,7 +174,7 @@ def payment_delay_handler():
     logging.basicConfig()
     logger = logging.getLogger("feedback")
     logger.info("Payment delay handler started")
-    locale.setlocale(locale.LC_ALL, "nb_NO.UTF-8")
+    locale.setlocale(locale.LC_ALL, "no_NO.UTF-8")
 
     payment_delays = PaymentDelay.objects.filter(active=True)
 
