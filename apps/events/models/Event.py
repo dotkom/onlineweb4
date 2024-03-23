@@ -167,7 +167,7 @@ class EventUserAction(models.Model):
         max_length=15,
         choices=[
             ("register", "register"),
-            ("unregister", "unregister")
+            ("unregister", "unregister"),
             #  , ("pay", "pay"), ("chose_extra", "chose_extra"), ("sent_feedback", "sent_feedback") TODO: these should be added, but we start with register/unregister for now.
         ],
     )
