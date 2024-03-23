@@ -20,7 +20,7 @@ class NotificationTestMixin:
 
     def _gen_subscription_info(self, recv_key=None, endpoint="https://example.com/"):
         if not recv_key:
-            recv_key = ec.generate_private_key(ec.SECP256R1, default_backend())
+            recv_key = ec.generate_private_key(ec.SECP256R1(), default_backend())
         return {
             "endpoint": endpoint,
             "keys": {
