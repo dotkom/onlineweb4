@@ -204,46 +204,40 @@ def position(request):
 
 @login_required
 def delete_position(request):
-    if request.is_ajax():
-        if request.method == "POST":
-            position_id = request.POST.get("position_id")
-            pos = get_object_or_404(Position, pk=position_id)
-            if pos.user == request.user:
-                pos.delete()
-                return_status = json.dumps({"message": _("Posisjonen ble slettet.")})
-                return HttpResponse(status=200, content=return_status)
-            else:
-                return_status = json.dumps(
-                    {
-                        "message": _(
-                            "Du prøvde å slette en posisjon som ikke tilhørte deg selv."
-                        )
-                    }
-                )
-            return HttpResponse(status=500, content=return_status)
-        raise Http404
+    if request.method == "POST":
+        position_id = request.POST.get("position_id")
+        pos = get_object_or_404(Position, pk=position_id)
+        if pos.user == request.user:
+            pos.delete()
+            return_status = json.dumps({"message": _("Posisjonen ble slettet.")})
+            return HttpResponse(status=200, content=return_status)
+        else:
+            return_status = json.dumps(
+                {
+                    "message": _(
+                        "Du prøvde å slette en posisjon som ikke tilhørte deg selv."
+                    )
+                }
+            )
+        return HttpResponse(status=500, content=return_status)
+    raise Http404
 
 
 @login_required
 def update_mark_rules(request):
-    if request.is_ajax():
-        if request.method == "POST":
-            accepted = request.POST.get("rules_accepted") == "true"
-            if accepted:
-                return_status = json.dumps(
-                    {"message": _("Du har valgt å akseptere prikkereglene.")}
-                )
-                MarkRuleSet.accept_mark_rules(request.user)
-            else:
-                return_status = json.dumps(
-                    {
-                        "message": _(
-                            "Du kan ikke endre din godkjenning av prikkereglene."
-                        )
-                    }
-                )
-                return HttpResponse(status=403, content=return_status)
-            return HttpResponse(status=212, content=return_status)
+    if request.method == "POST":
+        accepted = request.POST.get("rules_accepted") == "true"
+        if accepted:
+            return_status = json.dumps(
+                {"message": _("Du har valgt å akseptere prikkereglene.")}
+            )
+            MarkRuleSet.accept_mark_rules(request.user)
+        else:
+            return_status = json.dumps(
+                {"message": _("Du kan ikke endre din godkjenning av prikkereglene.")}
+            )
+            return HttpResponse(status=403, content=return_status)
+        return HttpResponse(status=212, content=return_status)
     return HttpResponse(status=405)
 
 
@@ -252,14 +246,13 @@ def toggle_infomail(request):
     """
     Toggles the infomail field in Onlineuser object
     """
-    if request.is_ajax():
-        if request.method == "POST":
-            request.user.infomail = not request.user.infomail
-            request.user.save()
+    if request.method == "POST":
+        request.user.infomail = not request.user.infomail
+        request.user.save()
 
-            return HttpResponse(
-                status=200, content=json.dumps({"state": request.user.infomail})
-            )
+        return HttpResponse(
+            status=200, content=json.dumps({"state": request.user.infomail})
+        )
     raise Http404
 
 
@@ -268,14 +261,13 @@ def toggle_jobmail(request):
     """
     Toggles the jobmail field in Onlineuser object
     """
-    if request.is_ajax():
-        if request.method == "POST":
-            request.user.jobmail = not request.user.jobmail
-            request.user.save()
+    if request.method == "POST":
+        request.user.jobmail = not request.user.jobmail
+        request.user.save()
 
-            return HttpResponse(
-                status=200, content=json.dumps({"state": request.user.jobmail})
-            )
+        return HttpResponse(
+            status=200, content=json.dumps({"state": request.user.jobmail})
+        )
     raise Http404
 
 

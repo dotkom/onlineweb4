@@ -76,6 +76,7 @@ def generate_user(username: str, *args, **kwargs) -> OnlineUser:
         username=username,
         ntnu_username=username,
         phone_number="12345678",
+        is_active=True,
         *args,
         **kwargs
     )

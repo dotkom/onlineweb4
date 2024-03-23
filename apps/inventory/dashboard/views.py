@@ -135,9 +135,8 @@ def item_change_availability(request, item_pk):
 
     item = get_object_or_404(Item, pk=item_pk)
 
-    # AJAX
     if request.method == "POST":
-        if request.is_ajax and "action" in request.POST:
+        if "action" in request.POST:
             item.available = not item.available
             item.save()
 

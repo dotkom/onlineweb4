@@ -177,30 +177,27 @@ def detail(request, order_id=None):
 # Ajax
 @login_required
 def assign_person(request):
-    if request.is_ajax():
-        if request.method == "POST":
-            order = get_object_or_404(Poster, pk=request.POST.get("order_id"))
-            if (
-                request.POST.get("assign_to_id")
-                and not str(request.POST.get("assign_to_id")).isnumeric()
-            ):
-                return HttpResponse(
-                    status=400,
-                    content=json.dumps(
-                        {
-                            "message": "Denne brukerprofilen kunne ikke tilordnes til ordren."
-                        }
-                    ),
-                )
-            assign_to = get_object_or_404(User, pk=request.POST.get("assign_to_id"))
+    if request.method == "POST":
+        order = get_object_or_404(Poster, pk=request.POST.get("order_id"))
+        if (
+            request.POST.get("assign_to_id")
+            and not str(request.POST.get("assign_to_id")).isnumeric()
+        ):
+            return HttpResponse(
+                status=400,
+                content=json.dumps(
+                    {"message": "Denne brukerprofilen kunne ikke tilordnes til ordren."}
+                ),
+            )
+        assign_to = get_object_or_404(User, pk=request.POST.get("assign_to_id"))
 
-            if order.finished or order.assigned_to is not None:
-                response_text = json.dumps(
-                    {"message": _("Denne ordren er allerede behandlet.")}
-                )
-                return HttpResponse(status=400, content=response_text)
+        if order.finished or order.assigned_to is not None:
+            response_text = json.dumps(
+                {"message": _("Denne ordren er allerede behandlet.")}
+            )
+            return HttpResponse(status=400, content=response_text)
 
-            order.assigned_to = assign_to
-            order.save()
+        order.assigned_to = assign_to
+        order.save()
 
-            return HttpResponse(status=200)
+        return HttpResponse(status=200)

@@ -76,20 +76,19 @@ def upload(request):
 @login_required
 @permission_required("gallery.add_responsiveimage")
 def unhandled(request):
-    if request.is_ajax():
-        if request.method == "GET":
-            images = []
+    if request.method == "GET":
+        images = []
 
-            for image in UnhandledImage.objects.all():
-                images.append(
-                    {
-                        "id": image.id,
-                        "thumbnail": image.thumbnail.url,
-                        "image": image.image.url,
-                    }
-                )
+        for image in UnhandledImage.objects.all():
+            images.append(
+                {
+                    "id": image.id,
+                    "thumbnail": image.thumbnail.url,
+                    "image": image.image.url,
+                }
+            )
 
-            return JsonResponse({"unhandled": images}, status=200)
+        return JsonResponse({"unhandled": images}, status=200)
     return JsonResponse({"status": 405, "message": "Method not allowed"}, status=405)
 
 
@@ -158,42 +157,41 @@ class CropView(PermissionRequiredMixin, View):
 def crop(request):
     log = logging.getLogger(__name__)
 
-    if request.is_ajax():
-        if request.method == "POST":
-            crop_data = request.POST
+    if request.method == "POST":
+        crop_data = request.POST
 
-            # Check that the image ID exists
-            image = get_object_or_404(UnhandledImage, pk=crop_data["id"])
+        # Check that the image ID exists
+        image = get_object_or_404(UnhandledImage, pk=crop_data["id"])
 
-            # Fetch values from Django's immutable MultiValueDict
-            config = {key: crop_data.get(key) for key in crop_data.keys()}
+        # Fetch values from Django's immutable MultiValueDict
+        config = {key: crop_data.get(key) for key in crop_data.keys()}
 
-            log.debug("Crop invoked with config: %s" % repr(config))
+        log.debug("Crop invoked with config: %s" % repr(config))
 
-            # Construct a responsive image handler and configure it using the provided request data
-            handler = ResponsiveImageHandler(image)
-            status = handler.configure(config)
-            if not status:
-                return HttpResponse(status.message, status=400)
+        # Construct a responsive image handler and configure it using the provided request data
+        handler = ResponsiveImageHandler(image)
+        status = handler.configure(config)
+        if not status:
+            return HttpResponse(status.message, status=400)
 
-            # Generate the responsive versions based on the provided request data
-            status = handler.generate()
-            if not status:
-                return HttpResponse(status.message, status=500)
+        # Generate the responsive versions based on the provided request data
+        status = handler.generate()
+        if not status:
+            return HttpResponse(status.message, status=500)
 
-            # Add Taggit tags if provided
-            resp_image = status.data
-            tags = crop_data.get("tags")
-            if tags:
-                resp_image.tags.add(*parse_tags(tags))
+        # Add Taggit tags if provided
+        resp_image = status.data
+        tags = crop_data.get("tags")
+        if tags:
+            resp_image.tags.add(*parse_tags(tags))
 
-            # Log who performed the crop operation
-            log.info(
-                "%s cropped and saved ResponsiveImage %d (%s)"
-                % (request.user, resp_image.id, config.get("name"))
-            )
+        # Log who performed the crop operation
+        log.info(
+            "%s cropped and saved ResponsiveImage %d (%s)"
+            % (request.user, resp_image.id, config.get("name"))
+        )
 
-            return JsonResponse(data={"name": config["name"], "id": resp_image.id})
+        return JsonResponse(data={"name": config["name"], "id": resp_image.id})
 
     return HttpResponse(status=405)
 

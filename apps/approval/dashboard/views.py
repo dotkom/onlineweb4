@@ -52,57 +52,56 @@ def index(request):
 @login_required
 @permission_required("approval.change_membershipapproval", return_403=True)
 def approve_application(request):
-    if request.is_ajax():
-        if request.method == "POST":
-            application_id = request.POST.get("application_id")
-            apps = MembershipApproval.objects.filter(pk=application_id)
+    if request.method == "POST":
+        application_id = request.POST.get("application_id")
+        apps = MembershipApproval.objects.filter(pk=application_id)
 
-            if apps.count() == 0:
-                response_text = json.dumps(
-                    {
-                        "message": _(
-                            """Kan ikke finne en søknad med denne IDen (%s).
+        if apps.count() == 0:
+            response_text = json.dumps(
+                {
+                    "message": _(
+                        """Kan ikke finne en søknad med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no."""
-                        )
-                        % application_id
-                    }
-                )
-                return HttpResponse(status=412, content=response_text)
+                    )
+                    % application_id
+                }
+            )
+            return HttpResponse(status=412, content=response_text)
 
-            app = apps[0]
+        app = apps[0]
 
-            if app.processed:
-                response_text = json.dumps(
-                    {"message": _("Denne søknaden er allerede behandlet.")}
-                )
-                return HttpResponse(status=412, content=response_text)
+        if app.processed:
+            response_text = json.dumps(
+                {"message": _("Denne søknaden er allerede behandlet.")}
+            )
+            return HttpResponse(status=412, content=response_text)
 
-            user = app.applicant
+        user = app.applicant
 
-            if not user.ntnu_username:
-                response_text = json.dumps(
-                    {
-                        "message": _(
-                            """Brukeren (%s) har ikke noe lagret ntnu brukernavn."""
-                        )
-                        % user.get_full_name()
-                    }
-                )
-                return HttpResponse(status=412, content=response_text)
+        if not user.ntnu_username:
+            response_text = json.dumps(
+                {
+                    "message": _(
+                        """Brukeren (%s) har ikke noe lagret ntnu brukernavn."""
+                    )
+                    % user.get_full_name()
+                }
+            )
+            return HttpResponse(status=412, content=response_text)
 
-            if app.is_fos_application():
-                user.field_of_study = app.field_of_study
-                user.started_date = app.started_date
-                user.save()
+        if app.is_fos_application():
+            user.field_of_study = app.field_of_study
+            user.started_date = app.started_date
+            user.save()
 
-            if app.is_membership_application():
-                membership = Membership.objects.filter(username=user.ntnu_username)
-                if membership.count() == 1:
-                    membership = membership[0]
-                    membership.expiration_date = app.new_expiry_date
-                    if not membership.description:
-                        membership.description = ""
-                    membership.description += """
+        if app.is_membership_application():
+            membership = Membership.objects.filter(username=user.ntnu_username)
+            if membership.count() == 1:
+                membership = membership[0]
+                membership.expiration_date = app.new_expiry_date
+                if not membership.description:
+                    membership.description = ""
+                membership.description += """
 -------------------
 Updated by approvals app.
 
@@ -111,37 +110,37 @@ Approved by %s on %s.
 Old notes:
 %s
 """ % (
-                        request.user.get_full_name(),
-                        str(timezone.now().date()),
-                        membership.note,
-                    )
-                    membership.note = (
-                        user.get_field_of_study_display() + " " + str(user.started_date)
-                    )
-                    membership.save()
-                else:
-                    membership = Membership()
-                    membership.username = user.ntnu_username
-                    membership.expiration_date = app.new_expiry_date
-                    membership.registered = timezone.now().date()
-                    membership.note = (
-                        user.get_field_of_study_display() + " " + str(user.started_date)
-                    )
-                    membership.description = """Added by approvals app.
+                    request.user.get_full_name(),
+                    str(timezone.now().date()),
+                    membership.note,
+                )
+                membership.note = (
+                    user.get_field_of_study_display() + " " + str(user.started_date)
+                )
+                membership.save()
+            else:
+                membership = Membership()
+                membership.username = user.ntnu_username
+                membership.expiration_date = app.new_expiry_date
+                membership.registered = timezone.now().date()
+                membership.note = (
+                    user.get_field_of_study_display() + " " + str(user.started_date)
+                )
+                membership.description = """Added by approvals app.
 
 Approved by %s on %s.""" % (
-                        request.user.get_full_name(),
-                        str(timezone.now().date()),
-                    )
-                    membership.save()
+                    request.user.get_full_name(),
+                    str(timezone.now().date()),
+                )
+                membership.save()
 
-            app.processed = True
-            app.processed_date = timezone.now()
-            app.approved = True
-            app.approver = request.user
-            app.save()
+        app.processed = True
+        app.processed_date = timezone.now()
+        app.approved = True
+        app.approver = request.user
+        app.save()
 
-            return HttpResponse(status=200)
+        return HttpResponse(status=200)
 
     raise Http404
 
@@ -150,42 +149,41 @@ Approved by %s on %s.""" % (
 @ensure_csrf_cookie
 @permission_required("approval.change_membershipapproval", return_403=True)
 def decline_application(request):
-    if request.is_ajax():
-        if request.method == "POST":
-            application_id = request.POST.get("application_id")
-            apps = MembershipApproval.objects.filter(pk=application_id)
+    if request.method == "POST":
+        application_id = request.POST.get("application_id")
+        apps = MembershipApproval.objects.filter(pk=application_id)
 
-            if apps.count() == 0:
-                response_text = json.dumps(
-                    {
-                        "message": _(
-                            """
+        if apps.count() == 0:
+            response_text = json.dumps(
+                {
+                    "message": _(
+                        """
 Kan ikke finne en søknad med denne IDen (%s).
 Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no."""
-                        )
-                        % application_id
-                    }
-                )
-                return HttpResponse(status=412, content=response_text)
+                    )
+                    % application_id
+                }
+            )
+            return HttpResponse(status=412, content=response_text)
 
-            app = apps[0]
+        app = apps[0]
 
-            if app.processed:
-                response_text = json.dumps(
-                    {"message": _("Denne søknaden er allerede behandlet.")}
-                )
-                return HttpResponse(status=412, content=response_text)
+        if app.processed:
+            response_text = json.dumps(
+                {"message": _("Denne søknaden er allerede behandlet.")}
+            )
+            return HttpResponse(status=412, content=response_text)
 
-            message = request.POST.get("message")
+        message = request.POST.get("message")
 
-            app.processed = True
-            app.processed_date = timezone.now()
-            app.approved = False
-            app.approver = request.user
-            app.message = message
-            app.save()
+        app.processed = True
+        app.processed_date = timezone.now()
+        app.approved = False
+        app.approver = request.user
+        app.message = message
+        app.save()
 
-            return HttpResponse(status=200)
+        return HttpResponse(status=200)
 
     raise Http404
 

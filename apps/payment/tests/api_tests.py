@@ -171,7 +171,9 @@ class PaymentRelationTestCase(APITestCase):
         response = self.client.get(self.id_url(payment_relation.id))
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.json().get("detail"), "Ikke funnet.")
+        self.assertEqual(
+            response.json().get("detail"), "No PaymentRelation matches the given query."
+        )
 
     def test_unauthenticated_client_cannot_access_payments(self):
         self.client.force_authenticate(user=None)

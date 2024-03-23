@@ -71,7 +71,7 @@ def marks_details(request, pk):
 
     # AJAX
     if request.method == "POST":
-        if request.is_ajax and "action" in request.POST:
+        if "action" in request.POST:
             resp = {"status": 200}
 
             context, resp = _handle_mark_detail(request, context, resp)

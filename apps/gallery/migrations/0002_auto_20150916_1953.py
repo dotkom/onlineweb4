@@ -2,9 +2,9 @@
 
 
 import datetime
+from datetime import timezone
 
 from django.db import migrations, models
-from django.utils.timezone import utc
 
 
 class Migration(migrations.Migration):
@@ -16,7 +16,9 @@ class Migration(migrations.Migration):
             model_name="responsiveimage",
             name="timestamp",
             field=models.DateTimeField(
-                default=datetime.datetime(2015, 9, 16, 17, 53, 35, 899762, tzinfo=utc),
+                default=datetime.datetime(
+                    2015, 9, 16, 17, 53, 35, 899762, tzinfo=timezone.utc
+                ),
                 auto_now_add=True,
             ),
             preserve_default=False,

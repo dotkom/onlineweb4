@@ -59,7 +59,9 @@ class ProfileViewEditTestCase(TestCase):
         response = self.client.post(self._url, data)
 
         self.assertFormError(
-            response, "user_profile_form", "zip_code", ZIP_CODE_VALIDATION_ERROR
+            form=response.context["user_profile_form"],
+            field="zip_code",
+            errors=[ZIP_CODE_VALIDATION_ERROR],
         )
 
 
