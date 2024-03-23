@@ -4,14 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    replaces = [
-        ("authentication", "0053_onlineuser_auth0_subject"),
-        ("authentication", "0054_remove_onlineuser_auth0_subject"),
-        ("authentication", "0055_auto_20240201_0005"),
-        ("authentication", "0056_onlineuser_auth0_subject"),
-        ("authentication", "0057_alter_onlineuser_auth0_subject"),
-    ]
-
     dependencies = [
         ("authentication", "0052_onlineuser_has_set_cognito_password"),
     ]
