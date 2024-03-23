@@ -41,7 +41,7 @@ jobs:
       env:
         POETRY_VIRTUALENVS_CREATE: false
       run: |
-        pipx install poetry==1.6.1
+        pipx install poetry==1.8.2
         poetry install
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
