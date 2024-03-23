@@ -61,7 +61,6 @@ LOCALE_PATHS = [os.path.join(PROJECT_ROOT_DIRECTORY, "locale")]
 
 SITE_ID = 1
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 DATETIME_FORMAT = "N j, Y, H:i"
 SECRET_KEY = config("OW4_DJANGO_SECRET_KEY", default="override-this-in-local.py")

@@ -4,25 +4,26 @@ version = "1.0.0"
 description = "Web pages for Online, Linjeforeningen for Informatikk at NTNU"
 authors = ["dotkom <dotkom@online.ntnu.no>"]
 license = "MIT"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "~3.11"
-Django = "^3.2.24"
-djangorestframework = "~3.14"
-django-filter = "~23.5"
+Django = "~5.0"
+djangorestframework = "~3.15"
+django-filter = "~24.1"
 pillow = "~10.2"
 stripe = "~3.5"
 icalendar = "~5.0"
 google-api-python-client = "~2.113"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
-django-crispy-forms = "~2.0"
+django-crispy-forms = "~2.1"
 crispy-bootstrap3 = "^2024.1"
 django-dynamic-fixture = "~3.1"
 django-recaptcha = "~3.0"           # Google ReCaptcha
 django-watson = "~1.6.2"            # Indexed model search lib
 django-reversion = "~5.0"           # Model version history with middleware hooks to all post_save signals
 django-guardian = "~2.4"            # Per Object permissions framework
-django-taggit = "~4.0"              # Generic multi-model tagging library
+django-taggit = "~5.0"              # Generic multi-model tagging library
 pdfdocument = "~4.0"
 Unidecode = "~1.3"                  # Translates every unicode symbol to the closest ascii. online_mail_usernames
 django-markdown-deux = "~1.0"
@@ -35,7 +36,7 @@ docutils = "~0.20"                  # Allows django-admindocs to generate docume
 oic = "~1.6"			            # OpenID Connect Client
 requests = { version = "~2.31", extras = [ "security" ] }
 # Wiki
-wiki = "^0.10.0"
+wiki = "~0.11"
 
 django-js-reverse = "~0.10"
 pyyaml = "^6.0"
@@ -100,15 +101,13 @@ addopts = "--nomigrations -n auto --dist loadscope"
 filterwarnings = [
     # for future maintainers: these fields are documented here
     # https://docs.python.org/3/library/warnings.html#the-warnings-filter
-    # All local ones are dealt with, this cannot be fixed by us
-    "ignore:.*defines default_app_config.*:django.utils.deprecation.RemovedInDjango41Warning",
-    "ignore:Use setlocale\\(\\), getencoding\\(\\) and getlocale\\(\\) instead:DeprecationWarning:.*django.*",
-    "ignore:'cgi' is deprecated and slated for removal in Python 3.13:DeprecationWarning:.*django.*",
-    "ignore:'etree' is deprecated. Use 'xml.etree.ElementTree' instead.:DeprecationWarning:.*wiki.*",
     # we should probably care about OpenAPI-warnings, but they are extremely noisy
     "ignore:Schema component \"Event\" has been overriden with a different value.:UserWarning:rest_framework.schemas.openapi",
     "ignore:You have a duplicated operationId in your OpenAPI schema:UserWarning",
     "ignore:<class '.*'> is not compatible with schema generation:UserWarning",
+    # remove once migrated, this is just setting a transitional setting
+    "ignore:The FORMS_URLFIELD_ASSUME_HTTPS transitional setting is deprecated.:django.utils.deprecation.RemovedInDjango60Warning",
+    "ignore:The default scheme will be changed from 'http' to 'https' in Django 6.0.*:django.utils.deprecation.RemovedInDjango60Warning",
 ]
 
 [tool.coverage.report]

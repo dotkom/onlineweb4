@@ -52,7 +52,7 @@ def details(request, event_id, event_slug):
         return index(request)
 
     if request.method == "POST":
-        if request.is_ajax and "action" in request.POST and "extras_id" in request.POST:
+        if "action" in request.POST and "extras_id" in request.POST:
             return JsonResponse(
                 handle_event_ajax(
                     event,

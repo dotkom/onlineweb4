@@ -56,7 +56,7 @@ def groups_index(request):
 
 
 def groups_detail_post_handler(request, group):
-    if request.is_ajax and "action" in request.POST:
+    if "action" in request.POST:
         action = request.POST.get("action")
         if action == "remove_user":
             return handle_group_member_remove(request, group)
