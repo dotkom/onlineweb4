@@ -167,7 +167,7 @@ class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
     @action(detail=True, methods=["get"], url_path="group-users")
     def group_users(self, request, pk: int = None):
         group: OnlineGroup = self.get_object()
-        users = group.members.all()
+        users = group.members.select_related("user").prefetch_related("roles")
         serializer = self.get_serializer(users, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
