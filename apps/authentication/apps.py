@@ -10,6 +10,7 @@ class AuthenticationConfig(AppConfig):
 
         from watson import search as watson
 
+        import apps.authentication.schema  # noqa: F401
         import apps.authentication.signals  # noqa: F401
         from apps.authentication.models import OnlineUser
 

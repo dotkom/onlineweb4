@@ -182,6 +182,7 @@ INSTALLED_APPS = [
     "guardian",
     "stripe",
     "rest_framework",
+    "drf_spectacular",
     "django_filters",
     "taggit",
     "corsheaders",
