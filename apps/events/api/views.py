@@ -81,6 +81,7 @@ class EventViewSet(viewsets.ModelViewSet):
 class AttendanceEventViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceEventSerializer
     permission_classes = (permissions.DjangoModelPermissionsOrAnonReadOnly,)
+    ordering_fields = ()
 
     def get_queryset(self):
         user = self.request.user

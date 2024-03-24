@@ -40,6 +40,7 @@ class CommitteeApplicationPeriodViewSet(ModelViewSet):
     queryset = CommitteeApplicationPeriod.objects.all()
     filterset_class = CommitteeApplicationPeriodFilter
     permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+    ordering_fields = ("deadline", "year")
 
 
 class CommitteeApplicationViewSet(ModelViewSet):

@@ -274,10 +274,12 @@ class ResponsiveImageViewSet(
     The 'query' filter performs a case-insensitive OR match on either image name or description.
     """
 
-    queryset = ResponsiveImage.objects.filter().order_by("-timestamp")
+    queryset = ResponsiveImage.objects.all()
     serializer_class = ResponsiveImageSerializer
     permission_classes = (AllowAny,)
     filterset_fields = ("id", "name", "timestamp", "preset")
+    ordering_fields = ("timestamp", "id")
+    ordering = ("-timestamp",)
 
     def get_queryset(self):
         queryset = self.queryset
