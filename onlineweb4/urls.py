@@ -3,9 +3,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from django_js_reverse.views import urls_js
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularRedocView,
+    SpectacularSwaggerView,
+)
 
 # URL config
 admin.autodiscover()
@@ -64,8 +69,6 @@ urlpatterns = [
 
 
 # Onlineweb app urls
-if "apps.api" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^api/", include("apps.api.urls"))]
 
 if "apps.approval" in settings.INSTALLED_APPS:
     urlpatterns += [
@@ -218,7 +221,18 @@ if "rest_framework" in settings.INSTALLED_APPS:
     from apps.api.utils import SharedAPIRootRouter
 
     urlpatterns += [
-        re_path(r"^api/v1/", include(SharedAPIRootRouter.shared_router.urls))
+        re_path(r"^api/v1/", include(SharedAPIRootRouter.shared_router.urls)),
+        path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+        path(
+            "api/schema/swagger-ui/",
+            SpectacularSwaggerView.as_view(url_name="schema"),
+            name="swagger-ui",
+        ),
+        path(
+            "api/schema/redoc/",
+            SpectacularRedocView.as_view(url_name="schema"),
+            name="redoc",
+        ),
     ]
 
 if "mozilla_django_oidc" in settings.INSTALLED_APPS:

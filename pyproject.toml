@@ -54,6 +54,7 @@ django-storages = { version = "~1.14", extras = ["s3"], optional = true }
 psycopg2-binary = { version = "~2.9", optional = true }
 mozilla-django-oidc = "^4.0.0"
 auth0-python = "^4.7.0"
+drf-spectacular = "^0.27.1"
 
 
 [tool.poetry.group.dev.dependencies]
