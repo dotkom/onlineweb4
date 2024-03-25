@@ -632,6 +632,7 @@ class GroupMember(ObjectPermissionModel, models.Model):
         verbose_name="Bruker",
         related_name="group_memberships",
         on_delete=models.CASCADE,
+        editable=False,
         null=False,
     )
     group = models.ForeignKey(
@@ -639,9 +640,10 @@ class GroupMember(ObjectPermissionModel, models.Model):
         verbose_name="Onlinegruppe",
         related_name="members",
         on_delete=models.CASCADE,
+        editable=False,
         null=False,
     )
-    added = models.DateTimeField(default=timezone.now)
+    added = models.DateTimeField(default=timezone.now, editable=False)
 
     is_on_leave = models.BooleanField(_("Permittert"), default=False)
     is_retired = models.BooleanField(_("Pensjonert"), default=False)

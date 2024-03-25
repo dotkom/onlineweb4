@@ -142,6 +142,11 @@ class GroupMemberInlineAdmin(admin.StackedInline):
     extra = 0
     fk_name = "group"
 
+    def get_queryset(self, *args):
+        return (
+            super().get_queryset(*args).select_related("user").prefetch_related("roles")
+        )
+
 
 @admin.register(OnlineGroup)
 class OnlineGroupAdmin(VersionAdmin):
@@ -156,6 +161,14 @@ class OnlineGroupAdmin(VersionAdmin):
 
     member_count.admin_order_field = "members__count"
     member_count.short_description = "Antall medlemmer (synkronisert)"
+
+    def get_queryset(self, *args):
+        return (
+            super()
+            .get_queryset(*args)
+            .select_related("group")
+            .prefetch_related("group__user_set", "members", "members__roles")
+        )
 
 
 class MemberRoleInline(admin.TabularInline):
@@ -184,7 +197,9 @@ class GroupMemberAdmin(VersionAdmin):
     all_roles.short_description = "Roller"
 
     def get_queryset(self, *args):
-        return super().get_queryset(*args).prefetch_related("roles")
+        return (
+            super().get_queryset(*args).select_related("user").prefetch_related("roles")
+        )
 
 
 @admin.register(GroupRole)
