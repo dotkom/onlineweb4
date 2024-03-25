@@ -783,25 +783,6 @@ files = [
 django = ">=4.2"
 
 [[package]]
-name = "django-datetime-widget"
-version = "0.9.3"
-description = "Django-datetime-widget is a simple and clean widget for DateField, Timefiled and DateTimeField  in Django framework. It is based on Bootstrap datetime picker, supports both Bootstrap 3 and Bootstrap 2"
-optional = false
-python-versions = "*"
-files = []
-develop = false
-
-[package.dependencies]
-django = "*"
-pytz = "*"
-
-[package.source]
-type = "git"
-url = "https://github.com/oleast/django-datetime-widget.git"
-reference = "95a5ba4738853d1ed4081e1e33e1600cba984aad"
-resolved_reference = "95a5ba4738853d1ed4081e1e33e1600cba984aad"
-
-[[package]]
 name = "django-dynamic-fixture"
 version = "4.0.1"
 description = "A full library to create dynamic model instances for testing purposes."
@@ -1116,18 +1097,18 @@ testing = ["hatch", "pre-commit", "pytest", "tox"]
 
 [[package]]
 name = "filelock"
-version = "3.13.1"
+version = "3.13.2"
 description = "A platform independent file lock."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "filelock-3.13.1-py3-none-any.whl", hash = "sha256:57dbda9b35157b05fb3e58ee91448612eb674172fab98ee235ccb0b5bee19a1c"},
-    {file = "filelock-3.13.1.tar.gz", hash = "sha256:521f5f56c50f8426f5e03ad3b281b490a87ef15bc6c526f168290f0c7148d44e"},
+    {file = "filelock-3.13.2-py3-none-any.whl", hash = "sha256:e4c33bc026ace328551af557d4d34f59566c98acd4ed66c13b4335f114f04f7a"},
+    {file = "filelock-3.13.2.tar.gz", hash = "sha256:9e2106260b5f65600a31bc503721e3db7e64598bb406ebc5921aeaafe441ba34"},
 ]
 
 [package.extras]
-docs = ["furo (>=2023.9.10)", "sphinx (>=7.2.6)", "sphinx-autodoc-typehints (>=1.24)"]
-testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "pytest-mock (>=3.12)", "pytest-timeout (>=2.2)"]
+docs = ["furo (>=2023.9.10)", "sphinx (>=7.2.6)", "sphinx-autodoc-typehints (>=1.25.2)"]
+testing = ["covdefaults (>=2.3)", "coverage (>=7.3.2)", "diff-cover (>=8.0.1)", "pytest (>=7.4.3)", "pytest-cov (>=4.1)", "pytest-mock (>=3.12)", "pytest-timeout (>=2.2)"]
 typing = ["typing-extensions (>=4.8)"]
 
 [[package]]
@@ -3362,4 +3343,4 @@ s3 = ["django-storages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "064ca10f0018bc70e706cf4d5bb9e2e999a863b665a1e2189da07a94735a8d98"
+content-hash = "587dd29c95e4dea1445ec866c1b2455a59e1daa67ff5b2094cbe0ab3f8a9accd"

@@ -186,7 +186,6 @@ INSTALLED_APPS = [
     "django_filters",
     "taggit",
     "corsheaders",
-    "datetimewidget",
     "webpack_loader",
     "mozilla_django_oidc",
     # Django apps
