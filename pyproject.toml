@@ -39,7 +39,7 @@ wiki = "~0.11"
 
 django-js-reverse = "~0.10"
 pyyaml = "^6.0"
-pywebpush = "^1.11.0"
+pywebpush = "^2.0.0"
 
 # Monitoring
 sentry-sdk = { version = "~1.43", extras = [ "django" ] }

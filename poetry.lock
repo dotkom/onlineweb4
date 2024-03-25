@@ -2568,21 +2568,24 @@ files = [
 
 [[package]]
 name = "pywebpush"
-version = "1.14.1"
+version = "2.0.0"
 description = "WebPush publication library"
 optional = false
 python-versions = "*"
 files = [
-    {file = "pywebpush-1.14.1-py3-none-any.whl", hash = "sha256:2865ee65cf44375f7cbdcfd5ba915a9d84c239900c6fba2245efd8d8314a3e84"},
-    {file = "pywebpush-1.14.1.tar.gz", hash = "sha256:f88d7e2bf5e87c616dfb04b8c95c119238c511659b02f735ee77cc16842855ee"},
+    {file = "pywebpush-2.0.0.tar.gz", hash = "sha256:03ccc3e975b60374b7634c495595616be523bf2c7da0d976e84fda9ac8c63301"},
 ]
 
 [package.dependencies]
+aiohttp = "*"
 cryptography = ">=2.6.1"
 http-ece = ">=1.1.0"
 py-vapid = ">=1.7.0"
 requests = ">=2.21.0"
 six = ">=1.15.0"
+
+[package.extras]
+dev = ["black", "mock", "pytest"]
 
 [[package]]
 name = "pyyaml"
@@ -3347,4 +3350,4 @@ s3 = ["django-storages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "8103f8b182b4211150d97e0d1fd647830fcae4a2926de73c2676d1c180ea7c83"
+content-hash = "07abd05c3dbeedaae4e42615f2bd5cf0a4cda3fadd6427e9120dae4da5d352ec"
