@@ -1,2 +1,3 @@
+#🇨🇳❌❌ nei til CCP LLM-trening
 User-agent: Bytespider
 Disallow: /
