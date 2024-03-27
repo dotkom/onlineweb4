@@ -1,8 +1,8 @@
-{% for company in event.companies.all %}
+{% for ce in event.company_events.all %}
     <p>
-        <form method="POST" action="{% url 'dashboard_events_remove_company' event.id company.id %}">
+        <form method="POST" action="{% url 'dashboard_events_remove_company' ce.event.id ce.id %}">
           {% csrf_token %}
-          {{ company.name }}
+          {{ ce.company.name }}
           <button type="submit" class="btn btn-danger btn-xs"><i class="fa fa-times"></i> Fjern</button>
         </form>
     </p>
