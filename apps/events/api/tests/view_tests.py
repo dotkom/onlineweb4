@@ -40,13 +40,13 @@ class EventsAPITestCase(GetUrlMixin, APITestCase):
         self.attendees = [self.attendee1, self.attendee2]
 
     def test_events_list_empty(self):
-        with self.assertNumQueries(11):
+        with self.assertNumQueries(10):
             response = self.client.get(self.get_list_url())
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_events_detail(self):
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(9):
             response = self.client.get(self.get_detail_url(self.event.id))
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -69,7 +69,7 @@ class EventsAPITestCase(GetUrlMixin, APITestCase):
         bedpres_with_evilcorp = generate_event(organizer=self.committee)
         G(CompanyEvent, company=evilcorp, event=bedpres_with_evilcorp)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             response = self.client.get(
                 f"{self.get_list_url()}?companies={onlinecorp.id}"
             )
@@ -83,7 +83,7 @@ class EventsAPITestCase(GetUrlMixin, APITestCase):
         self.assertNotIn(bedpres_with_evilcorp.id, event_titles_list)
 
     def test_event_with_group_restriction(self):
-        with self.assertNumQueries(10):
+        with self.assertNumQueries(9):
             response = self.client.get(self.get_detail_url(self.event.id))
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -96,7 +96,7 @@ class EventsAPITestCase(GetUrlMixin, APITestCase):
 
         attendee = attend_user_to_event(self.event, self.user)
 
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(6):
             self.assertIn(attendee, self.event.attendance_event.attendees.all())
             response = self.client.get(self.get_detail_url(self.event.id))
             self.assertEqual(response.status_code, status.HTTP_200_OK)

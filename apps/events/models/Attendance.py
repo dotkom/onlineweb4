@@ -633,6 +633,10 @@ class CompanyEvent(models.Model):
             assign_perm("events.change_companyevent", self.event.organizer, obj=self)
             assign_perm("events.delete_companyevent", self.event.organizer, obj=self)
 
+        if not self.event.image and self.company.image:
+            self.event.image = self.company.image
+            self.event.save()
+
     class Meta:
         verbose_name = _("bedrift")
         verbose_name_plural = _("bedrifter")
