@@ -286,16 +286,8 @@ class Event(models.Model):
 
     @property
     def images(self):
-        # we want to have self.image first, so use dict-keys instead of set since keys are ordered.
-        # it is not entirely clear why we even need to de-deplicate here
-        images = {self.image: None}
-        images |= {c.image: None for c in self.companies.select_related("image")}
-        # if company or we are missing an image, remove it
-        try:
-            del images[None]
-        except KeyError:
-            pass
-        return list(images.keys())
+        # only here for backwards-compatability
+        return [self.image] if self.image else []
 
     @property
     def organizer_name(self):
