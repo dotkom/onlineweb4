@@ -1,4 +1,4 @@
-from captcha.fields import ReCaptchaField
+from turnstile.fields import TurnstileField
 from django import forms
 
 
@@ -22,10 +22,11 @@ class ContactForm(forms.Form):
     content = forms.CharField(
         required=True, widget=forms.Textarea({"placeholder": "Din melding"})
     )
-    captcha = ReCaptchaField(
+    captcha = TurnstileField(
         error_messages={
-            "required": ("Du klarte ikke captchaen! Er du en bot?"),
-            "invalid": ("Du klarte ikke captchaen! Er du en bot?"),
+            "error_turnstile": ("Du klarte ikke captchaen! Er du en bot?"),
+            "invalid_turnstile": ("Du klarte ikke captchaen! Er du en bot?"),
+            "required": ("Vennligst vis at du er human."),
         }
     )
 

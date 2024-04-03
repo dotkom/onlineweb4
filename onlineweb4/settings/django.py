@@ -175,6 +175,7 @@ INSTALLED_APPS = [
     "crispy_bootstrap3",
     "django_dynamic_fixture",
     "captcha",
+    "turnstile",
     "pdfdocument",
     "watson",
     "markdown_deux",
