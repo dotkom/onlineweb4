@@ -901,20 +901,6 @@ django = ">=2.2,<5.1"
 docs = ["channels (==4.0.0)", "sphinx (==6.2.1)", "sphinx-rtd-theme (==1.2.0)"]
 
 [[package]]
-name = "django-recaptcha"
-version = "3.0.0"
-description = "Django recaptcha form field/widget app."
-optional = false
-python-versions = "*"
-files = [
-    {file = "django-recaptcha-3.0.0.tar.gz", hash = "sha256:253197051288923cae675d7eff91b619e3775311292a5dbaf27a8a55ffebc670"},
-    {file = "django_recaptcha-3.0.0-py3-none-any.whl", hash = "sha256:1aed69fd6ac8fd9e99e52665392ae6748f8b6339ace656fad779fe0c6c915a52"},
-]
-
-[package.dependencies]
-django = "*"
-
-[[package]]
 name = "django-reversion"
 version = "5.0.12"
 description = "An extension to the Django web framework that provides version control for model instances."
@@ -3361,4 +3347,4 @@ s3 = ["django-storages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "173332093576ce4f26312175f1c2a4db875fff23efe596f16d222a2dc5bbdc4e"
+content-hash = "6ecef74b96fbbcc80652d63c70082aec23ebeb150594e4d1d641a9d9f7ef6ad4"
