@@ -4,6 +4,7 @@ from django.urls import re_path
 
 from apps.api.utils import SharedAPIRootRouter
 from apps.events import views
+from apps.events.feeds import OpenedSignupsFeed
 
 urlpatterns = [
     re_path(r"^$", views.index, name="events_index"),
@@ -45,6 +46,7 @@ urlpatterns = [
         views.calendar_export,
         name="events_personal_ics",
     ),
+    re_path("^signup-feed/$", OpenedSignupsFeed()),
 ]
 
 # API v1
