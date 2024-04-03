@@ -1002,6 +1002,17 @@ files = [
 Django = ">=4.1"
 
 [[package]]
+name = "django-turnstile"
+version = "0.1.0"
+description = "Add Cloudflare Turnstile validator widget to the forms of your django project"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-turnstile-0.1.0.tar.gz", hash = "sha256:9b6036a90a39c48020e3c4e34565b7db2f0efd7a2be74bc52116e4ee403d95cb"},
+    {file = "django_turnstile-0.1.0-py3-none-any.whl", hash = "sha256:92009e09d8aff0755ea667f2e4c521a3f1817c0b3f94d63d3b4723d9efefb0b9"},
+]
+
+[[package]]
 name = "django-watson"
 version = "1.6.3"
 description = "Full-text multi-table search application for Django. Easy to install and use, with good performance."
@@ -3349,4 +3360,4 @@ s3 = ["django-storages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "07abd05c3dbeedaae4e42615f2bd5cf0a4cda3fadd6427e9120dae4da5d352ec"
+content-hash = "173332093576ce4f26312175f1c2a4db875fff23efe596f16d222a2dc5bbdc4e"

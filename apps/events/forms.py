@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from captcha.fields import ReCaptchaField
+from turnstile.fields import TurnstileField
 from django import forms
 from django.conf import settings
 from django.utils.translation import gettext as _
@@ -27,11 +27,11 @@ class CaptchaForm(forms.Form):
         ),
         error_messages={"required": _("Du må godta prikkereglene!")},
     )
-    captcha = ReCaptchaField(
+    captcha = TurnstileField(
         error_messages={
-            "captcha_error": _("Du klarte ikke captchaen! Er du en bot?"),
-            "captcha_invalid": _("Du klarte ikke captchaen! Er du en bot?"),
-            "required": _("Du glemte captchaen! Vennligst prøv på nytt."),
+            "error_turnstile": ("Du klarte ikke captchaen! Er du en bot?"),
+            "invalid_turnstile": ("Du klarte ikke captchaen! Er du en bot?"),
+            "required": ("Vennligst vis at du er human."),
         }
     )
 
