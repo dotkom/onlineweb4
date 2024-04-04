@@ -3350,4 +3350,4 @@ s3 = ["django-storages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.11"
-content-hash = "07abd05c3dbeedaae4e42615f2bd5cf0a4cda3fadd6427e9120dae4da5d352ec"
+content-hash = "47d49d387c1bb83eff70006ea2863b520959018eafb0595399c5b15605946f89"
