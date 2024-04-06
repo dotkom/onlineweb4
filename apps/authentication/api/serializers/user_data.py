@@ -4,11 +4,7 @@ from wiki.models.article import Article as WikiArticle
 from wiki.models.article import ArticleRevision
 from wiki.plugins.attachments.models import AttachmentRevision
 
-from apps.approval.models import (
-    CommitteeApplication,
-    CommitteePriority,
-    MembershipApproval,
-)
+from apps.approval.models import MembershipApproval
 from apps.article.serializers import ArticleSerializer
 from apps.authentication.models import GroupMember
 from apps.authentication.serializers import (
@@ -292,31 +288,6 @@ class MembershipApprovalSerializer(serializers.ModelSerializer):
         )
 
 
-class CommitteePrioritiySerializer(serializers.ModelSerializer):
-    committee = serializers.CharField(source="group.name")
-
-    class Meta:
-        model = CommitteePriority
-        fields = ("committee", "priority")
-
-
-class CommitteeApplicationSerializer(serializers.ModelSerializer):
-    committee_priorities = CommitteePrioritiySerializer(many=True)
-
-    class Meta:
-        model = CommitteeApplication
-        fields = (
-            "created",
-            "modified",
-            "applicant",
-            "name",
-            "application_text",
-            "prioritized",
-            "committees",
-            "committee_priorities",
-        )
-
-
 class UserDataSerializer(serializers.ModelSerializer):
     # Profile
     name = serializers.SerializerMethodField()
@@ -354,7 +325,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     # Approval
     applications = MembershipApprovalSerializer(many=True)
     approved_applications = MembershipApprovalSerializer(many=True)
-    committeeapplication_set = CommitteeApplicationSerializer(many=True)
     # Wiki
     wiki_attachment_revisions = WikiAttachmentRevisionSerializer(
         many=True, source="attachmentrevision_set"
@@ -447,7 +417,6 @@ class UserDataSerializer(serializers.ModelSerializer):
             # Approval
             "applications",
             "approved_applications",
-            "committeeapplication_set",
             # Posters
             "ordered_posters",
             "assigned_posters",
