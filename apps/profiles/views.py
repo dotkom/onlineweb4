@@ -27,7 +27,7 @@ from apps.gsuite.accounts.main import (
     reset_password_g_suite_account,
 )
 from apps.marks.models import Mark, MarkRuleSet, Suspension
-from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
+from apps.payment.models import PaymentDelay, PaymentRelation
 from apps.profiles.filters import PublicProfileFilter
 from apps.profiles.forms import PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
@@ -36,7 +36,6 @@ from apps.profiles.serializers import (
     ProfileSerializer,
     PublicProfileSerializer,
 )
-from apps.shop.models import Order
 from utils.shortcuts import render_json
 
 """
@@ -71,11 +70,6 @@ def _create_profile_context(request):
         "groups": groups,
         # privacy
         "privacy_form": PrivacyForm(instance=request.user.privacy),
-        # nibble information
-        "transactions": PaymentTransaction.objects.filter(user=request.user),
-        "orders": Order.objects.filter(order_line__user=request.user).order_by(
-            "-order_line__datetime"
-        ),
         # marks
         "mark_rule_set": MarkRuleSet.get_current_rule_set(),
         "mark_rules_accepted": request.user.mark_rules_accepted,

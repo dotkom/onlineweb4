@@ -17,7 +17,6 @@ from apps.feedback.serializers import (
     FeedbackRelationListSerializer,
     GenericSurveySerializer,
 )
-from apps.inventory.models import Item, ItemCategory
 from apps.marks.serializers import (
     MarkUserSerializer,
     RuleAcceptanceSerializer,
@@ -31,8 +30,6 @@ from apps.payment.models import (
     PaymentTransaction,
 )
 from apps.profiles.serializers import PrivacySerializer
-from apps.shop.models import Order as ShopOrder
-from apps.shop.models import OrderLine as ShopOrderLine
 from apps.webshop.models import Order as WebshopOrder
 from apps.webshop.models import OrderLine as WebshopOrderLine
 from apps.webshop.models import Product as WebshopProduct
@@ -234,37 +231,6 @@ class WebshopOrderLineSerializer(serializers.ModelSerializer):
         fields = ("datetime", "paid", "delivered", "orders", "subtotal")
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ItemCategory
-
-        fields = ("name",)
-
-
-class ItemSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
-
-    class Meta:
-        model = Item
-        fields = ("name", "category")
-
-
-class ShopOrderSerializer(serializers.ModelSerializer):
-    content_object = ItemSerializer()
-
-    class Meta:
-        model = ShopOrder
-        fields = ("price", "quantity", "content_object")
-
-
-class ShopOrderLineSerializer(serializers.ModelSerializer):
-    orders = ShopOrderSerializer(many=True)
-
-    class Meta:
-        model = ShopOrderLine
-        fields = ("orders", "paid", "datetime")
-
-
 class MembershipApprovalSerializer(serializers.ModelSerializer):
     applicant = serializers.SerializerMethodField()
     approver = serializers.SerializerMethodField()
@@ -317,7 +283,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     )
     # Purchases
     orderline_set = WebshopOrderLineSerializer(many=True)
-    shop_order_lines = ShopOrderLineSerializer(many=True)
     # Marks
     accepted_mark_rule_sets = RuleAcceptanceSerializer(many=True)
     marks = MarkUserSerializer(many=True, source="markuser_set")
@@ -413,7 +378,6 @@ class UserDataSerializer(serializers.ModelSerializer):
             "payment_transactions",
             # Purchases
             "orderline_set",
-            "shop_order_lines",
             # Approval
             "applications",
             "approved_applications",
@@ -421,6 +385,5 @@ class UserDataSerializer(serializers.ModelSerializer):
             "ordered_posters",
             "assigned_posters",
             # Other
-            "magictoken_set",
             "object_revisions",
         )
