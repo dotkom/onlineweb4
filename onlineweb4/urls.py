@@ -164,14 +164,6 @@ if "apps.notifications" in settings.INSTALLED_APPS:
         re_path(r"^notifications/", include("apps.notifications.urls")),
     ]
 
-if "apps.inventory" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^dashboard/inventory/", include("apps.inventory.dashboard.urls"))
-    ]
-
-if "apps.shop" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^shop/", include("apps.shop.urls"))]
-
 if "apps.posters" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^dashboard/posters/", include("apps.posters.dashboard.urls"))

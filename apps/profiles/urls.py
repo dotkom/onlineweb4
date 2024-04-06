@@ -5,7 +5,6 @@ from django.urls import path, re_path
 from apps.api.utils import SharedAPIRootRouter
 from apps.marks.views import MarksViewSet, SuspensionViewSet
 from apps.profiles import views
-from apps.shop.views import UserOrderViewSet
 
 urlpatterns = [
     re_path(r"^$", views.index, name="profiles"),
@@ -65,7 +64,6 @@ router = SharedAPIRootRouter()
 router.register(
     "profile/search", views.PublicProfileSearchSet, basename="profile-search"
 )
-router.register("profile/orders", UserOrderViewSet, basename="profile-orders")
 router.register(
     "profile/privacy", views.PersonalPrivacyView, basename="profile-privacy"
 )
