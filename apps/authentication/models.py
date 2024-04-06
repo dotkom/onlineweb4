@@ -372,37 +372,6 @@ class OnlineUser(AbstractUser):
         default_permissions = ("add", "change", "delete")
 
 
-class Email(models.Model):
-    user = models.ForeignKey(
-        OnlineUser, related_name="email_user", on_delete=models.CASCADE
-    )
-    email = models.EmailField(_("epostadresse"), unique=True)
-    primary = models.BooleanField(_("primær"), default=False)
-    verified = models.BooleanField(_("verifisert"), default=False, editable=False)
-
-    def save(self, *args, **kwargs):
-        primary_email = self.user.email_object
-        if not primary_email:
-            self.primary = True
-        elif primary_email.email != self.email:
-            self.primary = False
-        self.email = self.email.lower()
-        if self.primary:
-            self.user.email = self.email
-            self.user.save()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.email
-
-    class Meta:
-        verbose_name = _("epostadresse")
-        verbose_name_plural = _("epostadresser")
-        permissions = (("view_email", "View Email"),)
-        default_permissions = ("add", "change", "delete")
-        ordering = ("user", "email")
-
-
 class Membership(models.Model):
     """
     Holds usernames that are considered valid members of Online and the time they expire.
