@@ -192,7 +192,7 @@ class Migration(migrations.Migration):
                 ("price", models.IntegerField(verbose_name="pris")),
                 (
                     "description",
-                    models.CharField(default="No description", max_length=128),
+                    models.CharField(max_length=128),
                 ),
                 (
                     "payment",
@@ -238,13 +238,12 @@ class Migration(migrations.Migration):
                 (
                     "payment_price",
                     models.ForeignKey(
-                        default=0,
                         on_delete=django.db.models.deletion.CASCADE,
                         to="payment.paymentprice",
                     ),
                 ),
                 ("refunded", models.BooleanField(default=False)),
-                ("stripe_id", models.CharField(default=0, max_length=128)),
+                ("stripe_id", models.CharField(max_length=128)),
             ],
             options={
                 "verbose_name": "betalingsrelasjon",

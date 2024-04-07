@@ -6,7 +6,8 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("inventory", "0002_auto_20151016_2157"),
+        # intentionally commented out to make migration work
+        # ("inventory", "0002_auto_20151016_2157"),
         ("payment", "0007_paymenttransaction"),
     ]
 

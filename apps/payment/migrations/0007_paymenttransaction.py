@@ -7,7 +7,8 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("inventory", "0001_initial"),
+        # intentionally commented out, this migration does no longer exist in the squashed version
+        # ("inventory", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("payment", "0006_auto_20151014_1938"),
     ]
