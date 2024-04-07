@@ -17,7 +17,6 @@ from django.utils.translation import gettext as _
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
-from apps.payment import status as PaymentStatus
 from apps.permissions.models import ObjectPermissionModel
 
 logger = logging.getLogger(__name__)
@@ -225,15 +224,6 @@ class OnlineUser(AbstractUser):
         if not self.is_member:
             return None
         return Membership.objects.get(username=self.ntnu_username.lower())
-
-    @property
-    def saldo(self) -> int:
-        value = (
-            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
-            .aggregate(coins=models.Sum("amount"))
-            .get("coins")
-        )
-        return value if value is not None else 0
 
     @property
     def year(self):
