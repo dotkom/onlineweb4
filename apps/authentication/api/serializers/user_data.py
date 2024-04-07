@@ -22,13 +22,7 @@ from apps.marks.serializers import (
     RuleAcceptanceSerializer,
     SuspensionSerializer,
 )
-from apps.payment.models import (
-    Payment,
-    PaymentDelay,
-    PaymentPrice,
-    PaymentRelation,
-    PaymentTransaction,
-)
+from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 from apps.profiles.serializers import PrivacySerializer
 from apps.webshop.models import Order as WebshopOrder
 from apps.webshop.models import OrderLine as WebshopOrderLine
@@ -155,21 +149,6 @@ class GroupMemberSerializer(serializers.ModelSerializer):
         fields = ("group_name", "added", "is_on_leave", "is_retired", "roles")
 
 
-class PaymentTransactionSerializer(serializers.ModelSerializer):
-    items = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
-
-    def get_items(self, obj: PaymentTransaction):
-        return obj.get_receipt_items()
-
-    def get_description(self, obj: PaymentTransaction):
-        return obj.get_receipt_description()
-
-    class Meta:
-        model = PaymentTransaction
-        fields = ("amount", "used_stripe", "datetime", "status", "description", "items")
-
-
 class PaymentPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentPrice
@@ -278,9 +257,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     payment_relations = PaymentRelationSerializer(
         many=True, source="paymentrelation_set"
     )
-    payment_transactions = PaymentTransactionSerializer(
-        many=True, source="paymenttransaction_set"
-    )
     # Purchases
     orderline_set = WebshopOrderLineSerializer(many=True)
     # Marks
@@ -328,13 +304,10 @@ class UserDataSerializer(serializers.ModelSerializer):
             "allergies",
             "linkedin",
             "rfid",
-            "saldo",
             "field_of_study",
             "phone_number",
             "gender",
             "github",
-            "rfid",
-            "saldo",
             "website",
             "year",
             "zip_code",
@@ -375,7 +348,6 @@ class UserDataSerializer(serializers.ModelSerializer):
             # Payments
             "payment_delays",
             "payment_relations",
-            "payment_transactions",
             # Purchases
             "orderline_set",
             # Approval

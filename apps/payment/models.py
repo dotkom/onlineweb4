@@ -19,7 +19,6 @@ from apps.notifications.utils import send_message_to_users
 from apps.payment import status
 
 from .mixins import PaymentMixin, ReceiptMixin
-from .transaction_constants import TransactionSource
 
 User = settings.AUTH_USER_MODEL
 
@@ -318,89 +317,6 @@ class PaymentDelay(models.Model):
         verbose_name_plural = _("betalingsutsettelser")
         default_permissions = ("add", "change", "delete")
         ordering = ("active", "valid_to")
-
-
-class TransactionManager(models.Manager):
-    def aggregate_coins(self, user: User) -> int:
-        """
-        :return: The aggregated amount of coins in a users wallet.
-        """
-        value = (
-            self.filter(user=user, status=status.DONE)
-            .aggregate(coins=models.Sum("amount"))
-            .get("coins")
-        )
-        return value if value is not None else 0
-
-
-class PaymentTransaction(ReceiptMixin, StripeMixin, models.Model):
-    """
-    A transaction for a User
-    The set of all transactions for a user defines the amount of 'coins' a user has.
-    """
-
-    objects = TransactionManager()
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    amount = models.IntegerField(null=True, blank=True)
-    """Amount in NOK"""
-    source = models.CharField(max_length=64, choices=TransactionSource.ALL_CHOICES)
-    """ Origin of the transaction, such as purchases in Nibble or additions from Stripe """
-    datetime = models.DateTimeField(auto_now_add=True)
-
-    @property
-    def used_stripe(self):
-        return self.source == TransactionSource.STRIPE
-
-    def get_receipt_timestamp(self) -> timezone.datetime:
-        return self.datetime
-
-    def get_receipt_subject(self) -> str:
-        return f"[Kvittering] {self.get_receipt_description()}"
-
-    def get_receipt_description(self) -> str:
-        if self.source == TransactionSource.STRIPE:
-            return "Saldoinnskudd på online.ntnu.no"
-        elif self.source == TransactionSource.TRANSFER:
-            return "Overføring av saldo til annen bruker på online.ntnu.no"
-        elif self.source == TransactionSource.CASH:
-            return "Innskudd av kontanter på online.ntnu.no"
-        elif self.source == TransactionSource.SHOP:
-            return "Kjøp i Onlinekiosken"
-
-    def get_receipt_items(self):
-        if self.source == TransactionSource.STRIPE:
-            return [{"name": "Påfyll av saldo", "price": self.amount, "quantity": 1}]
-        elif self.source == TransactionSource.TRANSFER:
-            return [
-                {"name": "Overføring av saldo", "price": self.amount, "quantity": 1}
-            ]
-        elif self.source == TransactionSource.CASH:
-            return [
-                {"name": "Påfyll av kontanter", "price": self.amount, "quantity": 1}
-            ]
-        elif self.source == TransactionSource.SHOP:
-            if hasattr(self, "shop_order_line"):
-                return self.shop_order_line.get_order_descriptions()
-            else:
-                raise ValueError(
-                    "Transaction for a shop purchase is not connected to an OrderLine"
-                )
-
-    def get_receipt_from_email(self):
-        return settings.EMAIL_TRIKOM
-
-    def get_receipt_to_user(self):
-        return self.user
-
-    def __str__(self):
-        return f"{self.user} - {self.amount} ({self.datetime})"
-
-    class Meta:
-        ordering = ["-datetime"]
-        verbose_name = _("transaksjon")
-        verbose_name_plural = _("transaksjoner")
-        default_permissions = ("add", "change", "delete")
 
 
 class PaymentReceipt(models.Model):

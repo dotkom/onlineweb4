@@ -48,7 +48,6 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
                     "mark_rules_accepted",
                     "rfid",
                     "nickname",
-                    "saldo",
                     "website",
                 )
             },
@@ -68,7 +67,7 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
     )
     filter_horizontal = ("groups", "user_permissions")
     search_fields = ("first_name", "last_name", "username", "ntnu_username")
-    readonly_fields = ("mark_rules_accepted", "saldo", "auth0_subject")
+    readonly_fields = ("mark_rules_accepted", "auth0_subject")
 
     def is_member(self, instance: OnlineUser):
         return instance.is_member
