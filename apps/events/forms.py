@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from turnstile.fields import TurnstileField
 from django import forms
 from django.conf import settings
 from django.utils.translation import gettext as _
+from turnstile.fields import TurnstileField
 
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import MarkRuleSet
