@@ -1,7 +1,6 @@
 from datetime import timedelta
 from unittest.mock import patch
 
-from captcha.client import RecaptchaResponse
 from django.contrib.auth.models import Group
 from django.core import mail
 from django.test import TestCase, TransactionTestCase
@@ -39,6 +38,9 @@ class EventsTestMixin:
 
         self.user = generate_user("test")
         self.client.force_login(self.user)
+
+        # it will fail without a POST body
+        self.dummy_form = {"dummy": "dummy"}
 
         self.mark_rule_set = G(MarkRuleSet)
 
@@ -246,16 +248,14 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.assertInMessages("Vennligst fyll ut skjemaet.", response)
 
     def test_attend_missing_note(self):
-        form_params = {"g-recaptcha-response": "PASSED"}
         url = reverse("attend_event", args=(self.event.id,))
 
-        response = self.client.post(url, form_params, follow=True)
+        response = self.client.post(url, self.dummy_form, follow=True)
 
         self.assertRedirects(response, self.event.get_absolute_url())
         self.assertInMessages("Du må fylle inn et notat!", response)
 
     def test_attend_not_accepted_rules(self):
-        form_params = {"g-recaptcha-response": "PASSED"}
         url = reverse("attend_event", args=(self.event.id,))
         G(
             Membership,
@@ -263,16 +263,24 @@ class EventsAttend(EventsTestMixin, TestCase):
             expiration_date=timezone.now() + timedelta(days=1),
         )
 
-        response = self.client.post(url, form_params, follow=True)
+        response = self.client.post(url, self.dummy_form, follow=True)
 
         self.assertRedirects(response, self.event.get_absolute_url())
         self.assertInMessages("Du må godta prikkereglene!", response)
 
-    @patch("captcha.fields.client.submit")
-    def test_attend_invalid_captcha(self, mocked_submit):
-        mocked_submit.return_value = RecaptchaResponse(is_valid=False)
-        url = reverse("attend_event", args=(self.event.id,))
-        form_params = {"g-recaptcha-response": "WRONG"}
+    def test_attend_invalid_captcha(self):
+        # validation THROWS, it does not return a boolean
+        # therefoer we dont even overwrite it
+
+        event = G(Event)
+        G(
+            AttendanceEvent,
+            event=event,
+            registration_start=timezone.now() - timedelta(days=1),
+            registration_end=timezone.now() + timedelta(days=1),
+        )
+        url = reverse("attend_event", args=(event.id,))
+
         G(
             Membership,
             username=self.user.ntnu_username,
@@ -280,14 +288,14 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         MarkRuleSet.accept_mark_rules(self.user)
 
-        response = self.client.post(url, form_params, follow=True)
+        response = self.client.post(url, self.dummy_form, follow=True)
 
-        self.assertRedirects(response, self.event.get_absolute_url())
-        self.assertInMessages("Du klarte ikke captchaen! Er du en bot?", response)
+        self.assertRedirects(response, event.get_absolute_url())
+        self.assertInMessages("Vennligst vis at du er human.", response)
 
-    @patch("captcha.fields.client.submit")
+    @patch("turnstile.fields.TurnstileField.validate")
     def test_attend_before_registration_start(self, mocked_submit):
-        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
+        mocked_submit.return_value = None  # no throw
         event = G(Event)
         G(
             AttendanceEvent,
@@ -297,7 +305,6 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         url = reverse("attend_event", args=(event.id,))
 
-        form_params = {"g-recaptcha-response": "PASSED"}
         G(
             Membership,
             username=self.user.ntnu_username,
@@ -305,14 +312,14 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         MarkRuleSet.accept_mark_rules(self.user)
 
-        response = self.client.post(url, form_params, follow=True)
+        response = self.client.post(url, self.dummy_form, follow=True)
 
         self.assertRedirects(response, event.get_absolute_url())
         self.assertInMessages("Påmeldingen har ikke åpnet enda.", response)
 
-    @patch("captcha.fields.client.submit")
+    @patch("turnstile.fields.TurnstileField.validate")
     def test_attend_successfully(self, mocked_submit):
-        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
+        mocked_submit.return_value = None  # no throw
         event = G(Event)
         G(
             AttendanceEvent,
@@ -322,7 +329,6 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         url = reverse("attend_event", args=(event.id,))
 
-        form_params = {"g-recaptcha-response": "PASSED"}
         G(
             Membership,
             username=self.user.ntnu_username,
@@ -330,14 +336,14 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         MarkRuleSet.accept_mark_rules(self.user)
 
-        response = self.client.post(url, form_params, follow=True)
+        response = self.client.post(url, self.dummy_form, follow=True)
 
         self.assertRedirects(response, event.get_absolute_url())
         self.assertInMessages("Du er nå meldt på arrangementet.", response)
 
-    @patch("captcha.fields.client.submit")
+    @patch("turnstile.fields.TurnstileField.validate")
     def test_attend_twice(self, mocked_submit):
-        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
+        mocked_submit.return_value = None  # no throw
         event = G(Event)
         G(
             AttendanceEvent,
@@ -347,7 +353,6 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         url = reverse("attend_event", args=(event.id,))
 
-        form_params = {"g-recaptcha-response": "PASSED"}
         G(
             Membership,
             username=self.user.ntnu_username,
@@ -355,15 +360,15 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         MarkRuleSet.accept_mark_rules(self.user)
 
-        self.client.post(url, form_params, follow=True)
-        response = self.client.post(url, form_params, follow=True)
+        self.client.post(url, self.dummy_form, follow=True)
+        response = self.client.post(url, self.dummy_form, follow=True)
 
         self.assertRedirects(response, event.get_absolute_url())
         self.assertInMessages(StatusCode.ALREADY_SIGNED_UP.message, response)
 
-    @patch("captcha.fields.client.submit")
+    @patch("turnstile.fields.TurnstileField.validate")
     def test_attend_with_payment_creates_paymentdelay(self, mocked_submit):
-        mocked_submit.return_value = RecaptchaResponse(is_valid=True)
+        mocked_submit.return_value = None  # no throw
         event = G(Event)
         G(
             AttendanceEvent,
@@ -377,7 +382,6 @@ class EventsAttend(EventsTestMixin, TestCase):
         G(PaymentPrice, price=200, payment=self.event_payment)
         url = reverse("attend_event", args=(event.id,))
 
-        form_params = {"g-recaptcha-response": "PASSED"}
         G(
             Membership,
             username=self.user.ntnu_username,
@@ -385,7 +389,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         MarkRuleSet.accept_mark_rules(self.user)
 
-        self.client.post(url, form_params, follow=True)
+        self.client.post(url, self.dummy_form, follow=True)
 
         self.assertTrue(PaymentDelay.objects.filter(user=self.user).exists())
 

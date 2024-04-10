@@ -13,7 +13,7 @@ from apps.events.tests.utils import (
     generate_user,
     pay_for_event,
 )
-from onlineweb4.fields.recaptcha import mock_validate_recaptcha
+from onlineweb4.fields.turnstile import mock_validate_turnstile
 from onlineweb4.testing import GetUrlMixin
 
 from ...models import Extras, StatusCode
@@ -28,7 +28,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         self.user = generate_user(username="_user")
         self.client.force_authenticate(user=self.user)
 
-        self.recaptcha_arg = {"recaptcha": "--mock-recaptcha--"}
+        self.captcha_arg = {"turnstile": "dummy"}
 
         self.event = generate_event(organizer=self.committee)
         self.event.attendance_event.registration_start = timezone.now()
@@ -75,32 +75,32 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         response = self.client.get(self.get_detail_url(self.event.id))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_user_cannot_register_for_a_non_attendance_event(self, _):
         event_without_attendance = generate_event(
             organizer=self.committee, attendance=False
         )
 
         response = self.client.post(
-            self.get_register_url(event_without_attendance.id), self.recaptcha_arg
+            self.get_register_url(event_without_attendance.id), self.captcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_guest_user_can_register_for_event_with_guest_attendance(self, _):
         attendance = self.event.attendance_event
         attendance.guest_attendance = True
         attendance.save()
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg
+            self.get_register_url(self.event.id), self.captcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(attendance.is_attendee(self.user))
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_signup_settings_override_defaults(self, _):
         test_cases: list[Tuple[dict[str, bool]]] = [
             (
@@ -175,7 +175,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
 
                 response = self.client.post(
                     self.get_register_url(self.event.id),
-                    self.recaptcha_arg | registration,
+                    self.captcha_arg | registration,
                 )
 
                 self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -188,7 +188,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
                     expected["allow_pictures"],
                 )
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_user_can_set_show_as_attending_on_registration(self, _):
         attendance = self.event.attendance_event
         attendance.guest_attendance = True
@@ -196,26 +196,26 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
 
         response = self.client.post(
             self.get_register_url(self.event.id),
-            {"show_as_attending_event": True, **self.recaptcha_arg},
+            {"show_as_attending_event": True, **self.captcha_arg},
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertTrue(response.json().get("show_as_attending_event"))
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_allow_pictures_is_set_false_by_default(self, _):
         attendance = self.event.attendance_event
         attendance.guest_attendance = True
         attendance.save()
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg
+            self.get_register_url(self.event.id), self.captcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertFalse(response.json().get("allow_pictures"))
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_user_can_set_allow_pictures_on_registration(self, _):
         attendance = self.event.attendance_event
         attendance.guest_attendance = True
@@ -223,7 +223,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
 
         response = self.client.post(
             self.get_register_url(self.event.id),
-            {"allow_pictures": True, **self.recaptcha_arg},
+            {"allow_pictures": True, **self.captcha_arg},
         )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -238,16 +238,16 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(attendance.is_attendee(self.user))
-        self.assertEqual(response.json().get("recaptcha"), ["Dette feltet er påkrevd."])
+        self.assertEqual(response.json().get("turnstile"), ["Dette feltet er påkrevd."])
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_user_cannot_register_twice(self, _):
         attendance = self.event.attendance_event
         initial_attendees = len(attendance.attendees.all())
         attend_user_to_event(attendance.event, self.user)
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg
+            self.get_register_url(self.event.id), self.captcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -257,14 +257,14 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         )
         self.assertEqual(len(attendance.attendees.all()), initial_attendees + 1)
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_guest_user_cannot_register_for_event_without_guest_attendance(self, _):
         attendance = self.event.attendance_event
         attendance.guest_attendance = False
         attendance.save()
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg
+            self.get_register_url(self.event.id), self.captcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -273,7 +273,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
             StatusCode.NOT_A_MEMBER.message,
         )
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_user_cannot_register_event_after_registration_end(self, _):
         attendance = self.event.attendance_event
         attendance.registration_start = timezone.now() - timezone.timedelta(days=2)
@@ -282,7 +282,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         attendance.save()
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg
+            self.get_register_url(self.event.id), self.captcha_arg
         )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -338,7 +338,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
             "Du kan ikke melde deg av et arrangement som allerede har startet.",
         )
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_user_can_re_register_for_an_event_after_unregistering(self, _):
         attend_user_to_event(self.event, self.user)
         self.event.attendance_event.unattend_deadline = (
@@ -351,11 +351,11 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         self.client.delete(self.get_unregister_url(self.event.id))
 
         response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg
+            self.get_register_url(self.event.id), self.captcha_arg
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    @mock_validate_recaptcha()
+    @mock_validate_turnstile()
     def test_payment_is_configured_on_registration(self, _):
         generate_payment(
             self.event,
@@ -367,7 +367,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         attendance.save()
 
         register_response = self.client.post(
-            self.get_register_url(self.event.id), self.recaptcha_arg
+            self.get_register_url(self.event.id), self.captcha_arg
         )
 
         self.assertEqual(register_response.status_code, status.HTTP_201_CREATED)
