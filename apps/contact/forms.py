@@ -1,5 +1,5 @@
-from turnstile.fields import TurnstileField
 from django import forms
+from turnstile.fields import TurnstileField
 
 
 class ContactForm(forms.Form):
