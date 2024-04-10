@@ -6,7 +6,7 @@ from rest_framework import fields, serializers
 from apps.authentication.serializers import UserReadOnlySerializer
 from apps.events.models import AttendanceEvent
 from apps.gallery.serializers import ResponsiveImageSerializer
-from onlineweb4.fields.recaptcha import RecaptchaField
+from onlineweb4.fields.turnstile import TurnstileField
 
 from ..models import (
     Attendee,
@@ -152,7 +152,7 @@ class RegisterSerializer(serializers.Serializer):
     Serializer used when a user attempts to register for an event
     """
 
-    recaptcha = RecaptchaField()
+    turnstile = TurnstileField()
     allow_pictures = serializers.BooleanField(required=False)
     show_as_attending_event = serializers.BooleanField(required=False)
     note = serializers.CharField(default="", max_length=100)
