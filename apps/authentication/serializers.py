@@ -225,23 +225,6 @@ class GroupMemberReadOnlySerializer(serializers.ModelSerializer):
         read_only = True
 
 
-class GroupMemberCreateSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        required=True, queryset=User.objects.all()
-    )
-    group = serializers.PrimaryKeyRelatedField(
-        required=True, queryset=OnlineGroup.objects.all()
-    )
-    roles = serializers.PrimaryKeyRelatedField(
-        required=False, queryset=GroupRole.objects.all(), many=True
-    )
-
-    class Meta:
-        model = GroupMember
-        fields = ("id", "user", "group", "added", "roles", "is_on_leave", "is_retired")
-        read_only_fields = ("added",)
-
-
 class GroupMemberUpdateSerializer(serializers.ModelSerializer):
     roles = serializers.PrimaryKeyRelatedField(
         required=False, queryset=GroupRole.objects.all(), many=True
