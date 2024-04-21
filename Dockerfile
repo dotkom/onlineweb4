@@ -41,7 +41,7 @@ COPY --from=js-static $APP_DIR/bundles ./bundles
 
 RUN ./manage.py collectstatic
 
-FROM amazon/aws-lambda-python:3.8
+FROM amazon/aws-lambda-python:3.11.8
 
 LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
 ENV POETRY_VIRTUALENVS_CREATE=false \
