@@ -65,7 +65,6 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
         # Related fields
         if instance.member() is not None:
             Membership.objects.get(username=instance.member().username).delete()
-        instance.email_user.all().delete()
         instance.positions.all().delete()
         instance.special_positions.all().delete()
         instance.group_memberships.all().delete()
@@ -73,7 +72,7 @@ class AnonymizeUserSerializer(serializers.ModelSerializer):
         # Django related fields
         instance.first_name = ""
         instance.last_name = ""
-        instance.email = ""
+        instance.email = username + "@example.com"
         instance.passord = instance.set_password(password)
         instance.username = username
         instance.groups.clear()
