@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import Attendee, Event
+from apps.profiles.models import Privacy
 
 
 def _get_attendee(attendee_id):
@@ -127,7 +128,14 @@ def handle_add_attendee(event: Event, user_id: int):
             **resp,
         }
 
-    attendee = Attendee(user=user, event=event.attendance_event)
+    privacy: Privacy = user.privacy
+    show_as_attending_event = bool(privacy.visible_as_attending_events)
+
+    attendee = Attendee(
+        user=user,
+        event=event.attendance_event,
+        show_as_attending_event=show_as_attending_event,
+    )
     attendee.save()
 
     resp = _get_event_context(event, resp)
