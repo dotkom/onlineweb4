@@ -269,9 +269,6 @@ class EventsAttend(EventsTestMixin, TestCase):
         self.assertInMessages("Du må godta prikkereglene!", response)
 
     def test_attend_invalid_captcha(self):
-        # validation THROWS, it does not return a boolean
-        # therefoer we dont even overwrite it
-
         event = G(Event)
         G(
             AttendanceEvent,

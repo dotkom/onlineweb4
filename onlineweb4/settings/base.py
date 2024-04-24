@@ -107,11 +107,11 @@ CORS_URLS_REGEX = r"^(/api/v1/.*|/openid/.*)$"  # Enables CORS on all /api/v1/, 
 
 TURNSTILE_SITEKEY = config(
     "OW4_TURNSTILE_PUBLIC_KEY",
-    default="1x00000000000000000000AA",
+    default="1x00000000000000000000AA",  # always pass
 )
 TURNSTILE_SECRET = config(
     "OW4_TURNSTILE_PRIVATE_KEY",
-    default="1x0000000000000000000000000000000AA",
+    default="2x0000000000000000000000000000000AA",  # always fail
 )
 TURNSTILE_DEFAULT_CONFIG = {"theme": "light"}
 
