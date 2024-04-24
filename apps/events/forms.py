@@ -31,7 +31,7 @@ class CaptchaForm(forms.Form):
         error_messages={
             "error_turnstile": ("Du klarte ikke captchaen! Er du en bot?"),
             "invalid_turnstile": ("Du klarte ikke captchaen! Er du en bot?"),
-            "required": ("Vennligst vis at du er human."),
+            "required": ("Vennligst vis at du ikke er en bot."),
         }
     )
 
