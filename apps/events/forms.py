@@ -50,9 +50,7 @@ class CaptchaForm(forms.Form):
             if self.user.is_member:
                 del self.fields["note"]
 
-            if not settings.OW4_SETTINGS.get("events", {}).get(
-                "ENABLE_RECAPTCHA", True
-            ):
+            if not settings.OW4_SETTINGS.get("events", {}).get("ENABLE_CAPTCHA", True):
                 del self.fields["captcha"]
 
     def clean(self):
