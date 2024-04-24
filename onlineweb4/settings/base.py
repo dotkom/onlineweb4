@@ -114,8 +114,6 @@ TURNSTILE_SECRET = config(
     default="1x0000000000000000000000000000000AA",
 )
 TURNSTILE_DEFAULT_CONFIG = {"theme": "light"}
-NOCAPTCHA = config("OW4_DJANGO_NOCAPTCHA", cast=bool, default=True)
-RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=True)
 
 
 USE_X_FORWARDED_HOST = config("OW4_DJANGO_DEVELOPMENT_HTTPS", cast=bool, default=False)
