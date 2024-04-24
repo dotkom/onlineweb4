@@ -291,7 +291,7 @@ class EventsAttend(EventsTestMixin, TestCase):
         response = self.client.post(url, self.dummy_form, follow=True)
 
         self.assertRedirects(response, event.get_absolute_url())
-        self.assertInMessages("Vennligst vis at du er human.", response)
+        self.assertInMessages("Vennligst vis at du ikke er en bot.", response)
 
     @patch("turnstile.fields.TurnstileField.validate")
     def test_attend_before_registration_start(self, mocked_submit):
