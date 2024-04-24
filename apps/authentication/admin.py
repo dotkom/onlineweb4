@@ -6,7 +6,6 @@ from django.utils.translation import gettext as _
 from reversion.admin import VersionAdmin
 
 from apps.authentication.models import (
-    Email,
     GroupMember,
     GroupRole,
     Membership,
@@ -17,14 +16,8 @@ from apps.authentication.models import (
 )
 
 
-class EmailInline(admin.TabularInline):
-    model = Email
-    extra = 1
-
-
 class OnlineUserAdmin(UserAdmin, VersionAdmin):
     model = OnlineUser
-    inlines = (EmailInline,)
     list_display = [
         "username",
         "first_name",
@@ -35,7 +28,7 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
     ]
     list_filter = ("is_staff", "is_superuser", "is_active", "groups__name")
     fieldsets = (
-        (None, {"fields": ("username", "password")}),
+        (None, {"fields": ("email", "username", "auth0_subject")}),
         (
             _("Personlig info"),
             {"fields": ("first_name", "last_name", "phone_number", "online_mail")},
@@ -55,7 +48,6 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
                     "mark_rules_accepted",
                     "rfid",
                     "nickname",
-                    "saldo",
                     "website",
                 )
             },
@@ -75,7 +67,7 @@ class OnlineUserAdmin(UserAdmin, VersionAdmin):
     )
     filter_horizontal = ("groups", "user_permissions")
     search_fields = ("first_name", "last_name", "username", "ntnu_username")
-    readonly_fields = ("mark_rules_accepted", "saldo")
+    readonly_fields = ("mark_rules_accepted", "auth0_subject")
 
     def is_member(self, instance: OnlineUser):
         return instance.is_member

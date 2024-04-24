@@ -10,11 +10,6 @@ router.register(
     "payment/relations", views.PaymentRelationViewSet, basename="payment_relations"
 )
 router.register(
-    "payment/transactions",
-    views.PaymentTransactionViewSet,
-    basename="payment_transactions",
-)
-router.register(
     "payment/prices", views.PaymentPriceReadOnlyViewSet, basename="payment_prices"
 )
 router.register(

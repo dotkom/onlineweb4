@@ -1,23 +1,10 @@
 from django.test import TestCase
 from django.urls import reverse
 from django_dynamic_fixture import G
-from rest_framework import status
 
 from apps.authentication.models import OnlineUser as User
 from apps.profiles.forms import ZIP_CODE_VALIDATION_ERROR, ProfileForm
 from apps.profiles.models import Privacy
-
-
-class ProfilesURLTestCase(TestCase):
-    def test_user_search(self):
-        user = G(User)
-        url = reverse("profiles_user_search")
-
-        self.client.force_login(user)
-
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class ProfileInitTestCase(TestCase):

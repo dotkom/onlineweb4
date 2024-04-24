@@ -15,6 +15,7 @@ class RoleType(models.TextChoices):
     DEPUTY_LEADER = "deputy_leader", _("Nestleder")
     TREASURER = "treasurer", _("Økonomiansvarlig")
     CHIEF_EDITOR = "chief_editor", _("Redaktør")
+    WINE_PENALTY_MANAGER = "wine_penalty_manager", _("Vinstraffansvarlig")
 
 
 class FieldOfStudyType(models.IntegerChoices):

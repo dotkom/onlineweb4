@@ -5,7 +5,6 @@ from django.urls import path, re_path
 from apps.api.utils import SharedAPIRootRouter
 from apps.marks.views import MarksViewSet, SuspensionViewSet
 from apps.profiles import views
-from apps.shop.views import UserOrderViewSet
 
 urlpatterns = [
     re_path(r"^$", views.index, name="profiles"),
@@ -46,17 +45,12 @@ urlpatterns = [
         views.update_mark_rules,
         name="profile_update_mark_rules",
     ),
-    # Endpoint that exposes a json lump of all users but only id and name.
+    # Endpoint that exposes a json lump of all users but only id and name. Only used for autocomplete in the dashboard
     re_path(
         r"^api_plain_user_search/$",
         views.api_plain_user_search,
         name="profiles_api_plain_user_search",
     ),
-    # Endpoint that exposes a json lump of all users which have set their profile to public.
-    re_path(
-        "^api_user_search/$", views.api_user_search, name="profiles_api_user_search"
-    ),
-    re_path(r"^user_search/$", views.user_search, name="profiles_user_search"),
     # Profile index with active tab.
     re_path(r"^(?P<active_tab>\w+)/$", views.index, name="profiles_active"),
 ]
@@ -65,7 +59,6 @@ router = SharedAPIRootRouter()
 router.register(
     "profile/search", views.PublicProfileSearchSet, basename="profile-search"
 )
-router.register("profile/orders", UserOrderViewSet, basename="profile-orders")
 router.register(
     "profile/privacy", views.PersonalPrivacyView, basename="profile-privacy"
 )

@@ -10,21 +10,13 @@ from stripe.error import InvalidRequestError, StripeError
 
 from apps.common.rest_framework.mixins import MultiSerializerMixin
 from apps.payment import status as payment_status
-from apps.payment.models import (
-    PaymentDelay,
-    PaymentPrice,
-    PaymentRelation,
-    PaymentTransaction,
-)
+from apps.payment.models import PaymentDelay, PaymentPrice, PaymentRelation
 from apps.payment.serializers import (
     PaymentDelayReadOnlySerializer,
     PaymentPriceReadOnlySerializer,
     PaymentRelationCreateSerializer,
     PaymentRelationReadOnlySerializer,
     PaymentRelationUpdateSerializer,
-    PaymentTransactionCreateSerializer,
-    PaymentTransactionReadOnlySerializer,
-    PaymentTransactionUpdateSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -112,29 +104,3 @@ class PaymentPriceReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = PaymentPriceReadOnlySerializer
     queryset = PaymentPrice.objects.all()
-
-
-class PaymentTransactionViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
-    """
-    A user should be allowed to view their transactions.
-    Transactions are created with Stripe payment intents.
-    Transactions are only updated to confirm pending payment intents.
-    A use should not be able to delete a transaction.
-    """
-
-    permission_classes = (permissions.IsAuthenticated,)
-    serializer_classes = {
-        "read": PaymentTransactionReadOnlySerializer,
-        "create": PaymentTransactionCreateSerializer,
-        "update": PaymentTransactionUpdateSerializer,
-    }
-
-    def get_queryset(self):
-        user = self.request.user
-        return PaymentTransaction.objects.filter(user=user)
-
-    def destroy(self, request, *args, **kwargs):
-        return Response(
-            {"message": "Du kan ikke slette eksisterende transaksjoner"},
-            status.HTTP_403_FORBIDDEN,
-        )

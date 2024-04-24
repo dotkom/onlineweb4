@@ -2,14 +2,14 @@ import logging
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.urls import reverse
 
 from apps.notifications.constants import PermissionType
 from apps.notifications.utils import send_message_to_users
 
-from .models import Approval, CommitteeApplication
+from .models import Approval
 
 
 def send_approval_notification(approval: Approval):
@@ -51,51 +51,3 @@ def send_approval_status_update(approval):
         recipients=[approval.applicant],
         permission_type=PermissionType.APPLICATIONS,
     )
-
-
-def send_committee_application_notification_to_admins(
-    application: CommitteeApplication,
-):
-    context = {
-        "link_to_admin": True,
-        "absolute_url": settings.BASE_URL + application.get_absolute_url(),
-        "applicant_name": application.get_name(),
-    }
-    message = render_to_string(
-        "approval/email/committeeapplication_notification.txt", context
-    )
-    send_mail(
-        subject="[opptak] Bekreftelse på komitésøknad",
-        message=message,
-        from_email=settings.DEFAULT_FROM_EMAIL,
-        recipient_list=[settings.EMAIL_HS],
-    )
-
-
-def send_committee_application_notification_to_applicant(
-    application: CommitteeApplication,
-):
-    context = {
-        "link_to_admin": False,
-        "absolute_url": settings.BASE_URL + application.get_absolute_url(),
-        "applicant_name": application.get_name(),
-    }
-    message = render_to_string(
-        "approval/email/committeeapplication_notification.txt", context
-    )
-    title = "[opptak] Bekreftelse på komitésøknad"
-    if application.applicant:
-        send_message_to_users(
-            title=title,
-            content=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipients=[application.applicant],
-            permission_type=PermissionType.APPLICATIONS,
-        )
-    else:
-        send_mail(
-            subject=title,
-            message=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[application.email],
-        )

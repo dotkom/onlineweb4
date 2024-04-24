@@ -20,5 +20,4 @@ router.register("groups", api_views.GroupViewSet, basename="groups")
 router.register(
     "group/online-groups", api_views.OnlineGroupViewSet, basename="online_groups"
 )
-router.register("group/members", api_views.GroupMemberViewSet, basename="group_members")
 router.register("group/roles", api_views.GroupRoleViewSet, basename="group_roles")

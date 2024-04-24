@@ -214,18 +214,6 @@
                         </a>
                     </li>
                     {% endif %}
-                    {% if 'approval.view_committeeapplicationperiod' in user_permissions and 'approval.view_committeeapplication' in user_permissions %}
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-inbox blue"></i> <span>Komitésøknader</span>
-                            <i class="fa fa-angle-down pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="{% url 'application-periods-create' %}"><i class="fa fa-angle-double-right orange"></i>Ny opptaksperiode</a></li>
-                            <li><a href="{% url 'application-periods-list' %}"><i class="fa fa-angle-double-right orange"></i>Se opptaksperioder</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
                     {% if 'feedback.view_feedback' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
@@ -235,23 +223,6 @@
                         <ul class="treeview-menu">
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Flervalgsspørsmål</a></li>
                             <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tilbakemeldingsskjema</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
-                    {% if 'inventory.view_item' in user_permissions %}
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-archive blue"></i> <span>Varelager</span>
-                            <i class="fa fa-angle-down pull-right"></i>
-                            {% if inventory_expired %}
-                            <span class="pull-right"><i class="fa fa-warning orange"></i>&nbsp;&nbsp;</span>
-                            {% endif %}
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="{% url 'dashboard_inventory_index' %}"><i class="fa fa-angle-double-right orange"></i> Administrere varelager</a></li>
-                            <li><a href="{% url 'dashboard_discontinued_index' %}"><i class="fa fa-angle-double-right orange"></i> Administrere utgått varelager</a></li>
-                            <li><a href="{% url 'dashboard_category_index' %}"><i class="fa fa-angle-double-right orange"></i> Administrere kategorier</a></li>
-                            <li><a href="{% url 'dashboard_inventory_statistics' %}"><i class="fa fa-angle-double-right orange"></i> Statistikk</a></li>
                         </ul>
                     </li>
                     {% endif %}

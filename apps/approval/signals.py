@@ -2,15 +2,10 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from apps.approval.models import Approval, CommitteeApplication, MembershipApproval
+from apps.approval.models import Approval, MembershipApproval
 from utils.disable_for_loaddata import disable_for_loaddata
 
-from .tasks import (
-    send_approval_notification,
-    send_approval_status_update,
-    send_committee_application_notification_to_admins,
-    send_committee_application_notification_to_applicant,
-)
+from .tasks import send_approval_notification, send_approval_status_update
 
 
 @receiver(post_save, sender=MembershipApproval)
@@ -49,14 +44,3 @@ def notify_membership_applicant_handler(
         and settings.APPROVAL_SETTINGS.get("SEND_APPLICANT_NOTIFICATION_EMAIL", False)
     ):
         send_approval_status_update(instance)
-
-
-@receiver(post_save, sender=CommitteeApplication)
-@disable_for_loaddata
-def notify_new_committee_application(sender, instance, created, **kwargs):
-    if created:
-        send_committee_application_notification_to_admins(instance)
-        if settings.APPROVAL_SETTINGS.get(
-            "SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL", True
-        ):
-            send_committee_application_notification_to_applicant(instance)

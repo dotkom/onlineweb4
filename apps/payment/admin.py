@@ -10,7 +10,6 @@ from apps.payment.models import (
     PaymentPrice,
     PaymentReceipt,
     PaymentRelation,
-    PaymentTransaction,
 )
 
 
@@ -84,13 +83,7 @@ class PaymentReceiptAdmin(admin.ModelAdmin):
     search_fields = ["receipt_id"]
 
 
-class PaymentTransactionAdmin(VersionAdmin):
-    model = PaymentTransaction
-    list_display = ("__str__", "user", "datetime", "amount", "used_stripe", "source")
-
-
 admin.site.register(PaymentReceipt, PaymentReceiptAdmin)
 admin.site.register(Payment, PaymentAdmin)
 admin.site.register(PaymentRelation, PaymentRelationAdmin)
 admin.site.register(PaymentDelay, PaymentDelayAdmin)
-admin.site.register(PaymentTransaction, PaymentTransactionAdmin)

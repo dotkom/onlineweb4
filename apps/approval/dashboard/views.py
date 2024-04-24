@@ -2,29 +2,17 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse
 from django.shortcuts import render
-from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.views.decorators.csrf import ensure_csrf_cookie
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    TemplateView,
-    UpdateView,
-)
 from guardian.decorators import permission_required
 
 from apps.authentication.models import Membership
-from apps.dashboard.tools import DashboardPermissionMixin, get_base_context, has_access
+from apps.dashboard.tools import get_base_context, has_access
 
-from ..models import CommitteeApplicationPeriod, MembershipApproval
-from .forms import (
-    ApplicationPeriodParticipantsUpdateForm,
-    CommitteeApplicationPeriodForm,
-)
+from ..models import MembershipApproval
 
 
 @ensure_csrf_cookie
@@ -186,77 +174,3 @@ Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no."""
         return HttpResponse(status=200)
 
     raise Http404
-
-
-class ApplicationPeriodList(DashboardPermissionMixin, TemplateView):
-    model = CommitteeApplicationPeriod
-    template_name = "approval/dashboard/application_period/index.html"
-    permission_required = "approval.view_committeeapplicationperiod"
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["application_periods"] = CommitteeApplicationPeriod.objects.all()
-        return context
-
-
-class ApplicationPeriodCreate(DashboardPermissionMixin, CreateView):
-    model = CommitteeApplicationPeriod
-    template_name = "approval/dashboard/application_period/create.html"
-    permission_required = "approval.add_committeeapplicationperiod"
-    form_class = CommitteeApplicationPeriodForm
-
-    def get_success_url(self):
-        return reverse("application-periods-list")
-
-
-class ApplicationPeriodDetail(DashboardPermissionMixin, DetailView):
-    model = CommitteeApplicationPeriod
-    template_name = "approval/dashboard/application_period/detail.html"
-    permission_required = "approval.change_committeeapplicationperiod"
-    context_object_name = "application_period"
-
-
-class ApplicationPeriodUpdate(DashboardPermissionMixin, UpdateView):
-    model = CommitteeApplicationPeriod
-    template_name = "approval/dashboard/application_period/create.html"
-    permission_required = "approval.delete_committeeapplicationperiod"
-    form_class = CommitteeApplicationPeriodForm
-    context_object_name = "application_period"
-
-    def get_success_url(self):
-        return reverse("application-periods-detail", kwargs={"pk": self.object.pk})
-
-
-class ApplicationPeriodDelete(DashboardPermissionMixin, DeleteView):
-    model = CommitteeApplicationPeriod
-    template_name = "approval/dashboard/application_period/delete.html"
-    permission_required = "approval.delete_committeeapplicationperiod"
-    context_object_name = "application_period"
-
-    def get_success_url(self):
-        return reverse("application-periods-list")
-
-
-class ApplicationPeriodParticipantionUpdate(DashboardPermissionMixin, UpdateView):
-    model = CommitteeApplicationPeriod
-    template_name = "approval/dashboard/application_period/create.html"
-    permission_required = "approval.delete_committeeapplicationperiod"
-    form_class = ApplicationPeriodParticipantsUpdateForm
-    context_object_name = "application_period"
-
-    def post(self, request, *args, **kwargs):
-        instance = CommitteeApplicationPeriod.objects.get(pk=kwargs["pk"])
-        form = ApplicationPeriodParticipantsUpdateForm(request.POST, instance=instance)
-        if form.is_valid():
-            committes_to_be_set_true = form.cleaned_data["committees_with_applications"]
-            for c in instance.committeeapplicationperiodparticipation_set.all():
-                previous_open = c.open_for_applications
-                c.open_for_applications = False
-                if str(c.pk) in committes_to_be_set_true:
-                    c.open_for_applications = True
-                if not previous_open == c.open_for_applications:
-                    c.save()
-            return HttpResponseRedirect(
-                reverse("application-periods-detail", kwargs={"pk": instance.pk})
-            )
-        return super().form_invalid(form)
