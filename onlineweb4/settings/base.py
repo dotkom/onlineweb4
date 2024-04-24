@@ -105,16 +105,6 @@ CORS_ORIGIN_ALLOW_ALL = config(
 CORS_URLS_REGEX = r"^(/api/v1/.*|/openid/.*)$"  # Enables CORS on all /api/v1/, and all /openid/ endpoints
 
 
-# Google reCaptcha settings
-# Keys are found here: https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
-RECAPTCHA_PUBLIC_KEY = config(
-    "OW4_DJANGO_RECAPTCHA_PUBLIC_KEY",
-    default="6LfV9jkUAAAAANqYIOgveJ0pOowXvNCcsYzRi7Y_",
-)
-RECAPTCHA_PRIVATE_KEY = config(
-    "OW4_DJANGO_RECAPTCHA_PRIVATE_KEY",
-    default="6LfV9jkUAAAAABlc4-q01vMsBNv3-Gsp75G8Zd5N",
-)
 TURNSTILE_SITEKEY = config(
     "OW4_DJANGO_TURNSTILE_PUBLIC_KEY",
     default="1x00000000000000000000AA",
