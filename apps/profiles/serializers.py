@@ -43,7 +43,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "mark_rules_accepted",
             "gender",
             "bio",
-            "saldo",
             "is_committee",
             "is_member",
             "image",
@@ -56,7 +55,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             "field_of_study",
             "started_date",
             "compiled",
-            "saldo",
         )
 
 

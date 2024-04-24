@@ -7,14 +7,12 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from apps.authentication.models import GroupMember, GroupRole, OnlineGroup
+from apps.authentication.models import GroupRole, OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position, SpecialPosition
 from apps.authentication.serializers import (
     AnonymizeUserSerializer,
-    GroupMemberCreateSerializer,
     GroupMemberReadOnlySerializer,
-    GroupMemberUpdateSerializer,
     GroupReadOnlySerializer,
     GroupRoleReadOnlySerializer,
     OnlineGroupCreateOrUpdateSerializer,
@@ -170,16 +168,6 @@ class OnlineGroupViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         users = group.members.select_related("user").prefetch_related("roles")
         serializer = self.get_serializer(users, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-
-class GroupMemberViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
-    permission_classes = (DjangoObjectPermissionOrAnonReadOnly,)
-    queryset = GroupMember.objects.all()
-    serializer_classes = {
-        "create": GroupMemberCreateSerializer,
-        "update": GroupMemberUpdateSerializer,
-        "read": GroupMemberReadOnlySerializer,
-    }
 
 
 class GroupRoleViewSet(viewsets.ReadOnlyModelViewSet):

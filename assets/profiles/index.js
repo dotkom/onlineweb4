@@ -1,6 +1,5 @@
 import { loadCityFromZipCode } from 'common/utils/';
 import DependentDocumentation from './dependent_fields';
-import enableUserSearch from './userSearch';
 import './profiles';
 import './less/profiles.less';
 
@@ -10,8 +9,4 @@ if (zipCodeElement) {
   loadCityFromZipCode(zipCodeElement, cityElement);
 }
 
-const userSearchElement = document.getElementById('user-search');
-if (userSearchElement) {
-  enableUserSearch();
-}
 DependentDocumentation();

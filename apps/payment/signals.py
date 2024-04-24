@@ -1,5 +1,3 @@
-from typing import Union
-
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.db.models.signals import post_save, pre_save
@@ -8,7 +6,7 @@ from django.dispatch import receiver
 from utils.disable_for_loaddata import disable_for_loaddata
 
 from . import status
-from .models import PaymentReceipt, PaymentRelation, PaymentTransaction
+from .models import PaymentReceipt, PaymentRelation
 
 
 @receiver(signal=pre_save, sender=PaymentRelation)
@@ -23,27 +21,9 @@ def handle_payment_relation_status_change(sender, instance: PaymentRelation, **k
         instance.status = status.REMOVED
 
 
-@receiver(signal=pre_save, sender=PaymentTransaction)
-def handle_payment_transaction_status_change(
-    sender, instance: PaymentTransaction, **kwargs
-):
-    # When a payment succeeds, it should be stored to the DB
-    if instance.status == status.SUCCEEDED:
-        # Pass the transaction to the next step, which is DONE
-        instance.status = status.DONE
-
-    # Handle when a transaction is being refunded by Stripe
-    if instance.status == status.REFUNDED:
-        # Pass transaction to the next strip, which is REMOVED
-        instance.status = status.REMOVED
-
-
 @receiver(signal=post_save, sender=PaymentRelation)
-@receiver(signal=post_save, sender=PaymentTransaction)
 @disable_for_loaddata
-def send_receipt_after_payment(
-    sender, instance: Union[PaymentRelation, PaymentTransaction], **kwargs
-):
+def send_receipt_after_payment(sender, instance: PaymentRelation, **kwargs):
     content_type = ContentType.objects.get_for_model(instance)
     receipt_exists = PaymentReceipt.objects.filter(
         Q(object_id=instance.id) & Q(content_type=content_type)

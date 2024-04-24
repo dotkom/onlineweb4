@@ -50,20 +50,4 @@ export const plainUserTypeahead = (element, select) => {
   });
 };
 
-export const userTypeahead = (element, select) => {
-  const userSearchTemplate = template(`
-    <div>
-      <img width="100%" src="<%= image %>" alt="" />
-      <span data-id="<%= id %>" class="user-meta"><h4><%= name %></h4>
-    </div>
-  `);
-
-  typeahead(element, {
-    template: userSearchTemplate,
-    url: `${Urls.profiles_api_user_search()}?query=%QUERY`,
-    select,
-    name: 'users',
-  });
-};
-
 export { typeahead as default };

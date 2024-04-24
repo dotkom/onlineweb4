@@ -1,12 +1,10 @@
 # -*- encoding: utf-8 -*-
-from datetime import date
 
 from django.core.exceptions import PermissionDenied
 from guardian.mixins import PermissionRequiredMixin
 
 from apps.approval.models import MembershipApproval
 from apps.gallery.models import UnhandledImage
-from apps.inventory.models import Batch
 from apps.posters.models import Poster
 
 
@@ -50,11 +48,6 @@ def get_base_context(request):
         context["approval_pending"] = MembershipApproval.objects.filter(
             processed=False
         ).count()
-
-    # Check if there exists a batch in inventory that has expired
-    if request.user.has_perm("inventory.view_item"):
-        if Batch.objects.filter(expiration_date__lt=date.today()):
-            context["inventory_expired"] = True
 
     if request.user.has_perm("posters.view_poster"):
         if Poster.objects.filter(assigned_to=None) or Poster.objects.filter(

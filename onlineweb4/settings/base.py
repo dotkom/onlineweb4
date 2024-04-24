@@ -19,11 +19,6 @@ sys.dont_write_bytecode = config(
 APPROVAL_SETTINGS = {
     "SEND_APPLICANT_NOTIFICATION_EMAIL": True,
     "SEND_APPROVER_NOTIFICATION_EMAIL": True,
-    "SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL": config(
-        "OW4_APPROVAL_SEND_COMMITTEEAPPLICATION_APPLICANT_EMAIL",
-        default=False,
-        cast=bool,
-    ),
 }
 
 OW4_SETTINGS = {

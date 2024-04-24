@@ -4,11 +4,7 @@ from wiki.models.article import Article as WikiArticle
 from wiki.models.article import ArticleRevision
 from wiki.plugins.attachments.models import AttachmentRevision
 
-from apps.approval.models import (
-    CommitteeApplication,
-    CommitteePriority,
-    MembershipApproval,
-)
+from apps.approval.models import MembershipApproval
 from apps.article.serializers import ArticleSerializer
 from apps.authentication.models import GroupMember
 from apps.authentication.serializers import (
@@ -21,22 +17,13 @@ from apps.feedback.serializers import (
     FeedbackRelationListSerializer,
     GenericSurveySerializer,
 )
-from apps.inventory.models import Item, ItemCategory
 from apps.marks.serializers import (
     MarkUserSerializer,
     RuleAcceptanceSerializer,
     SuspensionSerializer,
 )
-from apps.payment.models import (
-    Payment,
-    PaymentDelay,
-    PaymentPrice,
-    PaymentRelation,
-    PaymentTransaction,
-)
+from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
 from apps.profiles.serializers import PrivacySerializer
-from apps.shop.models import Order as ShopOrder
-from apps.shop.models import OrderLine as ShopOrderLine
 from apps.webshop.models import Order as WebshopOrder
 from apps.webshop.models import OrderLine as WebshopOrderLine
 from apps.webshop.models import Product as WebshopProduct
@@ -162,21 +149,6 @@ class GroupMemberSerializer(serializers.ModelSerializer):
         fields = ("group_name", "added", "is_on_leave", "is_retired", "roles")
 
 
-class PaymentTransactionSerializer(serializers.ModelSerializer):
-    items = serializers.SerializerMethodField()
-    description = serializers.SerializerMethodField()
-
-    def get_items(self, obj: PaymentTransaction):
-        return obj.get_receipt_items()
-
-    def get_description(self, obj: PaymentTransaction):
-        return obj.get_receipt_description()
-
-    class Meta:
-        model = PaymentTransaction
-        fields = ("amount", "used_stripe", "datetime", "status", "description", "items")
-
-
 class PaymentPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentPrice
@@ -238,37 +210,6 @@ class WebshopOrderLineSerializer(serializers.ModelSerializer):
         fields = ("datetime", "paid", "delivered", "orders", "subtotal")
 
 
-class CategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ItemCategory
-
-        fields = ("name",)
-
-
-class ItemSerializer(serializers.ModelSerializer):
-    category = CategorySerializer()
-
-    class Meta:
-        model = Item
-        fields = ("name", "category")
-
-
-class ShopOrderSerializer(serializers.ModelSerializer):
-    content_object = ItemSerializer()
-
-    class Meta:
-        model = ShopOrder
-        fields = ("price", "quantity", "content_object")
-
-
-class ShopOrderLineSerializer(serializers.ModelSerializer):
-    orders = ShopOrderSerializer(many=True)
-
-    class Meta:
-        model = ShopOrderLine
-        fields = ("orders", "paid", "datetime")
-
-
 class MembershipApprovalSerializer(serializers.ModelSerializer):
     applicant = serializers.SerializerMethodField()
     approver = serializers.SerializerMethodField()
@@ -289,31 +230,6 @@ class MembershipApprovalSerializer(serializers.ModelSerializer):
             "processed_date",
             "approved",
             "message",
-        )
-
-
-class CommitteePrioritiySerializer(serializers.ModelSerializer):
-    committee = serializers.CharField(source="group.name")
-
-    class Meta:
-        model = CommitteePriority
-        fields = ("committee", "priority")
-
-
-class CommitteeApplicationSerializer(serializers.ModelSerializer):
-    committee_priorities = CommitteePrioritiySerializer(many=True)
-
-    class Meta:
-        model = CommitteeApplication
-        fields = (
-            "created",
-            "modified",
-            "applicant",
-            "name",
-            "application_text",
-            "prioritized",
-            "committees",
-            "committee_priorities",
         )
 
 
@@ -341,12 +257,8 @@ class UserDataSerializer(serializers.ModelSerializer):
     payment_relations = PaymentRelationSerializer(
         many=True, source="paymentrelation_set"
     )
-    payment_transactions = PaymentTransactionSerializer(
-        many=True, source="paymenttransaction_set"
-    )
     # Purchases
     orderline_set = WebshopOrderLineSerializer(many=True)
-    shop_order_lines = ShopOrderLineSerializer(many=True)
     # Marks
     accepted_mark_rule_sets = RuleAcceptanceSerializer(many=True)
     marks = MarkUserSerializer(many=True, source="markuser_set")
@@ -354,7 +266,6 @@ class UserDataSerializer(serializers.ModelSerializer):
     # Approval
     applications = MembershipApprovalSerializer(many=True)
     approved_applications = MembershipApprovalSerializer(many=True)
-    committeeapplication_set = CommitteeApplicationSerializer(many=True)
     # Wiki
     wiki_attachment_revisions = WikiAttachmentRevisionSerializer(
         many=True, source="attachmentrevision_set"
@@ -393,13 +304,10 @@ class UserDataSerializer(serializers.ModelSerializer):
             "allergies",
             "linkedin",
             "rfid",
-            "saldo",
             "field_of_study",
             "phone_number",
             "gender",
             "github",
-            "rfid",
-            "saldo",
             "website",
             "year",
             "zip_code",
@@ -440,18 +348,14 @@ class UserDataSerializer(serializers.ModelSerializer):
             # Payments
             "payment_delays",
             "payment_relations",
-            "payment_transactions",
             # Purchases
             "orderline_set",
-            "shop_order_lines",
             # Approval
             "applications",
             "approved_applications",
-            "committeeapplication_set",
             # Posters
             "ordered_posters",
             "assigned_posters",
             # Other
-            "magictoken_set",
             "object_revisions",
         )

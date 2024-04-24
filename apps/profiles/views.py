@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
-from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
@@ -17,8 +16,6 @@ from watson import search as watson
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
-from apps.authentication.constants import GroupType
-from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
 from apps.authentication.models import Position
 from apps.dashboard.tools import has_access
@@ -27,7 +24,7 @@ from apps.gsuite.accounts.main import (
     reset_password_g_suite_account,
 )
 from apps.marks.models import Mark, MarkRuleSet, Suspension
-from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTransaction
+from apps.payment.models import PaymentDelay, PaymentRelation
 from apps.profiles.filters import PublicProfileFilter
 from apps.profiles.forms import PositionForm, PrivacyForm, ProfileForm
 from apps.profiles.models import Privacy
@@ -36,7 +33,6 @@ from apps.profiles.serializers import (
     ProfileSerializer,
     PublicProfileSerializer,
 )
-from apps.shop.models import Order
 from utils.shortcuts import render_json
 
 """
@@ -71,11 +67,6 @@ def _create_profile_context(request):
         "groups": groups,
         # privacy
         "privacy_form": PrivacyForm(instance=request.user.privacy),
-        # nibble information
-        "transactions": PaymentTransaction.objects.filter(user=request.user),
-        "orders": Order.objects.filter(order_line__user=request.user).order_by(
-            "-order_line__datetime"
-        ),
         # marks
         "mark_rule_set": MarkRuleSet.get_current_rule_set(),
         "mark_rules_accepted": request.user.mark_rules_accepted,
@@ -272,43 +263,11 @@ def toggle_jobmail(request):
 
 
 @login_required
-def user_search(request):
-    committee_groups = OnlineGroup.objects.filter(
-        Q(group_type=GroupType.COMMITTEE) | Q(group_type=GroupType.NODE_COMMITTEE)
-    )
-    groups_to_include = [online_group.group.pk for online_group in committee_groups]
-    groups = Group.objects.filter(pk__in=groups_to_include).order_by("name")
-    users_to_display = User.objects.filter(privacy__visible_for_other_users=True)
-
-    context = {"users": users_to_display, "groups": groups}
-    return render(request, "profiles/users.html", context)
-
-
-@login_required
-def api_user_search(request):
-    if request.GET.get("query"):
-        users = search_for_users(request.GET.get("query"))
-        return render_json(users)
-    return render_json(error="Mangler søkestreng")
-
-
-def search_for_users(query, limit=10):
-    if not query:
-        return []
-
-    results = []
-
-    for result in watson.search(
-        query, models=(User.objects.filter(privacy__visible_for_other_users=True),)
-    ):
-        results.append(result.object)
-
-    return results[:limit]
-
-
-@login_required
 def api_plain_user_search(request):
     """The difference between plain_user_search and the other is exposing only id and name."""
+    if not request.user.is_staff:
+        raise PermissionError()
+
     if request.GET.get("query"):
         users = search_for_plain_users(request.GET.get("query"))
         return JsonResponse(users, safe=False)

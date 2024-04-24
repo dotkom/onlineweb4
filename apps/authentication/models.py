@@ -17,7 +17,6 @@ from django.utils.translation import gettext as _
 from apps.authentication.constants import FieldOfStudyType, GroupType, RoleType
 from apps.authentication.validators import validate_rfid
 from apps.gallery.models import ResponsiveImage
-from apps.payment import status as PaymentStatus
 from apps.permissions.models import ObjectPermissionModel
 
 logger = logging.getLogger(__name__)
@@ -227,15 +226,6 @@ class OnlineUser(AbstractUser):
         return Membership.objects.get(username=self.ntnu_username.lower())
 
     @property
-    def saldo(self) -> int:
-        value = (
-            self.paymenttransaction_set.filter(status=PaymentStatus.DONE)
-            .aggregate(coins=models.Sum("amount"))
-            .get("coins")
-        )
-        return value if value is not None else 0
-
-    @property
     def year(self):
         start_year = get_start_of_field_of_study(self.field_of_study)
         length_of_study = get_length_of_field_of_study(self.field_of_study)
@@ -370,37 +360,6 @@ class OnlineUser(AbstractUser):
         verbose_name_plural = _("brukerprofiler")
         permissions = (("view_onlineuser", "View OnlineUser"),)
         default_permissions = ("add", "change", "delete")
-
-
-class Email(models.Model):
-    user = models.ForeignKey(
-        OnlineUser, related_name="email_user", on_delete=models.CASCADE
-    )
-    email = models.EmailField(_("epostadresse"), unique=True)
-    primary = models.BooleanField(_("primær"), default=False)
-    verified = models.BooleanField(_("verifisert"), default=False, editable=False)
-
-    def save(self, *args, **kwargs):
-        primary_email = self.user.email_object
-        if not primary_email:
-            self.primary = True
-        elif primary_email.email != self.email:
-            self.primary = False
-        self.email = self.email.lower()
-        if self.primary:
-            self.user.email = self.email
-            self.user.save()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.email
-
-    class Meta:
-        verbose_name = _("epostadresse")
-        verbose_name_plural = _("epostadresser")
-        permissions = (("view_email", "View Email"),)
-        default_permissions = ("add", "change", "delete")
-        ordering = ("user", "email")
 
 
 class Membership(models.Model):
