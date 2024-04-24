@@ -138,12 +138,3 @@ STRIPE_PRIVATE_KEYS = {
         "OW4_DJANGO_STRIPE_PRIVATE_KEY_TRIKOM", default="pk_test_replace_this"
     ),
 }
-
-# Google reCaptcha settings
-# Keys are found here: https://online.ntnu.no/wiki/komiteer/dotkom/aktuelt/onlineweb4/keys/
-RECAPTCHA_PUBLIC_KEY = config("OW4_DJANGO_RECAPTCHA_PUBLIC_KEY", default="replace this")
-RECAPTCHA_PRIVATE_KEY = config(
-    "OW4_DJANGO_RECAPTCHA_PRIVATE_KEY", default="replace this"
-)
-NOCAPTCHA = config("OW4_DJANGO_NOCAPTCHA", cast=bool, default=True)
-RECAPTCHA_USE_SSL = config("OW4_DJANGO_RECAPTCHA_USE_SSL", cast=bool, default=True)
