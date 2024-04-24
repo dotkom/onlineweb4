@@ -288,7 +288,9 @@ class EventsAttend(EventsTestMixin, TestCase):
         )
         MarkRuleSet.accept_mark_rules(self.user)
 
-        response = self.client.post(url, {"cf-turnstile-response": "WHATEVER"}, follow=True)
+        response = self.client.post(
+            url, {"cf-turnstile-response": "WHATEVER"}, follow=True
+        )
 
         self.assertRedirects(response, event.get_absolute_url())
         self.assertInMessages("Du klarte ikke captchaen! Er du en bot?", response)
