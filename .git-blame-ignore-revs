@@ -4,3 +4,5 @@
 10b74f780ed732743183a87d5f1e443bef869c9d
 # run Black-formatting on all the other files
 8acc087654521acf3bbe3ff6c0ecc5e7e4b336e8
+# format with ruff, minor diffs from black
+925a3941a1111400d48703583665f093240d3b18
