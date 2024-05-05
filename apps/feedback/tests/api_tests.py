@@ -41,7 +41,7 @@ class FeedbackAPITestCase(GetUrlMixin, FeedbackTestCaseMixin, APITestCase):
         self.feedback: Feedback = G(Feedback)
 
     def create_feedback_relation(self, *args, **kwargs):
-        return super().create_feedback_relation(feedback=self.feedback, *args, **kwargs)
+        return super().create_feedback_relation(*args, feedback=self.feedback, **kwargs)
 
     def create_generic_survey(self, **kwargs):
         survey: GenericSurvey = G(

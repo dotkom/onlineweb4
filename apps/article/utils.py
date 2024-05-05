@@ -15,7 +15,7 @@ MONTH_STRINGS = {
 
 
 def create_article_filters(articles):
-    rev_month_strings = dict((v, k) for k, v in MONTH_STRINGS.items())
+    rev_month_strings = {v: k for k, v in MONTH_STRINGS.items()}
 
     # For creating the date filters.
     dates = {}

@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from django.contrib.auth.models import Group
 from django.utils import timezone
 from django_dynamic_fixture import G
@@ -102,7 +100,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
 
     @mock_validate_turnstile()
     def test_signup_settings_override_defaults(self, _):
-        test_cases: list[Tuple[dict[str, bool]]] = [
+        test_cases: list[tuple[dict[str, bool]]] = [
             (
                 {
                     "show_as_attending_event": True,

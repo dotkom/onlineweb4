@@ -98,7 +98,7 @@ def send_missed_payment_mail(payment):
     message += _("\n\nMvh\nLinjeforeningen Online")
 
     logging.getLogger(__name__).warn(
-        "Call to method that does nothing. Should it send a mail? Subject: %s" % subject
+        f"Call to method that does nothing. Should it send a mail? Subject: {subject}"
     )
 
 

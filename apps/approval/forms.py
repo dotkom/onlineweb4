@@ -14,7 +14,7 @@ VALID_FIELD_OF_STUDY_CHOICES = filter(
 def _year_choices():
     now = timezone.now()
     years = list(range(now.year - 10, now.year + 1))
-    return list(zip(years[::-1], years[::-1]))
+    return list(zip(years[::-1], years[::-1], strict=False))
 
 
 class FieldOfStudyApplicationForm(forms.Form):

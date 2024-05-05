@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import timedelta
 from random import choice as random_choice
-from typing import List, Optional, Tuple
 
 from django.conf import settings
 from django.contrib.auth.models import Group
@@ -90,7 +89,7 @@ class StatusCode(models.IntegerChoices):
 class AttendanceResult:
     status_code: StatusCode
     # If the attendee has a postponed admission, this is the delay
-    offset: Optional[timezone.datetime] = None
+    offset: timezone.datetime | None = None
 
     @property
     def status(self) -> bool:
@@ -292,7 +291,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
                 if visible
                 else ["Anonym " + random_choice(dyr), ""]
             )
-            year = "{} klasse".format(user.year)
+            year = f"{user.year} klasse"
             visible_attendees.append(
                 {
                     "visible": visible,
@@ -495,7 +494,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
             return None
         except MultipleObjectsReturned:
             logger.warning(
-                "Multiple payment objects connected to attendance event #%s." % self.pk
+                f"Multiple payment objects connected to attendance event #{self.pk}."
             )
             return (
                 self.get_payments()
@@ -552,7 +551,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
             return not attendee.has_paid
         return False
 
-    def can_refund_payment(self, payment_relation) -> Tuple[bool, str]:
+    def can_refund_payment(self, payment_relation) -> tuple[bool, str]:
         if self.unattend_deadline < timezone.now():
             return False, _("Fristen for å melde seg av har utgått")
         if len(Attendee.objects.filter(event=self, user=payment_relation.user)) == 0:
@@ -574,7 +573,7 @@ class AttendanceEvent(PaymentMixin, models.Model):
     def on_payment_refunded(self, payment_relation):
         Attendee.objects.get(event=self, user=payment_relation.user).delete()
 
-    def get_payment_receipt_items(self, payment_relation) -> List[dict]:
+    def get_payment_receipt_items(self, payment_relation) -> list[dict]:
         items = [
             {
                 "name": self.get_payment_description(),
@@ -689,7 +688,7 @@ class Attendee(models.Model):
         if not self.is_on_waitlist():
             self.event.bump_waitlist_for_x_users()
 
-        super(Attendee, self).delete(**kwargs)
+        super().delete(**kwargs)
 
     @property
     def payment_relations(self):
@@ -715,10 +714,8 @@ class Attendee(models.Model):
                 refunded=False
             )
             return any(
-                map(
-                    lambda relation: relation.status == payment_status.DONE,
-                    non_refunded_payment_relations,
-                )
+                relation.status == payment_status.DONE
+                for relation in non_refunded_payment_relations
             )
         return False
 
@@ -746,7 +743,7 @@ class Attendee(models.Model):
     # Unattend user from event
     def unattend(self, admin_user):
         logger.info(
-            f'User {self.user.get_full_name()} was removed from event "{self.event}" by {admin_user} on {datetime.now()}'
+            f'User {self.user.get_full_name()} was removed from event "{self.event}" by {admin_user} on {timezone.now()}'
         )
 
         # Notify responsible group if someone is unattended after deadline
@@ -754,11 +751,7 @@ class Attendee(models.Model):
             timezone.now() >= self.event.unattend_deadline
             and not self.user_id == admin_user.id
         ):
-            subject = "[%s] %s har blitt avmeldt arrangementet av %s" % (
-                self.event,
-                self.user.get_full_name(),
-                admin_user,
-            )
+            subject = f"[{self.event}] {self.user.get_full_name()} har blitt avmeldt arrangementet av {admin_user}"
 
             content = render_to_string(
                 "events/email/unattend.txt",
@@ -817,7 +810,7 @@ class Reservation(models.Model):
         return self.reservees.count()
 
     def __str__(self):
-        return "Reservasjoner for %s" % self.attendance_event.event.title
+        return f"Reservasjoner for {self.attendance_event.event.title}"
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None

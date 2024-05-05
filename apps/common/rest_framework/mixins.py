@@ -11,8 +11,6 @@ class DefaultDestroySerializer(serializers.Serializer):
     for openapi schemas to be rendered correctly.
     """
 
-    pass
-
 
 class MultiSerializerMixin(viewsets.GenericViewSet):
     """

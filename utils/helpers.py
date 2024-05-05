@@ -37,6 +37,6 @@ def humanize_size(size, suffix="B"):
 
     for unit in ["", "K", "M", "G", "T", "P", "E", "Z"]:
         if abs(size) < 1024.0:
-            return "%.1f%s%s" % (size, unit, suffix)
+            return f"{size:.1f}{unit}{suffix}"
         size /= 1024.0
-    return "%.1f%s%s" % (size, "", suffix)
+    return "{:.1f}{}{}".format(size, "", suffix)

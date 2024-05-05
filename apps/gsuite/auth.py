@@ -1,5 +1,4 @@
 import json
-from typing import List, Optional
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
@@ -11,7 +10,7 @@ from googleapiclient.discovery import Resource, build
 
 def generate_g_suite_credentials(
     json_keyfile_name: str = settings.OW4_GSUITE_SYNC.get("CREDENTIALS"),
-    scopes: List[str] = None,
+    scopes: list[str] = None,
 ) -> ServiceAccountCredentials:
     """
     Creates the credentials required for building a Google API Client Resource.
@@ -33,7 +32,7 @@ def generate_g_suite_credentials(
 
 
 def build_g_suite_service(
-    service: str, version: str, credentials: Optional[Credentials]
+    service: str, version: str, credentials: Credentials | None
 ) -> Resource:
     """
     Builds a Google API Resource Client.
@@ -57,7 +56,7 @@ def build_g_suite_service(
 def build_and_authenticate_g_suite_service(
     service: str,
     version: str,
-    scopes: List[str],
+    scopes: list[str],
     json_keyfile_name: str = settings.OW4_GSUITE_SETTINGS.get("CREDENTIALS"),
 ) -> Resource:
     """

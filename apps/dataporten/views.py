@@ -37,9 +37,7 @@ def study(request):
         return redirect("profiles_active", active_tab="membership")
 
     logger.debug(
-        "{} wants to automatically confirm study programme through Dataporten.".format(
-            request.user
-        ),
+        f"{request.user} wants to automatically confirm study programme through Dataporten.",
         extra={"user": request.user},
     )
 
@@ -82,7 +80,7 @@ def study_callback(request):  # noqa: C901
 
     Dataporten Groups API: https://docs.dataporten.no/docs/groups/"""
     logger.debug(
-        "Fetching study programme for user {}".format(request.user),
+        f"Fetching study programme for user {request.user}",
         extra={"user": request.user},
     )
     client = client_setup(DATAPORTEN_CLIENT_ID, DATAPORTEN_CLIENT_SECRET)
@@ -130,9 +128,7 @@ def study_callback(request):  # noqa: C901
         and request.user.ntnu_username != ntnu_username_dataporten
     ):
         logger.warning(
-            "{} tried to authorize, but the registered ntnu_username and the one received from Dataporten differ.".format(
-                request.user
-            ),
+            f"{request.user} tried to authorize, but the registered ntnu_username and the one received from Dataporten differ.",
             extra={
                 "user": request.user,
                 "ntnu_username__ow4": request.user.ntnu_username,
@@ -182,10 +178,8 @@ def study_callback(request):  # noqa: C901
     if studies_informatics:
         messages.success(
             request,
-            "Bekreftet studieretning som {} i {}. klasse. Dersom dette er feil, "
-            "kontakt dotkom slik at vi kan rette opp og finne ut hva som gikk galt.".format(
-                study_name, study_year
-            ),
+            f"Bekreftet studieretning som {study_name} i {study_year}. klasse. Dersom dette er feil, "
+            "kontakt dotkom slik at vi kan rette opp og finne ut hva som gikk galt.",
         )
     else:
         messages.error(

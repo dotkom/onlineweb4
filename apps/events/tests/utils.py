@@ -37,15 +37,15 @@ def generate_company_event(
 
 def generate_attendance_event(*args, **kwargs) -> AttendanceEvent:
     event = G(Event)
-    return G(AttendanceEvent, event=event, *args, **kwargs)
+    return G(AttendanceEvent, *args, event=event, **kwargs)
 
 
 def generate_payment(event: Event, *args, **kwargs) -> Payment:
     payment = G(
         Payment,
+        *args,
         object_id=event.id,
         content_type=ContentType.objects.get_for_model(AttendanceEvent),
-        *args,
         **kwargs,
     )
     G(PaymentPrice, payment=payment)
@@ -59,9 +59,9 @@ def attend_user_to_event(event: Event, user: OnlineUser) -> Attendee:
 def pay_for_event(event: Event, user: OnlineUser, *args, **kwargs) -> PaymentRelation:
     return G(
         PaymentRelation,
+        *args,
         payment=event.attendance_event.payment(),
         user=user,
-        *args,
         **kwargs,
     )
 
@@ -73,11 +73,11 @@ def add_payment_delay(payment: Payment, user: OnlineUser) -> PaymentDelay:
 def generate_user(username: str, *args, **kwargs) -> OnlineUser:
     user = G(
         OnlineUser,
+        *args,
         username=username,
         ntnu_username=username,
         phone_number="12345678",
         is_active=True,
-        *args,
         **kwargs,
     )
     return user

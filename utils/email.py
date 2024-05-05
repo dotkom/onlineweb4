@@ -2,7 +2,6 @@ import itertools
 import logging
 import time
 from threading import Thread
-from typing import List, Optional
 
 from django.core.mail import EmailMessage, get_connection
 
@@ -15,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 def handle_mail_error(
     error: Exception,
-    emails_not_sent: List[EmailMessage],
-    emails_sent: List[EmailMessage],
-    to: Optional[List[str]] = None,
+    emails_not_sent: list[EmailMessage],
+    emails_sent: list[EmailMessage],
+    to: list[str] | None = None,
 ) -> None:
     """Callback called when an error occures while sending batched emails."""
 
@@ -140,9 +139,7 @@ class AutoChunkedEmailMessage:
                     email.send(fail_silently=fail_silently)
                 except Exception as e:
 
-                    def rethrow():
-                        nonlocal e
-
+                    def rethrow(not_sent=not_sent, e=e):
                         try:
                             if callable(error_callback):
                                 error_callback(
@@ -158,7 +155,6 @@ class AutoChunkedEmailMessage:
                     # This is ultimately the weird bug that this whole class is trying to fix.
                     if "Recipient count exceeds 50" in str(e):
                         logger.debug("Recipient count exceeds 50?, retrying soon.")
-                        pass
                     else:
                         rethrow()
 
@@ -187,13 +183,12 @@ class AutoChunkedEmailMessage:
 
         chunks = self._create_chunks()
 
-        emails = []
-        for chunk in chunks:
-            emails.append(
-                EmailMessage(
-                    **self.kwargs | chunk,
-                )
+        emails = [
+            EmailMessage(
+                **self.kwargs | chunk,
             )
+            for chunk in chunks
+        ]
 
         self._send(
             emails,

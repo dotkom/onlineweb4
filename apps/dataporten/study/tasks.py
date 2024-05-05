@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 def fetch_groups_information(access_token, show_all=False):
     logger.debug("Fetching groups info...")
     query_params = urlencode({"show_all": show_all})
-    groups_api = "https://groups-api.dataporten.no/groups/me/groups?%s" % query_params
+    groups_api = f"https://groups-api.dataporten.no/groups/me/groups?{query_params}"
     groups_resp = requests.get(
         groups_api, headers={"Authorization": "Bearer " + access_token}
     )
@@ -49,11 +49,12 @@ def find_user_study_and_update(user, groups):
         start_date_for_study = study_year
 
     # Approvals are usually set from July 1st, so we do that here too.
-    started_date = datetime(timezone.now().year - start_date_for_study + 1, 7, 1)
-
-    logger.debug(
-        "Found {} to be studying {} on year {}".format(user, study_id, study_year)
+    now = timezone.now()
+    started_date = datetime(
+        now.year - start_date_for_study + 1, 7, 1, tzinfo=now.tzinfo
     )
+
+    logger.debug(f"Found {user} to be studying {study_id} on year {study_year}")
 
     if study_name:
         application = MembershipApproval.objects.create(
@@ -81,18 +82,15 @@ def find_user_study_and_update(user, groups):
                 membership = membership[0]
                 if not membership.description:
                     membership.description = ""
-                membership.description += """
+                membership.description += f"""
                 -------------------
                 Updated by dataporten app.
 
-                Automatically approved on %s.
+                Automatically approved on {str(timezone.now().date())}.
 
                 Old notes:
-                %s
-                """ % (
-                    str(timezone.now().date()),
-                    membership.note,
-                )
+                {membership.note}
+                """
                 membership.note = (
                     user.get_field_of_study_display() + " " + str(user.started_date)
                 )
@@ -101,9 +99,9 @@ def find_user_study_and_update(user, groups):
                 membership = Membership()
                 membership.username = user.ntnu_username
                 membership.registered = timezone.now().date()
-                membership.description = """Added by dataporten app.
+                membership.description = f"""Added by dataporten app.
 
-                Automatically approved on %s.""" % (str(timezone.now().date()))
+                Automatically approved on {str(timezone.now().date())}."""
                 membership.note = (
                     user.get_field_of_study_display() + " " + str(user.started_date)
                 )

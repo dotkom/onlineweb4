@@ -50,4 +50,4 @@ class Command(BaseCommand):
         # Then produce a list of "alias: email" for all users in Komiteer
         for user in staff_users:
             if user.online_mail and user.email:
-                print("%s: %s" % (user.online_mail, user.email))
+                print(f"{user.online_mail}: {user.email}")

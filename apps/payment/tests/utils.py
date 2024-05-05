@@ -20,9 +20,9 @@ def add_price_to_payment(payment: Payment, price=200) -> PaymentPrice:
 def generate_event_payment(event, price=100, *args, **kwargs):
     payment: Payment = G(
         Payment,
+        *args,
         object_id=event.id,
         content_type=ContentType.objects.get_for_model(AttendanceEvent),
-        *args,
         **kwargs,
     )
     add_price_to_payment(payment, price)

@@ -10,7 +10,7 @@ register = template.Library()
 @register.simple_tag(takes_context=True)
 def gravatar_url(context, user, size):
     prefix = "https://" if context["request"].is_secure() else "http://"
-    default = "%s%s%s_%s.png" % (
+    default = "{}{}{}_{}.png".format(
         prefix,
         context["request"].META.get("HTTP_HOST", "localhost"),
         settings.DEFAULT_PROFILE_PICTURE_PREFIX,

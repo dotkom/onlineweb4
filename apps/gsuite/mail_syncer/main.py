@@ -50,7 +50,7 @@ def remove_excess_g_suite_users(
     :param suppress_http_errors: Whether or not to suppress HttpErrors happening during execution.
     """
     logger.info(
-        "Cleaning G Suite group '{group}'.".format(group=group_name),
+        f"Cleaning G Suite group '{group_name}'.",
         extra={"group": group_name, "excess_users": g_suite_excess_users},
     )
 

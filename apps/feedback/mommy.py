@@ -27,7 +27,7 @@ def feedback_mail():
                 bcc=message.attended_mails,
             )
             email.send_in_background(
-                error_callback=lambda e, nse, se: handle_mail_error(
+                error_callback=lambda e, nse, se, message=message: handle_mail_error(
                     e,
                     nse,
                     se,
@@ -86,7 +86,7 @@ def generate_message(feedback, logger):
     message.subject = "Feedback: " + title
     message.intro = 'Hei, vi ønsker tilbakemelding på "' + title + '"'
     message.mark = mark_message(feedback)
-    message.contact = "\n\nEventuelle spørsmål sendes til %s " % message.committee_mail
+    message.contact = f"\n\nEventuelle spørsmål sendes til {message.committee_mail} "
     message.date = date_message(end_date)
 
     if deadline_diff < 0:  # Deadline passed
@@ -99,8 +99,7 @@ def generate_message(feedback, logger):
             set_marks(title, not_responded)
 
             message.intro = (
-                'Fristen for å svare på "%s" har gått ut og du har fått en prikk.'
-                % title
+                f'Fristen for å svare på "{title}" har gått ut og du har fått en prikk.'
             )
             message.mark = ""
             message.date = ""
@@ -116,25 +115,23 @@ def generate_message(feedback, logger):
 
         message.results_message = (
             "Hei, siste purremail på feedback skjema har blitt sendt til alle gjenværende "
-            'deltagere på "{}".\nDere kan se feedback-resultatene på:\n{}\n'.format(
-                title, results_link
-            )
+            f'deltagere på "{title}".\nDere kan se feedback-resultatene på:\n{results_link}\n'
         )
         message.send = True
         message.status = "Last warning"
     elif deadline_diff < 3 and feedback.gives_mark:  # 3 days from the deadline
         message.deadline = (
-            "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
+            f"\n\nFristen for å svare på skjema er {deadline} innen kl 23:59."
         )
         message.send = True
         message.status = "Warning message"
     elif not feedback.first_mail_sent:
         message.deadline = (
-            "\n\nFristen for å svare på skjema er %s innen kl 23:59." % deadline
+            f"\n\nFristen for å svare på skjema er {deadline} innen kl 23:59."
         )
         message.results_message = (
-            'Hei, nå har feedbackmail blitt sendt til alle deltagere på "{}".'
-            "\nDere kan se resultatene på:\n{}\n".format(title, results_link)
+            f'Hei, nå har feedbackmail blitt sendt til alle deltagere på "{title}".'
+            f"\nDere kan se resultatene på:\n{results_link}\n"
         )
         message.send = True
         message.status = "First message"
@@ -161,7 +158,7 @@ def date_message(date):
     # The first notification the day after the feedbackrelation is made
     if date:
         date_string = date.strftime("%d. %B")
-        message_date = "som du var med på den %s:" % date_string
+        message_date = f"som du var med på den {date_string}:"
     else:
         message_date = ""
 
@@ -200,7 +197,7 @@ def mark_message(feedback):
 
 def set_marks(title, not_responded):
     mark = Mark()
-    mark.title = "Manglende tilbakemelding på %s" % title
+    mark.title = f"Manglende tilbakemelding på {title}"
     mark.category = 4  # Missed feedback
     mark.description = "Du har fått en prikk fordi du ikke har levert tilbakemelding."
     mark.save()
@@ -229,13 +226,5 @@ class Message:
     attended_mails = False
 
     def __str__(self):
-        message = "%s %s %s %s %s %s %s" % (
-            self.intro,
-            self.date,
-            self.link,
-            self.deadline,
-            self.mark,
-            self.contact,
-            self.end,
-        )
+        message = f"{self.intro} {self.date} {self.link} {self.deadline} {self.mark} {self.contact} {self.end}"
         return message

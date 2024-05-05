@@ -209,7 +209,7 @@ class OnlineUser(AbstractUser):
         """
         Returns the first_name plus the last_name, with a space in between.
         """
-        full_name = "%s %s" % (self.first_name, self.last_name)
+        full_name = f"{self.first_name} {self.last_name}"
         return full_name.strip()
 
     def get_active_suspensions(self):
@@ -322,11 +322,7 @@ class OnlineUser(AbstractUser):
         }
 
     def get_image_url(self, size=50):
-        default = "%s%s_%s.png" % (
-            settings.BASE_URL,
-            settings.DEFAULT_PROFILE_PICTURE_PREFIX,
-            self.gender,
-        )
+        default = f"{settings.BASE_URL}{settings.DEFAULT_PROFILE_PICTURE_PREFIX}_{self.gender}.png"
 
         gravatar_url = (
             "https://www.gravatar.com/avatar/"
@@ -441,7 +437,7 @@ class SpecialPosition(models.Model):
     )
 
     def __str__(self):
-        return "%s, %s" % (self.user.get_full_name(), self.position)
+        return f"{self.user.get_full_name()}, {self.position}"
 
     class Meta:
         verbose_name = _("spesialposisjon")

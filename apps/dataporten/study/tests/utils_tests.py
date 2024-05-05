@@ -230,7 +230,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_1st_grader(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "1st_grader_2018.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -242,7 +242,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_2nd_grader(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "2nd_grader_2018.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -254,7 +254,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_3rd_grader(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "3rd_grader_2018.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -266,7 +266,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_4th_grader_dbs_2018(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "4th_grader_2018_dbs.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -278,7 +278,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_4th_grader_dbs_2019(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "4th_grader_2019_dbs.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -290,7 +290,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_5th_grader_ki(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "5th_grader_2018_ki.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -302,7 +302,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_5th_grader_pvs(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "5th_grader_2018_pvs.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -314,7 +314,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_1st_grader_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "1st_grader_2018.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -326,7 +326,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_2nd_grader_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "2nd_grader_2018.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -338,7 +338,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_3rd_grader_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "3rd_grader_2018.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -350,7 +350,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_3rd_grader_extended_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "3rd_grader_extended_1_year_2018.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -362,7 +362,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_4th_grader_dbs_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "4th_grader_2018_dbs.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -374,7 +374,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_5th_grader_ki_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "5th_grader_2018_ki.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)
@@ -386,7 +386,7 @@ class GetStudyTestCase(TestCase):
     def test_find_study_5th_grader_pvs_fall(self):
         dumps_dir = os.path.join(DIR_NAME, "data")
         fname = os.path.join(dumps_dir, "5th_grader_2018_pvs.json")
-        with open(fname, "r") as f:
+        with open(fname) as f:
             groups = json.load(f)
 
         field_of_study = get_field_of_study(groups)

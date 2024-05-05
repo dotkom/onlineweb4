@@ -23,7 +23,9 @@ from .course_test_data import (
 
 
 class StudyRequestsTestCase(TestCase):
-    def _mock_request(self, content=list()):
+    def _mock_request(self, content=None):
+        if content is None:
+            content = []
         resp = mock.Mock()
         resp.content = json.dumps(content).encode("UTF-8")
 

@@ -168,7 +168,7 @@ class PaymentTest(TransactionTestCase):
         attendees = Attendee.objects.all()
 
         self.assertTrue(payment_relation.refunded)
-        self.assertEqual(set([]), set(attendees))
+        self.assertEqual(set(), set(attendees))
 
     # Mommy
 

@@ -35,7 +35,7 @@ class UnhandledImage(models.Model):
 
     @property
     def resolution(self):
-        return "%sx%s" % (self.width, self.height)
+        return f"{self.width}x{self.height}"
 
     def save(self, *args, **kwargs):
         image = self.image
@@ -99,7 +99,7 @@ class BaseResponsiveImage(models.Model):
         :return: The RELATIVE path to the LG image version
         """
 
-        return "%s%s" % (settings.MEDIA_URL, self.image_lg)
+        return f"{settings.MEDIA_URL}{self.image_lg}"
 
     def file_status_ok(self):
         """
@@ -133,31 +133,31 @@ class BaseResponsiveImage(models.Model):
 
     @property
     def original(self):
-        return "%s%s" % (settings.MEDIA_URL, self.image_original)
+        return f"{settings.MEDIA_URL}{self.image_original}"
 
     @property
     def wide(self):
-        return "%s%s" % (settings.MEDIA_URL, self.image_wide)
+        return f"{settings.MEDIA_URL}{self.image_wide}"
 
     @property
     def lg(self):
-        return "%s%s" % (settings.MEDIA_URL, self.image_lg)
+        return f"{settings.MEDIA_URL}{self.image_lg}"
 
     @property
     def md(self):
-        return "%s%s" % (settings.MEDIA_URL, self.image_md)
+        return f"{settings.MEDIA_URL}{self.image_md}"
 
     @property
     def sm(self):
-        return "%s%s" % (settings.MEDIA_URL, self.image_sm)
+        return f"{settings.MEDIA_URL}{self.image_sm}"
 
     @property
     def xs(self):
-        return "%s%s" % (settings.MEDIA_URL, self.image_xs)
+        return f"{settings.MEDIA_URL}{self.image_xs}"
 
     @property
     def thumb(self):
-        return "%s%s" % (settings.MEDIA_URL, self.thumbnail)
+        return f"{settings.MEDIA_URL}{self.thumbnail}"
 
     @property
     def sizeof_total(self):

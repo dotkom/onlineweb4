@@ -1,4 +1,4 @@
-from typing import Iterable
+from collections.abc import Iterable
 
 from django.contrib.auth.models import Group
 from django.db import models

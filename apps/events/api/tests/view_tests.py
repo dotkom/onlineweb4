@@ -57,7 +57,7 @@ class EventsAPITestCase(GetUrlMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         events_list = response.json().get("results")
-        event_titles_list = list(map(lambda event: event.get("title"), events_list))
+        event_titles_list = [event.get("title") for event in events_list]
 
         self.assertIn(self.event.title, event_titles_list)
 
@@ -77,7 +77,7 @@ class EventsAPITestCase(GetUrlMixin, APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         events_list = response.json().get("results")
-        event_titles_list = list(map(lambda event: event.get("id"), events_list))
+        event_titles_list = [event.get("id") for event in events_list]
 
         self.assertIn(bedpres_with_onlinecorp.id, event_titles_list)
         self.assertNotIn(bedpres_with_evilcorp.id, event_titles_list)
@@ -126,7 +126,7 @@ class ExtrasTestCase(GetUrlMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         object_list = response.json().get("results")
-        object_id_list = list(map(lambda obj: obj.get("id"), object_list))
+        object_id_list = [obj.get("id") for obj in object_list]
 
         self.assertIn(self.object.id, object_id_list)
 
@@ -155,7 +155,7 @@ class RuleBundleTestCase(GetUrlMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         object_list = response.json().get("results")
-        object_id_list = list(map(lambda obj: obj.get("id"), object_list))
+        object_id_list = [obj.get("id") for obj in object_list]
 
         self.assertIn(self.object.id, object_id_list)
 
@@ -184,7 +184,7 @@ class FieldOfStudyRuleTestCase(GetUrlMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         object_list = response.json().get("results")
-        object_id_list = list(map(lambda obj: obj.get("id"), object_list))
+        object_id_list = [obj.get("id") for obj in object_list]
 
         self.assertIn(self.object.id, object_id_list)
 
@@ -213,7 +213,7 @@ class GradeRuleTestCase(GetUrlMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         object_list = response.json().get("results")
-        object_id_list = list(map(lambda obj: obj.get("id"), object_list))
+        object_id_list = [obj.get("id") for obj in object_list]
 
         self.assertIn(self.object.id, object_id_list)
 
@@ -242,6 +242,6 @@ class UserGroupRuleTestCase(GetUrlMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         object_list = response.json().get("results")
-        object_id_list = list(map(lambda obj: obj.get("id"), object_list))
+        object_id_list = [obj.get("id") for obj in object_list]
 
         self.assertIn(self.object.id, object_id_list)

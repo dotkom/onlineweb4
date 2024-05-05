@@ -184,10 +184,12 @@ def _fix_mark_history(user):
         last_expiry_date = entry.expiration_date
 
 
-def _get_with_duration_and_vacation(added_date=timezone.now()):
+def _get_with_duration_and_vacation(added_date=None):
     """
     Checks whether the span of a marks duration needs to have vacation durations added.
     """
+    if not added_date:
+        added_date = timezone.now()
 
     duration = DURATION
     mark_change_date = date(2022, 2, 1)

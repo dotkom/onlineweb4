@@ -48,7 +48,7 @@ def get_course_finish_date(course):
             return parse_datetime(raw_datetime)
         except ValueError:
             # well formatted but invalid date
-            logger.warning('Failed to parse datetime "%s".' % raw_datetime)
+            logger.warning(f'Failed to parse datetime "{raw_datetime}".')
     return None
 
 
@@ -91,7 +91,7 @@ def get_bachelor_year(groups):
 def get_master_year(groups):
     for group in groups:
         if group.get("id") in MASTER_IDS:
-            logger.debug("Identified master study course: %s" % group.get("id"))
+            logger.debug("Identified master study course: {}".format(group.get("id")))
             return 5
     return 4
 

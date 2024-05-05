@@ -189,7 +189,7 @@ class FeedbackRelation(models.Model):
         if hasattr(self.content_object, "feedback_info"):
             return self.content_object.feedback_info()
         else:
-            return dict()
+            return {}
 
 
 class Feedback(models.Model):

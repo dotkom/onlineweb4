@@ -731,7 +731,7 @@ class EventsSearch(TestCase):
         query = ""
 
         _url_pre_get_param = reverse("search_events")
-        url = _url_pre_get_param + "?query=%s" % query
+        url = _url_pre_get_param + f"?query={query}"
 
         response = self.client.get(url)
 

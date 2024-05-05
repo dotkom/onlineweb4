@@ -1,5 +1,4 @@
 import logging
-from typing import Optional, Union
 
 from django.conf import settings
 from django.db.models import QuerySet
@@ -20,7 +19,7 @@ scopes = [
 ]
 
 
-def setup_g_suite_client() -> Optional[Resource]:
+def setup_g_suite_client() -> Resource | None:
     """
     Sets up a working API client towards the Google Developers API.
     Requires various Django settings to be set to function properly.
@@ -69,7 +68,7 @@ def get_group_key(domain: str, group_name: str) -> str:
     return f"{group_name}@{domain}"
 
 
-def get_user_key(domain: str, user: Union[User, str]) -> str:
+def get_user_key(domain: str, user: User | str) -> str:
     """
     Generates a user key to interact with the Google API.
     :param domain: Domain in which the user key should exist.
@@ -186,9 +185,7 @@ def insert_ow4_user_into_g_suite_group(
     :return: The response of the execution.
     """
     logger.info(
-        "Inserting '{user}' into G Suite group '{group}'.".format(
-            user=ow4_user, group=group_name
-        ),
+        f"Inserting '{ow4_user}' into G Suite group '{group_name}'.",
         extra={"user": ow4_user, "group": group_name},
     )
 
@@ -210,7 +207,7 @@ def insert_ow4_user_into_g_suite_group(
 def remove_g_suite_user_from_group(
     domain: str,
     group_name: str,
-    g_suite_user: Union[dict, str],
+    g_suite_user: dict | str,
     suppress_http_errors: bool = False,
 ):
     """
@@ -259,7 +256,7 @@ def remove_g_suite_user_from_group(
         )
         if not suppress_http_errors:
             raise err
-    logger.debug("Removal of user response: {resp}".format(resp=resp))
+    logger.debug(f"Removal of user response: {resp}")
 
     return resp
 
@@ -455,7 +452,9 @@ def check_emails_match_each_other(
         return False
 
     logger.debug("Verifying that all users match to an email address.")
-    for gsuite_user, ow4_user in zip(g_suite_users, ow4_users.order_by("first_name")):
+    for gsuite_user, ow4_user in zip(
+        g_suite_users, ow4_users.order_by("first_name"), strict=False
+    ):
         if ow4_user.online_mail != gsuite_user.get("email"):
             logger.debug(
                 f"Emails do not match! '{ow4_user.online_mail}' != '{gsuite_user.get('email')}'"
@@ -488,7 +487,7 @@ def get_excess_users_in_g_suite(
 
 def _get_g_suite_user_from_g_suite_user_list(
     g_suite_users: list[dict[str, str]], g_suite_email: str
-) -> Optional[dict[str, str]]:
+) -> dict[str, str] | None:
     """
     Tries to find a user from a list of users, matching a given email address.
     :param g_suite_users: The members of a G Suite group.
@@ -497,17 +496,9 @@ def _get_g_suite_user_from_g_suite_user_list(
     """
     for user in g_suite_users:
         if g_suite_email == user.get("email"):
-            logger.debug(
-                "Found user with G Suite email address '{g_suite_email}'".format(
-                    g_suite_email=g_suite_email
-                )
-            )
+            logger.debug(f"Found user with G Suite email address '{g_suite_email}'")
             return user
-    logger.debug(
-        "Could not find user with G Suite email address '{g_suite_email}'".format(
-            g_suite_email=g_suite_email
-        )
-    )
+    logger.debug(f"Could not find user with G Suite email address '{g_suite_email}'")
     return None
 
 

@@ -28,7 +28,7 @@ def get_correct_file_name(uploaded_file):
     if file_extension.lower() == ".jpg":
         file_extension = ".jpeg"
 
-    return "{0}{1}".format(file_name, file_extension)
+    return f"{file_name}{file_extension}"
 
 
 class DocumentForm(forms.Form):

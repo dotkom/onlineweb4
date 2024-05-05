@@ -57,11 +57,11 @@ class RegisterAttendanceSerializer(serializers.Serializer):
                     detail="Administerende bruker har ikke rettigheter til å registrere oppmøte på dette arrangementet",
                     attend_status=AttendStatus.NOT_AUTHORIZED,
                 )
-        except Event.DoesNotExist:
+        except Event.DoesNotExist as e:
             raise RegisterAttendanceError(
                 detail="Det gitte arrangementet eksisterer ikke",
                 attend_status=AttendStatus.EVENT_DOES_NOT_EXIST,
-            )
+            ) from e
 
         return event_id
 
@@ -120,7 +120,7 @@ class RegisterAttendanceSerializer(serializers.Serializer):
                     f'Storing new RFID to user "{user}"',
                     extra={"user": user.pk, "rfid": rfid},
                 )
-            except (IntegrityError, ValidationError):
+            except (IntegrityError, ValidationError) as e:
                 logger.error(
                     f'Could not store RFID information for username "{username}" with RFID "{rfid}".'
                 )
@@ -129,24 +129,24 @@ class RegisterAttendanceSerializer(serializers.Serializer):
                     "Dersom problemet vedvarer, ta kontakt med dotkom. "
                     "Personen kan registreres med brukernavn i steden for RFID.",
                     attend_status=AttendStatus.REGISTER_ERROR,
-                )
+                ) from e
 
         try:
             attendee = self.get_attendee(attrs)
             self._handle_attendee(attendee, waitlist_approved)
-        except Attendee.DoesNotExist:
+        except Attendee.DoesNotExist as e:
             raise RegisterAttendanceError(
                 detail="Brukeren er ikke påmeldt dette arrangementet",
                 attend_status=AttendStatus.USER_NOT_ATTENDING,
-            )
-        except User.DoesNotExist:
+            ) from e
+        except User.DoesNotExist as e:
             # If attendee tried to attend by a username that isn't tied to a user
             if not rfid:
                 raise RegisterAttendanceError(
                     detail="Brukernavnet finnes ikke. Husk at det er et online.ntnu.no brukernavn! "
                     "(Prøv igjen, eller scan nytt kort for å avbryte.)",
                     attend_status=AttendStatus.USERNAME_DOES_NOT_EXIST,
-                )
+                ) from e
 
             # If attendee tried to attend by card, but card isn't tied to a user
             else:
@@ -154,6 +154,6 @@ class RegisterAttendanceSerializer(serializers.Serializer):
                     detail="Kortet finnes ikke i databasen. Skriv inn et online.ntnu.no brukernavn for å "
                     "knytte kortet til brukeren og registrere oppmøte.",
                     attend_status=AttendStatus.RFID_DOES_NOT_EXIST,
-                )
+                ) from e
 
         return attrs

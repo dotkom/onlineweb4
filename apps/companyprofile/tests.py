@@ -54,9 +54,9 @@ class CompanyAPITestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        company_names = list(
-            map(lambda company: company.get("name"), response.json().get("results"))
-        )
+        company_names = [
+            company.get("name") for company in response.json().get("results")
+        ]
 
         self.assertIn(self.company.name, company_names)
         self.assertNotIn(other_company.name, company_names)

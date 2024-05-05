@@ -53,7 +53,7 @@ def feedback(request, applabel, appmodel, object_id, feedback_id):
 
     if request.method == "POST":
         questions = create_forms(feedback_relation, post_data=request.POST)
-        if all([answer.is_valid() for answer in questions]):
+        if all(answer.is_valid() for answer in questions):
             for answer in questions:
                 answer.save()
 
@@ -124,11 +124,7 @@ def feedback_results(request, feedback_relation, token=False):
 
     http_host = request.META.get("HTTP_HOST", None)
 
-    token_url = "%s%sresults/%s" % (
-        http_host,
-        feedback_relation.get_absolute_url(),
-        register_token.token,
-    )
+    token_url = f"{http_host}{feedback_relation.get_absolute_url()}results/{register_token.token}"
 
     return render(
         request,
@@ -167,8 +163,8 @@ def chart_data_token(request, applabel, appmodel, object_id, feedback_id, token)
 def get_chart_data(request, feedback_relation, token=False):
     rating_answers = []
     rating_titles = []
-    answer_collection = dict()
-    answer_collection["replies"] = dict()
+    answer_collection = {}
+    answer_collection["replies"] = {}
     answer_length = int(len(RATING_CHOICES))
     for question in feedback_relation.ratingquestion:
         if question.display or not token:
@@ -234,8 +230,8 @@ def _get_fbr_or_404(app_label, app_model, object_id, feedback_id):
         fbr = FeedbackRelation.objects.get(
             content_type=ct, object_id=object_id, feedback_id=feedback_id
         )
-    except ObjectDoesNotExist:
-        raise Http404
+    except ObjectDoesNotExist as e:
+        raise Http404 from e
 
     return fbr
 

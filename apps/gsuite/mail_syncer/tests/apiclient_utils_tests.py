@@ -189,7 +189,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
         self.assertIn({"email": "test2@example.org"}, users)
 
     def test_get_missing_ow4_users_for_g_suite(self):
-        g_suite_members = [{"email": "test@%s" % self.domain}]
+        g_suite_members = [{"email": f"test@{self.domain}"}]
         user = G(OnlineUser, online_mail="test")
         user2 = G(OnlineUser, online_mail="test2")
         group = G(Group, name="dotkom")

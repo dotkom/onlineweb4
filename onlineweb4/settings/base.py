@@ -65,7 +65,8 @@ def get_stats_file() -> str:
     `webpack-stats.json` does not exists!
     Tests using Django templates will fail, and static files will not load when running.
     Please run `npm run build` to generate the files.
-    """
+    """,
+        stacklevel=0,
     )
 
     return "webpack-stats.json"

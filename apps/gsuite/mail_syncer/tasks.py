@@ -45,9 +45,7 @@ def insert_user_into_group_pass_if_already_member(
 
         if "Member already exists" in error_message:
             logger.warning(
-                'Email address "{email}" was already subscribed to mailing list "{list}"!'.format(
-                    email=email, list=group
-                )
+                f'Email address "{email}" was already subscribed to mailing list "{group}"!'
             )
         else:
             raise err
@@ -70,9 +68,7 @@ def remove_user_from_group_pass_if_not_subscribed(
 
         if "Resource Not Found" in error_message:
             logger.warning(
-                'Email address "{email}" was not subscribed to mailing list "{list}"!'.format(
-                    email=email, list=group
-                )
+                f'Email address "{email}" was not subscribed to mailing list "{group}"!'
             )
         else:
             raise err

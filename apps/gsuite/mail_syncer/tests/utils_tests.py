@@ -61,6 +61,4 @@ class GSuiteUtilsTestCase(TestCase):
     def test_get_onlineuser_not_exist(self, mocked_logger):
         email = f"{self.user}@{self.domain}"
         self.assertRaises(OnlineUser.DoesNotExist, lambda: get_user(email, ow4=True))
-        mocked_logger.assert_called_with(
-            'User "{user}" does not exist on OW4!'.format(user=email)
-        )
+        mocked_logger.assert_called_with(f'User "{email}" does not exist on OW4!')

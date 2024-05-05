@@ -11,5 +11,5 @@ def create_http_response(status, reason):
 def create_http_error(status, reason, error):
     return HttpError(
         resp=create_http_response(status, reason),
-        content=bytes(('{"error": {"message": "%s"}}' % error).encode("UTF-8")),
+        content=bytes((f'{{"error": {{"message": "{error}"}}}}').encode()),
     )

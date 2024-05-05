@@ -26,7 +26,7 @@ ATMOIC_REQUESTS = True
 DATABASES = {
     # Set this using the environment variable "DATABASE_URL"
     "default": dj_database_url.config(
-        default="sqlite:///%s/db.db" % PROJECT_ROOT_DIRECTORY
+        default=f"sqlite:///{PROJECT_ROOT_DIRECTORY}/db.db"
     )
 }
 

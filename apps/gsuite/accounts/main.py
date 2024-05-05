@@ -75,16 +75,12 @@ def create_g_suite_account(user):
         resp = query.execute()
     except HttpError as err:
         logger.error(
-            "HttpError while requesting G Suite Account creation: {}".format(
-                err.content
-            ),
+            f"HttpError while requesting G Suite Account creation: {err.content}",
             extra={"error": err},
         )
         if err.resp.status == 409:
             logger.error(
-                'G Suite account creation: User "{}@online.ntnu.no" already exists.'.format(
-                    user.online_mail
-                )
+                f'G Suite account creation: User "{user.online_mail}@online.ntnu.no" already exists.'
             )
         raise err
 
@@ -93,7 +89,7 @@ def create_g_suite_account(user):
             user=user, gsuite_username=resp.get("primaryEmail")
         )
     )
-    logger.debug("Created G Suite account, response: {}".format(resp))
+    logger.debug(f"Created G Suite account, response: {resp}")
 
     notify_g_suite_user_account(user, password)
 
@@ -114,7 +110,7 @@ def reset_password_g_suite_account(ow4_user):
         settings.OW4_GSUITE_SETTINGS.get("DOMAIN"), ow4_user.online_mail
     )
 
-    logger.debug("Resetting G Suite password for {}.".format(ow4_user))
+    logger.debug(f"Resetting G Suite password for {ow4_user}.")
 
     resp = (
         directory.users()
@@ -125,7 +121,7 @@ def reset_password_g_suite_account(ow4_user):
         .execute()
     )
 
-    logger.debug("Reset G Suite password for {}, resp: {}".format(ow4_user, resp))
+    logger.debug(f"Reset G Suite password for {ow4_user}, resp: {resp}")
 
     notify_g_suite_user_account(ow4_user, password)
 

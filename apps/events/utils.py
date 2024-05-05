@@ -20,12 +20,9 @@ from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
 def handle_waitlist_bump(event, attendees, payment=None):
-    title = "Du har fått plass på %s" % (event.title)
+    title = f"Du har fått plass på {event.title}"
 
-    message = (
-        'Du har stått på venteliste for arrangementet "%s" og har nå fått plass.\n'
-        % (str(event.title))
-    )
+    message = f'Du har stått på venteliste for arrangementet "{str(event.title)}" og har nå fått plass.\n'
 
     if payment:
         message += _handle_waitlist_bump_payment(payment, attendees)
@@ -35,7 +32,7 @@ def handle_waitlist_bump(event, attendees, payment=None):
         )
 
     message += "\n\nFor mer info:"
-    message += "\n%s%s" % (settings.BASE_URL, event.get_absolute_url())
+    message += f"\n{settings.BASE_URL}{event.get_absolute_url()}"
 
     send_message_to_users(
         title=title,
@@ -59,9 +56,8 @@ def _handle_waitlist_bump_payment(payment, attendees):
         if (
             payment.deadline > extended_deadline
         ):  # More than 2 days left of payment deadline
-            message += (
-                "Dette arrangementet krever betaling og fristen for å betale er %s"
-                % (payment.deadline.strftime("%-d %B %Y kl. %H:%M"))
+            message += "Dette arrangementet krever betaling og fristen for å betale er {}".format(
+                payment.deadline.strftime("%-d %B %Y kl. %H:%M")
             )
         else:  # The deadline is in less than 2 days
             for attendee in attendees:
@@ -79,16 +75,13 @@ def _handle_waitlist_bump_payment(payment, attendees):
         # Adding some seconds makes it seem like it's in more than X days, rather than X-1 days and 23 hours.
         # Could be weird if the delay is less than a minute or so, in which the seconds actually matter.
         message += (
-            "Dette arrangementet krever betaling og du må betale innen %s (%s)."
-            % (
+            "Dette arrangementet krever betaling og du må betale innen {} ({}).".format(
                 deadline.strftime("%-d %B %Y kl. %H:%M"),
                 naturaltime(deadline + timezone.timedelta(seconds=5)),
             )
         )
     if len(payment.prices()) == 1:
-        message += (
-            "\nPrisen for dette arrangementet er %skr." % payment.prices()[0].price
-        )
+        message += f"\nPrisen for dette arrangementet er {payment.prices()[0].price}kr."
     # elif len(payment.prices()) >= 2:
     #     message += "\nDette arrangementet har flere prisklasser:"
     #     for payment_price in payment.prices():
@@ -317,10 +310,7 @@ def handle_attend_event_payment(event: Event, user: User):
             deadline = payment.deadline
 
         # Send notification about payment to user by mail
-        subject = (
-            "[%s] Husk å betale for å fullføre påmeldingen til arrangementet."
-            % event.title
-        )
+        subject = f"[{event.title}] Husk å betale for å fullføre påmeldingen til arrangementet."
 
         content = render_to_string(
             "events/email/payment_reminder.txt",
@@ -393,12 +383,10 @@ def handle_mail_participants(
         )
 
         logger.info(
-            'Sent mail to %s for event "%s".'
-            % (_to_email_options[_to_email_value][1], event)
+            f'Sent mail to {_to_email_options[_to_email_value][1]} for event "{event}".'
         )
         return all_attendees, attendees_on_waitlist, attendees_not_paid
     except ImproperlyConfigured as e:
         logger.error(
-            'Something went wrong while trying to send mail to %s for event "%s"\n%s'
-            % (_to_email_options[_to_email_value][1], event, e)
+            f'Something went wrong while trying to send mail to {_to_email_options[_to_email_value][1]} for event "{event}"\n{e}'
         )

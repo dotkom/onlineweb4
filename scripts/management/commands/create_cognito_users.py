@@ -3,7 +3,6 @@ import secrets
 import string
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from typing import Optional
 
 import boto3
 import boto3.session
@@ -20,7 +19,7 @@ ws = re.compile(r"\s+")
 phone_number_regex = re.compile(r"^(00|\+(?P<country_code>\d{2}))?(?P<digits>\d{8})$")
 
 
-def extract_phone_number(u: OnlineUser) -> Optional[str]:
+def extract_phone_number(u: OnlineUser) -> str | None:
     if u.phone_number is None:
         return
     # remove whitespace

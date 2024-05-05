@@ -25,7 +25,7 @@ from apps.webshop.serializers import (
 class LoginRequiredMixin:
     @classmethod
     def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        view = super().as_view(**initkwargs)
         return login_required(view)
 
 
@@ -169,13 +169,11 @@ class Checkout(LoginRequiredMixin, WebshopMixin, TemplateView):
     def remove_inactive_orders(self, orders):
         for order in orders:
             if order.product.stock == 0:
-                message = """Det er ingen {} på lager og varen er fjernet
-                             fra din handlevogn.""".format(order.product.name)
+                message = f"""Det er ingen {order.product.name} på lager og varen er fjernet
+                             fra din handlevogn."""
             else:
-                message = """{} er ikke lenger tilgjengelig for kjøp og
-                             er fjernet fra din handlevogn.""".format(
-                    order.product.name
-                )
+                message = f"""{order.product.name} er ikke lenger tilgjengelig for kjøp og
+                             er fjernet fra din handlevogn."""
             messages.add_message(self.request, messages.INFO, message)
             order.delete()
 

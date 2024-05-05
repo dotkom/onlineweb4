@@ -117,6 +117,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(
-            name="markuser", unique_together=set([("user", "mark")])
+            name="markuser", unique_together={("user", "mark")}
         ),
     ]

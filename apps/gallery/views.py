@@ -52,8 +52,9 @@ def upload(request):
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             log.info(
-                '%s uploaded image "%s"'
-                % (request.user, os.path.abspath(str(request.FILES["file"])))
+                '{} uploaded image "{}"'.format(
+                    request.user, os.path.abspath(str(request.FILES["file"]))
+                )
             )
 
             # Check if we successfully generate an UnhandledImage object
@@ -164,7 +165,7 @@ def crop(request):
         # Fetch values from Django's immutable MultiValueDict
         config = {key: crop_data.get(key) for key in crop_data.keys()}
 
-        log.debug("Crop invoked with config: %s" % repr(config))
+        log.debug(f"Crop invoked with config: {repr(config)}")
 
         # Construct a responsive image handler and configure it using the provided request data
         handler = ResponsiveImageHandler(image)

@@ -54,7 +54,7 @@ class GSuiteAPITestCase(TestCase):
     @patch("logging.Logger.debug")
     def test_remove_leader(self, mocked_logger):
         group_name = list(settings.OW4_GSUITE_SYNC.get("GROUPS").keys())[0]
-        email = "leder@{domain}".format(domain=self.domain)
+        email = f"leder@{self.domain}"
 
         ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync["ENABLE_DELETE"] = False

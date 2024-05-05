@@ -18,9 +18,7 @@ class Resource(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return "{title} (Priority: {priority})".format(
-            title=self.title, priority=self.priority
-        )
+        return f"{self.title} (Priority: {self.priority})"
 
     class Meta:
         default_permissions = ("add", "change", "delete")
