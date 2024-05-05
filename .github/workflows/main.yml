@@ -102,11 +102,9 @@ jobs:
       - name: Install python dependencies
         run: poetry install --no-interaction --no-ansi
 
-      - name: Ruff
-        run: poetry run isort -c apps scripts utils onlineweb4
-      - name: Isort
-        run: poetry run black --check apps scripts utils onlineweb4
-      - name: Black
+      - name: Format
+        run: poetry run ruff format --check apps scripts utils onlineweb4
+      - name: Lint
         run: poetry run ruff check apps scripts utils onlineweb4
 
   django-checks:

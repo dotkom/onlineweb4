@@ -66,8 +66,6 @@ coverage = { version = "~7.5", extras = [ "toml" ] }
 
 # Linting
 ruff = "~0.4"
-isort = "~5.13"
-black = "~24.3"
 pre-commit = "~3.7"
 
 [tool.poetry.extras]
@@ -82,13 +80,25 @@ prod = [
 s3 = ["django-storages"]
 
 
-[tool.ruff.lint.extend-per-file-ignores]
-"__init__.py" = ["F403"]
+[tool.ruff]
+src = [ "apps", "utils", "onlineweb4", "scripts" ]
+target-version = "py311"
 
+[tool.ruff.lint]
+select = [
+    "E", # pycodestyle
+    # "UP", # pyupgrade
+    # "B", # flake8-bugbear
+    # "SIM", # flake8 simplify
+    # "C901", # Mccabe complexiy
+    "F", # Pyflakes
+    "I", # isort
+]
+ignore = ["E501"]
+extend-per-file-ignores = { "__init__.py" = ["F403"] }
 
-[tool.isort]
-profile = "black"
-known_first_party = [ "apps", "utils", "onlineweb4" ]
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "utils", "onlineweb4", "scripts"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "onlineweb4.settings"
@@ -99,7 +109,6 @@ filterwarnings = [
     # for future maintainers: these fields are documented here
     # https://docs.python.org/3/library/warnings.html#the-warnings-filter
     # we should probably care about OpenAPI-warnings, but they are extremely noisy
-    "ignore:Schema component \"Event\" has been overriden with a different value.:UserWarning:rest_framework.schemas.openapi",
     "ignore:You have a duplicated operationId in your OpenAPI schema:UserWarning",
     "ignore:<class '.*'> is not compatible with schema generation:UserWarning",
     # remove once migrated, this is just setting a transitional setting
