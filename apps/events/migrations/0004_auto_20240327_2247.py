@@ -15,7 +15,6 @@ def forward_company_event_image(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("events", "0003_eventuseraction"),
     ]

@@ -171,9 +171,7 @@ class Checkout(LoginRequiredMixin, WebshopMixin, TemplateView):
         for order in orders:
             if order.product.stock == 0:
                 message = """Det er ingen {} på lager og varen er fjernet
-                             fra din handlevogn.""".format(
-                    order.product.name
-                )
+                             fra din handlevogn.""".format(order.product.name)
             else:
                 message = """{} er ikke lenger tilgjengelig for kjøp og
                              er fjernet fra din handlevogn.""".format(

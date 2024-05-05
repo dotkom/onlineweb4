@@ -4,7 +4,6 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("approval", "0015_alter_membershipapproval_options"),
     ]

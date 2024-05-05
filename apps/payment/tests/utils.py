@@ -23,7 +23,7 @@ def generate_event_payment(event, price=100, *args, **kwargs):
         object_id=event.id,
         content_type=ContentType.objects.get_for_model(AttendanceEvent),
         *args,
-        **kwargs
+        **kwargs,
     )
     add_price_to_payment(payment, price)
     return payment

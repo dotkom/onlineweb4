@@ -50,17 +50,21 @@ class StatusCode(models.IntegerChoices):
     ALREADY_SIGNED_UP = 404, _("Du er allerede påmeldt.")
     SUSPENDED = 405, _("Du er suspendert, og kan derfor ikke melde deg på.")
 
-    NOT_SATISFIED_FIELD_OF_STUDY = 410, _(
-        "Din studieretning har ikke adgang til dette arrangementet."
+    NOT_SATISFIED_FIELD_OF_STUDY = (
+        410,
+        _("Din studieretning har ikke adgang til dette arrangementet."),
     )
-    NOT_SATISFIED_GRADE = 411, _(
-        "Din studieretning har ikke adgang til dette arrangementet."
+    NOT_SATISFIED_GRADE = (
+        411,
+        _("Din studieretning har ikke adgang til dette arrangementet."),
     )
-    NOT_SATISFIED_USER_GROUP = 412, _(
-        "Din studieretning har ikke adgang til dette arrangementet."
+    NOT_SATISFIED_USER_GROUP = (
+        412,
+        _("Din studieretning har ikke adgang til dette arrangementet."),
     )
-    NOT_SATISFIED_UNKNOWN = 413, _(
-        "Din studieretning har ikke adgang til dette arrangementet."
+    NOT_SATISFIED_UNKNOWN = (
+        413,
+        _("Din studieretning har ikke adgang til dette arrangementet."),
     )
 
     DELAYED_SIGNUP_FIELD_OF_STUDY = 420, _("Din påmelding er utsatt.")

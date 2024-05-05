@@ -103,9 +103,7 @@ def find_user_study_and_update(user, groups):
                 membership.registered = timezone.now().date()
                 membership.description = """Added by dataporten app.
 
-                Automatically approved on %s.""" % (
-                    str(timezone.now().date())
-                )
+                Automatically approved on %s.""" % (str(timezone.now().date()))
                 membership.note = (
                     user.get_field_of_study_display() + " " + str(user.started_date)
                 )

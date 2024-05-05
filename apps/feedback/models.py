@@ -9,6 +9,7 @@ An Answer is related to an Object and a Question.
 This implementation is not very database friendly however, as it does
 very many database lookups.
 """
+
 import uuid
 from collections import OrderedDict
 

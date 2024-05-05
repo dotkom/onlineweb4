@@ -46,7 +46,7 @@ def generate_payment(event: Event, *args, **kwargs) -> Payment:
         object_id=event.id,
         content_type=ContentType.objects.get_for_model(AttendanceEvent),
         *args,
-        **kwargs
+        **kwargs,
     )
     G(PaymentPrice, payment=payment)
     return payment
@@ -62,7 +62,7 @@ def pay_for_event(event: Event, user: OnlineUser, *args, **kwargs) -> PaymentRel
         payment=event.attendance_event.payment(),
         user=user,
         *args,
-        **kwargs
+        **kwargs,
     )
 
 
@@ -78,7 +78,7 @@ def generate_user(username: str, *args, **kwargs) -> OnlineUser:
         phone_number="12345678",
         is_active=True,
         *args,
-        **kwargs
+        **kwargs,
     )
     return user
 

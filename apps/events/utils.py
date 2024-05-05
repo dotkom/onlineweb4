@@ -247,9 +247,7 @@ def handle_event_payment(event, user, payment, context):
         }
     )
 
-    if (
-        not user.is_authenticated
-    ):  # Return early if user not logged in, can't filter payment relations against no one
+    if not user.is_authenticated:  # Return early if user not logged in, can't filter payment relations against no one
         return context
 
     payment_relations = PaymentRelation.objects.filter(
