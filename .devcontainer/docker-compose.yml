@@ -3,7 +3,7 @@ name: onlineweb4
 services:
   app:
     # we do not include the build-definition here, since that prevents us from using the pre-built image.
-    image: mcr.microsoft.com/devcontainers/python:3.11-bullseye
+    image: mcr.microsoft.com/devcontainers/python:3.12-bullseye
     volumes:
       - ../..:/workspace:cached
     # Overrides default command so things don't shut down after the process ends.

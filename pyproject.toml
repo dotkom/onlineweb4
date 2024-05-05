@@ -7,7 +7,7 @@ license = "MIT"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "~3.11"
+python = "~3.12"
 Django = "~5.0"
 djangorestframework = "~3.15"
 django-filter = "~24.2"
@@ -82,7 +82,7 @@ s3 = ["django-storages"]
 
 [tool.ruff]
 src = [ "apps", "utils", "onlineweb4", "scripts" ]
-target-version = "py311"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = [
@@ -114,6 +114,7 @@ filterwarnings = [
     # remove once migrated, this is just setting a transitional setting
     "ignore:The FORMS_URLFIELD_ASSUME_HTTPS transitional setting is deprecated.:django.utils.deprecation.RemovedInDjango60Warning",
     "ignore:The default scheme will be changed from 'http' to 'https' in Django 6.0.*:django.utils.deprecation.RemovedInDjango60Warning",
+    "ignore:ast.NameConstant is deprecated and will be removed in Python 3.14; use ast.Constant instead:DeprecationWarning",
 ]
 
 [tool.coverage.report]

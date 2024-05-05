@@ -80,7 +80,7 @@ gh pr create
 
 ### Local installation
 
-To run the project you need Python 3.11 and node >=18 for bundling the frontend-dependencies.
+To run the project you need Python 3.12 and node >=20 for bundling the frontend-dependencies.
 
 We recommend using either [pyenv](https://github.com/pyenv/pyenv) or [rye](https://rye-up.com) to manage your Python-versions.
 You will need [Poetry](https://python-poetry.org) to install the dependencies, we recommend using [pipx](https://github.com/pypa/pipx) to instal Poetry.

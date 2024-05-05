@@ -10,9 +10,8 @@
 	"customizations": {
 		"vscode": {
 			"settings": {
-				"python.defaultInterpreterPath": "${containerEnv:POETRY_ENV_PATH}/bin/python",
-				"python.testing.cwd": "/workspace",
-				"python.testing.pytestPath": "${containerEnv:POETRY_ENV_PATH}/bin/pytest",
+				"python.defaultInterpreterPath": "/workspace/${localWorkspaceFolderBasename}/.venv/bin/python",
+				"python.testing.pytestEnabled": true,
 				"dev.containers.copyGitConfig": true
 			},
 			"extensions": [
@@ -26,7 +25,7 @@
 	},
 	"features": {
 		"ghcr.io/devcontainers/features/node:1": {
-			"version": "18"
+			"version": "20"
 		},
 		"ghcr.io/devcontainers-contrib/features/poetry:2": {
 			"version": "1.8.2"

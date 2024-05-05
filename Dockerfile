@@ -1,7 +1,7 @@
 # This is only intended to build the application for deployment on AWS Lambda with Zappa
 # it has limited usage locally
 
-FROM node:18-alpine AS js-static
+FROM node:20-alpine AS js-static
 
 ENV APP_DIR=/srv/app
 ENV NODE_ENV=production
@@ -17,7 +17,7 @@ COPY esbuild.mjs ./
 
 RUN npm run build
 
-FROM python:3.11 AS static-files
+FROM python:3.12 AS static-files
 
 ENV APP_DIR=/srv/app \
     POETRY_VIRTUALENVS_CREATE=false \
@@ -41,7 +41,7 @@ COPY --from=js-static $APP_DIR/bundles ./bundles
 
 RUN ./manage.py collectstatic
 
-FROM amazon/aws-lambda-python:3.11.2024.03.28.16
+FROM amazon/aws-lambda-python:3.12.2024.03.28.16
 
 LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
 ENV POETRY_VIRTUALENVS_CREATE=false \
