@@ -51,18 +51,18 @@ ARG FUNCTION_DIR="/var/task/"
 COPY pyproject.toml poetry.lock $FUNCTION_DIR
 
 # Setup Python environment
-RUN yum install -y git unzip \
+RUN dnf install -y git unzip libffi \
     && curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.8.2 python3 - \
     # silent, show errors and location (aka follow redirect)
     && curl -sSL --output vault-lambda-extension.zip \
-        https://releases.hashicorp.com/vault-lambda-extension/0.6.0/vault-lambda-extension_0.6.0_linux_amd64.zip \
+        https://releases.hashicorp.com/vault-lambda-extension/0.10.3/vault-lambda-extension_0.10.3_linux_amd64.zip \
     && unzip vault-lambda-extension.zip -d /opt \
     && poetry install --no-root --no-dev -E prod \
     && poetry cache clear . --all -n \
-    && yum remove -y git unzip \
-    && yum clean all \
+    && dnf remove -y git unzip perl-Git \
+    && dnf clean all \
     && rm vault-lambda-extension.zip \
-    && rm -rf /var/cache/yum
+    && rm -rf /var/cache/dnf
 
 COPY ./ $FUNCTION_DIR
 
