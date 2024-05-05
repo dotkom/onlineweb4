@@ -51,7 +51,7 @@ jobs:
           python-version-file: '.python-version'
 
       - name: Install Zappa
-        run: pip install zappa==0.58
+        run: pip install zappa==0.59
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
