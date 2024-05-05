@@ -21,7 +21,7 @@ def send_approval_notification(approval: Approval):
 
     try:
         EmailMessage(
-            "[Medlemskapssøknad] %s" % approval.applicant.get_full_name(),
+            f"[Medlemskapssøknad] {approval.applicant.get_full_name()}",
             content,
             settings.DEFAULT_FROM_EMAIL,
             to_emails,

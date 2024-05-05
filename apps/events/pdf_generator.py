@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from textwrap import wrap
 
 from pdfdocument.utils import pdf_response
@@ -43,7 +41,7 @@ class EventPDF:
             user = attendee.user
             self.attendee_table_data.append(
                 (
-                    create_body_text("%s, %s" % (user.last_name, user.first_name)),
+                    create_body_text(f"{user.last_name}, {user.first_name}"),
                     user.year,
                     create_body_text(user.get_field_of_study_display()),
                     user.phone_number,
@@ -54,7 +52,7 @@ class EventPDF:
                 self.attendee_table_data.append(
                     (
                         create_body_text(
-                            "Notat for %s: " % attendee.user.first_name + attendee.note
+                            f"Notat for {attendee.user.first_name}: " + attendee.note
                         ),
                     )
                 )
@@ -75,7 +73,7 @@ class EventPDF:
             user = attendee.user
             self.waiters_table_data.append(
                 (
-                    create_body_text("%s, %s" % (user.last_name, user.first_name)),
+                    create_body_text(f"{user.last_name}, {user.first_name}"),
                     user.year,
                     create_body_text(user.get_field_of_study_display()),
                     user.phone_number,
@@ -86,7 +84,7 @@ class EventPDF:
                 self.waiters_table_data.append(
                     (
                         create_body_text(
-                            "Notat for %s: " % attendee.user.first_name + attendee.note
+                            f"Notat for {attendee.user.first_name}: " + attendee.note
                         ),
                     )
                 )

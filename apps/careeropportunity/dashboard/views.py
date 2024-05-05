@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 import logging
 
 from django.contrib import messages
@@ -34,7 +33,7 @@ def index(request):
 @permission_required("careeropportunity.change_careeropportunity", return_403=True)
 def detail(request, opportunity_id=None):
     logger = logging.getLogger(__name__)
-    logger.debug("Editing careeropportunity with id: %s" % (opportunity_id))
+    logger.debug(f"Editing careeropportunity with id: {opportunity_id}")
 
     if not has_access(request):
         raise PermissionDenied
@@ -72,7 +71,7 @@ def detail(request, opportunity_id=None):
 @permission_required("careeropportunity.change_careeropportunity", return_403=True)
 def delete(request, opportunity_id=None):
     logger = logging.getLogger(__name__)
-    logger.debug("Deleting careeropportunitywith id: %s" % (opportunity_id))
+    logger.debug(f"Deleting careeropportunitywith id: {opportunity_id}")
     if not has_access(request):
         raise PermissionDenied
 

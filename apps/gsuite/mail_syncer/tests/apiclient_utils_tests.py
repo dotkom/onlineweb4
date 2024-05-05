@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pytest
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
@@ -23,6 +24,7 @@ from apps.gsuite.mail_syncer.utils import (
 )
 
 
+@pytest.mark.xdist_group(name="settings")
 class GSuiteAPIUtilsTestCase(TestCase):
     """Tests for ow4-side utils of G Suite app, like "get excess groups for user"."""
 
@@ -187,7 +189,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
         self.assertIn({"email": "test2@example.org"}, users)
 
     def test_get_missing_ow4_users_for_g_suite(self):
-        g_suite_members = [{"email": "test@%s" % self.domain}]
+        g_suite_members = [{"email": f"test@{self.domain}"}]
         user = G(OnlineUser, online_mail="test")
         user2 = G(OnlineUser, online_mail="test2")
         group = G(Group, name="dotkom")
@@ -255,9 +257,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
             self.assertEqual(1, len(resp))
 
             http_error = create_http_error(400, "Error", "Error")
-            mocked_g_suite_client.return_value.members.return_value.list.return_value.execute.return_value.get.side_effect = (
-                http_error
-            )
+            mocked_g_suite_client.return_value.members.return_value.list.return_value.execute.return_value.get.side_effect = http_error
             self.assertRaises(
                 HttpError, lambda: get_g_suite_users_for_group(self.domain, self.group)
             )
@@ -267,9 +267,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
         ow4_gsuite_sync = settings.OW4_GSUITE_SYNC
         ow4_gsuite_sync["ENABLED"] = True
 
-        mocked_g_suite_client.return_value.members.return_value.list.return_value.execute.return_value.get.return_value = (
-            None
-        )
+        mocked_g_suite_client.return_value.members.return_value.list.return_value.execute.return_value.get.return_value = None
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             resp = get_g_suite_users_for_group(self.domain, self.group)
@@ -297,9 +295,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
             self.assertEqual(1, len(resp))
 
             http_error = create_http_error(400, "Error", "Error")
-            mocked_g_suite_client.return_value.groups.return_value.list.return_value.execute.return_value.get.side_effect = (
-                http_error
-            )
+            mocked_g_suite_client.return_value.groups.return_value.list.return_value.execute.return_value.get.side_effect = http_error
             self.assertRaises(
                 HttpError, lambda: get_g_suite_groups_for_user(self.domain, user)
             )
@@ -316,9 +312,7 @@ class GSuiteAPIUtilsTestCase(TestCase):
         ow4_gsuite_sync = settings.OW4_GSUITE_SYNC
         ow4_gsuite_sync["ENABLED"] = True
 
-        mocked_g_suite_client.return_value.groups.return_value.list.return_value.execute.return_value.get.return_value = (
-            None
-        )
+        mocked_g_suite_client.return_value.groups.return_value.list.return_value.execute.return_value.get.return_value = None
 
         with override_settings(OW4_GSUITE_SYNC=ow4_gsuite_sync):
             resp = get_g_suite_groups_for_user(self.domain, user)

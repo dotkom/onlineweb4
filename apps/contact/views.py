@@ -31,23 +31,11 @@ def contact_submit(request):
 
             if request.user.is_authenticated:
                 username = request.user.username
-                log.info(
-                    "{username} has tried to contact {to_email}".format(
-                        username=username, to_email=to_email
-                    )
-                )
+                log.info(f"{username} has tried to contact {to_email}")
             else:
-                log.info(
-                    "A user at {client_ip} has tried to contact {to_email}".format(
-                        client_ip=client_ip, to_email=to_email
-                    )
-                )
+                log.info(f"A user at {client_ip} has tried to contact {to_email}")
 
-            subject = (
-                "[Kontakt] {name} har kontaktet dere gjennom online.ntnu.no".format(
-                    name=name
-                )
-            )
+            subject = f"[Kontakt] {name} har kontaktet dere gjennom online.ntnu.no"
 
             EmailMessage(
                 subject,

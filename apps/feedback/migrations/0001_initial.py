@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from django.conf import settings
 from django.db import migrations, models
 
@@ -467,7 +464,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name="feedbackrelation",
-            unique_together=set([("feedback", "content_type", "object_id")]),
+            unique_together={("feedback", "content_type", "object_id")},
         ),
         migrations.AddField(
             model_name="choice",

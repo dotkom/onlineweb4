@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from typing import List
 
 from django.conf import settings
 from django.utils import timezone
@@ -43,17 +42,15 @@ class PaymentMixin:
         """
         Handle the effect of a payment being done/completed for a user.
         """
-        pass
 
     @abstractmethod
     def on_payment_refunded(self, payment_relation):
         """
         Handle the effects of payment relation being refunded.
         """
-        pass
 
     @abstractmethod
-    def get_payment_receipt_items(self, payment_relation) -> List[dict]:
+    def get_payment_receipt_items(self, payment_relation) -> list[dict]:
         return []
 
 
@@ -71,7 +68,7 @@ class ReceiptMixin:
         pass
 
     @abstractmethod
-    def get_receipt_items(self) -> List[dict]:
+    def get_receipt_items(self) -> list[dict]:
         pass
 
     @abstractmethod

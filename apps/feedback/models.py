@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 An anonymous customizable Feedback Schema application.
 
@@ -9,6 +8,7 @@ An Answer is related to an Object and a Question.
 This implementation is not very database friendly however, as it does
 very many database lookups.
 """
+
 import uuid
 from collections import OrderedDict
 
@@ -20,6 +20,7 @@ from django.db import models
 from django.db.models import Q
 from django.urls import reverse
 from django.utils.translation import gettext as _
+from guardian.shortcuts import assign_perm
 
 from apps.authentication.constants import FieldOfStudyType
 from apps.authentication.models import OnlineUser
@@ -71,6 +72,12 @@ class FeedbackRelation(models.Model):
         verbose_name = _("tilbakemelding")
         verbose_name_plural = _("tilbakemeldinger")
         ordering = ("content_type", "object_id", "feedback")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if not self.token_objects.exists():
+            RegisterToken.objects.create(fbr=self)
 
     @property
     def questions(self):
@@ -182,7 +189,7 @@ class FeedbackRelation(models.Model):
         if hasattr(self.content_object, "feedback_info"):
             return self.content_object.feedback_info()
         else:
-            return dict()
+            return {}
 
 
 class Feedback(models.Model):
@@ -323,6 +330,36 @@ class GenericSurvey(models.Model):
         info = OrderedDict()
         info[_("Antall mulig svar")] = self.feedback_users().count()
         return info
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # sync_survey_options_to_feedback_relation
+        try:
+            feedback_relation = self.get_feedback_relation()
+            feedback_relation.feedback = self.feedback
+            feedback_relation.deadline = self.deadline
+            feedback_relation.save()
+        except FeedbackRelation.DoesNotExist:
+            FeedbackRelation.objects.create(
+                content_type=ContentType.objects.get_for_model(GenericSurvey),
+                content_object=self,
+                object_id=self.id,
+                feedback=self.feedback,
+                deadline=self.deadline,
+                gives_mark=False,
+            )
+
+        # sync permissions
+        survey_owner_permissions = [
+            "feedback.view_genericsurvey",
+            "feedback.change_genericsurvey",
+            "feedback.delete_genericsurvey",
+        ]
+        for permission in survey_owner_permissions:
+            assign_perm(permission, self.owner, obj=self)
+            if self.owner_group:
+                assign_perm(permission, self.owner_group, obj=self)
 
     class Meta:
         verbose_name = _("Generisk undersøkelse")

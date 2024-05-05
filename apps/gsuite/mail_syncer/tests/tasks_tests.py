@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pytest
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django_dynamic_fixture import G
@@ -13,6 +14,7 @@ from apps.gsuite.mail_syncer.tasks import (
 from apps.gsuite.mail_syncer.tests.test_utils import create_http_error
 
 
+@pytest.mark.xdist_group(name="settings")
 class GSuiteSignalsTestCase(TestCase):
     def setUp(self):
         self.domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")

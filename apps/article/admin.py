@@ -27,8 +27,8 @@ class ArticleAdmin(VersionAdmin):
 
     def save_formset(self, request, form, formset, change):
         instances = formset.save(commit=False)
-        for instances in instances:
-            instances.save()
+        for instance in instances:
+            instance.save()
 
 
 admin.site.register(Article, ArticleAdmin)

@@ -69,7 +69,7 @@ class ExposableUserField(serializers.Field):
 
     def __init__(self, **kwargs):
         self.field_name = kwargs.pop("field_name", None)
-        defualt_privacy_field = "expose_{}".format(self.field_name)
+        defualt_privacy_field = f"expose_{self.field_name}"
         self.privacy_field = kwargs.pop("privacy_field", defualt_privacy_field)
         super().__init__(**kwargs)
 

@@ -37,7 +37,7 @@ class MarksTest(TestCase):
     def test_mark_user(self):
         self.logger.debug("Testing MarkUser unicode with dynamic fixtures")
         self.assertEqual(
-            str(self.user_entry), "Mark entry for user: %s" % self.user.get_full_name()
+            str(self.user_entry), f"Mark entry for user: {self.user.get_full_name()}"
         )
 
     def test_getting_expiration_date_with_no_vacation_in_spring(self):

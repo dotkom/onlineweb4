@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pytest
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django_dynamic_fixture import G
@@ -14,6 +15,7 @@ from apps.gsuite.mail_syncer.utils import (
 )
 
 
+@pytest.mark.xdist_group(name="settings")
 class GSuiteAPITestCase(TestCase):
     def setUp(self):
         self.domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
@@ -52,7 +54,7 @@ class GSuiteAPITestCase(TestCase):
     @patch("logging.Logger.debug")
     def test_remove_leader(self, mocked_logger):
         group_name = list(settings.OW4_GSUITE_SYNC.get("GROUPS").keys())[0]
-        email = "leder@{domain}".format(domain=self.domain)
+        email = f"leder@{self.domain}"
 
         ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync["ENABLE_DELETE"] = False
@@ -146,9 +148,7 @@ class GSuiteAPITestCase(TestCase):
         group_name = list(settings.OW4_GSUITE_SYNC.get("GROUPS").keys())[0]
         email = "example@example.org"
 
-        mocked_g_suite_client.return_value.members.return_value.delete.return_value.execute.return_value = (
-            None
-        )
+        mocked_g_suite_client.return_value.members.return_value.delete.return_value.execute.return_value = None
 
         ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync["ENABLE_DELETE"] = True
@@ -166,9 +166,7 @@ class GSuiteAPITestCase(TestCase):
         group_name = list(settings.OW4_GSUITE_SYNC.get("GROUPS").keys())[0]
         email = {"email": "example@example.org"}
 
-        mocked_g_suite_client.return_value.members.return_value.delete.return_value.execute.return_value = (
-            None
-        )
+        mocked_g_suite_client.return_value.members.return_value.delete.return_value.execute.return_value = None
 
         ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync["ENABLE_DELETE"] = True
@@ -187,9 +185,7 @@ class GSuiteAPITestCase(TestCase):
         email = "example@example.org"
 
         http_error = create_http_error(400, "Error", "Error")
-        mocked_g_suite_client.return_value.members.return_value.delete.return_value.execute.side_effect = (
-            http_error
-        )
+        mocked_g_suite_client.return_value.members.return_value.delete.return_value.execute.side_effect = http_error
 
         ow4_gsuite_sync = self.ow4_gsuite_sync
         ow4_gsuite_sync["ENABLED"] = True

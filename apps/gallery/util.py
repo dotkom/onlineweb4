@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import math
 import os
@@ -87,7 +85,7 @@ class GalleryStatus:
         return self.success
 
     def __str__(self):
-        return "Status: %s (%s): %s" % (self.status, self.message, self.data)
+        return f"Status: {self.status} ({self.message}): {self.data}"
 
 
 class BaseImageHandler:
@@ -159,8 +157,7 @@ class BaseImageHandler:
             # If we have been provided an unsupported object, return unsuccessfully
             return GalleryStatus(
                 False,
-                'Could not decide what thumbnail to generate, since "self" is %s'
-                % type(self),
+                f'Could not decide what thumbnail to generate, since "self" is {type(self)}',
                 None,
             )
 
@@ -173,17 +170,16 @@ class BaseImageHandler:
         """
 
         _log = logging.getLogger(__name__)
-        _log.debug("Copying image %s to %s" % (from_path, to_path))
+        _log.debug(f"Copying image {from_path} to {to_path}")
         try:
             file = default_storage.open(from_path)
             default_storage.save(to_path, file)
             file.close()
         except OSError as os_error:
-            _log("An OSError occurred: %s" % os_error)
+            _log(f"An OSError occurred: {os_error}")
             return GalleryStatus(
                 False,
-                "Failed to copy image from %s to %s: %s"
-                % (from_path, to_path, os_error),
+                f"Failed to copy image from {from_path} to {to_path}: {os_error}",
                 os_error,
             )
         return GalleryStatus(True, "sucess", to_path)
@@ -204,7 +200,7 @@ class BaseImageHandler:
         try:
             file = default_storage.open(source)
             img = Image.open(file)
-        except IOError as e:
+        except OSError as e:
             return GalleryStatus(
                 False, "IOError: File was not an image file, or could not be found.", e
             )
@@ -227,7 +223,7 @@ class BaseImageHandler:
 
         img = BaseImageHandler._open_image(source)
         if not img:
-            logging.getLogger(__name__).error("Could not open %s" % source)
+            logging.getLogger(__name__).error(f"Could not open {source}")
             return img
         else:
             img = img.data
@@ -239,7 +235,7 @@ class BaseImageHandler:
         try:
             # Convert our image to a thumbnail
             img = ImageOps.fit(img, thumb_size, Image.LANCZOS)
-        except IOError as e:
+        except OSError as e:
             return GalleryStatus(False, "Image is truncated.", e)
 
         # Save the image to file
@@ -286,23 +282,23 @@ class UploadImageHandler(BaseImageHandler):
 
         # Do we already have an UnhandledImage stored in the database?
         if isinstance(image, UnhandledImage):
-            self._log.debug("ImageUploadHandler instanced with %s" % image)
+            self._log.debug(f"ImageUploadHandler instanced with {image}")
         # Or are we performing a new upload?
         elif isinstance(image, InMemoryUploadedFile) or isinstance(
             image, TemporaryUploadedFile
         ):
             self._log.debug(
-                "ImageUploadHandler instanced with %s file data" % image.__class__
+                f"ImageUploadHandler instanced with {image.__class__} file data"
             )
 
             # Handle the upload of the image
             self._handle_upload(image)
             if not self.status:
-                self._log.error("Image upload failed: %s" % self.status)
+                self._log.error(f"Image upload failed: {self.status}")
 
         else:
             self._log.error(
-                "ImageUploadHandler instanced with non-valid type: %s" % type(image)
+                f"ImageUploadHandler instanced with non-valid type: {type(image)}"
             )
 
             raise ValueError(
@@ -323,16 +319,16 @@ class UploadImageHandler(BaseImageHandler):
 
         # Save the path to where the image was stored
         self.image = original.data
-        self._log.debug('Unhandled file was saved at: "%s"' % self.image)
+        self._log.debug(f'Unhandled file was saved at: "{self.image}"')
 
         # Generate a thumbnail image or break early on failure
         thumbnail = self.create_thumbnail()  # From superclass
         if not thumbnail:
-            self._log.error("Failed to create thumbnail for %s" % self.image)
+            self._log.error(f"Failed to create thumbnail for {self.image}")
             self.status = thumbnail
             return
 
-        self._log.debug('Creating an UnhandledImage for "%s"' % self.image)
+        self._log.debug(f'Creating an UnhandledImage for "{self.image}"')
 
         # Translate the relative paths to Django Media paths
         full_path = get_unhandled_media_path(os.path.abspath(original.data))
@@ -343,7 +339,7 @@ class UploadImageHandler(BaseImageHandler):
         self.image.save()
 
         # Update our status
-        self._log.debug("Successfully created UnhandledImage %s" % self.image)
+        self._log.debug(f"Successfully created UnhandledImage {self.image}")
         self.status = GalleryStatus(True, "success", self.image)
 
     def _save_temp_uploaded_file_data(self, memory_object):
@@ -357,20 +353,18 @@ class UploadImageHandler(BaseImageHandler):
         filepath = os.path.join(
             django_settings.MEDIA_ROOT,
             gallery_settings.UNHANDLED_IMAGES_PATH,
-            "%s%s" % (uuid.uuid4(), extension.lower()),
+            f"{uuid.uuid4()}{extension.lower()}",
         )
 
         self._log.debug(
-            "_save_temp_uploaded_file_data: Attempting to store uploaded image at %s"
-            % filepath
+            f"_save_temp_uploaded_file_data: Attempting to store uploaded image at {filepath}"
         )
         # Open a file pointer in binary mode and write the image data chunks from memory
         try:
             default_storage.save(filepath, memory_object.file)
-        except IOError as e:
+        except OSError as e:
             self._log.error(
-                '_save_temp_uploaded_file_data: Failed to save uploaded image! "%s"'
-                % repr(e)
+                f'_save_temp_uploaded_file_data: Failed to save uploaded image! "{repr(e)}"'
             )
 
             return GalleryStatus(False, str(e), memory_object)
@@ -406,10 +400,10 @@ class ResponsiveImageHandler(BaseImageHandler):
         :param config: A configuration dictionary containing necessary crop data.
         """
 
-        self._log.debug("Configuring ResponsiveImageHandler with %s" % repr(config))
+        self._log.debug(f"Configuring ResponsiveImageHandler with {repr(config)}")
         self._config = config
         self.status = self._verify_config_data()
-        self._log.debug("Configuration status: %s" % self.status)
+        self._log.debug(f"Configuration status: {self.status}")
 
         return self.status
 
@@ -425,7 +419,7 @@ class ResponsiveImageHandler(BaseImageHandler):
         if not self._config or not self.status:
             return self.status
 
-        self._log.debug("generate: cropping %s" % self.image)
+        self._log.debug(f"generate: cropping {self.image}")
 
         # Crop the image
         self.status = self._crop_image()
@@ -448,7 +442,7 @@ class ResponsiveImageHandler(BaseImageHandler):
         # Clean up
         unhandled_image_name = self.image.image.name
         self.image.delete()
-        self._log.debug("UnhandledImage %s was deleted" % unhandled_image_name)
+        self._log.debug(f"UnhandledImage {unhandled_image_name} was deleted")
 
         return GalleryStatus(True, "success", responsive_image)
 
@@ -499,8 +493,7 @@ class ResponsiveImageHandler(BaseImageHandler):
         memfile.close()
 
         self._log.debug(
-            "_crop_image: successfully cropped %s"
-            % get_responsive_original_path(destination_path)
+            f"_crop_image: successfully cropped {get_responsive_original_path(destination_path)}"
         )
 
         return GalleryStatus(True, "success", image)
@@ -535,13 +528,12 @@ class ResponsiveImageHandler(BaseImageHandler):
 
         try:
             image = ImageOps.fit(image, (target_width, target_height), Image.LANCZOS)
-        except IOError as io_error:
+        except OSError as io_error:
             self._log.error(
-                "Critical error while resizing %s to %s (Image truncation)"
-                % (filename, size)
+                f"Critical error while resizing {filename} to {size} (Image truncation)"
             )
             return GalleryStatus(
-                False, "Image source is truncated (%s)" % io_error, io_error
+                False, f"Image source is truncated ({io_error})", io_error
             )
 
         quality = gallery_settings.RESPONSIVE_IMAGE_QUALITY
@@ -557,13 +549,10 @@ class ResponsiveImageHandler(BaseImageHandler):
             memfile.close()
             image.close()
             self._log.debug(
-                "Successsfully resized %s to %s"
-                % (filename, (target_width, target_height))
+                f"Successsfully resized {filename} to {(target_width, target_height)}"
             )
-        except IOError as io_error:
-            self._log.error(
-                "Critical error while saving image %s: %s" % (filename, io_error)
-            )
+        except OSError as io_error:
+            self._log.error(f"Critical error while saving image {filename}: {io_error}")
             return GalleryStatus
 
         return GalleryStatus(True, "success", destination_path)
@@ -606,8 +595,9 @@ class ResponsiveImageHandler(BaseImageHandler):
         )
 
         self._log.debug(
-            "Downsizing images based on model profile: %s"
-            % repr(gallery_settings.MODELS[self._config["preset"]]["sizes"])
+            "Downsizing images based on model profile: {}".format(
+                repr(gallery_settings.MODELS[self._config["preset"]]["sizes"])
+            )
         )
 
         # Resize the images based on bootstrap breakpoint sizes for each preset type
@@ -696,7 +686,7 @@ class ResponsiveImageHandler(BaseImageHandler):
             missing = required - provided
             return GalleryStatus(
                 False,
-                "Configuration is missing the following attributes %s" % missing,
+                f"Configuration is missing the following attributes {missing}",
                 self._config,
             )
 
@@ -732,7 +722,7 @@ class ResponsiveImageHandler(BaseImageHandler):
         return GalleryStatus(valid, "success", self._config)
 
     def __str__(self):
-        return "ResponsiveImageHandler: %s (Status: %s)" % (self.image, self.status)
+        return f"ResponsiveImageHandler: {self.image} (Status: {self.status})"
 
 
 # Support functions
@@ -986,8 +976,7 @@ def verify_directory_structure():
         )
     ):
         logging.getLogger(__name__).info(
-            "%s directory did not exist, creating it..."
-            % gallery_settings.UNHANDLED_THUMBNAIL_PATH
+            f"{gallery_settings.UNHANDLED_THUMBNAIL_PATH} directory did not exist, creating it..."
         )
         os.makedirs(
             os.path.join(
@@ -1000,8 +989,7 @@ def verify_directory_structure():
         )
     ):
         logging.getLogger(__name__).info(
-            "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_THUMBNAIL_PATH
+            f"{gallery_settings.RESPONSIVE_THUMBNAIL_PATH} directory did not exist, creating it..."
         )
         os.makedirs(
             os.path.join(
@@ -1014,8 +1002,7 @@ def verify_directory_structure():
         )
     ):
         logging.getLogger(__name__).info(
-            "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_XS_PATH
+            f"{gallery_settings.RESPONSIVE_IMAGES_XS_PATH} directory did not exist, creating it..."
         )
         os.makedirs(
             os.path.join(
@@ -1028,8 +1015,7 @@ def verify_directory_structure():
         )
     ):
         logging.getLogger(__name__).info(
-            "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_SM_PATH
+            f"{gallery_settings.RESPONSIVE_IMAGES_SM_PATH} directory did not exist, creating it..."
         )
         os.makedirs(
             os.path.join(
@@ -1042,8 +1028,7 @@ def verify_directory_structure():
         )
     ):
         logging.getLogger(__name__).info(
-            "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_MD_PATH
+            f"{gallery_settings.RESPONSIVE_IMAGES_MD_PATH} directory did not exist, creating it..."
         )
         os.makedirs(
             os.path.join(
@@ -1056,8 +1041,7 @@ def verify_directory_structure():
         )
     ):
         logging.getLogger(__name__).info(
-            "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_LG_PATH
+            f"{gallery_settings.RESPONSIVE_IMAGES_LG_PATH} directory did not exist, creating it..."
         )
         os.makedirs(
             os.path.join(
@@ -1070,8 +1054,7 @@ def verify_directory_structure():
         )
     ):
         logging.getLogger(__name__).info(
-            "%s directory did not exist, creating it..."
-            % gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH
+            f"{gallery_settings.RESPONSIVE_IMAGES_WIDE_PATH} directory did not exist, creating it..."
         )
         os.makedirs(
             os.path.join(

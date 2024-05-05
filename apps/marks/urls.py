@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from apps.api.utils import SharedAPIRootRouter
 from apps.marks import views
 

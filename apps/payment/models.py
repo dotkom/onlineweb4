@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import uuid
-from typing import List
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -257,7 +254,7 @@ class PaymentRelation(ReceiptMixin, StripeMixin, models.Model):
     def get_receipt_description(self) -> str:
         return self.payment.description()
 
-    def get_receipt_items(self) -> List[dict]:
+    def get_receipt_items(self) -> list[dict]:
         return self.payment.content_object.get_payment_receipt_items(self)
 
     def get_receipt_from_email(self) -> str:
@@ -283,7 +280,7 @@ class PaymentRelation(ReceiptMixin, StripeMixin, models.Model):
     def save(self, *args, **kwargs):
         if not self.unique_id:
             self.unique_id = str(uuid.uuid4())
-        super(PaymentRelation, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.payment.description() + " - " + str(self.user)
@@ -349,8 +346,8 @@ class PaymentReceipt(models.Model):
         subject: str,
         description: str,
         payment_id: str,
-        items: List[dict],
-        to_users: List[User],
+        items: list[dict],
+        to_users: list[User],
         from_mail: str,
     ):
         """Send confirmation email with receipt"""

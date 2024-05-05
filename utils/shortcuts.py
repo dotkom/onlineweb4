@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 import json
 
 from django.http import HttpResponse

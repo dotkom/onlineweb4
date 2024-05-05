@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from chunks.models import Chunk
 from rest_framework import serializers
 

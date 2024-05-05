@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 
 from django.conf import settings
@@ -308,9 +307,7 @@ class GSuiteCreateAccount(View):
             create_g_suite_account(request.user)
             messages.success(
                 request,
-                "Opprettet en G Suite konto til deg. Sjekk primærepostadressen din ({}) for instruksjoner.".format(
-                    request.user.email
-                ),
+                f"Opprettet en G Suite konto til deg. Sjekk primærepostadressen din ({request.user.email}) for instruksjoner.",
             )
         except HttpError as err:
             if err.resp.status == 409:

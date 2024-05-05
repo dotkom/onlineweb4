@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-
-
 import datetime
-from datetime import timezone
 
 from django.db import migrations, models
 
@@ -17,7 +13,7 @@ class Migration(migrations.Migration):
             name="timestamp",
             field=models.DateTimeField(
                 default=datetime.datetime(
-                    2015, 9, 16, 17, 53, 35, 899762, tzinfo=timezone.utc
+                    2015, 9, 16, 17, 53, 35, 899762, tzinfo=datetime.UTC
                 ),
                 auto_now_add=True,
             ),

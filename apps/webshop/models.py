@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from typing import List
-
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.validators import (
@@ -145,7 +142,7 @@ class ProductSize(models.Model):
 
     def __str__(self):
         if self.description:
-            return "%s - %s" % (self.size, self.description)
+            return f"{self.size} - {self.description}"
         return self.size
 
     class Meta:
@@ -185,8 +182,8 @@ class Order(models.Model):
 
     def __str__(self):
         if self.size:
-            return "%sx %s (%s)" % (self.quantity, self.product, self.size.size)
-        return "%sx %s" % (self.quantity, self.product)
+            return f"{self.quantity}x {self.product} ({self.size.size})"
+        return f"{self.quantity}x {self.product}"
 
     class Meta:
         verbose_name = "Bestilling"
@@ -233,7 +230,7 @@ class OrderLine(PaymentMixin, models.Model):
     @property
     def payment_description(self):
         all_orders = self.orders.all()
-        order_count = sum(map(lambda order: order.quantity, all_orders))
+        order_count = sum(order.quantity for order in all_orders)
         return f"{order_count} varer fra Onlines webshop"
 
     def count_orders(self):
@@ -258,7 +255,7 @@ class OrderLine(PaymentMixin, models.Model):
         Returns:
             bool: orders are valid
         """
-        return all((order.is_valid() for order in self.orders.all()))
+        return all(order.is_valid() for order in self.orders.all())
 
     def update_stock(self, order):
         """Updates stock for ProductSize if present or Product
@@ -311,7 +308,7 @@ class OrderLine(PaymentMixin, models.Model):
         self.paid = False
         self.save()
 
-    def get_payment_receipt_items(self, payment_relation) -> List[dict]:
+    def get_payment_receipt_items(self, payment_relation) -> list[dict]:
         items = []
 
         for order in self.orders.all():
@@ -324,7 +321,7 @@ class OrderLine(PaymentMixin, models.Model):
         return items
 
     def __str__(self):
-        return "Webshop purchase %s by %s" % (self.datetime, self.user)
+        return f"Webshop purchase {self.datetime} by {self.user}"
 
     class Meta:
         permissions = (("view_order_line", "View Order Line"),)

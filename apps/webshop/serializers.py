@@ -249,7 +249,7 @@ class OrderLineCreateSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         user_order_lines = OrderLine.objects.filter(user=request.user)
 
-        has_unpaid_order_line = any([not line.paid for line in user_order_lines])
+        has_unpaid_order_line = any(not line.paid for line in user_order_lines)
         if has_unpaid_order_line:
             raise serializers.ValidationError(
                 "Du har allerede en handlekurv som ikke er betalt, betal eller slett den for å kunne opprette en ny"

@@ -2,6 +2,7 @@ import logging
 from copy import deepcopy
 from datetime import timedelta
 
+import pytest
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
@@ -90,6 +91,7 @@ class AuthenticationTest(TestCase):
         self.assertEqual(0, self.user.year)
 
 
+@pytest.mark.xdist_group(name="settings")
 class UserGroupSyncTestCase(TestCase):
     def setUp(self):
         self.user = G(OnlineUser)

@@ -1,7 +1,7 @@
-# -*- encoding: utf-8 -*-
 import logging
 from datetime import timedelta
 
+import pytest
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -244,10 +244,8 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         set_marks("test_title", users)
         mark = Mark.objects.get()
 
-        self.assertEqual(set(users), set([mu.user for mu in mark.given_to.all()]))
-        self.assertNotEqual(
-            set(all_users), set([mu.user for mu in mark.given_to.all()])
-        )
+        self.assertEqual(set(users), {mu.user for mu in mark.given_to.all()})
+        self.assertNotEqual(set(all_users), {mu.user for mu in mark.given_to.all()})
 
     def test_login(self):
         client = Client()
@@ -288,6 +286,8 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
     # TODO test permissions when implemented
 
 
+# FIXME: why is this failing when running multiple tests at once??
+@pytest.mark.xdist_group(name="isolated_unknown")
 class FeedbackViewTestCase(FeedbackTestCaseMixin, TestCase):
     def setUp(self):
         super().setUp()

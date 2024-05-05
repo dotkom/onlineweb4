@@ -7,9 +7,15 @@ from django.utils.timezone import datetime
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import serializers
 
-from apps.authentication.models import GroupMember, GroupRole, Membership, OnlineGroup
+from apps.authentication.models import (
+    GroupMember,
+    GroupRole,
+    Membership,
+    OnlineGroup,
+    Position,
+    SpecialPosition,
+)
 from apps.authentication.models import OnlineUser as User
-from apps.authentication.models import Position, SpecialPosition
 from apps.gallery.models import ResponsiveImage
 from apps.gallery.serializers import ResponsiveImageSerializer
 

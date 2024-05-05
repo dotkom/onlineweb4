@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 from collections import Counter
 from logging import getLogger
 
@@ -21,7 +19,7 @@ def article_index(request):
     context = get_base_context(request)
     context["articles"] = Article.objects.all().order_by("-published_date")
     context["years"] = sorted(
-        list(set(a.published_date.year for a in context["articles"])), reverse=True
+        {a.published_date.year for a in context["articles"]}, reverse=True
     )
     context["pages"] = list(range(1, context["articles"].count() // 10 + 2))
 
@@ -29,7 +27,7 @@ def article_index(request):
     queryset = TaggedItem.objects.filter(
         content_type=ContentType.objects.get_for_model(Article)
     )
-    context["tags"] = Counter(map(lambda item: item.tag, queryset)).most_common(30)
+    context["tags"] = Counter(item.tag for item in queryset).most_common(30)
 
     return render(request, "article/dashboard/article_index.html", context)
 
@@ -86,7 +84,7 @@ def article_edit(request, article_id):
             article_heading = instance.heading
             article_id = instance.id
             instance.delete()
-            messages.success(request, "%s ble slettet." % article_heading)
+            messages.success(request, f"{article_heading} ble slettet.")
             getLogger(__name__).info(
                 "%s deleted article %d (%s)"
                 % (request.user, article_id, article_heading)

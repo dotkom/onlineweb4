@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db import models
@@ -103,9 +101,9 @@ class Poster(OrderMixin):
 
     def __str__(self):
         if self.order_type == 1:
-            return _("Plakatbestilling: %(event)s" % {"event": self.event.title})
+            return _("Plakatbestilling: {event}".format(event=self.event.title))
         else:
-            return _("Generell bestilling: %(title)s" % {"title": self.title})
+            return _("Generell bestilling: {title}".format(title=self.title))
 
 
 class CustomText(models.Model):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 
 from django.core.mail import EmailMessage
@@ -29,7 +28,7 @@ def set_event_marks():
                 bcc=message.not_attended_mails,
             )
             email.send_in_background(
-                error_callback=lambda e, nse, se: handle_mail_error(
+                error_callback=lambda e, nse, se, message=message: handle_mail_error(
                     e,
                     nse,
                     se,
@@ -50,14 +49,16 @@ def set_event_marks():
             logger.info("Email sent to: " + message.committee_mail)
 
 
-def set_marks(attendance_event, logger=logging.getLogger()):
+def set_marks(attendance_event, logger=None):
+    if logger is None:
+        logger = logging.getLogger()
     event = attendance_event.event
     logger.info('Proccessing "' + event.title + '"')
     mark = Mark()
-    mark.title = "Manglende oppmøte på %s" % (event.title)
+    mark.title = f"Manglende oppmøte på {event.title}"
     mark.category = event.event_type
-    mark.description = "Du har fått en prikk på grunn av manglende oppmøte på %s." % (
-        event.title
+    mark.description = (
+        f"Du har fått en prikk på grunn av manglende oppmøte på {event.title}."
     )
     mark.save()
 
@@ -90,16 +91,11 @@ def generate_message(attendance_event):
 
     message.subject = title
     message.intro = (
-        'Hei\n\nPå grunn av manglende oppmøte på "%s" har du fått en prikk' % (title)
+        f'Hei\n\nPå grunn av manglende oppmøte på "{title}" har du fått en prikk'
     )
-    message.contact = "\n\nEventuelle spørsmål sendes til %s " % (
-        message.committee_mail
-    )
+    message.contact = f"\n\nEventuelle spørsmål sendes til {message.committee_mail} "
     message.send = True
-    message.committee_message = (
-        'På grunn av manglende oppmøte på "%s" har følgende brukere fått en prikk:\n'
-        % (event.title)
-    )
+    message.committee_message = f'På grunn av manglende oppmøte på "{event.title}" har følgende brukere fått en prikk:\n'
     message.committee_message += not_attended_string
     return message
 
@@ -125,5 +121,5 @@ class Message:
     committee_message = False
 
     def __str__(self):
-        message = "%s %s %s" % (self.intro, self.contact, self.end)
+        message = f"{self.intro} {self.contact} {self.end}"
         return message

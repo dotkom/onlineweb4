@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collections import Counter
 
 from django.contrib.contenttypes.models import ContentType
@@ -41,7 +39,7 @@ def archive(request, name=None, slug=None, year=None, month=None):
     )
     if name and slug:
         queryset = queryset.filter(tag__name=name)
-    tags = Counter(map(lambda item: item.tag, queryset)).most_common(30)
+    tags = Counter(item.tag for item in queryset).most_common(30)
 
     return render(request, "article/archive.html", {"tags": tags, "dates": dates})
 

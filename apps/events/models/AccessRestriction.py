@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from django.contrib.auth.models import Group
 from django.db import models
 from django.utils import timezone
@@ -131,7 +129,7 @@ class RuleBundle(models.Model):
     user_group_rules = models.ManyToManyField(UserGroupRule, blank=True)
 
     def get_all_rules(self):
-        rules: List[Rule] = []
+        rules: list[Rule] = []
         rules.extend(self.field_of_study_rules.all())
         rules.extend(self.grade_rules.all())
         rules.extend(self.user_group_rules.all())
@@ -143,7 +141,7 @@ class RuleBundle(models.Model):
 
     def satisfied(
         self, user: User, registration_start: timezone.datetime
-    ) -> List[AttendanceResult]:
+    ) -> list[AttendanceResult]:
         errors = []
 
         for rule in self.get_all_rules():
@@ -180,8 +178,8 @@ class RuleBundle(models.Model):
 
 
 def reduce_attendance_results(
-    responses: List[AttendanceResult],
-) -> Optional[AttendanceResult]:
+    responses: list[AttendanceResult],
+) -> AttendanceResult | None:
     """
     Reduce a list of multiple AttendanceResults to a single AttendanceResult.
 
@@ -195,9 +193,9 @@ def reduce_attendance_results(
     :return: A single AttendanceResult, or None if responses is empty
     """
     # Put the smallest offset faaar into the future.
-    offset_response: Optional[AttendanceResult] = None
-    future_response: Optional[AttendanceResult] = None
-    first_result: Optional[AttendanceResult] = None
+    offset_response: AttendanceResult | None = None
+    future_response: AttendanceResult | None = None
+    first_result: AttendanceResult | None = None
 
     for response in responses:
         if response.status:

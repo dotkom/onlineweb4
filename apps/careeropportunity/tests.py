@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from django.test import TestCase
 from django.urls import reverse
@@ -21,8 +21,8 @@ class CareerOpportunityURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_careeropportunity_detail(self):
-        past = datetime(2000, 1, 1, 1, 0, 0, 0, timezone.utc)
-        future = datetime.now(timezone.utc) + timedelta(days=1)
+        past = datetime(2000, 1, 1, 1, 0, 0, 0, UTC)
+        future = datetime.now(UTC) + timedelta(days=1)
         careeropportunity = G(CareerOpportunity, start=past, end=future)
 
         url = reverse("careeropportunity_details", args=(careeropportunity.id,))
@@ -37,8 +37,8 @@ class CompanyAPITestCase(GetUrlMixin, APITestCase):
 
     def setUp(self):
         self.company: Company = G(Company, name="online")
-        self.past = datetime.now(timezone.utc) - timedelta(days=7)
-        self.future = datetime.now(timezone.utc) + timedelta(days=7)
+        self.past = datetime.now(UTC) - timedelta(days=7)
+        self.future = datetime.now(UTC) + timedelta(days=7)
         self.opportunity: CareerOpportunity = G(
             CareerOpportunity, start=self.past, end=self.future, company=self.company
         )
@@ -64,12 +64,9 @@ class CompanyAPITestCase(GetUrlMixin, APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        opportunity_titles = list(
-            map(
-                lambda opportunity: opportunity.get("title"),
-                response.json().get("results"),
-            )
-        )
+        opportunity_titles = [
+            opportunity.get("title") for opportunity in response.json().get("results")
+        ]
 
         self.assertIn(self.opportunity.title, opportunity_titles)
         self.assertNotIn(other_opportunity.title, opportunity_titles)

@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 #
 # Created by 'myth' on 10/24/15
 
@@ -50,7 +49,7 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
                     total_disk_usage += img.total_size
                 except OSError as e:
                     getLogger(__name__).error(
-                        "GalleryIndex file summation on missing file: %s" % e
+                        f"GalleryIndex file summation on missing file: {e}"
                     )
 
         # Filter out potential ResponsiveImage objects that have orphan file references
@@ -59,12 +58,12 @@ class GalleryIndex(DashboardPermissionMixin, ListView):
         # Add query filters and some statistics on disk usage
         context["years"] = years
         context["tags"] = sorted(
-            set(
+            {
                 tag.tag.name
                 for tag in TaggedItem.objects.filter(
                     content_type=ContentType.objects.get_for_model(ResponsiveImage)
                 ).order_by("tag__name")
-            )
+            }
         )
         context["disk_usage"] = humanize_size(total_disk_usage)
 
@@ -161,7 +160,7 @@ class GalleryUnhandledIndex(DashboardPermissionMixin, ListView):
                 messages.success(request, "Alle ubehandlede bilder ble slettet")
 
                 getLogger(__name__).info(
-                    "%s deleted all UnhandledImage instances" % self.request.user
+                    f"{self.request.user} deleted all UnhandledImage instances"
                 )
 
                 return redirect(reverse("gallery_dashboard:unhandled"))

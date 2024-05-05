@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import json
 
 from django.contrib import messages
@@ -105,7 +103,7 @@ def attend_event(request, event_id):
     form = CaptchaForm(request.POST, user=request.user)
 
     if not form.is_valid():
-        for field, errors in form.errors.items():
+        for errors in form.errors.values():
             for error in errors:
                 messages.error(request, error)
 
@@ -291,32 +289,29 @@ def generate_json(request, event_id):
     waiters = event.attendance_event.waitlist_qs
     reserve = event.attendance_event.reservees_qs
     # Goes though attendance, the waitlist and reservations, and adds them to a json file.
-    attendees = []
-    for a in attendee_sorted:
-        attendees.append(
-            {
-                "first_name": a.user.first_name,
-                "last_name": a.user.last_name,
-                "year": a.user.year,
-                "email": a.user.email,
-                "phone_number": a.user.phone_number,
-                "allergies": a.user.allergies,
-            }
-        )
-    waitlist = []
-    for w in waiters:
-        waitlist.append(
-            {
-                "first_name": w.user.first_name,
-                "last_name": w.user.last_name,
-                "year": w.user.year,
-                "phone_number": w.user.phone_number,
-            }
-        )
+    attendees = [
+        {
+            "first_name": a.user.first_name,
+            "last_name": a.user.last_name,
+            "year": a.user.year,
+            "email": a.user.email,
+            "phone_number": a.user.phone_number,
+            "allergies": a.user.allergies,
+        }
+        for a in attendee_sorted
+    ]
 
-    reservees = []
-    for r in reserve:
-        reservees.append({"name": r.name, "note": r.note})
+    waitlist = [
+        {
+            "first_name": w.user.first_name,
+            "last_name": w.user.last_name,
+            "year": w.user.year,
+            "phone_number": w.user.phone_number,
+        }
+        for w in waiters
+    ]
+
+    reservees = [{"name": r.name, "note": r.note} for r in reserve]
 
     response = HttpResponse(content_type="application/json")
     response["Content-Disposition"] = (

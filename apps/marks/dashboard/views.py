@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 import json
 
 import django.utils.timezone
@@ -170,7 +168,7 @@ def marks_delete(request, pk):
     mark = get_object_or_404(Mark, pk=pk)
 
     # Save message
-    messages.success(request, "%s er ble slettet." % mark.title)
+    messages.success(request, f"{mark.title} er ble slettet.")
 
     # Delete the mark
     mark.delete()
@@ -199,7 +197,7 @@ def _handle_mark_detail(request, context, resp):
         context["mark"].save()
 
         # Set information to resp
-        resp["message"] = "%s ble fjernet fra %s" % (
+        resp["message"] = "{} ble fjernet fra {}".format(
             user.get_full_name(),
             context["mark"].title,
         )
@@ -216,8 +214,9 @@ def _handle_mark_detail(request, context, resp):
             if context_mark_user.user == user:
                 resp = {
                     "status": 500,
-                    "message": "%s har allerede prikken %s."
-                    % (user.get_full_name(), context["mark"].title),
+                    "message": "{} har allerede prikken {}.".format(
+                        user.get_full_name(), context["mark"].title
+                    ),
                 }
 
                 # Return ajax
@@ -235,9 +234,7 @@ def _handle_mark_detail(request, context, resp):
         mark_user.save()
 
         # Build new list of users
-        mark_users_list = []
-        for context_mark_user in context["mark_users"]:
-            mark_users_list.append(context_mark_user)
+        mark_users_list = list(context["mark_users"])
         mark_users_list.append(mark_user)
 
         # Sort the list of mark users
@@ -248,7 +245,7 @@ def _handle_mark_detail(request, context, resp):
         resp["mark_users"].sort(key=lambda x: x["user"])
 
         # Set information to resp
-        resp["message"] = "%s ble tildelt prikken %s." % (
+        resp["message"] = "{} ble tildelt prikken {}.".format(
             user.get_full_name(),
             context["mark"].title,
         )

@@ -167,11 +167,11 @@ class PaymentRelationCreateSerializer(serializers.ModelSerializer):
             logger.error(
                 f"Stripe charge for {request.user} failed with card_error: {error}"
             )
-            raise serializers.ValidationError(error)
+            raise serializers.ValidationError(error) from err
 
         except stripe.error.StripeError as error:
             logger.error(f"An error occurred during the Stripe charge: {error}")
-            raise serializers.ValidationError(error)
+            raise serializers.ValidationError(error) from error
 
     class Meta:
         model = PaymentRelation
@@ -237,7 +237,7 @@ class PaymentRelationUpdateSerializer(serializers.ModelSerializer):
             )
             raise ValidationError(
                 "Det skjedde en feil under bekreftelsen av betalingen."
-            )
+            ) from error
 
     class Meta:
         model = PaymentRelation

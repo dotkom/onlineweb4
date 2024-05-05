@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 
 from django.conf import settings
@@ -18,7 +17,7 @@ except ImportError:
 class SynchronizeGroups:
     @staticmethod
     def run():
-        logger = logging.getLogger("syncer.%s" % __name__)
+        logger = logging.getLogger(f"syncer.{__name__}")
 
         if hasattr(settings, "GROUP_SYNCER"):
             logger.info("Running group syncer.")
@@ -61,8 +60,7 @@ class SynchronizeGroups:
                         # User is not in the current destination group, add
                         destination_group_object.user_set.add(user)
                         logger.info(
-                            "%s added to group %s"
-                            % (user, destination_group_object.name)
+                            f"{user} added to group {destination_group_object.name}"
                         )
 
     @staticmethod
@@ -106,8 +104,7 @@ class SynchronizeGroups:
                             ).first()
                             destination_group.user_set.remove(user)
                             logger.info(
-                                "%s removed from group %s"
-                                % (user, destination_group.name)
+                                f"{user} removed from group {destination_group.name}"
                             )
 
 

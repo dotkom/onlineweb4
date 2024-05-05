@@ -144,12 +144,12 @@ class ProductImage(DashboardPermissionMixin, DetailView):
         context["images"] = [i for i in images if i.file_status_ok()]
 
         context["tags"] = sorted(
-            set(
+            {
                 tag.tag.name
                 for tag in TaggedItem.objects.filter(
                     content_type=ContentType.objects.get_for_model(ResponsiveImage)
                 ).order_by("tag__name")
-            )
+            }
         )
 
         return context

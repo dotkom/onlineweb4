@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 from django.conf import settings
 from django.db import migrations, models
 
@@ -120,6 +117,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.AlterUniqueTogether(
-            name="markuser", unique_together=set([("user", "mark")])
+            name="markuser", unique_together={("user", "mark")}
         ),
     ]

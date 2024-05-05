@@ -23,5 +23,3 @@ class FeedbackConfig(AppConfig):
         reversion.register(RatingAnswer)
         reversion.register(RegisterToken)
         reversion.register(TextAnswer)
-
-        import apps.feedback.signals  # noqa: F401

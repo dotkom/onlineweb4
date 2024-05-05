@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 
+import pytest
 from django.conf import settings
 from django.test import TestCase, override_settings
 from django.utils import timezone
@@ -10,6 +9,7 @@ from django_dynamic_fixture import G
 from apps.events.models import AttendanceEvent, Event
 
 
+@pytest.mark.xdist_group(name="settings")
 class EventOrderedByRegistrationTestCase(TestCase):
     def setUp(self):
         self.FEATURED_TIMEDELTA_SETTINGS = settings

@@ -42,7 +42,7 @@ def _handle_poster_add(request, form, order_type):
     title = str(poster)
 
     # The great sending of emails
-    subject = "[prokom] Ny bestilling | %s" % title
+    subject = f"[prokom] Ny bestilling | {title}"
 
     poster.absolute_url = request.build_absolute_uri(poster.get_dashboard_url())
     context = {}
@@ -71,7 +71,7 @@ def _handle_poster_add(request, form, order_type):
 
 def _handle_poster_celebration(poster, context):
     logger = logging.getLogger(__name__)
-    subject = "[dotkom] Gratulerer med {} plakater!".format(poster.id)
+    subject = f"[dotkom] Gratulerer med {poster.id} plakater!"
     message = render_to_string("posters/email/100_multiple_order.txt", context)
 
     from_email = settings.EMAIL_DOTKOM

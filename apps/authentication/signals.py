@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import uuid
 
@@ -17,7 +16,7 @@ from apps.gsuite.mail_syncer.main import update_g_suite_group, update_g_suite_us
 from utils.disable_for_loaddata import disable_for_loaddata
 
 User = get_user_model()
-logger = logging.getLogger("syncer.%s" % __name__)
+logger = logging.getLogger(f"syncer.{__name__}")
 sync_uuid = uuid.uuid1()
 
 MAILING_LIST_USER_FIELDS_TO_LIST_NAME = settings.MAILING_LIST_USER_FIELDS_TO_LIST_NAME
@@ -32,11 +31,11 @@ def run_group_syncer(user: User) -> None:
     if settings.OW4_GSUITE_SYNC.get("ENABLED", False):
         ow4_gsuite_domain = settings.OW4_GSUITE_SYNC.get("DOMAIN")
         if isinstance(user, User):
-            logger.debug("Running G Suite syncer for user {}".format(user))
+            logger.debug(f"Running G Suite syncer for user {user}")
             update_g_suite_user(ow4_gsuite_domain, user, suppress_http_errors=True)
         elif isinstance(user, Group):
             group = user
-            logger.debug("Running G Suite syncer for group {}".format(group))
+            logger.debug(f"Running G Suite syncer for group {group}")
             update_g_suite_group(
                 ow4_gsuite_domain, group.name, suppress_http_errors=True
             )
@@ -63,17 +62,14 @@ def trigger_group_syncer(sender, instance: Group, created=False, **kwargs):
         # those models as they will trigger a recursive call to this method.
         if sender == User.groups.through:
             logger.debug(
-                "Disconnect m2m_changed signal hook with uuid %s before synchronizing groups"
-                % sync_uuid
+                f"Disconnect m2m_changed signal hook with uuid {sync_uuid} before synchronizing groups"
             )
             if m2m_changed.disconnect(sender=sender, dispatch_uid=sync_uuid):
-                logger.debug("Signal with uuid %s disconnected" % sync_uuid)
+                logger.debug(f"Signal with uuid {sync_uuid} disconnected")
                 run_group_syncer(instance)
 
             sync_uuid = uuid.uuid1()
-            logger.debug(
-                "m2m_changed signal hook reconnected with uuid: %s" % sync_uuid
-            )
+            logger.debug(f"m2m_changed signal hook reconnected with uuid: {sync_uuid}")
             m2m_changed.connect(
                 receiver=trigger_group_syncer,
                 dispatch_uid=sync_uuid,

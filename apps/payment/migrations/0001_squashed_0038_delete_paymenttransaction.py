@@ -43,7 +43,6 @@ def m29_forward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     replaces = [
         ("payment", "0001_initial"),
         ("payment", "0002_payment_active"),

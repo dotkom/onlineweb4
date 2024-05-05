@@ -89,19 +89,15 @@ Om feilen vedvarer etter en refresh, kontakt dotkom@online.ntnu.no."""
                 membership.expiration_date = app.new_expiry_date
                 if not membership.description:
                     membership.description = ""
-                membership.description += """
+                membership.description += f"""
 -------------------
 Updated by approvals app.
 
-Approved by %s on %s.
+Approved by {request.user.get_full_name()} on {str(timezone.now().date())}.
 
 Old notes:
-%s
-""" % (
-                    request.user.get_full_name(),
-                    str(timezone.now().date()),
-                    membership.note,
-                )
+{membership.note}
+"""
                 membership.note = (
                     user.get_field_of_study_display() + " " + str(user.started_date)
                 )
@@ -114,12 +110,9 @@ Old notes:
                 membership.note = (
                     user.get_field_of_study_display() + " " + str(user.started_date)
                 )
-                membership.description = """Added by approvals app.
+                membership.description = f"""Added by approvals app.
 
-Approved by %s on %s.""" % (
-                    request.user.get_full_name(),
-                    str(timezone.now().date()),
-                )
+Approved by {request.user.get_full_name()} on {str(timezone.now().date())}."""
                 membership.save()
 
         app.processed = True
