@@ -1,3 +1,4 @@
+import pytest
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -38,6 +39,7 @@ class PosterPermissionTestCase(TestCase):
         self.assertNotIn(self.ordering_user, all_admin_users)
 
 
+@pytest.mark.xdist_group(name="settings")
 class AddPosterTestCase(TestCase):
     def test_create_poster_order(self):
         url = reverse("posters_add", kwargs={"order_type": 3})

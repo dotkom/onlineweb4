@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pytest
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase, override_settings
@@ -8,6 +9,7 @@ from apps.gsuite.auth import build_g_suite_service
 from apps.gsuite.mail_syncer.utils import setup_g_suite_client
 
 
+@pytest.mark.xdist_group(name="settings")
 class GSuiteAPIClientTestCase(TestCase):
     def setUp(self):
         self.ow4_gsuite_settings = settings.OW4_GSUITE_SETTINGS.copy()

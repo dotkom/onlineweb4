@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pytest
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import TestCase, override_settings
@@ -23,6 +24,7 @@ from apps.gsuite.mail_syncer.utils import (
 )
 
 
+@pytest.mark.xdist_group(name="settings")
 class GSuiteAPIUtilsTestCase(TestCase):
     """Tests for ow4-side utils of G Suite app, like "get excess groups for user"."""
 

@@ -96,7 +96,7 @@ known_first_party = [ "apps", "utils", "onlineweb4" ]
 DJANGO_SETTINGS_MODULE = "onlineweb4.settings"
 norecursedirs = [ ".*",  "env*", "tmp*" ]
 python_files = [ "tests.py", "*_tests.py" ]
-addopts = "--nomigrations -n auto --dist loadscope"
+addopts = "--nomigrations -n auto --dist loadgroup"
 filterwarnings = [
     # for future maintainers: these fields are documented here
     # https://docs.python.org/3/library/warnings.html#the-warnings-filter

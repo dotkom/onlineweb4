@@ -2,6 +2,7 @@
 import logging
 from datetime import timedelta
 
+import pytest
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.test import TestCase
@@ -288,6 +289,8 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
     # TODO test permissions when implemented
 
 
+# FIXME: why is this failing when running multiple tests at once??
+@pytest.mark.xdist_group(name="isolated_unknown")
 class FeedbackViewTestCase(FeedbackTestCaseMixin, TestCase):
     def setUp(self):
         super().setUp()
