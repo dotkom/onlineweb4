@@ -166,7 +166,7 @@ TAG=$DOCKER_REGISTRY/onlineweb4-zappa:$VERSION
 aws ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY
 
 # If zappa is not available you must install it, alternatively use devcontainer:
-poentry install -E prod
+poetry install -E prod
 # then either run `poetry shell` first, or prepend `poetry run` before the command
 zappa save-python-settings-file $STAGE
 
