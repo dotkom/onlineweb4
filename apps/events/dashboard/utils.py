@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.urls import reverse
 
 from apps.authentication.models import OnlineUser as User

@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 import datetime
 
 from django.contrib import messages

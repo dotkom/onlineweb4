@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from django.forms import ModelForm
 from django.forms.fields import URLField
 

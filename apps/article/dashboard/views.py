@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 from collections import Counter
 from logging import getLogger
 

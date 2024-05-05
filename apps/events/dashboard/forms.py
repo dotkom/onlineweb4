@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django import forms
 from django.contrib.auth.models import Group
 from guardian.shortcuts import get_perms_for_model

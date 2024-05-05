@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.contrib import admin, messages
 from django.utils.translation import gettext as _
 from guardian.admin import GuardedModelAdmin

@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-
 from django.shortcuts import render
 from sentry_sdk import capture_message
+
 from onlineweb4.settings.sentry import OW4_SENTRY_DSN
 
 

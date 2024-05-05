@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 from django.urls import re_path
 
 from apps.approval import views

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from datetime import datetime, timedelta, timezone
 
 from django.core.management.base import BaseCommand

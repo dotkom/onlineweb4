@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from django.urls import re_path
 
 from apps.authentication.dashboard import views

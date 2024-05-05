@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from textwrap import wrap
 
 from pdfdocument.utils import pdf_response

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 An anonymous customizable Feedback Schema application.
 

@@ -1,4 +1,3 @@
-# -*- coding: utf8 -*-
 import json
 from datetime import date, datetime
 
