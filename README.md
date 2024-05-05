@@ -1,17 +1,49 @@
 # Onlineweb 4
 
 [![codecov](https://codecov.io/gh/dotkom/onlineweb4/branch/main/graph/badge.svg)](https://codecov.io/gh/dotkom/onlineweb4)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/dotkom/onlineweb4.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dotkom/onlineweb4/alerts/)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/dotkom/onlineweb4.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/dotkom/onlineweb4/context:python)
 [![Open in Remote - Containers](https://img.shields.io/static/v1?label=Remote%20-%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/dotkom/onlineweb4)
+
+## Contributing
+
+## Development environment
+
+The by far easiest way to start developing is to use Visual Studio Code (VS Code) with
+[remote-containers](https://code.visualstudio.com/docs/remote/containers).
+
+After starting the container you can run the following to run the test-suite:
+
+```sh
+poetry install
+poetry shell
+
+npm ci
+npm run build
+
+# run tests
+pytest
+
+# install pre-commit hooks to automatically check formatting
+pre-commit install
+
+# to run
+./manage.py migrate
+
+./manage.py runserver
+
+# OnlineWeb4 should be available on localhost:8000
+```
+
+
+## Authentication
+
+Authentication goes through our Auth0-tenant, to get access to development configuration contact dotkom@online.ntnu.no.
 
 ## Frameworks
 
 ### Frontend
 
-The frontend code is located in the `assets` folder. It's a mixture of old jQuery code and newer React code.
-The code is built with [webpack](http://webpack.js.org/) and transpiled using [Babel](https://babeljs.io/).
+Frontend code is located in the `assets` folder. It's a mixture of old jQuery code and newer React code.
+The code is bundled with [esbuild](https://esbuild.github.io).
 
 ### Backend
 
@@ -20,121 +52,50 @@ Django templates are in `templates` folder.
 The API uses [Django REST framework](http://www.django-rest-framework.org/)
 
 To find the list of available commands when using `python manage.py` (alternatively `./manage.py`), see the
-[docs](https://docs.djangoproject.com/en/3.2/ref/django-admin/).
+[docs](https://docs.djangoproject.com/en/5.0/ref/django-admin/).
 
 ## Installation - Git and repository setup
 
 ### Setting up your Git user and cloning the repo
 
+We recommend using GitHub's own [Command Line Interface (CLI)](https://cli.github.com):
+
 ```shell
-git config core.autocrlf false
-git config user.name "<your github username>"
-git config user.email your.github@email.com
-git clone git@github.com:dotkom/onlineweb4.git
+gh auth login
+gh repo clone dotkom/onlineweb4
 cd onlineweb4
 ```
 
-Alternatively we also recommend using GitHub's own [Command Line Interface (CLI)](https://cli.github.com), which
-also eases the creation of pull requests with `gh pr create`.
+Normal flow for making a PR:
 
-## Development environment
-
-The by far easiest way to start developing is to use Visual Studio Code (VS Code) with
-[remote-containers](https://code.visualstudio.com/docs/remote/containers).
-The development environment should be pre-built as part of our Gtihub Actions workflows,
-and should work automatically upon opening this repo locally in VS Code with the extension installed.
-
-Note: the setup has a focus on the Djangp-backend, the frontend is likely to require more manual intervention,
-if you need help feel free to reach out to someone in Dotkom for help!
-
-### Devcontainer variants
-
-We have two ways to run the development environment, with the one suiting you depending on how you want
-to interact with the project dependencies.
-
-Note: regardless of base image, the remaning dependencies (and pre-commit) will be installed when you create the
-container.
-
-> _Important disclaimer:_ Be wary of combining local and devcontainer environments, in particular
-> local `.venv` and `node_modules`-folders can quickly make your environment confusing.
-
-#### Pre-built image with included dependencies (default)
-
-Uses the imge built automatically on change to dependencies, can be quite big, and has a very long wait-time.
-Not recommended if you want to actively develop with changing dependencies.
-
-You can build this image locally by adding `"docker-compose.build.yml"` to the end of the
-`dockerComposeFile`-array in [`devcontainer.json`](/.devcontainer/devcontainer.json).
-
-#### Pre-built image without included dependencies
-
-Useful if your development often involves changing dependencies in `poetry`, but requires that you manually run
-`npm ci` and `poetry install`.
-You can use this method by adding `"docker-compose.no-deps.yml"` to the end of the
-`dockerComposeFile`-array in [`devcontainer.json`](/.devcontainer/devcontainer.json).
-
-You can also build the image locally instead of using our pre-built version by using `docker-compose.no-deps-build.yml` instead.
-
-### Run OnlineWeb4
-
-```shell
-# in one terminal
-npm run build
-
-# in another terminal
-# only required first time
-python manage.py migrate
-
-python manage.py runserver
+```sh
+git switch -c new-feature
+# exciting code
+py.test
+# can use `git add -ip`
+git add <files>
+git commit
+gh pr create
 ```
-
-If you are using the devcontainer, onlineweb4 should then be available at [http://localhost:8000](http://localhost:8000). Please open an issue if that does not work!
 
 ### Local installation
 
-The performance of the containers might be a little lackluster on macOS, in which case you can
-attempt to set up a local Python environemnt. Onlineweb4 is setup to use
-[Poetry](https://python-poetry.org/) for dependency mangement.
+To run the project you need Python 3.11 and node >=18 for bundling the frontend-dependencies.
 
-The following commands _should_ make `py.test` work out of the box, if they do not please open an issue.
+We recommend using either [pyenv](https://github.com/pyenv/pyenv) or [rye](https://rye-up.com) to manage your Python-versions.
+You will need [Poetry](https://python-poetry.org) to install the dependencies, we recommend using [pipx](https://github.com/pypa/pipx) to instal Poetry.
+Using the devcontainer above automatically install the correct python-version and has pipx and poetry pre-installed.
 
-```shell
-# static files are required for tests to pass
-# we use Node 18 and npm, see e.g. https://github.com/nvm-sh/nvm
-# for help with managing multiple Node versions on your system
-npm ci
-npm run build
-
-# recommended for easier debugging
-# saves the virtual environment and all packages to `.venv`
-poetry config virtualenvs.in-project true
-
-# if you do not have Python 3.11 installed, you can use e.g. pyenv to manage them.
-poetry install
-
-# use the virtual environment
-poetry shell
-
-py.test
-```
-
-To start the server first run the database migrations with `python manage.py migrate`,
-and run the server with `python manage.py runserver`.
-
-Next, you need to fire up the front-end stuff, by running `npm install` followed by `npm start`.
-
-The project should now be available at [http://localhost:8000](http://localhost:8000)
+For Node you can use [NVM](https://github.com/nvm-sh/nvm).
 
 ### Testing and linting
 
-We use [pre-commit](https://pre-commit.com) to run linting before each commit.
-`pre-commit` should be automaticall available after running `poetry install`,
-you can set up the git-hooks locally:
+We use [Ruff](https://docs.astral.sh/ruff/) for linting and formatting.
+To run the linting run `ruff check .`.
+You can add git hooks that automatically check the linting when committing with `pre-committ install`.
 
 ```shell
-pre-commit install --install-hooks
-# or if you have not activated the Poetry environment
-poetry run pre-commit install --install-hooks
+pre-commit install
 ```
 
 And run the lints manually by running
@@ -154,31 +115,6 @@ py.test
 
 Which should work as long as you have properly set up the Python environment.
 
-For linting and testing the frontend, we have the following commands, which are not currently set
-up with `pre-commit`:
-
-```shell
-npm run lint
-```
-
-#### Code Test Coverage
-
-```shell
-# you can then open the report in a browser, or instead generate XML-report and use any tool to view it.
-py.test --cov= --cov-report html
-```
-
-#### Editor integration
-
-CI will fail if our requirements for code style are not met. To ensure that you adhere to our code guidelines, we recommend you run linting tools locally before pushing your code. This can be done automatically by using the above-mentioned `pre-commit`.
-
-For potentially improved productivity, you can integrate the linting and formatting tools we use in your editor:
-
-- [Black](https://black.readthedocs.io/en/stable/)
-- [isort](https://github.com/timothycrosley/isort)
-- [Flake8](http://flake8.pycqa.org/)
-- [ESLint](https://eslint.org/docs/about/), with editor plugins available [here](https://eslint.org/docs/user-guide/integrations).
-- [stylelint](https://stylelint.io) for our stylesheets, with editor plugins available [here](https://github.com/stylelint/stylelint/blob/master/docs/user-guide/complementary-tools.md#editor-plugins).
 
 ### Creating migrations
 
@@ -249,67 +185,4 @@ aws s3 sync static "s3://${BUCKET_NAME}/static" --delete --acl=public-read
 ## API
 
 Onlineweb4 comes with an API located at `/api/v1`.  
-Autogenerated Swagger-docs can be found at `/api/v1/docs`.  
-Some endpoints require user authentication. See [OAuth/OIDC](#oauthoidc).
-
-## OAuth/OIDC
-
-Onlineweb4 has an Oauth2/OIDC-provider built-in, allowing external projects to authenticate users through Onlineweb4.  
-[Auth0: Which flow should I use?](https://auth0.com/docs/authorization/which-oauth-2-0-flow-should-i-use)  
-[Digital Ocean: Introduction to Oauth 2](https://www.digitalocean.com/community/tutorials/an-intr
-[Auth0: Authorization Flow with PKCE - Single Page Apps](https://auth0.com/docs/flows/authorization-code-flow-with-proof-key-for-code-exchange-pkce)
-[PKCE: What it is and how to use it with OAuth 2.0](https://www.loginradius.com/blog/async/pkce/)
-
-### For production setup
-
-To authenticate users through `https://online.ntnu.no`, contact `dotkom@online.ntnu.no` for issuing a new client.  
-Follow the steps in _Usage in a project_ for how to use the client information.
-
-### For local setup
-
-Initialize OpenID Connect by creating an RSA-key:
-
-```shell
-python manage.py creatersakey
-```
-
-go to `localhost:8000/admin` and log in with your administrator user.  
-Scroll to `OpenID Connect Provider` and add a new `Client`.  
-Fill in the information related to the selected flow (see linked documentation on flows).
-Upon saving, a client-ID and client secret is generated for you. Revisit the client you created to retrieve the id and secret.
-
-### Usage in a project
-
-[Automated configuration and all endpoints](https://online.ntnu.no/openid/.well-known/openid-configuration)  
-There are many packages that provide oauth2/oidc-helpers. These can be quite helpful to automate much of the OAuth2-flow.
-If you have configured your client correctly, the following `cURL`-commands are the equivalent of the authorization code flow and illustrate how the HTTP-requests are setup.
-
-```bash
-curl -v http://{url:port}/openid/authorize?\
-  client_id={your client_id}&\
-  redirect_uri={your configured callback url}&\
-  response_type={your configured response type}&\
-  scope={your configured scopes}&\
-  state={persistant state through the calls}&\
-```
-
-_Note:_ Two common scopes are `openid` and `onlineweb4`
-This will trigger a 302 Redirect where the user will be asked to login to Onlineweb4.  
-Upon successfull login, the user are redirect to your configured callback url with `?code={authorization_code}&state{persistant state}` added to the url.  
-Retrieve the code from the URL (and check that the state has not been tampered with, i.e. still is the same one.)  
-Exchange the code for an access token which will be used to identify the user in your application.
-
-```shell
-curl -v http://{url:port}/openid/token?
-  \grant_type={grant, i.e. the content of the parenthesis of the response type}
-  \code={code from previous step}
-```
-
-This response will contain some basic information about the user, based on which scopes you requested, as well as an access token which can be added to the authorization header to request data from the API.  
-To use the access token, add `Authorization: Bearer {token}` to your requests to the API.
-
-As a last step, basic user information can be retrieved from the endpoint `/openid/userinfo`.  
-This endpoint requires the `Authorization`-header to be set as mentioned above and the `profile`-scope to have been requested.  
-More information, such as `email` can be retrieved if the `email`-scope have been requested.  
-The full set of scopes for userinfo are: [email, address, phone, offline_access].  
-More information about this endpoint can be found in the [spec](https://openid.net/specs/openid-connect-basic-1_0-28.html#userinfo)
+Autogenerated Swagger-docs can be found at `/api/schema/swagger-ui`.  

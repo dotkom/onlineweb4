@@ -3,42 +3,42 @@
 // Note that this file cannot have trailing commas, since it is modified as part of CI with jq
 {
 	"name": "OnlineWeb4",
-	"dockerComposeFile": [
-		"docker-compose.yml"
-	],
+	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
-	"workspaceFolder": "/workspace",
+	"workspaceFolder": "/workspace/${localWorkspaceFolderBasename}",
 	// Set *default* container specific settings.json values on container create.
-	"settings": {
-		"python.defaultInterpreterPath": "${containerEnv:POETRY_ENV_PATH}/bin/python",
-		"python.linting.enabled": true,
-		"python.linting.pylintEnabled": true,
-		"python.testing.cwd": "/workspace",
-		"python.formatting.autopep8Path": "${containerEnv:POETRY_ENV_PATH}/bin/autopep8",
-		"python.formatting.blackPath": "${containerEnv:POETRY_ENV_PATH}/bin/black",
-		"python.formatting.yapfPath": "${containerEnv:POETRY_ENV_PATH}/bin/yapf",
-		"python.linting.banditPath": "${containerEnv:POETRY_ENV_PATH}/bin/bandit",
-		"python.linting.flake8Path": "${containerEnv:POETRY_ENV_PATH}/bin/flake8",
-		"python.linting.mypyPath": "${containerEnv:POETRY_ENV_PATH}/bin/mypy",
-		"python.linting.pycodestylePath": "${containerEnv:POETRY_ENV_PATH}/bin/pycodestyle",
-		"python.linting.pydocstylePath": "${containerEnv:POETRY_ENV_PATH}/bin/pydocstyle",
-		"python.linting.pylintPath": "${containerEnv:POETRY_ENV_PATH}/bin/pylint",
-		"python.testing.pytestPath": "${containerEnv:POETRY_ENV_PATH}/bin/pytest"
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "${containerEnv:POETRY_ENV_PATH}/bin/python",
+				"python.testing.cwd": "/workspace",
+				"python.testing.pytestPath": "${containerEnv:POETRY_ENV_PATH}/bin/pytest",
+				"dev.containers.copyGitConfig": true
+			},
+			"extensions": [
+				"ms-python.python",
+				"ms-python.vscode-pylance",
+				"charliermarsh.ruff",
+				"tamasfe.even-better-toml",
+				"eamodio.gitlens"
+			]
+		}
 	},
-	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"ms-python.python",
-		"ms-python.vscode-pylance",
-		"bungcip.better-toml"
-	],
+	"features": {
+		"ghcr.io/devcontainers/features/node:1": {
+			"version": "18"
+		},
+		"ghcr.io/devcontainers-contrib/features/poetry:2": {
+			"version": "1.8.2"
+		}
+	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// This can be used to network with other containers or the host.
 	"forwardPorts": [
-		8000, // Django
-		3000 // webpack-dev-server
-	],
+		8000 // Django
+	]
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "poetry install && export POETRY_ENV_PATH=$(poetry env info --path) && poetry run pre-commit install --install-hooks",
+	// "postCreateCommand": "poetry install && export POETRY_ENV_PATH=$(poetry env info --path) && poetry run pre-commit install --install-hooks",
 	// avoids notification about no python-interpreter selected
-	"waitFor": "postCreateCommand"
+	// "waitFor": "postCreateCommand"
 }
