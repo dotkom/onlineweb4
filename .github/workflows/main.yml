@@ -55,7 +55,7 @@ jobs:
         run: pip install poetry==${{ env.POETRY_VERSION }}
 
       - name: Install python dependencies
-        run: poetry install --no-interaction --no-ansi -E postgresql
+        run: poetry install --no-interaction --no-ansi
 
       - name: Install node dependencies
         run: npm ci
