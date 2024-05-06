@@ -40,7 +40,7 @@ pyyaml = "^6.0"
 pywebpush = "^2.0.0"
 
 # Monitoring
-sentry-sdk = { version = "~2.0", extras = [ "django" ] }
+sentry-sdk = { version = "~2.1", extras = [ "django" ] }
 
 # AWS
 boto3 =  { version = "~1.34", optional = true }
