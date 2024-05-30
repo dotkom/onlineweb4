@@ -49,25 +49,22 @@ def set_event_marks():
             logger.info("Email sent to: " + message.committee_mail)
 
 
-def set_marks(attendance_event, logger=None):
+def set_marks(attendance_event: AttendanceEvent, logger=None):
     if logger is None:
         logger = logging.getLogger()
     event = attendance_event.event
-    logger.info('Proccessing "' + event.title + '"')
-    mark = Mark()
-    mark.title = f"Manglende oppmøte på {event.title}"
-    mark.category = event.event_type
-    mark.description = (
-        f"Du har fått en prikk på grunn av manglende oppmøte på {event.title}."
+    logger.info('Proccessing "%s"', event.title)
+    mark = Mark(
+        title=f"Manglende oppmøte på {event.title}",
+        cause=Mark.Cause.NO_ATTENDANCE,
+        description=f"Du har fått en prikk på grunn av manglende oppmøte på {event.title}.",
     )
     mark.save()
 
     for user in attendance_event.not_attended():
-        user_entry = MarkUser()
-        user_entry.user = user
-        user_entry.mark = mark
+        user_entry = MarkUser(user=user, mark=mark)
         user_entry.save()
-        logger.info("Mark given to: " + str(user_entry.user))
+        logger.info("Mark given to: %s", user_entry.user)
 
     attendance_event.marks_has_been_set = True
     attendance_event.save()

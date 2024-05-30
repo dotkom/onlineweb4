@@ -261,8 +261,8 @@ class UserDataSerializer(serializers.ModelSerializer):
     orderline_set = WebshopOrderLineSerializer(many=True)
     # Marks
     accepted_mark_rule_sets = RuleAcceptanceSerializer(many=True)
-    marks = MarkUserSerializer(many=True, source="markuser_set")
-    suspensions = SuspensionSerializer(many=True, source="suspension_set")
+    marks = MarkUserSerializer(many=True)
+    suspensions = SuspensionSerializer(many=True)
     # Approval
     applications = MembershipApprovalSerializer(many=True)
     approved_applications = MembershipApprovalSerializer(many=True)
