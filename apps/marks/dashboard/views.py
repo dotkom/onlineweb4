@@ -1,11 +1,11 @@
 import json
 
-import django.utils.timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from guardian.decorators import permission_required
 
 from apps.authentication.models import OnlineUser as User
@@ -139,7 +139,7 @@ def marks_edit(request, pk):
 
             # Save the additional mark data
             new_mark.last_changed_by = request.user
-            new_mark.last_changed_date = django.utils.timezone.now()
+            new_mark.last_changed_date = timezone.now()
             new_mark.save()
 
             # Add news
@@ -192,7 +192,7 @@ def _handle_mark_detail(request, context, resp):
                 mark_users_filtered.append(mark_user)
 
         # Update mark
-        context["mark"].last_changed_date = django.utils.timezone.now()
+        context["mark"].last_changed_date = timezone.now()
         context["mark"].last_changed_by = request.user
         context["mark"].save()
 
@@ -223,7 +223,7 @@ def _handle_mark_detail(request, context, resp):
                 return HttpResponse(json.dumps(resp), status=500)
 
         # Update mark
-        context["mark"].last_changed_date = django.utils.timezone.now()
+        context["mark"].last_changed_date = timezone.now()
         context["mark"].last_changed_by = request.user
         context["mark"].save()
 
