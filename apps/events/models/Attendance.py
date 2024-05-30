@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import timedelta
+from datetime import datetime
 from random import choice as random_choice
 
 from django.conf import settings
@@ -15,7 +15,8 @@ from guardian.shortcuts import assign_perm
 
 from apps.authentication.models import OnlineGroup
 from apps.companyprofile.models import Company
-from apps.marks.models import get_expiration_date
+from apps.marks.models import is_suspended
+from apps.marks.models import signup_delay as mark_signup_delay
 from apps.payment import status as payment_status
 from apps.payment.mixins import PaymentMixin
 
@@ -88,7 +89,7 @@ class StatusCode(models.IntegerChoices):
 @dataclass
 class AttendanceResult:
     status_code: StatusCode
-    # If the attendee has a postponed admission, this is the delay
+    # If the attendee has a postponed admission, this is the new start time
     offset: timezone.datetime | None = None
 
     @property
@@ -305,34 +306,12 @@ class AttendanceEvent(PaymentMixin, models.Model):
             visible_attendees, key=lambda attendee: attendee["visible"], reverse=True
         )
 
-    def has_delayed_signup(self, user):
-        pass
-
     def is_marked(self, user):
-        expiry_date = get_expiration_date(user)
-        return expiry_date and expiry_date > timezone.now().date()
+        # TODO: just remove this?
+        return mark_signup_delay(user, timezone.now()) is not None
 
-    def has_postponed_registration(self, user):
-        if not self.is_marked(user):
-            return False
-        expiry_date = get_expiration_date(user)
-        mark_offset = timedelta(days=1)
-        postponed_registration_start = self.registration_start + mark_offset
-
-        before_expiry = self.registration_start.date() < expiry_date
-
-        if postponed_registration_start > timezone.now() and before_expiry:
-            return postponed_registration_start
-
-    def is_suspended(self, user):
-        for suspension in user.get_active_suspensions():
-            if (
-                not suspension.expiration_date
-                or suspension.expiration_date > timezone.now().date()
-            ):
-                return True
-
-        return False
+    def is_suspended(self, user, now: datetime | None = None):
+        return is_suspended(user, now)
 
     @property
     def will_i_be_on_wait_list(self):
@@ -352,7 +331,9 @@ class AttendanceEvent(PaymentMixin, models.Model):
         bumped_attendees = self.waitlist_qs[:extra_capacity]
         handle_waitlist_bump(self.event, bumped_attendees, self.payment())
 
-    def is_eligible_for_signup(self, user: User) -> AttendanceResult:
+    def is_eligible_for_signup(
+        self, user: User, now: datetime | None = None
+    ) -> AttendanceResult:
         """
         Checks if a user can attend a specific event
         This method checks for:
@@ -363,20 +344,22 @@ class AttendanceEvent(PaymentMixin, models.Model):
         - Marks
         - Suspension
         """
+        if now is None:
+            now = timezone.now()
         # User is already an attendee
         if self.attendees.filter(user=user).exists():
             return AttendanceResult(StatusCode.ALREADY_SIGNED_UP)
 
-        if timezone.now() > self.registration_end:
+        if now > self.registration_end:
             return AttendanceResult(StatusCode.SIGNUP_CLOSED)
 
-        if timezone.now() < self.registration_start:
+        if now < self.registration_start:
             return AttendanceResult(StatusCode.SIGNUP_NOT_OPENED_YET)
 
         if not self.room_on_event:
             return AttendanceResult(StatusCode.NO_SEATS_LEFT)
 
-        if self.is_suspended(user):
+        if self.is_suspended(user, now):
             return AttendanceResult(StatusCode.SUSPENDED)
 
         # Checks if the event is group restricted and if the user is in the right group
@@ -388,64 +371,28 @@ class AttendanceEvent(PaymentMixin, models.Model):
         response = self.rules_satisfied(user)
 
         if not response.status and response.offset is None:
-            # FIXME: what if offest is something?
             return response
 
-        # Do I have any marks that postpone my registration date?
-        response = self._check_marks(response, user)
+        if mark_offset := mark_signup_delay(user, self.registration_start.date()):
+            curr_start = response.offset or self.registration_start
+            new_reg_start = curr_start + mark_offset
 
-        # Return response if offset was set.
-        if response.offset is not None and response.offset > timezone.now():
-            return response
-        # user should be good to go
-        return response
+            if now < new_reg_start:
+                return AttendanceResult(
+                    StatusCode.DELAYED_SIGNUP_MARKS,
+                    new_reg_start,
+                )
 
-    def get_minimum_rule_offset_for_user(self, user: User):
-        offsets_deltas = [
-            rule_bundle.get_minimum_offset_for_user(user)
-            for rule_bundle in self.rule_bundles.all()
-        ]
-        if len(offsets_deltas) == 0:
-            return timezone.timedelta(hours=0)
-        offsets_deltas.sort()
-        return offsets_deltas[0]
-
-    def _check_marks(self, response: AttendanceResult, user: User) -> AttendanceResult:
-        expiry_date = get_expiration_date(user)
-        if expiry_date and expiry_date > timezone.now().date():
-            # Offset is currently 1 day if you have marks, regardless of amount.
-            mark_offset = timedelta(days=1)
-            rule_offset = self.get_minimum_rule_offset_for_user(user)
-            postponed_registration_start = (
-                self.registration_start + rule_offset + mark_offset
-            )
-
-            before_expiry = self.registration_start.date() < expiry_date
-
-            if postponed_registration_start > timezone.now() and before_expiry:
-                if (
-                    response.offset is not None
-                    and response.offset < postponed_registration_start
-                    or response.offset is None
-                ):
-                    response = AttendanceResult(
-                        StatusCode.DELAYED_SIGNUP_MARKS,
-                        postponed_registration_start,
-                    )
         return response
 
     def rules_satisfied(self, user: User) -> AttendanceResult:
         """
         Checks a user against rules applied to an attendance event
         """
-        # avoid circular import
-        from .AccessRestriction import reduce_attendance_results
-
         # If the event has guest attendance, allow absolutely anyone
         if self.guest_attendance:
             return AttendanceResult(StatusCode.SUCCESS_GUEST_SIGNUP)
 
-        # If the user is not a member, return False right away
         # TODO check for guest list
         if not user.is_member:
             return AttendanceResult(StatusCode.NOT_A_MEMBER)
@@ -455,13 +402,23 @@ class AttendanceEvent(PaymentMixin, models.Model):
             return AttendanceResult(StatusCode.SUCCESS_MEMBER)
 
         # Check all rule bundles
-        responses = []
+        responses: list[AttendanceResult] = [
+            result
+            for rb in self.rule_bundles.all()
+            for result in rb.satisfied(user, self.registration_start)
+        ]
 
-        # If one satisfies, return true, else append to the error list
-        for rule_bundle in self.rule_bundles.all():
-            responses.extend(rule_bundle.satisfied(user, self.registration_start))
+        min_offset: None | AttendanceResult = None
+        for r in responses:
+            if r.status:
+                return r
 
-        return reduce_attendance_results(responses)
+            if min_offset is not None:
+                min_offset = min(min_offset, r, key=lambda x: x.offset or datetime.min)
+            else:
+                min_offset = r
+
+        return min_offset
 
     def is_attendee(self, user):
         return self.attendees.filter(user=user).exists()

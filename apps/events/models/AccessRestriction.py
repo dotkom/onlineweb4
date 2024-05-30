@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import Group
 from django.db import models
 from django.utils import timezone
@@ -25,11 +27,9 @@ class Rule(models.Model):
     def satisfies_constraint(self, user: User) -> bool:
         return True
 
-    def satisfied(
-        self, user: User, registration_start: timezone.datetime
-    ) -> AttendanceResult:
+    def satisfied(self, user: User, registration_start: datetime) -> AttendanceResult:
         if self.satisfies_constraint(user):
-            postponed_start = registration_start + timezone.timedelta(hours=self.offset)
+            postponed_start = registration_start + timedelta(hours=self.offset)
             if postponed_start < timezone.now():
                 return AttendanceResult(self.SUCCESS)
             elif self.offset == 0:
@@ -140,7 +140,7 @@ class RuleBundle(models.Model):
         return [str(rule) for rule in self.get_all_rules()]
 
     def satisfied(
-        self, user: User, registration_start: timezone.datetime
+        self, user: User, registration_start: datetime
     ) -> list[AttendanceResult]:
         errors = []
 
@@ -153,7 +153,7 @@ class RuleBundle(models.Model):
 
         return errors
 
-    def get_minimum_offset_for_user(self, user: User) -> timezone.timedelta:
+    def get_minimum_offset_for_user(self, user: User) -> timedelta:
         offsets = sorted(
             [
                 rule.offset
@@ -161,7 +161,7 @@ class RuleBundle(models.Model):
                 if rule.satisfies_constraint(user)
             ]
         )
-        return timezone.timedelta(hours=offsets[0] if len(offsets) > 0 else 0)
+        return timedelta(hours=offsets[0] if len(offsets) > 0 else 0)
 
     def __str__(self):
         if self.description:
@@ -175,44 +175,3 @@ class RuleBundle(models.Model):
         permissions = (("view_rulebundle", "View RuleBundle"),)
         default_permissions = ("add", "change", "delete")
         ordering = ("id",)
-
-
-def reduce_attendance_results(
-    responses: list[AttendanceResult],
-) -> AttendanceResult | None:
-    """
-    Reduce a list of multiple AttendanceResults to a single AttendanceResult.
-
-    If any of them give access to the event, the result will give access to the event.
-    If there is no access, and at least one of the results have an postponement,
-    the result with the shortest postponement is returned.
-
-    Otherwise, returns the first result
-
-    :param responses: List of AttendanceResults
-    :return: A single AttendanceResult, or None if responses is empty
-    """
-    # Put the smallest offset faaar into the future.
-    offset_response: AttendanceResult | None = None
-    future_response: AttendanceResult | None = None
-    first_result: AttendanceResult | None = None
-
-    for response in responses:
-        if response.status:
-            return response
-        elif response.offset is not None and (
-            (offset_response is not None and response.offset < offset_response.offset)
-            or offset_response is None
-        ):
-            offset_response = response
-        elif response.status_code == StatusCode.SIGNUP_NOT_OPENED_YET:
-            future_response = response
-        elif first_result is None:
-            first_result = response
-
-    if future_response:
-        return future_response
-    if offset_response is not None and offset_response.offset > timezone.now():
-        return offset_response
-    if first_result is not None:
-        return first_result

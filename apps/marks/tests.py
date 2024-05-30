@@ -1,5 +1,5 @@
 import logging
-from datetime import date
+from datetime import date, timedelta
 
 from django.test import TestCase
 from django.urls import reverse
@@ -10,12 +10,18 @@ from rest_framework.test import APITestCase
 
 from apps.authentication.models import OnlineUser as User
 from apps.marks.models import (
+    DURATION,
     Mark,
     MarkRuleSet,
     MarkUser,
     RuleAcceptance,
-    _get_with_duration_and_vacation,
+    delay_expiry_for_freeze_periods,
 )
+
+
+def _get_with_duration_and_vacation(d: date) -> date:
+    expiry = d + timedelta(days=DURATION)
+    return delay_expiry_for_freeze_periods(d, expiry)
 
 
 class MarksTest(TestCase):
@@ -30,6 +36,11 @@ class MarksTest(TestCase):
     #        self.logger.debug("Testing if Mark is active")
     #        self.assertTrue(self.mark.is_active)
 
+    def test_cause_defaults_weight(self):
+        mark = Mark(title="Test2Prikk", cause=Mark.Cause.LATE_ARRIVAL)
+        mark.save()
+        self.assertEqual(mark.weight, 3)
+
     def test_mark_unicode(self):
         self.logger.debug("Testing Mark unicode with dynamic fixtures")
         self.assertEqual(str(self.mark), "Prikk for Testprikk")
@@ -42,42 +53,42 @@ class MarksTest(TestCase):
 
     def test_getting_expiration_date_with_no_vacation_in_spring(self):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2013, 2, 1)
-        self.assertEqual(date(2013, 3, 3), _get_with_duration_and_vacation(d))
+        d = date(2024, 2, 1)
+        self.assertEqual(date(2024, 2, 21), _get_with_duration_and_vacation(d))
 
     def test_setting_expiration_date_with_summer_vacation(self):
         self.logger.debug("Testing expiration date with the summer vacation span")
-        d = date(2013, 5, 15)
-        self.assertEqual(date(2013, 8, 28), _get_with_duration_and_vacation(d))
+        d = date(2024, 5, 15)
+        self.assertEqual(date(2024, 8, 18), _get_with_duration_and_vacation(d))
 
     def test_getting_expiration_date_eith_no_vacation_in_fall(self):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2013, 9, 1)
-        self.assertEqual(date(2013, 10, 1), _get_with_duration_and_vacation(d))
+        d = date(2024, 9, 1)
+        self.assertEqual(date(2024, 9, 21), _get_with_duration_and_vacation(d))
 
     def test_getting_expiration_date_with_winter_vacation(self):
         self.logger.debug("Testing expiration date with the summer vacation span")
-        d = date(2013, 11, 15)
-        self.assertEqual(date(2014, 1, 29), _get_with_duration_and_vacation(d))
+        d = date(2024, 11, 15)
+        self.assertEqual(date(2025, 1, 10), _get_with_duration_and_vacation(d))
 
     def test_getting_expiration_date_ehen_date_between_new_years_and_end_of_winter_vacation(
         self,
     ):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2013, 1, 1)
-        self.assertEqual(date(2013, 2, 14), _get_with_duration_and_vacation(d))
+        d = date(2024, 1, 1)
+        self.assertEqual(date(2024, 1, 30), _get_with_duration_and_vacation(d))
 
     def test_getting_expiration_date_when_date_between_start_of_winter_vacation_and_new_years(
         self,
     ):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2013, 12, 15)
-        self.assertEqual(date(2014, 2, 14), _get_with_duration_and_vacation(d))
+        d = date(2024, 12, 15)
+        self.assertEqual(date(2025, 1, 30), _get_with_duration_and_vacation(d))
 
     def test_getting_expiration_date_when_date_in_summer_vacation(self):
         self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2013, 7, 1)
-        self.assertEqual(date(2013, 9, 14), _get_with_duration_and_vacation(d))
+        d = date(2024, 7, 1)
+        self.assertEqual(date(2024, 9, 4), _get_with_duration_and_vacation(d))
 
     def test_getting_expiration_date_with_no_vacation_in_spring_for_new_mark_duration(
         self,

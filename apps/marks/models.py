@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from typing import NamedTuple
 
 from django.conf import settings
 from django.db import models
@@ -8,18 +9,65 @@ from django.utils.translation import gettext as _
 User = settings.AUTH_USER_MODEL
 
 DURATION = 20
-# summer starts 1st June, ends 15th August
-SUMMER = ((6, 1), (8, 15))
-# winter starts 1st December, ends 15th January
-WINTER = ((12, 1), (1, 15))
+SUMMER = {"start": {"month": 6, "day": 1}, "end": {"month": 8, "day": 15}}
+WINTER = {"start": {"month": 12, "day": 5}, "end": {"month": 1, "day": 10}}
 
 
-def get_expiration_date(user):
-    if user:
-        marks = MarkUser.objects.filter(user=user).order_by("-expiration_date")
-        if marks:
-            return marks[0].expiration_date
+class DateRange(NamedTuple):
+    start: date
+    end: date
+
+
+def freeze_periods(year: int) -> list[DateRange]:
+    summer = DateRange(date(year, **SUMMER["start"]), date(year, **SUMMER["end"]))
+    winter = DateRange(date(year, **WINTER["start"]), date(year + 1, **WINTER["end"]))
+    past_winter = DateRange(
+        date(year - 1, **WINTER["start"]), date(year, **WINTER["end"])
+    )
+    return [past_winter, summer, winter]
+
+
+def offset_for_freeze_periods(
+    expiry: date, given: date, freeze: DateRange
+) -> timedelta | None:
+    start, end = freeze
+    if start < given < end:
+        return timedelta(days=(end - given).days)
+    elif start <= expiry <= end:
+        return timedelta(days=(end - start).days)
     return None
+
+
+def delay_expiry_for_freeze_periods(given_date: date, expiry_date: date | datetime):
+    for freeze in freeze_periods(expiry_date.year):
+        offset = offset_for_freeze_periods(expiry_date, given_date, freeze)
+        if offset is not None:
+            # we assume they are not overlapping
+            return expiry_date + offset
+    return expiry_date
+
+
+def user_weight(user: User, now: date | None = None) -> int:
+    if now is None:
+        now = timezone.now()
+
+    curr_weight = Mark.marks.active(user, now=now).aggregate(
+        total_weight=models.Sum("mark__weight")
+    )
+    return curr_weight["total_weight"] or 0
+
+
+def signup_delay(user: User, event_signup: date) -> timedelta | None:
+    match user_weight(user, event_signup):
+        case 0:
+            return None
+        case 1:
+            return timedelta(hours=1)
+        case 2:
+            return timedelta(hours=4)
+        case _:
+            # TODO: should we care about the suspension here?
+            return timedelta(days=1)
 
 
 class MarksManager(models.Manager):
@@ -28,10 +76,10 @@ class MarksManager(models.Manager):
         return Mark.objects.filter(given_to__expiration_date__gt=timezone.now().date())
 
     @staticmethod
-    def active(user):
-        return MarkUser.objects.filter(user=user).filter(
-            expiration_date__gt=timezone.now().date()
-        )
+    def active(user, now: date | None = None):
+        if not now:
+            now = timezone.now().date()
+        return MarkUser.objects.filter(user=user, expiration_date__gt=now)
 
     @staticmethod
     def inactive(user=None):
@@ -41,18 +89,54 @@ class MarksManager(models.Manager):
 
 
 class Mark(models.Model):
-    CATEGORY_CHOICES = (
-        (0, _("Ingen")),
-        (1, _("Sosialt")),
-        (2, _("Bedriftspresentasjon")),
-        (3, _("Kurs")),
-        (4, _("Tilbakemelding")),
-        (5, _("Kontoret")),
-        (6, _("Betaling")),
-    )
+    class Category(models.IntegerChoices):
+        Ingen = 0, _("Ingen")
+        Social = 1, _("Sosialt")
+        CompanyPresentation = 2, _("Bedriftspresentasjon")
+        Course = 3, _("Kurs")
+        Feedback = 4, _("Tilbakemelding")
+        Office = 5, _("Kontoret")
+        Payment = 6, _("Betaling")
+
+    class Cause(models.TextChoices):
+        LATE_DEREGISTRATION = "sen avmelding", _("Avmelding etter avmeldingsfrist")
+        VERY_LATE_DEREGISTRATION = (
+            "veldig sen avmelding",
+            _("Avmelding under 2 timer før arrangementstart"),
+        )
+        LATE_ARRIVAL = (
+            "sent oppmøte",
+            _("Oppmøte etter arrangementets start eller innslipp er ferdig"),
+        )
+        NO_ATTENDANCE = "manglende oppmøte", _("Manglende oppmøte")
+        MISSED_FEEDBACK = (
+            "manglende tilbakemelding",
+            _("Svarte ikke på tilbakemeldingsskjema"),
+        )
+        MISSED_PAYMENT = "manglende betaling", _("Manglende betaling")
+        OTHER = "annet", _("Ukjent grunn")
+
+        def weight(self) -> int:
+            match self:
+                case self.LATE_DEREGISTRATION:
+                    return 2
+                case self.VERY_LATE_DEREGISTRATION:
+                    return 3
+                case self.NO_ATTENDANCE:
+                    return 3
+                case self.LATE_ARRIVAL:
+                    return 3
+                case self.MISSED_FEEDBACK:
+                    return 1
+                case self.MISSED_PAYMENT:
+                    return 1
+                case self.OTHER:
+                    # marks used to last 24h by default
+                    return 3
 
     title = models.CharField(_("tittel"), max_length=155)
-    added_date = models.DateField(_("utdelt dato"))
+    weight = models.SmallIntegerField(_("Vekting, se prikkreglene for veiledning"))
+    added_date = models.DateField(_("utdelt dato"), default=datetime.now)
     given_by = models.ForeignKey(
         User,
         related_name="mark_given_by",
@@ -83,26 +167,25 @@ class Mark(models.Model):
         blank=True,
     )
     category = models.SmallIntegerField(
-        _("kategori"), choices=CATEGORY_CHOICES, default=0
+        _("kategori"), choices=Category.choices, default=0
     )
+    cause = models.CharField(
+        _("årsak"), max_length=30, choices=Cause.choices, default=Cause.OTHER
+    )
+    users = models.ManyToManyField(through="MarkUser", to=User, related_name="marks")
 
     # managers
     objects = models.Manager()  # default manager
     marks = MarksManager()  # active marks manager
 
+    def save(self, *args, **kwargs) -> None:
+        if self.weight is None:
+            self.weight = self.Cause(self.cause).weight()
+
+        return super().save(*args, **kwargs)
+
     def __str__(self):
         return _("Prikk for %s") % self.title
-
-    def save(self, *args, **kwargs):
-        if not self.added_date:
-            self.added_date = timezone.now().date()
-        super().save(*args, **kwargs)
-
-    def delete(self, **kwargs):
-        given_to = [mu.user for mu in self.given_to.all()]
-        super().delete()
-        for user in given_to:
-            _fix_mark_history(user)
 
     class Meta:
         verbose_name = _("Prikk")
@@ -116,23 +199,42 @@ class MarkUser(models.Model):
     One entry for a user that has received a mark.
     """
 
-    mark = models.ForeignKey(Mark, related_name="given_to", on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    mark = models.ForeignKey(
+        Mark, related_name="given_to", on_delete=models.CASCADE, editable=False
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
 
     expiration_date = models.DateField(_("utløpsdato"), editable=False)
 
-    def save(self, *args, **kwargs):
-        run_history_update = False
-        if not self.expiration_date:
-            self.expiration_date = timezone.now().date()
-            run_history_update = True
-        super().save(*args, **kwargs)
-        if run_history_update:
-            _fix_mark_history(self.user)
+    def save(self, *args, **kwargs) -> None:
+        now = timezone.now()
+        if (
+            user_weight(self.user, now) >= 6
+            and not self.user.suspensions.filter(
+                active=True, cause=Suspension.Cause.MARKS
+            ).exists()
+        ):
+            s = Suspension(
+                title=_("For mange prikker på rad"),
+                description=_(
+                    "Du har fått en 14 dagers suspensjon grunnet du har fått 6 eller flere prikker på en gang."
+                ),
+                active=True,
+                expiration_date=delay_expiry_for_freeze_periods(
+                    given_date=now,
+                    expiry_date=now + timedelta(days=14),
+                ),
+                user=self.user,
+                cause=Suspension.Cause.MARKS,
+            )
+            s.save()
 
-    def delete(self):
-        super().delete()
-        _fix_mark_history(self.user)
+        if not self.expiration_date:
+            self.expiration_date = delay_expiry_for_freeze_periods(
+                now.date(), now.date() + timedelta(days=DURATION)
+            )
+
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return _("Mark entry for user: %s") % self.user.get_full_name()
@@ -144,94 +246,24 @@ class MarkUser(models.Model):
         default_permissions = ("add", "change", "delete")
 
 
-def _fix_mark_history(user):
-    """
-    Goes through a users complete mark history and resets all expiration dates.
+def is_suspended(user: User, now: datetime | None = None):
+    if now is None:
+        now = timezone.now()
 
-    The reasons for doing it this way is that the mark rules now insist on marks building
-    on previous expiration dates if such exists. Instead of having the entire mark database
-    be a linked list structure, it can be simplified to guarantee the integrity of the
-    expiration dates by running this whenever;
+    for suspension in user.get_active_suspensions():
+        if not suspension.expiration_date or suspension.expiration_date > now.date():
+            return True
 
-     * new Mark is saved or deleted
-     * a new MarkUser entry is made
-     * an existing MarkUser entry is deleted
-    """
-    markusers = MarkUser.objects.filter(user=user).order_by("mark__added_date")
-    last_expiry_date = None
-    for entry in markusers:
-        # If the creation date is before the 1 of february 2022, the duration of the
-        # mark should be 30 days. The mark rule duration was changed.
-        duration = DURATION
-        mark_change_date = date(2022, 2, 1)
-        if entry.mark.added_date < mark_change_date:
-            duration = 30
-
-        # If there's a last_expiry date, it means a mark has been processed already.
-        # If that expiration date is within a DURATION of this added date, build on it.
-        if (
-            last_expiry_date
-            and entry.mark.added_date - timedelta(days=duration) < last_expiry_date
-        ):
-            entry.expiration_date = _get_with_duration_and_vacation(last_expiry_date)
-        # If there is no last_expiry_date or the last expiry date is over a DURATION old
-        # we add DURATIION days from the added date of the mark.
-        else:
-            entry.expiration_date = _get_with_duration_and_vacation(
-                entry.mark.added_date
-            )
-        entry.save()
-        last_expiry_date = entry.expiration_date
-
-
-def _get_with_duration_and_vacation(added_date=None):
-    """
-    Checks whether the span of a marks duration needs to have vacation durations added.
-    """
-    if not added_date:
-        added_date = timezone.now()
-
-    duration = DURATION
-    mark_change_date = date(2022, 2, 1)
-    if added_date < mark_change_date:
-        duration = 30
-
-    if isinstance(added_date, datetime):
-        added_date = added_date.date()
-
-    # Add the duration
-    expiry_date = added_date + timedelta(days=duration)
-    # Set up the summer and winter vacations
-    summer_start_date = date(added_date.year, SUMMER[0][0], SUMMER[0][1])
-    summer_end_date = date(added_date.year, SUMMER[1][0], SUMMER[1][1])
-    first_winter_start_date = date(added_date.year, WINTER[0][0], WINTER[0][1])
-    first_winter_end_date = date(added_date.year + 1, WINTER[1][0], WINTER[1][1])
-    second_winter_end_date = date(added_date.year, WINTER[1][0], WINTER[1][1])
-
-    # If we're in the middle of summer, add the days remaining of summer
-    if summer_start_date < added_date < summer_end_date:
-        expiry_date += timedelta(days=(summer_end_date - added_date).days)
-    # If the number of days between added_date and the beginning of summer vacation is less
-    # than the duration, we need to add the length of summer to the expiry date
-    elif 0 < (summer_start_date - added_date).days < duration:
-        expiry_date += timedelta(days=(summer_end_date - summer_start_date).days)
-    # Same for middle of winter vacation, which will be at the end of the year
-    elif first_winter_start_date < added_date < first_winter_end_date:
-        expiry_date += timedelta(days=(first_winter_end_date - added_date).days)
-    # And for before the vacation
-    elif 0 < (first_winter_start_date - added_date).days < duration:
-        expiry_date += timedelta(
-            days=(first_winter_end_date - first_winter_start_date).days
-        )
-    # Then we need to check the edge case where now is between newyears and and of winter vacation
-    elif second_winter_end_date > added_date:
-        expiry_date += timedelta(days=(second_winter_end_date - added_date).days)
-
-    return expiry_date
+    return False
 
 
 class Suspension(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    class Cause(models.IntegerChoices):
+        PAYMENT = 0, _("Manglende betaling")
+        MARKS = 1, _("For mange prikker på rad")
+        OTHER = 2, _("Annet, se beskrivelse")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="suspensions")
     title = models.CharField(_("tittel"), max_length=64)
     description = models.CharField(_("beskrivelse"), max_length=255)
     active = models.BooleanField(default=True)
@@ -240,9 +272,10 @@ class Suspension(models.Model):
 
     # Using id because foreign key to Payment caused circular dependencies
     payment_id = models.IntegerField(null=True, blank=True)
+    cause = models.SmallIntegerField(_("Årsak"), choices=Cause.choices)
 
     def __str__(self):
-        return "Suspension: " + str(self.user)
+        return f"Suspension: {self.user}"
 
     class Meta:
         default_permissions = ("add", "change", "delete")
@@ -272,7 +305,7 @@ class MarkRuleSet(models.Model):
             cls.objects.order_by("-valid_from_date")
             .exclude(valid_from_date__gt=timezone.now())
             .first()
-        )
+        )  # type: ignore
 
     @classmethod
     def has_user_accepted_mark_rules(cls, user: User) -> bool:
