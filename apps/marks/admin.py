@@ -15,26 +15,10 @@ class MarkUserInline(admin.TabularInline):
 @admin.register(Mark)
 class MarkAdmin(VersionAdmin):
     inlines = (MarkUserInline,)
-    list_display = ["__str__", "category", "added_date"]
+    list_display = ["__str__", "category", "added_date", "weight"]
     search_fields = ("title",)
 
     def save_model(self, request, obj, form, change):
-        if not change:
-            obj.given_by = request.user
-            if not obj.description:
-                descriptions = {
-                    0: _("Ingen begrunnelse. Kontakt %s for mer informasjon.")
-                    % obj.given_by.email,
-                    1: _("Du har fått en prikk for et sosialt arrangement."),
-                    2: _("Du har fått en prikk for en bedriftspresentasjon."),
-                    3: _("Du har fått en prikk for et kurs."),
-                    4: _(
-                        "Du har fått en prikk fordi du ikke har levert tilbakemelding."
-                    ),
-                    5: _("Du har fått en prikk relatert til kontoret."),
-                }
-                obj.description = descriptions[obj.category]
-
         obj.last_changed_by = request.user
         obj.save()
 

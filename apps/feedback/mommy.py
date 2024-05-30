@@ -196,16 +196,18 @@ def mark_message(feedback):
 
 
 def set_marks(title, not_responded):
-    mark = Mark()
-    mark.title = f"Manglende tilbakemelding på {title}"
-    mark.category = 4  # Missed feedback
-    mark.description = "Du har fått en prikk fordi du ikke har levert tilbakemelding."
+    mark = Mark(
+        title=f"Manglende tilbakemelding på {title}",
+        cause=Mark.Cause.MISSED_FEEDBACK,
+        description="Du har fått en prikk fordi du ikke har levert tilbakemelding.",
+    )
     mark.save()
 
     for user in not_responded:
-        user_entry = MarkUser()
-        user_entry.user = user
-        user_entry.mark = mark
+        user_entry = MarkUser(
+            user=user,
+            mark=mark,
+        )
         user_entry.save()
 
 

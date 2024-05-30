@@ -97,6 +97,14 @@
                         <td id="dashboard-marks-changed-time">{{ mark.last_changed_date|date:'Y-m-d' }}</td>
                     </tr>
                     <tr>
+                        <td><b>Vekt</b></td>
+                        <td colspan="3">{{ mark.weight }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Årsak</b></td>
+                        <td colspan="3">{{ mark.get_cause_display }}</td>
+                    </tr>
+                    <tr>
                         <td><b>Detaljer</b></td>
                         <td colspan="3">{{ mark.description }}</td>
                     </tr>
