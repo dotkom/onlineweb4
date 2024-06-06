@@ -8,7 +8,7 @@ from django.utils.translation import gettext as _
 
 User = settings.AUTH_USER_MODEL
 
-DURATION = 20
+DURATION = 14
 SUMMER = {"start": {"month": 6, "day": 1}, "end": {"month": 8, "day": 15}}
 WINTER = {"start": {"month": 12, "day": 5}, "end": {"month": 1, "day": 10}}
 
@@ -31,9 +31,9 @@ def offset_for_freeze_periods(
     expiry: date, given: date, freeze: DateRange
 ) -> timedelta | None:
     start, end = freeze
-    if start < given < end:
+    if start <= given <= end:
         return timedelta(days=(end - given).days)
-    elif start <= expiry <= end:
+    elif start < expiry < end:
         return timedelta(days=(end - start).days)
     return None
 
@@ -268,6 +268,7 @@ class Suspension(models.Model):
     description = models.CharField(_("beskrivelse"), max_length=255)
     active = models.BooleanField(default=True)
     added_date = models.DateTimeField(auto_now=True, editable=False)
+    # the mark is active up to but _not including_ the expiry date
     expiration_date = models.DateField(_("utløpsdato"), null=True, blank=True)
 
     # Using id because foreign key to Payment caused circular dependencies

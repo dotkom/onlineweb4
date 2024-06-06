@@ -1,6 +1,6 @@
-import logging
 from datetime import date, timedelta
 
+import pytest
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -13,91 +13,49 @@ from apps.marks.models import (
     DURATION,
     Mark,
     MarkRuleSet,
-    MarkUser,
     RuleAcceptance,
     delay_expiry_for_freeze_periods,
 )
 
 
-def _get_with_duration_and_vacation(d: date) -> date:
-    expiry = d + timedelta(days=DURATION)
-    return delay_expiry_for_freeze_periods(d, expiry)
+def test_cause_defaults_weight(db):
+    mark = Mark(title="Test2Prikk", cause=Mark.Cause.LATE_ARRIVAL)
+    mark.save()
+    assert mark.weight == 3
 
 
-class MarksTest(TestCase):
-    def setUp(self):
-        self.logger = logging.getLogger(__name__)
-        self.user = G(User)
-        self.mark = G(Mark, title="Testprikk", added_date=timezone.now().date())
-        self.user_entry = G(MarkUser, user=self.user, mark=self.mark)
-
-    # Rewrite to check
-    #    def test_marks_active(self):
-    #        self.logger.debug("Testing if Mark is active")
-    #        self.assertTrue(self.mark.is_active)
-
-    def test_cause_defaults_weight(self):
-        mark = Mark(title="Test2Prikk", cause=Mark.Cause.LATE_ARRIVAL)
-        mark.save()
-        self.assertEqual(mark.weight, 3)
-
-    def test_mark_unicode(self):
-        self.logger.debug("Testing Mark unicode with dynamic fixtures")
-        self.assertEqual(str(self.mark), "Prikk for Testprikk")
-
-    def test_mark_user(self):
-        self.logger.debug("Testing MarkUser unicode with dynamic fixtures")
-        self.assertEqual(
-            str(self.user_entry), f"Mark entry for user: {self.user.get_full_name()}"
-        )
-
-    def test_getting_expiration_date_with_no_vacation_in_spring(self):
-        self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2024, 2, 1)
-        self.assertEqual(date(2024, 2, 21), _get_with_duration_and_vacation(d))
-
-    def test_setting_expiration_date_with_summer_vacation(self):
-        self.logger.debug("Testing expiration date with the summer vacation span")
-        d = date(2024, 5, 15)
-        self.assertEqual(date(2024, 8, 18), _get_with_duration_and_vacation(d))
-
-    def test_getting_expiration_date_eith_no_vacation_in_fall(self):
-        self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2024, 9, 1)
-        self.assertEqual(date(2024, 9, 21), _get_with_duration_and_vacation(d))
-
-    def test_getting_expiration_date_with_winter_vacation(self):
-        self.logger.debug("Testing expiration date with the summer vacation span")
-        d = date(2024, 11, 15)
-        self.assertEqual(date(2025, 1, 10), _get_with_duration_and_vacation(d))
-
-    def test_getting_expiration_date_ehen_date_between_new_years_and_end_of_winter_vacation(
-        self,
-    ):
-        self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2024, 1, 1)
-        self.assertEqual(date(2024, 1, 30), _get_with_duration_and_vacation(d))
-
-    def test_getting_expiration_date_when_date_between_start_of_winter_vacation_and_new_years(
-        self,
-    ):
-        self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2024, 12, 15)
-        self.assertEqual(date(2025, 1, 30), _get_with_duration_and_vacation(d))
-
-    def test_getting_expiration_date_when_date_in_summer_vacation(self):
-        self.logger.debug("Testing expiration date with no vacation span in the spring")
-        d = date(2024, 7, 1)
-        self.assertEqual(date(2024, 9, 4), _get_with_duration_and_vacation(d))
-
-    def test_getting_expiration_date_with_no_vacation_in_spring_for_new_mark_duration(
-        self,
-    ):
-        self.logger.debug(
-            "Testing expiration date with no vacation span in the spring for new mark"
-        )
-        d = date(2022, 2, 2)
-        self.assertEqual(date(2022, 2, 22), _get_with_duration_and_vacation(d))
+@pytest.mark.parametrize(
+    "given_date,expected_last_day",
+    [
+        (date(2024, 2, 1), date(2024, 2, 1) + timedelta(days=DURATION)),
+        # summer vacation, on expiry the mark is no longer in effect
+        (date(2024, 5, 24), date(2024, 8, 21)),
+        (date(2024, 9, 1), date(2024, 9, 1) + timedelta(days=DURATION)),
+        # winter vacation
+        (
+            date(2024, 11, 25),
+            date(2024, 11, 25) + timedelta(days=DURATION) + timedelta(days=36),
+        ),
+        # between winter vacation and new year
+        (date(2024, 1, 1), date(2024, 1, 24)),
+        (date(2024, 1, 9), date(2024, 1, 24)),
+        (date(2024, 1, 10), date(2024, 1, 24)),
+        (date(2024, 12, 15), date(2025, 1, 24)),
+        (date(2024, 12, 5), date(2025, 1, 24)),
+        (date(2024, 1, 11), date(2024, 1, 25)),
+        (date(2024, 7, 1), date(2024, 8, 29)),
+        (date(2024, 6, 1), date(2024, 8, 29)),
+        (date(2024, 8, 14), date(2024, 8, 29)),
+        (date(2024, 8, 15), date(2024, 8, 29)),
+        (date(2024, 8, 16), date(2024, 8, 30)),
+        (date(2022, 2, 2), date(2022, 2, 16)),
+    ],
+)
+def test_freeze_duration(given_date, expected_last_day):
+    actual = delay_expiry_for_freeze_periods(
+        given_date, given_date + timedelta(days=DURATION)
+    )
+    assert expected_last_day == actual
 
 
 class MarkRuleSetTest(TestCase):
