@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from random import choice as random_choice
 
 from django.conf import settings
@@ -414,7 +414,11 @@ class AttendanceEvent(PaymentMixin, models.Model):
                 return r
 
             if min_offset is not None:
-                min_offset = min(min_offset, r, key=lambda x: x.offset or datetime.min)
+                min_offset = min(
+                    min_offset,
+                    r,
+                    key=lambda x: x.offset or datetime.max.replace(tzinfo=UTC),
+                )
             else:
                 min_offset = r
 
