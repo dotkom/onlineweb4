@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
-from django_dynamic_fixture import G
+from django_dynamic_fixture import F, G
 
 from apps.authentication.models import Membership
 from apps.authentication.models import OnlineUser as User
@@ -23,6 +23,7 @@ from apps.events.models import (
     StatusCode,
     UserGroupRule,
 )
+from apps.events.models.Attendance import AttendanceResult
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.marks.models import DURATION, Mark, MarkUser
 from apps.notifications.constants import PermissionType
@@ -375,6 +376,30 @@ class AttendanceEventModelTest(TestCase):
         response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response.status)
         self.assertEqual(StatusCode.SIGNUP_NOT_OPENED_YET, response.status_code)
+
+    def test_multiple_rule_bundles_give_least_offset(self):
+        self.user.field_of_study = 1
+        self.user.started_date = self.now.date()
+
+        self.attendance_event.rule_bundles.set(
+            [
+                G(
+                    RuleBundle,
+                    user_group_rules=[F(group=F(members=[self.user]), offset=24)],
+                    grade_rules=[F(grade=1, offset=23)],
+                ),
+                G(RuleBundle, user_group_rules=[F(group=F())]),
+            ],
+        )
+
+        response = self.attendance_event.is_eligible_for_signup(self.user)
+        self.assertEqual(
+            response,
+            AttendanceResult(
+                status_code=StatusCode.DELAYED_SIGNUP_GRADE,
+                offset=self.attendance_event.registration_start + timedelta(hours=23),
+            ),
+        )
 
     def test_restricted_events(self):
         allowed_groups = [G(Group), G(Group)]
