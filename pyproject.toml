@@ -14,7 +14,7 @@ django-filter = "~24.2"
 pillow = "~10.3"
 stripe = "~3.5"
 icalendar = "~5.0"
-google-api-python-client = "~2.130"
+google-api-python-client = "~2.132"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
 django-crispy-forms = "~2.1"
 crispy-bootstrap3 = "^2024.1"
@@ -28,7 +28,7 @@ Unidecode = "~1.3"                  # Translates every unicode symbol to the clo
 django-markdown-deux = "~1.0"
 django-cors-headers = "~4.3"        # Enable CORS for Nibble
 django-webpack-loader = "~3.1"      # Integration with webpack
-dj-database-url = "~2.1"            # Allows to configure databases using URLs
+dj-database-url = "~2.2"            # Allows to configure databases using URLs
 python-decouple = "~3.8"            # Configuration and settings management
 oic = "~1.7"			            # OpenID Connect Client
 requests = { version = "~2.32", extras = [ "security" ] }
@@ -40,7 +40,7 @@ pyyaml = "^6.0"
 pywebpush = "^2.0.0"
 
 # Monitoring
-sentry-sdk = { version = "~2.3", extras = [ "django" ] }
+sentry-sdk = { version = "~2.5", extras = [ "django" ] }
 
 # AWS
 boto3 =  { version = "~1.34", optional = true }
