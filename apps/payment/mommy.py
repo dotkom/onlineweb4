@@ -134,11 +134,13 @@ def not_paid_mail_addresses(payment):
 
 
 def set_marks(payment):
-    mark = Mark()
-    mark.title = _("Manglende betaling på %s") % payment.description()
-    mark.category = 6  # Manglende betaling
-    mark.description = _(
-        "Du har fått en prikk fordi du ikke har betalt for et arrangement."
+    mark = Mark(
+        title=_("Manglende betaling på %s") % payment.description(),
+        cause=Mark.Cause.MISSED_PAYMENT,
+        category=Mark.Category.Payment,
+        description=_(
+            "Du har fått en prikk fordi du ikke har betalt for et arrangement."
+        ),
     )
     mark.save()
 
@@ -151,16 +153,14 @@ def set_marks(payment):
 
 def suspend(payment):
     for user in not_paid(payment):
-        suspension = Suspension()
-
-        suspension.title = "Manglende betaling"
-        suspension.user = user
-        suspension.payment_id = payment.id
-        suspension.description = """
+        suspension = Suspension(
+            title="Manglende betaling",
+            user=user,
+            payment_id=payment.id,
+            cause=Suspension.Cause.PAYMENT,
+            description=f"""
         Du har ikke betalt for et arangement du har vært med på. For å fjerne denne suspensjonen må du betale.\n
-        Mer informasjon om betalingen finner du her: """
-        suspension.description += str(
-            settings.BASE_URL + payment.content_object.event.get_absolute_url()
+        Mer informasjon om betalingen finner du her: {settings.BASE_URL + payment.content_object.event.get_absolute_url()}""",
         )
 
         suspension.save()
@@ -202,17 +202,16 @@ def handle_deadline_passed(payment_delay, unattend_deadline_passed):
 
 
 def handle_suspensions(payment_delay):
-    suspension = Suspension()
-
-    suspension.title = "Manglende betaling"
-    suspension.user = payment_delay.user
-    suspension.payment_id = payment_delay.payment.id
-    suspension.description = """
+    suspension = Suspension(
+        title="Manglende betaling",
+        user=payment_delay.user,
+        payment_id=payment_delay.payment.id,
+        cause=Suspension.Cause.PAYMENT,
+        description="""
     Du har ikke betalt for et arangement du har vært med på. For å fjerne denne suspensjonen må du betale.\n
-    Mer informasjon om betalingen finner du her: """
-    suspension.description += str(
+    Mer informasjon om betalingen finner du her: {
         settings.BASE_URL
-        + payment_delay.payment.content_object.event.get_absolute_url()
+        + payment_delay.payment.content_object.event.get_absolute_url()}""",
     )
 
     suspension.save()
@@ -288,17 +287,20 @@ def send_notification_mail(payment_delay, unattend_deadline_passed):
 
 
 def set_mark(payment_delay):
-    mark = Mark()
-    mark.title = _("Manglende betaling på %s") % payment_delay.payment.description()
-    mark.category = 6  # Manglende betaling
-    mark.description = _(
-        "Du har fått en prikk fordi du ikke har betalt for et arrangement."
+    mark = Mark(
+        title=_("Manglende betaling på %s") % payment_delay.payment.description(),
+        cause=Mark.Cause.MISSED_PAYMENT,  # Manglende betaling
+        category=Mark.Category.Payment,
+        description=_(
+            "Du har fått en prikk fordi du ikke har betalt for et arrangement."
+        ),
     )
     mark.save()
 
-    user_entry = MarkUser()
-    user_entry.user = payment_delay.user
-    user_entry.mark = mark
+    user_entry = MarkUser(
+        user=payment_delay.user,
+        mark=mark,
+    )
     user_entry.save()
 
 

@@ -1,11 +1,11 @@
-import datetime
+from datetime import timedelta
 
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
-from django_dynamic_fixture import G
+from django_dynamic_fixture import F, G
 
 from apps.authentication.models import Membership
 from apps.authentication.models import OnlineUser as User
@@ -23,6 +23,7 @@ from apps.events.models import (
     StatusCode,
     UserGroupRule,
 )
+from apps.events.models.Attendance import AttendanceResult
 from apps.feedback.models import Feedback, FeedbackRelation
 from apps.marks.models import DURATION, Mark, MarkUser
 from apps.notifications.constants import PermissionType
@@ -63,15 +64,13 @@ class AttendanceEventModelTest(TestCase):
         )
         # Setting registration start 1 hour in the past, end one week in the future.
         self.now = timezone.now()
-        self.attendance_event.registration_start = self.now - datetime.timedelta(
-            hours=1
-        )
-        self.attendance_event.registration_end = self.now + datetime.timedelta(days=7)
+        self.attendance_event.registration_start = self.now - timedelta(hours=2)
+        self.attendance_event.registration_end = self.now + timedelta(days=7)
         # Making the user a member.
         self.allowed_username: Membership = G(
             Membership,
             username="ola123ntnu",
-            expiration_date=self.now + datetime.timedelta(weeks=1),
+            expiration_date=self.now + timedelta(weeks=1),
         )
 
     def create_attendance_event(self):
@@ -210,9 +209,11 @@ class AttendanceEventModelTest(TestCase):
             MarkUser,
             user=self.user,
             mark=mark1,
-            expiration_date=self.now + datetime.timedelta(days=DURATION),
+            expiration_date=self.now + timedelta(days=DURATION),
         )
-        response = self.attendance_event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(
+            self.user, self.attendance_event.registration_start + timedelta(minutes=1)
+        )
         self.assertFalse(response.status)
         self.assertEqual(StatusCode.DELAYED_SIGNUP_MARKS, response.status_code)
 
@@ -315,22 +316,20 @@ class AttendanceEventModelTest(TestCase):
         rule_bundle.user_group_rules.add(group_rule)
         self.attendance_event.rule_bundles.add(rule_bundle)
         # Registration just opened
-        self.attendance_event.registration_start = timezone.now() - timezone.timedelta(
-            minutes=1
-        )
+        self.attendance_event.registration_start = self.now - timedelta(minutes=1)
 
         # User should not be able to register because of the group rule offset
         self.user.groups.add(group)
-        response = self.attendance_event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user, self.now)
         self.assertFalse(response.status)
         self.assertEqual(StatusCode.DELAYED_SIGNUP_USER_GROUP, response.status_code)
 
         # Simulate a day passing for the offset to not have an effect anymore
-        self.attendance_event.registration_start -= timezone.timedelta(hours=24)
+        self.attendance_event.registration_start -= timedelta(hours=24)
         self.attendance_event.save()
 
         # User should be able to register for event since offset has passed
-        response = self.attendance_event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user, self.now)
         self.assertTrue(response.status)
         self.assertEqual(StatusCode.SUCCESS_USER_GROUP, response.status_code)
 
@@ -339,19 +338,21 @@ class AttendanceEventModelTest(TestCase):
             MarkUser,
             user=self.user,
             mark=mark,
-            expiration_date=self.now + datetime.timedelta(days=DURATION),
+            expiration_date=self.now + timedelta(days=DURATION),
         )
 
+        signup_time = self.attendance_event.registration_start + timedelta(minutes=1)
+
         # User should not be eligible for signup anymore because they have a mark
-        response = self.attendance_event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user, signup_time)
         self.assertFalse(response.status)
         self.assertEqual(StatusCode.DELAYED_SIGNUP_MARKS, response.status_code)
 
         # Set registration to be as far into the past as both the offset from the rule and the mark
-        self.attendance_event.registration_start -= timezone.timedelta(hours=24)
+        self.attendance_event.registration_start -= timedelta(hours=24)
         self.attendance_event.save()
 
-        response = self.attendance_event.is_eligible_for_signup(self.user)
+        response = self.attendance_event.is_eligible_for_signup(self.user, signup_time)
         self.assertTrue(response.status)
         self.assertEqual(StatusCode.SUCCESS_USER_GROUP, response.status_code)
 
@@ -371,12 +372,34 @@ class AttendanceEventModelTest(TestCase):
         self.rule_bundle.user_group_rules.add(self.group_rule)
         self.attendance_event.rule_bundles.add(self.rule_bundle)
         # Move registration start into the future
-        self.attendance_event.registration_start = self.now + datetime.timedelta(
-            hours=1
-        )
+        self.attendance_event.registration_start = self.now + timedelta(hours=1)
         response = self.attendance_event.is_eligible_for_signup(self.user)
         self.assertFalse(response.status)
         self.assertEqual(StatusCode.SIGNUP_NOT_OPENED_YET, response.status_code)
+
+    def test_multiple_rule_bundles_give_least_offset(self):
+        self.user.field_of_study = 1
+        self.user.started_date = self.now.date()
+
+        self.attendance_event.rule_bundles.set(
+            [
+                G(
+                    RuleBundle,
+                    user_group_rules=[F(group=F(members=[self.user]), offset=24)],
+                    grade_rules=[F(grade=1, offset=23)],
+                ),
+                G(RuleBundle, user_group_rules=[F(group=F())]),
+            ],
+        )
+
+        response = self.attendance_event.is_eligible_for_signup(self.user)
+        self.assertEqual(
+            response,
+            AttendanceResult(
+                status_code=StatusCode.DELAYED_SIGNUP_GRADE,
+                offset=self.attendance_event.registration_start + timedelta(hours=23),
+            ),
+        )
 
     def test_restricted_events(self):
         allowed_groups = [G(Group), G(Group)]
