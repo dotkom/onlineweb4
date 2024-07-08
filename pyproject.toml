@@ -14,7 +14,7 @@ django-filter = "~24.2"
 pillow = "~10.4"
 stripe = "~3.5"
 icalendar = "~5.0"
-google-api-python-client = "~2.135"
+google-api-python-client = "~2.136"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
 django-crispy-forms = "~2.2"
 crispy-bootstrap3 = "^2024.1"
@@ -40,7 +40,7 @@ pyyaml = "^6.0"
 pywebpush = "^2.0.0"
 
 # Monitoring
-sentry-sdk = { version = "~2.7", extras = [ "django" ] }
+sentry-sdk = { version = "~2.8", extras = [ "django" ] }
 
 # AWS
 boto3 =  { version = "~1.34", optional = true }
