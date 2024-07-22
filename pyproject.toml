@@ -16,7 +16,7 @@ stripe = "~3.5"
 icalendar = "~5.0"
 google-api-python-client = "~2.137"
 django-chunks = { git = "https://github.com/dotkom/django-chunks.git", rev = "5c01b06f40122c05d2a806f9872b07215ffc33ac" }
-django-crispy-forms = "~2.2"
+django-crispy-forms = "~2.3"
 crispy-bootstrap3 = "^2024.1"
 django-dynamic-fixture = "~4.0"
 django-watson = "~1.6.2"            # Indexed model search lib
@@ -57,7 +57,7 @@ django-turnstile = "^0.1.0"
 
 [tool.poetry.group.dev.dependencies]
 # Testing
-pytest = "~8.2"
+pytest = "~8.3"
 pytest-cov = "~5.0"
 pytest-django = "~4.8"
 pytest-xdist = "~3.6"
