@@ -78,12 +78,12 @@ def _create_profile_context(request):
             # Tuple syntax ('title', list_of_marks, is_collapsed)
             (
                 _("aktive suspensjoner"),
-                Suspension.objects.filter(user=request.user, active=True),
+                Suspension.active_suspensions(request.user),
                 False,
             ),
             (
                 _("inaktive suspensjoner"),
-                Suspension.objects.filter(user=request.user, active=False),
+                Suspension.inactive_suspensions(request.user),
                 True,
             ),
         ],

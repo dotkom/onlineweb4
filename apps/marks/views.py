@@ -1,9 +1,9 @@
 from rest_framework import mixins, permissions, viewsets
 
-from apps.marks.models import MarkRuleSet, MarkUser, RuleAcceptance, Suspension
+from apps.marks.models import Mark, MarkRuleSet, RuleAcceptance, Suspension
 from apps.marks.serializers import (
     MarkRuleSetReadOnlySerializer,
-    MarkUserSerializer,
+    MarkSerializer,
     RuleAcceptanceCreateSerializer,
     RuleAcceptanceReadOnlySerializer,
     SuspensionSerializer,
@@ -11,13 +11,11 @@ from apps.marks.serializers import (
 
 
 class MarksViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    serializer_class = MarkUserSerializer
+    serializer_class = MarkSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        user = self.request.user
-        user_marks = MarkUser.objects.filter(user=user)
-        return user_marks
+        return Mark.objects.filter(users__user=self.request.user)
 
 
 class SuspensionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

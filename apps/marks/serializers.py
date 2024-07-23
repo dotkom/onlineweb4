@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from apps.authentication.serializers import UserNameSerializer
-from apps.marks.models import Mark, MarkRuleSet, MarkUser, RuleAcceptance, Suspension
+from apps.marks.models import Mark, MarkRuleSet, RuleAcceptance, Suspension
 
 
 class MarkSerializer(serializers.ModelSerializer):
@@ -26,21 +26,12 @@ class MarkSerializer(serializers.ModelSerializer):
         )
 
 
-class MarkUserSerializer(serializers.ModelSerializer):
-    mark = MarkSerializer()
-
-    class Meta:
-        model = MarkUser
-        fields = ("expiration_date", "mark")
-
-
 class SuspensionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Suspension
         fields = (
             "title",
             "description",
-            "active",
             "added_date",
             "expiration_date",
             "payment_id",

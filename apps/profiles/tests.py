@@ -1,8 +1,11 @@
+from datetime import timedelta
+
 from django.test import TestCase
 from django.urls import reverse
 from django_dynamic_fixture import G
 
 from apps.authentication.models import OnlineUser as User
+from apps.marks.models import MarkRuleSet
 from apps.profiles.forms import ZIP_CODE_VALIDATION_ERROR, ProfileForm
 from apps.profiles.models import Privacy
 
@@ -14,36 +17,33 @@ class ProfileInitTestCase(TestCase):
 
 
 class ProfileViewEditTestCase(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls._url = reverse("profile_edit")
-        cls._user = G(User)
-
     def setUp(self):
-        self.client.force_login(self._user)
+        self.url = reverse("profile_edit")
+        self.user = G(User)
+        self.client.force_login(self.user)
+        self.rule_set = G(MarkRuleSet, duration=timedelta(days=14))
 
     def test_profile_retrieve(self):
-        response = self.client.get(self._url)
+        response = self.client.get(self.url)
 
         self.assertEqual(200, response.status_code)
 
     def test_profile_save(self):
-        response = self.client.post(self._url)
+        response = self.client.post(self.url)
 
         self.assertEqual(200, response.status_code)
 
     def test_profile_save_valid_zip(self):
         data = {"zip_code": 7030}
 
-        response = self.client.post(self._url, data)
+        response = self.client.post(self.url, data)
 
         self.assertEqual(200, response.status_code)
 
     def test_profile_save_invalid_zip(self):
         data = {"zip_code": 123}
 
-        response = self.client.post(self._url, data)
+        response = self.client.post(self.url, data)
 
         self.assertFormError(
             form=response.context["user_profile_form"],

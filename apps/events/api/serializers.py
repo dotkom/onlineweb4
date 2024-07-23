@@ -102,8 +102,6 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
     extras = ExtrasSerializer(many=True)
     feedback = serializers.PrimaryKeyRelatedField(read_only=True, source="get_feedback")
     payment = serializers.PrimaryKeyRelatedField(read_only=True)
-    is_marked = SerializerUserMethodField()
-    is_suspended = SerializerUserMethodField()
     is_eligible_for_signup = fields.SerializerMethodField()
     is_attendee = SerializerUserMethodField()
     is_on_waitlist = SerializerUserMethodField()
@@ -136,8 +134,6 @@ class AttendanceEventSerializer(serializers.ModelSerializer):
             "extras",
             "payment",
             "feedback",
-            "is_marked",
-            "is_suspended",
             "is_eligible_for_signup",
             "is_attendee",
             "is_on_waitlist",

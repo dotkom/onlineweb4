@@ -4,7 +4,7 @@ from django.core.mail import EmailMessage
 from django.utils import timezone
 
 from apps.events.models import AttendanceEvent
-from apps.marks.models import Mark, MarkUser
+from apps.marks.models import Mark, sanction_users
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
@@ -54,6 +54,8 @@ def set_marks(attendance_event: AttendanceEvent, logger=None):
         logger = logging.getLogger()
     event = attendance_event.event
     logger.info('Proccessing "%s"', event.title)
+    users = attendance_event.not_attended()
+
     mark = Mark(
         title=f"Manglende oppmøte på {event.title}",
         cause=Mark.Cause.NO_ATTENDANCE,
@@ -61,10 +63,10 @@ def set_marks(attendance_event: AttendanceEvent, logger=None):
     )
     mark.save()
 
-    for user in attendance_event.not_attended():
-        user_entry = MarkUser(user=user, mark=mark)
-        user_entry.save()
-        logger.info("Mark given to: %s", user_entry.user)
+    sanction_users(mark, users)
+
+    for u in users:
+        logger.info("Mark given to: %s", u)
 
     attendance_event.marks_has_been_set = True
     attendance_event.save()

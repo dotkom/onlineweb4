@@ -8,6 +8,7 @@ from django_dynamic_fixture import G
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Attendee, Event
+from apps.marks.models import MarkRuleSet
 from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
 from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
@@ -43,6 +44,7 @@ class PaymentTest(TransactionTestCase):
             content_type=ContentType.objects.get_for_model(AttendanceEvent),
         )
         self.payment_price = G(PaymentPrice, price=200, payment=self.event_payment)
+        self.rule_set = G(MarkRuleSet, duration=timedelta(days=14))
 
     def simulate_user_payment(self, user):
         G(
