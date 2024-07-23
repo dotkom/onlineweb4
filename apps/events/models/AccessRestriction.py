@@ -153,16 +153,6 @@ class RuleBundle(models.Model):
 
         return errors
 
-    def get_minimum_offset_for_user(self, user: User) -> timedelta:
-        offsets = sorted(
-            [
-                rule.offset
-                for rule in self.get_all_rules()
-                if rule.satisfies_constraint(user)
-            ]
-        )
-        return timedelta(hours=offsets[0] if len(offsets) > 0 else 0)
-
     def __str__(self):
         if self.description:
             return self.description

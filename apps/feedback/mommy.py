@@ -5,7 +5,7 @@ from django.core.mail import EmailMessage
 from django.utils import timezone
 
 from apps.feedback.models import FeedbackRelation
-from apps.marks.models import Mark, MarkUser
+from apps.marks.models import Mark, sanction_users
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
@@ -89,6 +89,13 @@ def generate_message(feedback, logger):
     message.contact = f"\n\nEventuelle spørsmål sendes til {message.committee_mail} "
     message.date = date_message(end_date)
 
+    mark = Mark(
+        title=f"Manglende tilbakemelding på {title}",
+        cause=Mark.Cause.MISSED_FEEDBACK,
+        description="Du har fått en prikk fordi du ikke har levert tilbakemelding.",
+    )
+    mark.save()
+
     if deadline_diff < 0:  # Deadline passed
         feedback.active = False
         feedback.save()
@@ -96,7 +103,7 @@ def generate_message(feedback, logger):
         message.status = "Deadine passed"
 
         if feedback.gives_mark:
-            set_marks(title, not_responded)
+            sanction_users(mark, not_responded)
 
             message.intro = (
                 f'Fristen for å svare på "{title}" har gått ut og du har fått en prikk.'
@@ -193,22 +200,6 @@ def mark_message(feedback):
         )
     else:
         return ""
-
-
-def set_marks(title, not_responded):
-    mark = Mark(
-        title=f"Manglende tilbakemelding på {title}",
-        cause=Mark.Cause.MISSED_FEEDBACK,
-        description="Du har fått en prikk fordi du ikke har levert tilbakemelding.",
-    )
-    mark.save()
-
-    for user in not_responded:
-        user_entry = MarkUser(
-            user=user,
-            mark=mark,
-        )
-        user_entry.save()
 
 
 class Message:

@@ -11,7 +11,7 @@ from guardian.decorators import permission_required
 from apps.authentication.models import OnlineUser as User
 from apps.dashboard.tools import get_base_context, has_access
 from apps.marks.dashboard.forms import MarkForm
-from apps.marks.models import Mark, MarkUser
+from apps.marks.models import Mark
 
 
 @login_required
@@ -225,22 +225,12 @@ def _handle_mark_detail(request, context, resp):
         # Update mark
         context["mark"].last_changed_date = timezone.now()
         context["mark"].last_changed_by = request.user
+        context["mark"].users.add(user)
         context["mark"].save()
-
-        # New MarkUser
-        mark_user = MarkUser()
-        mark_user.mark = context["mark"]
-        mark_user.user = user
-        mark_user.save()
-
-        # Build new list of users
-        mark_users_list = list(context["mark_users"])
-        mark_users_list.append(mark_user)
 
         # Sort the list of mark users
         resp["mark_users"] = [
-            {"user": mu.user.get_full_name(), "id": mu.user.id}
-            for mu in mark_users_list
+            {"user": u.get_full_name(), "id": u.user.id} for u in context["mark"].users
         ]
         resp["mark_users"].sort(key=lambda x: x["user"])
 

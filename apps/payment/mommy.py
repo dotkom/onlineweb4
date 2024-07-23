@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from apps.events.models import AttendanceEvent, Attendee
-from apps.marks.models import Mark, MarkUser, Suspension
+from apps.marks.models import Mark, Suspension, sanction_users
 from apps.payment.models import Payment, PaymentDelay, PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
@@ -32,10 +32,19 @@ def payment_reminder():
         deadline_diff = (payment.deadline - today).total_seconds()
 
         if deadline_diff <= 0:
-            if not_paid(payment):
+            if users := not_paid(payment):
+                mark = Mark(
+                    title=_("Manglende betaling på %s") % payment.description(),
+                    cause=Mark.Cause.MISSED_PAYMENT,
+                    category=Mark.Category.Payment,
+                    description=_(
+                        "Du har fått en prikk fordi du ikke har betalt for et arrangement."
+                    ),
+                )
+                mark.save()
                 send_deadline_passed_mail_payment(payment)
                 notify_committee(payment)
-                set_marks(payment)
+                sanction_users(mark, users)
                 suspend(payment)
 
             payment.active = False
@@ -133,24 +142,6 @@ def not_paid_mail_addresses(payment):
     return [user.email for user in not_paid(payment)]
 
 
-def set_marks(payment):
-    mark = Mark(
-        title=_("Manglende betaling på %s") % payment.description(),
-        cause=Mark.Cause.MISSED_PAYMENT,
-        category=Mark.Category.Payment,
-        description=_(
-            "Du har fått en prikk fordi du ikke har betalt for et arrangement."
-        ),
-    )
-    mark.save()
-
-    for user in not_paid(payment):
-        user_entry = MarkUser()
-        user_entry.user = user
-        user_entry.mark = mark
-        user_entry.save()
-
-
 def suspend(payment):
     for user in not_paid(payment):
         suspension = Suspension(
@@ -189,11 +180,19 @@ def payment_delay_handler():
 
 
 def handle_deadline_passed(payment_delay, unattend_deadline_passed):
+    mark = Mark(
+        title=_("Manglende betaling på %s") % payment_delay.payment.description(),
+        cause=Mark.Cause.MISSED_PAYMENT,  # Manglende betaling
+        category=Mark.Category.Payment,
+        description=_(
+            "Du har fått en prikk fordi du ikke har betalt for et arrangement."
+        ),
+    )
+    mark.save()
+    mark.users.set([payment_delay.user])
     if unattend_deadline_passed:
-        set_mark(payment_delay)
         handle_suspensions(payment_delay)
     else:
-        set_mark(payment_delay)
         unattend(payment_delay)
 
     payment_delay.active = False
@@ -207,11 +206,9 @@ def handle_suspensions(payment_delay):
         user=payment_delay.user,
         payment_id=payment_delay.payment.id,
         cause=Suspension.Cause.PAYMENT,
-        description="""
+        description=f"""
     Du har ikke betalt for et arangement du har vært med på. For å fjerne denne suspensjonen må du betale.\n
-    Mer informasjon om betalingen finner du her: {
-        settings.BASE_URL
-        + payment_delay.payment.content_object.event.get_absolute_url()}""",
+    Mer informasjon om betalingen finner du her: {settings.BASE_URL+ payment_delay.payment.content_object.event.get_absolute_url()}""",
     )
 
     suspension.save()
@@ -284,24 +281,6 @@ def send_notification_mail(payment_delay, unattend_deadline_passed):
     receivers = [payment_delay.user.email]
 
     EmailMessage(subject, content, payment.responsible_mail(), [], receivers).send()
-
-
-def set_mark(payment_delay):
-    mark = Mark(
-        title=_("Manglende betaling på %s") % payment_delay.payment.description(),
-        cause=Mark.Cause.MISSED_PAYMENT,  # Manglende betaling
-        category=Mark.Category.Payment,
-        description=_(
-            "Du har fått en prikk fordi du ikke har betalt for et arrangement."
-        ),
-    )
-    mark.save()
-
-    user_entry = MarkUser(
-        user=payment_delay.user,
-        mark=mark,
-    )
-    user_entry.save()
 
 
 def unattend(payment_delay):

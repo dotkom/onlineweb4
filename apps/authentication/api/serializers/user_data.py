@@ -18,7 +18,7 @@ from apps.feedback.serializers import (
     GenericSurveySerializer,
 )
 from apps.marks.serializers import (
-    MarkUserSerializer,
+    MarkSerializer,
     RuleAcceptanceSerializer,
     SuspensionSerializer,
 )
@@ -261,8 +261,8 @@ class UserDataSerializer(serializers.ModelSerializer):
     orderline_set = WebshopOrderLineSerializer(many=True)
     # Marks
     accepted_mark_rule_sets = RuleAcceptanceSerializer(many=True)
-    marks = MarkUserSerializer(many=True)
-    suspensions = SuspensionSerializer(many=True)
+    marks = MarkSerializer(many=True)
+    suspensions = SuspensionSerializer(many=True, source="suspension_set")
     # Approval
     applications = MembershipApprovalSerializer(many=True)
     approved_applications = MembershipApprovalSerializer(many=True)

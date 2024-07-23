@@ -12,9 +12,9 @@ def migrate_mark_category(apps, schema_editor):
     marks = Mark.objects.iterator(chunk_size=50)
     for m in marks:
         for title, cause in [
-            ("Prikk for Manglende oppmøte", MarkClass.Cause.NO_ATTENDANCE),
-            ("Prikk for Manglende tilbakemelding", MarkClass.Cause.MISSED_FEEDBACK),
-            ("Prikk for Manglende betaling", MarkClass.Cause.MISSED_PAYMENT),
+            ("Manglende oppmøte", MarkClass.Cause.NO_ATTENDANCE),
+            ("Manglende tilbakemelding", MarkClass.Cause.MISSED_FEEDBACK),
+            ("Manglende betaling", MarkClass.Cause.MISSED_PAYMENT),
             # the vast majority of others are due to late arrival, and some minor ones for behavior
         ]:
             if m.title.startswith(title):

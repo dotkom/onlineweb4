@@ -70,7 +70,7 @@
                             {% for suspension in suspension_list %}
                                 <div class="row row-space">
                                     <div class="col-md-12">
-                                        <h4>{{ suspension.title }} <span class="pull-right">{{ suspension.added_date }}</span></h4>
+                                        <h4>{{ suspension.title }} <span class="pull-right">{{ suspension.created_time }}</span></h4>
                                         <p>{{ suspension.description|urlize }}</p>
                                         {% if suspension.expiration_date %}
                                             <p><b>Utløpsdato: </b>{{ suspension.expiration_date }}</p>

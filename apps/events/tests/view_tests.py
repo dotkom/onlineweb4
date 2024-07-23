@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
 from django.contrib.auth.models import Group
@@ -513,6 +513,11 @@ class EventsUnattendWaitlist(TransactionTestCase):
         self.client.force_login(self.user)
         self.other_user = generate_user("other")
         self.url = reverse("unattend_event", args=(self.event.id,))
+        self.rule_Set = G(
+            MarkRuleSet,
+            duration=timedelta(days=14),
+            valid_from_date=datetime(year=2016, month=1, day=1, tzinfo=UTC),
+        )
 
     def test_unattend_notifies_waitlist_when_attending(self):
         generate_attendee(self.event, "user1")

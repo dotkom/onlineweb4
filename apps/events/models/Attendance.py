@@ -15,8 +15,11 @@ from guardian.shortcuts import assign_perm
 
 from apps.authentication.models import OnlineGroup
 from apps.companyprofile.models import Company
-from apps.marks.models import is_suspended
-from apps.marks.models import signup_delay as mark_signup_delay
+from apps.marks.models import (
+    MarkDelay,
+    Suspended,
+    user_sanctions,
+)
 from apps.payment import status as payment_status
 from apps.payment.mixins import PaymentMixin
 
@@ -306,13 +309,6 @@ class AttendanceEvent(PaymentMixin, models.Model):
             visible_attendees, key=lambda attendee: attendee["visible"], reverse=True
         )
 
-    def is_marked(self, user):
-        # TODO: just remove this?
-        return mark_signup_delay(user, timezone.now()) is not None
-
-    def is_suspended(self, user, now: datetime | None = None):
-        return is_suspended(user, now)
-
     @property
     def will_i_be_on_wait_list(self):
         return True if self.free_seats == 0 and self.waitlist else False
@@ -359,9 +355,6 @@ class AttendanceEvent(PaymentMixin, models.Model):
         if not self.room_on_event:
             return AttendanceResult(StatusCode.NO_SEATS_LEFT)
 
-        if self.is_suspended(user, now):
-            return AttendanceResult(StatusCode.SUSPENDED)
-
         # Checks if the event is group restricted and if the user is in the right group
         if not self.event.can_display(user):
             return AttendanceResult(StatusCode.ACCESS_DENIED)
@@ -373,15 +366,20 @@ class AttendanceEvent(PaymentMixin, models.Model):
         if not response.status and response.offset is None:
             return response
 
-        if mark_offset := mark_signup_delay(user, self.registration_start.date()):
-            curr_start = response.offset or self.registration_start
-            new_reg_start = curr_start + mark_offset
+        match user_sanctions(user, max(self.registration_start, now).date()):
+            case Suspended():
+                return AttendanceResult(StatusCode.SUSPENDED)
+            case MarkDelay(delay):
+                curr_start = response.offset or self.registration_start
+                new_reg_start = curr_start + delay
 
-            if now < new_reg_start:
-                return AttendanceResult(
-                    StatusCode.DELAYED_SIGNUP_MARKS,
-                    new_reg_start,
-                )
+                if now < new_reg_start:
+                    return AttendanceResult(
+                        StatusCode.DELAYED_SIGNUP_MARKS,
+                        new_reg_start,
+                    )
+            case None:
+                pass
 
         return response
 

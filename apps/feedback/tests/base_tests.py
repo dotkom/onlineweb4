@@ -24,9 +24,8 @@ from apps.feedback.mommy import (
     end_date,
     generate_message,
     get_committee_email,
-    set_marks,
 )
-from apps.marks.models import Mark
+from apps.marks.models import MarkRuleSet
 
 
 class FeedbackTestCaseMixin:
@@ -46,6 +45,7 @@ class FeedbackTestCaseMixin:
 
         self.user1.set_password("Herpaderp123")
         self.user1.save()
+        self.rule_set = G(MarkRuleSet, duration=timedelta(days=14))
 
     def yesterday(self):
         return timezone.now() - timedelta(days=1)
@@ -237,15 +237,6 @@ class SimpleTest(FeedbackTestCaseMixin, TestCase):
         feedback_relation = self.create_void_feedback_relation()
         date = end_date(feedback_relation)
         self.assertFalse(date)
-
-    def test_mark_setting(self):
-        users = [User.objects.get(username="user1")]
-        all_users = User.objects.all()
-        set_marks("test_title", users)
-        mark = Mark.objects.get()
-
-        self.assertEqual(set(users), {mu.user for mu in mark.given_to.all()})
-        self.assertNotEqual(set(all_users), {mu.user for mu in mark.given_to.all()})
 
     def test_login(self):
         client = Client()

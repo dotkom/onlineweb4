@@ -25,7 +25,7 @@ from apps.events.models import (
 )
 from apps.events.models.Attendance import AttendanceResult
 from apps.feedback.models import Feedback, FeedbackRelation
-from apps.marks.models import DURATION, Mark, MarkUser
+from apps.marks.models import Mark, MarkRuleSet
 from apps.notifications.constants import PermissionType
 from apps.notifications.models import Permission
 
@@ -72,6 +72,7 @@ class AttendanceEventModelTest(TestCase):
             username="ola123ntnu",
             expiration_date=self.now + timedelta(weeks=1),
         )
+        self.mark_rule_set = G(MarkRuleSet, duration=timedelta(days=14))
 
     def create_attendance_event(self):
         event: Event = G(Event)
@@ -204,13 +205,15 @@ class AttendanceEventModelTest(TestCase):
 
     def test_sign_up_with_no_rules_and_a_mark(self):
         # Giving the user a mark to see if the status goes to False.
-        mark1 = G(Mark, title="Testprikk12345")
-        G(
-            MarkUser,
-            user=self.user,
-            mark=mark1,
-            expiration_date=self.now + timedelta(days=DURATION),
+        mark1 = G(
+            Mark,
+            title="Testprikk12345",
+            users=[self.user],
+            ruleset=self.mark_rule_set,
+            added_date=self.now.date() - timedelta(days=1),
         )
+        mark1.save()
+
         response = self.attendance_event.is_eligible_for_signup(
             self.user, self.attendance_event.registration_start + timedelta(minutes=1)
         )
@@ -333,13 +336,10 @@ class AttendanceEventModelTest(TestCase):
         self.assertTrue(response.status)
         self.assertEqual(StatusCode.SUCCESS_USER_GROUP, response.status_code)
 
-        mark: Mark = G(Mark, title="Test mark")
-        G(
-            MarkUser,
-            user=self.user,
-            mark=mark,
-            expiration_date=self.now + timedelta(days=DURATION),
+        mark: Mark = G(
+            Mark, title="Test mark", ruleset=self.mark_rule_set, users=[self.user]
         )
+        mark.save()
 
         signup_time = self.attendance_event.registration_start + timedelta(minutes=1)
 

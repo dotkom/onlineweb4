@@ -1,10 +1,11 @@
 from datetime import date, timedelta
+from zoneinfo import ZoneInfo
 
 import pytest
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
-from django_dynamic_fixture import G
+from django_dynamic_fixture import F, G
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -14,12 +15,17 @@ from apps.marks.models import (
     Mark,
     MarkRuleSet,
     RuleAcceptance,
+    Suspended,
+    Suspension,
     delay_expiry_for_freeze_periods,
+    sanction_users,
+    user_sanctions,
 )
 
 
 def test_cause_defaults_weight(db):
-    mark = Mark(title="Test2Prikk", cause=Mark.Cause.LATE_ARRIVAL)
+    rs = G(MarkRuleSet, duration=timedelta(days=14))
+    mark = Mark(title="Test2Prikk", cause=Mark.Cause.LATE_ARRIVAL, ruleset=rs)
     mark.save()
     assert mark.weight == 3
 
@@ -56,6 +62,34 @@ def test_freeze_duration(given_date, expected_last_day):
         given_date, given_date + timedelta(days=DURATION)
     )
     assert expected_last_day == actual
+
+
+def test_suspensions_and_marks_over_time(db):
+    user = G(User)
+    now = timezone.datetime(
+        year=2024, month=9, day=1, hour=9, tzinfo=ZoneInfo("Europe/Oslo")
+    )
+    m = G(
+        Mark,
+        n=3,
+        weight=3,
+        added_date=now.date() - timedelta(days=7),
+        ruleset=F(duration=timedelta(days=14)),
+    )
+
+    for mark in m:
+        sanction_users(mark, [user], now)
+
+    assert type(user_sanctions(user, now.date())) is Suspended
+
+    active_suspensions = Suspension.active_suspensions(user, now.date())
+    assert len(active_suspensions) == 1
+
+    s = active_suspensions[0]
+    expected_end = now.date() + timedelta(days=14)
+    assert s.cause == Suspension.Cause.MARKS
+    assert s.expiration_date == expected_end
+    assert s.created_time == now
 
 
 class MarkRuleSetTest(TestCase):

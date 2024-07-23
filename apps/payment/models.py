@@ -1,5 +1,6 @@
 import logging
 import uuid
+from datetime import date
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -134,9 +135,10 @@ class Payment(models.Model):
             delay.delete()
 
         # If the user is suspended because of a lack of payment the suspension is deactivated.
-        suspensions = Suspension.objects.filter(payment_id=self.id, user=user)
-        for suspension in suspensions:
-            suspension.active = False
+        if suspension := Suspension.objects.filter(
+            payment_id=self.id, user=user
+        ).first():
+            suspension.expiration_date = date.today()
             suspension.save()
 
         self.content_object.on_payment_done(user)
@@ -144,7 +146,7 @@ class Payment(models.Model):
     def handle_refund(self, payment_relation):
         self.content_object.on_payment_refunded(payment_relation)
 
-    def check_refund(self, payment_relation) -> (bool, str):
+    def check_refund(self, payment_relation) -> tuple[bool, str]:
         return self.content_object.can_refund_payment(payment_relation)
 
     def prices(self):

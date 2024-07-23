@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core import mail
 from django.test import TestCase
 from django.utils import timezone
@@ -5,6 +7,7 @@ from django_dynamic_fixture import F, G
 
 from apps.authentication.models import OnlineGroup
 from apps.events.tests.utils import attend_user_to_event, generate_event, generate_user
+from apps.marks.models import MarkRuleSet
 from apps.payment.models import PaymentTypes
 from apps.payment.mommy import payment_reminder
 from apps.payment.tests.utils import generate_event_payment
@@ -35,6 +38,7 @@ class PaymentReminderTests(TestCase):
             payment_type=PaymentTypes.DEADLINE,
         )
         self.attendee = attend_user_to_event(self.event, self.user)
+        self.rule_set = G(MarkRuleSet, duration=timedelta(days=14))
 
     def test_no_attend_no_mail(self):
         payment_reminder()
