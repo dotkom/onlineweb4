@@ -9,6 +9,7 @@ from django.utils.translation import gettext as _
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
+from apps.authentication.auth0 import auth0_client
 from apps.authentication.models import get_length_of_membership
 
 
@@ -153,6 +154,16 @@ def update_user_name(request):
         request.user.first_name = first_name
         request.user.last_name = last_name
         request.user.save()
+
+        auth0 = auth0_client()
+        auth0.users.update(
+            request.user.auth0_subject,
+            {
+                "name": f"{first_name} {last_name}",
+                "given_name": first_name,
+                "family_name": last_name,
+            },
+        )
 
         messages.success(request, _("Ditt navn har blitt oppdatert."))
         return redirect("profiles_active", active_tab="membership")
