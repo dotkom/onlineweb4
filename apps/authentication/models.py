@@ -284,7 +284,7 @@ class OnlineUser(AbstractUser):
                 auth0 = auth0 if auth0 is not None else auth0_client()
                 auth0.users.update(self.auth0_subject, {"given_name": self.first_name})
 
-            if self.last_name != old.last_name and len(self.first_name) > 0:
+            if self.last_name != old.last_name and len(self.last_name) > 0:
                 auth0 = auth0 if auth0 is not None else auth0_client()
                 auth0.users.update(self.auth0_subject, {"family_name": self.last_name})
 
