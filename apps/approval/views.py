@@ -6,6 +6,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.translation import gettext as _
+from apps.authentication.auth0 import auth0_client
 
 from apps.approval.forms import FieldOfStudyApplicationForm
 from apps.approval.models import MembershipApproval
@@ -153,6 +154,15 @@ def update_user_name(request):
         request.user.first_name = first_name
         request.user.last_name = last_name
         request.user.save()
+
+        auth0 = auth0_client()
+        auth0.users.update(
+            request.user.auth0_subject, {
+                "name": f"{first_name} {last_name}",
+                "given_name": first_name,
+                "family_name": last_name,
+            }
+        )
 
         messages.success(request, _("Ditt navn har blitt oppdatert."))
         return redirect("profiles_active", active_tab="membership")
