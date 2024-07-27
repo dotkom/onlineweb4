@@ -1,10 +1,36 @@
 {% load crispy_forms_tags %}
 
+
 <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-4">
         <h3>Medlemskap</h3>
     </div>
 </div>
+
+{% if not user.first_name or not user.last_name %}
+<div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-5">
+        <form id="user-name-form" method="post" action="{% url 'update_user_name' %}">
+            {% csrf_token %}
+            <h3>Vi trenger ditt fornavn og etternavn!</h3>
+            <div class="form-group">
+                <label for="first_name">Fornavn</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Etternavn</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Send inn</button>
+        </form>
+    </div>
+</div>
+<hr />
+{% else %}
+
+
+
+
 <div class="row">
     <div class="col-xs-12 membership-text">
             Her kan du administrere dine søknader for medlemskap i Online, Linjeforeningen for Informatikk! <br>
@@ -40,23 +66,22 @@
         </div>
     </div>
     <div class="manual-membership-form">
-        {% if user.ntnu_username %}
-            {% if user.has_expiring_membership %}
-                <hr />
-                <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-md-6">
-                        <p class="ingress">
-                            Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
-                        </p>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-3">
-                        <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success pull-right">Send søknad om forlengelse</button>
-                        </form>
-                    </div>
+        {% if user.has_expiring_membership %}
+            <hr />
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <p class="ingress">
+                        Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
+                    </p>
                 </div>
-            {% endif %}
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success pull-right">Send søknad om forlengelse</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
             <hr />
             <div class="row">
                 <div class="col-md-12">
@@ -93,13 +118,6 @@
                         </div>
                         <button type="submit" class="btn btn-success pull-right">Send søknad</button>
                     </form>
-                </div>
-            </div>
-        {% else %}
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-4">
-                    <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
-                    <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
                 </div>
             </div>
         {% endif %}
@@ -189,3 +207,4 @@
         </div>
     </div>
 </div>
+{% endif %}

@@ -15,11 +15,11 @@ from apps.authentication.models import get_length_of_membership
 @login_required
 def create_fos_application(request):
     if request.method == "POST":
-        if not request.user.ntnu_username:
-            messages.error(
-                request, _("Du må knytte et NTNU-brukernavn til kontoen din.")
-            )
-            return redirect("profiles_active", active_tab="membership")
+        # if not request.user.ntnu_username:
+        # messages.error(
+        #     request, _("Du må knytte et NTNU-brukernavn til kontoen din.")
+        # )
+        # return redirect("profiles_active", active_tab="membership")
 
         form = FieldOfStudyApplicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -79,6 +79,9 @@ def create_fos_application(request):
 
             messages.success(request, _("Søknad om bytte av studieretning er sendt."))
 
+        else:
+            messages.error(request, str(form.errors))
+
         return redirect("profiles_active", active_tab="membership")
     raise Http404
 
@@ -108,11 +111,11 @@ def create_membership_application(request):
             messages.error(request, _("Din bruker har ikke et utløpende medlemskap."))
             return redirect("profiles_active", active_tab="membership")
 
-        if not request.user.ntnu_username:
-            messages.error(
-                request, _("Du må knytte et NTNU-brukernavn til kontoen din.")
-            )
-            return redirect("profiles_active", active_tab="membership")
+        # if not request.user.ntnu_username:
+        #     messages.error(
+        #         request, _("Du må knytte et NTNU-brukernavn til kontoen din.")
+        #     )
+        #     return redirect("profiles_active", active_tab="membership")
 
         # Grant membership until 16th of September this year if the request was sent previous to 1st of July,
         # or until 16th of September next year if the request was sent after 1st of July
@@ -132,6 +135,26 @@ def create_membership_application(request):
 
         messages.success(request, _("Søknad om ett års forlenget medlemskap er sendt."))
 
+        return redirect("profiles_active", active_tab="membership")
+    raise Http404
+
+
+@login_required
+def update_user_name(request):
+    if request.method == "POST":
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+
+        if not first_name or not last_name:
+            messages.error(request, _("Både fornavn og etternavn må fylles ut."))
+            return redirect("profiles_active", active_tab="membership")
+
+        # Update the user's first and last name
+        request.user.first_name = first_name
+        request.user.last_name = last_name
+        request.user.save()
+
+        messages.success(request, _("Ditt navn har blitt oppdatert."))
         return redirect("profiles_active", active_tab="membership")
     raise Http404
 
