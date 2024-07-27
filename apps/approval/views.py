@@ -16,10 +16,10 @@ from apps.authentication.models import get_length_of_membership
 def create_fos_application(request):
     if request.method == "POST":
         # if not request.user.ntnu_username:
-            # messages.error(
-            #     request, _("Du må knytte et NTNU-brukernavn til kontoen din.")
-            # )
-            # return redirect("profiles_active", active_tab="membership")
+        # messages.error(
+        #     request, _("Du må knytte et NTNU-brukernavn til kontoen din.")
+        # )
+        # return redirect("profiles_active", active_tab="membership")
 
         form = FieldOfStudyApplicationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -138,11 +138,12 @@ def create_membership_application(request):
         return redirect("profiles_active", active_tab="membership")
     raise Http404
 
+
 @login_required
 def update_user_name(request):
     if request.method == "POST":
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
 
         if not first_name or not last_name:
             messages.error(request, _("Både fornavn og etternavn må fylles ut."))
