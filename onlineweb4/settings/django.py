@@ -23,6 +23,13 @@ MANAGERS = ADMINS
 # might be 100% safe to remove, but keep it safe
 ATMOIC_REQUESTS = True
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "cache",
+    }
+}
+
 DATABASES = {
     # Set this using the environment variable "DATABASE_URL"
     "default": dj_database_url.config(
