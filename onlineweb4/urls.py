@@ -156,7 +156,6 @@ if "apps.hobbygroups" in settings.INSTALLED_APPS:
 if "apps.marks" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^marks/", include("apps.marks.urls")),
-        re_path(r"^dashboard/marks/", include("apps.marks.dashboard.urls")),
     ]
 
 if "apps.notifications" in settings.INSTALLED_APPS:

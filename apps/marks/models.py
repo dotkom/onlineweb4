@@ -117,7 +117,7 @@ class Mark(models.Model):
             _("Svarte ikke på tilbakemeldingsskjema"),
         )
         MISSED_PAYMENT = "manglende betaling", _("Manglende betaling")
-        OTHER = "annet", _("Ukjent grunn")
+        OTHER = "annet", _("Annet")
 
         def weight(self) -> int:
             match self:
@@ -138,7 +138,11 @@ class Mark(models.Model):
                     return 3
 
     title = models.CharField(_("tittel"), max_length=155)
-    weight = models.SmallIntegerField(_("Vekting, se prikkreglene for veiledning"))
+    weight = models.PositiveSmallIntegerField(
+        _("Vekting"),
+        help_text="Settes automatisk basert på årsak. Se prikkreglene for veiledning",
+        blank=True,
+    )
     added_date = models.DateField(_("utdelt dato"), default=date.today)
     given_by = models.ForeignKey(
         User,
@@ -161,25 +165,25 @@ class Mark(models.Model):
         blank=False,
         on_delete=models.SET_NULL,
     )
-    description = models.CharField(
+    description = models.TextField(
         _("beskrivelse"),
         max_length=255,
-        help_text=_(
-            "Hvis dette feltet etterlates blankt vil det fylles med en standard grunn for typen prikk som er valgt."
-        ),
+        help_text=_("Settes automatisk basert på årsak."),
         blank=True,
     )
     category = models.SmallIntegerField(
-        _("kategori"), choices=Category.choices, default=0
+        _("kategori"), choices=Category.choices, default=0, editable=False
     )
     cause = models.CharField(
         _("årsak"), max_length=30, choices=Cause.choices, default=Cause.OTHER
     )
     users = models.ManyToManyField(through="MarkUser", to=User, related_name="marks")
     ruleset = models.ForeignKey(
+        verbose_name=_("Gjeldene prikkregler"),
         to="MarkRuleSet",
         default=MarkRuleSet.get_current_rule_set_pk,
         on_delete=models.CASCADE,
+        editable=False,
     )
     expiration_date = models.DateField(_("Utløpsdato"))
 
@@ -192,8 +196,11 @@ class Mark(models.Model):
             self.added_date, self.added_date + self.ruleset.duration
         )
 
-        if self.weight is None:
+        if not self.pk:
             self.weight = self.Cause(self.cause).weight()
+
+        if not self.description:
+            self.description = self.Cause(self.cause).label
 
         return super().save(*args, **kwargs)
 
@@ -215,7 +222,7 @@ class MarkUser(models.Model):
     mark = models.ForeignKey(
         Mark, related_name="given_to", on_delete=models.CASCADE, editable=False
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     """this is here for historical reasons, the mark system used to have expirations build on each other"""
     expiration_date = models.DateField(
@@ -223,7 +230,7 @@ class MarkUser(models.Model):
     )
 
     def __str__(self):
-        return _("Mark entry for user: %s") % self.user.get_full_name()
+        return _("Prikk gitt til: %s") % self.user.get_full_name()
 
     def save(self, *args, **kwargs):
         now = timezone.now()
@@ -290,10 +297,12 @@ class Suspension(models.Model):
 
         return cls.objects.filter(user=user, expiration_date__lte=today)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, editable=False)
     title = models.CharField(_("tittel"), max_length=64)
     description = models.CharField(_("beskrivelse"), max_length=255)
-    created_time = models.DateTimeField(default=timezone.now, editable=False)
+    created_time = models.DateTimeField(
+        default=timezone.now, editable=False, verbose_name=_("Utdelt tidspunkt")
+    )
     # the mark is active up to but _not including_ the expiry date
     expiration_date = models.DateField(_("utløpsdato"), null=True, blank=True)
 
@@ -408,7 +417,7 @@ def sanction_users(
             raise InvalidOperation("Invalid sanction")
 
 
-def user_sanctions(user: User, today: date | None) -> UserSanction | None:
+def user_sanctions(user: User, today: date | None = None) -> UserSanction | None:
     if today is None:
         today = date.today()
 

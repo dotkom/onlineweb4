@@ -32,13 +32,13 @@
                             {% if mark_list|length == 0 %}
                                 Du har ingen {{ heading }}.
                             {% endif %}
-                            {% for mark_user in mark_list %}
+                            {% for m in mark_list %}
                                 <div class="row row-space">
                                     <div class="col-md-12">
-                                        <h4>{{ mark_user.mark.title }} <span class="pull-right">{{ mark_user.mark.added_date }}</span></h4>
-                                        <p>{{ mark_user.mark.description}}</p>
-                                        <p><b>Kategori: </b>{{ mark_user.mark.get_category_display }}</p>
-                                        <p><b>Utløpsdato: </b>{{ mark_user.expiration_date }}</p>
+                                        <h4>{{ m.title }} <span class="pull-right">{{ m.added_date }}</span></h4>
+                                        <p>{{ m.description}}</p>
+                                        <p><b>Årsak: </b>{{ m.get_cause_display }}</p>
+                                        <p><b>Utløpsdato: </b>{{ m.expiration_date }}</p>
                                     </div>
                                 </div>
                             {% endfor %}
