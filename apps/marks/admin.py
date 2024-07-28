@@ -15,7 +15,21 @@ class MarkUserInline(admin.TabularInline):
 @admin.register(Mark)
 class MarkAdmin(VersionAdmin):
     inlines = (MarkUserInline,)
-    list_display = ["__str__", "category", "added_date", "weight"]
+    fields = [
+        "title",
+        "added_date",
+        "cause",
+        "weight",
+        "description",
+        "expiration_date",
+        "ruleset",
+    ]
+
+    list_display = ["__str__", "category", "cause", "added_date", "weight"]
+    readonly_fields = (
+        "expiration_date",
+        "ruleset",
+    )
     search_fields = ("title",)
 
     def save_model(self, request, obj, form, change):

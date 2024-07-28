@@ -9,7 +9,7 @@ from ..models import Mark as MarkClass
 
 def migrate_mark_category(apps, schema_editor):
     Mark = apps.get_model("marks", "Mark")
-    marks = Mark.objects.iterator(chunk_size=50)
+    marks = list(Mark.objects.iterator(chunk_size=50))
     for m in marks:
         for title, cause in [
             ("Manglende oppmøte", MarkClass.Cause.NO_ATTENDANCE),
