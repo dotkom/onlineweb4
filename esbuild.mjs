@@ -19,7 +19,6 @@ let entryPoints = [
     { out: 'dashboardGroups', in: 'assets/dashboard/groups/index.js' },
     { out: 'dashboardHobbies', in: 'assets/dashboard/hobbies/index.jsx' },
     { out: 'dashboardPosters', in: 'assets/dashboard/posters/index.js' },
-    { out: 'dashboardResources', in: 'assets/dashboard/resources/index.jsx' },
     { out: 'dashboardWebshop', in: 'assets/dashboard/webshop/index.js' },
     { out: 'eventsArchive', in: 'assets/events/archive/index.js' },
     { out: 'eventsDetails', in: 'assets/events/details/index.js' },
@@ -29,7 +28,6 @@ let entryPoints = [
     { out: 'hobbygroups', in: 'assets/hobbygroups/index.js' },
     { out: 'mailinglists', in: 'assets/mailinglists/index.js' },
     { out: 'profiles', in: 'assets/profiles/index.js' },
-    { out: 'resourcecenter', in: 'assets/resourcecenter/index.js' },
     { out: 'webshop', in: 'assets/webshop/index.js' },
     { out: 'wiki', in: 'assets/wiki/index.js' },
 ];
