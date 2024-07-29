@@ -185,7 +185,9 @@ class Mark(models.Model):
         on_delete=models.CASCADE,
         editable=False,
     )
-    expiration_date = models.DateField(_("Utløpsdato"))
+    expiration_date = models.DateField(
+        _("Utløpsdato"), help_text=_("Settes automatisk")
+    )
 
     # managers
     objects = models.Manager()  # default manager
