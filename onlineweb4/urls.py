@@ -171,20 +171,9 @@ if "apps.posters" in settings.INSTALLED_APPS:
 if "apps.profiles" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^profile/", include("apps.profiles.urls"))]
 
-if (
-    "apps.resourcecenter" in settings.INSTALLED_APPS
-    and "apps.mailinglists" in settings.INSTALLED_APPS
-):
+if "apps.mailinglists" in settings.INSTALLED_APPS:
     urlpatterns += [
-        re_path(
-            r"^resourcecenter/mailinglists/", include("apps.mailinglists.urls")
-        ),  # leave in this order because...
-        re_path(
-            r"^resourcecenter/", include("apps.resourcecenter.urls")
-        ),  # Resourcecenter has catch-all on subpages
-        re_path(
-            r"^dashboard/resources/", include("apps.resourcecenter.dashboard.urls")
-        ),
+        re_path(r"^resourcecenter/mailinglists/", include("apps.mailinglists.urls")),
     ]
 
 if "apps.splash" in settings.INSTALLED_APPS:
