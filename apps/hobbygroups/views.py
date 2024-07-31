@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 from rest_framework import viewsets
 
 from apps.hobbygroups.models import Hobby
@@ -6,11 +6,8 @@ from apps.hobbygroups.serializers import HobbySerializer
 from onlineweb4.permissions import ModelPermission
 
 
-# Index page
 def index(request):
-    hobbygroups = Hobby.objects.filter(active=True).order_by("-priority")
-    context = {"hobbygroups": hobbygroups}
-    return render(request, "hobbygroups/index.html", context)
+    return redirect("https://online.ntnu.no/hobbygroups", permanent=True)
 
 
 class HobbyPermission(ModelPermission):
