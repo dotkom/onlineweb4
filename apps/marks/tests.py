@@ -92,6 +92,24 @@ def test_suspensions_and_marks_over_time(db):
     assert s.created_time == now
 
 
+class MarkTest(TestCase):
+    def setUp(self):
+        self.rule_set: MarkRuleSet = G(MarkRuleSet, version="1.0.0")
+        self.user = G(User, username="test1")
+        self.user2 = G(User, username="test2")
+        self.mark = G(Mark, title="Bad boy", users=[self.user])
+        self.mark2 = G(Mark, title="Good boy", users=[self.user2])
+        self.client.force_login(self.user)
+
+    def test_retrieve_marks_only_gives_your_own(self):
+        response = self.client.get(reverse("profile-marks-list"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = response.json()
+        self.assertEqual(response["count"], 1)
+        self.assertEqual(response["results"][0]["title"], self.mark.title)
+
+
 class MarkRuleSetTest(TestCase):
     def setUp(self):
         self.rule_set: MarkRuleSet = G(MarkRuleSet, version="1.0.0")
