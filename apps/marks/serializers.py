@@ -17,24 +17,30 @@ class MarkSerializer(serializers.ModelSerializer):
         fields = (
             "title",
             "added_date",
+            "expiration_date",
+            "weight",
             "last_changed_date",
             "description",
             "category",
             "category_display",
+            "cause",
             "given_by",
             "last_changed_by",
         )
 
 
 class SuspensionSerializer(serializers.ModelSerializer):
+    added_date = serializers.DateTimeField(source="created_time")
+
     class Meta:
         model = Suspension
         fields = (
             "title",
             "description",
-            "added_date",
+            "created_time",
             "expiration_date",
             "payment_id",
+            "added_date",
         )
 
 
