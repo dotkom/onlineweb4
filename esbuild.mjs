@@ -24,7 +24,6 @@ let entryPoints = [
     { out: 'eventsMail', in: 'assets/events/mail/index.js' },
     { out: 'feedback', in: 'assets/feedback/index.js' },
     { out: 'frontpage', in: 'assets/frontpage/index.jsx' },
-    { out: 'hobbygroups', in: 'assets/hobbygroups/index.js' },
     { out: 'mailinglists', in: 'assets/mailinglists/index.js' },
     { out: 'profiles', in: 'assets/profiles/index.js' },
     { out: 'webshop', in: 'assets/webshop/index.js' },
