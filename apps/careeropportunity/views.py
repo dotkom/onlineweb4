@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
@@ -11,7 +11,10 @@ from .serializers import CareerSerializer
 
 
 def index(request, id=None):
-    return render(request, "careeropportunity/index.html")
+    if id:
+        return redirect(f"https://online.ntnu.no/career/{id}", True)
+    else:
+        return redirect("https://online.ntnu.no/career", True)
 
 
 class HundredItemsPaginator(PageNumberPagination):

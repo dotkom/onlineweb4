@@ -6,7 +6,6 @@ import path from 'node:path';
 let entryPoints = [
     { out: 'articleDetails', in: 'assets/article/details/index.js' },
     { out: 'articleArchive', in: 'assets/article/archive/index.js' },
-    { out: 'careeropportunity', in: 'assets/careeropportunity/index.jsx' },
     { out: 'core', in: 'assets/core/index.js' },
     { out: 'contact', in: 'assets/contact/index.js' },
     { out: 'dashboard', in: 'assets/dashboard/core/index.js' },
