@@ -65,20 +65,6 @@
                         </ul>
                     </li>
 {% endif %}
-                    {% if 'authentication.view_onlineuser' in user_permissions %}
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-user blue"></i>
-                            <span>Autentisering</span>
-                            <i class="fa fa-angle-down pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="{% url 'auth_index' %}"><i class="fa fa-angle-double-right orange"></i> Brukerprofiler</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Posisjoner</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Spesialposisjoner</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
                     {% if 'companyprofile.view_company' in user_permissions %}
                     <li class="treeview">
                         <a href="#">
@@ -205,18 +191,6 @@
                             <i class="fa fa-envelope-o blue"></i> <span>Medlemsskapsøknader</span>
                             {% if approval_pending %}<small class="badge pull-right">{{ approval_pending }}</small>{% endif %}
                         </a>
-                    </li>
-                    {% endif %}
-                    {% if 'feedback.view_feedback' in user_permissions %}
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-envelope blue"></i> <span>Tilbakemelding</span>
-                            <i class="fa fa-angle-down pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Flervalgsspørsmål</a></li>
-                            <li><a href="#"><i class="fa fa-angle-double-right orange"></i> Tilbakemeldingsskjema</a></li>
-                        </ul>
                     </li>
                     {% endif %}
                     {% if 'webshop.view_category' in user_permissions or 'webshop.view_order' in user_permissions %}
