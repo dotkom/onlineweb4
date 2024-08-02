@@ -54,6 +54,7 @@ class MarkAdmin(VersionAdmin):
 @admin.register(Suspension)
 class SuspensionAdmin(VersionAdmin):
     model = Suspension
+    list_display = ["title", "user", "created_time", "expiration_date", "cause"]
 
     exclude = ("payment_id",)
 
