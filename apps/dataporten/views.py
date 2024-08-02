@@ -1,6 +1,7 @@
 import logging
 from urllib.parse import urlparse
 
+import requests
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -9,10 +10,10 @@ from django.shortcuts import redirect
 from oic import rndstr
 from oic.oauth2 import AuthorizationResponse, ResponseError
 
+from apps.authentication.models import OnlineUser
 from apps.dataporten.study.tasks import (
     fetch_groups_information,
     find_user_study_and_update,
-    set_ntnu_username,
 )
 
 from .client import client_setup
@@ -146,12 +147,24 @@ def study_callback(request):  # noqa: C901
         pass
         # @ToDo: Register email address. Maybe store it, but ask user to confirm? -> resend auth email
 
+    extended_userinfo = requests.get(
+        "https://api.dataporten.no/userinfo/v1/userinfo",
+        headers={"Authorization": f"Bearer {access_token}"},
+    ).json()
+
+    given_name = extended_userinfo["givenName"][0]
+    family_name = extended_userinfo["sn"][0]
+
+    user: OnlineUser = request.user
+    user.ntnu_username = ntnu_username_dataporten
+    user.first_name = given_name
+    user.last_name = family_name
+    user.save()
+
     # Getting information about study of the user
     groups = fetch_groups_information(access_token)
 
     try:
-        if not request.user.ntnu_username:
-            set_ntnu_username(request.user, ntnu_username_dataporten)
         studies_info = find_user_study_and_update(request.user, groups)
 
         if not studies_info:

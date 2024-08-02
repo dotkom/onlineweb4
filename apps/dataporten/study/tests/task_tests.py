@@ -10,7 +10,6 @@ from apps.authentication.models import OnlineUser
 from apps.dataporten.study.tasks import (
     fetch_groups_information,
     find_user_study_and_update,
-    set_ntnu_username,
 )
 
 from .course_test_data import (
@@ -74,10 +73,3 @@ class StudyUpdatingTestCase(TestCase):
         self.assertTrue(application.processed)
 
         self.assertEqual(len(mail.outbox), 0)
-
-
-class UserUpdatingTestCase(TestCase):
-    def test_set_ntnu_username(self):
-        user = G(OnlineUser)
-        set_ntnu_username(user, "testname")
-        self.assertEqual(user.ntnu_username, "testname")

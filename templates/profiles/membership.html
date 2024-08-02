@@ -40,7 +40,7 @@
         </div>
     </div>
     <div class="manual-membership-form">
-        {% if user.ntnu_username %}
+        {% if user.ntnu_username %} <!-- they have or have had a membership at somepoint, ntnu_username is *only* set after an interaction with FEIDE -->
             {% if user.has_expiring_membership %}
                 <hr />
                 <div class="row">
@@ -99,7 +99,7 @@
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-md-4">
                     <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
-                    <p>Gå til Epost-innstillinger og registrer din @stud.ntnu.no epost.</p>
+                    <p>Dette kan gjøres ved å søke om automatisk medlemskap, uavhengig av om du får innvilget det automatisk.</p>
                 </div>
             </div>
         {% endif %}

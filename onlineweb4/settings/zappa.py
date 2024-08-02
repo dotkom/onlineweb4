@@ -36,7 +36,14 @@ DATAPORTEN = {
         "CLIENT_SECRET": env["DP_STUDY_CLIENT_SECRET"],
         "REDIRECT_URI": config("OW4_DP_STUDY_REDIRECT_URI", default=""),
         "PROVIDER_URL": "https://auth.dataporten.no/oauth/token",
-        "SCOPES": ["openid", "userid-feide", "profile", "groups", "email"],
+        "SCOPES": [
+            "openid",
+            "userid-feide",
+            "userid-name",
+            "profile",
+            "groups",
+            "email",
+        ],
     }
 }
 
