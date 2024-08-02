@@ -317,6 +317,7 @@ class Suspension(models.Model):
 
     class Meta:
         default_permissions = ("add", "change", "delete")
+        verbose_name = "Suspensjoner"
 
     # TODO URL
 
