@@ -112,8 +112,3 @@ def find_user_study_and_update(user, groups):
             membership.save()
 
         return True, study_name, study_year
-
-
-def set_ntnu_username(user, username):
-    user.ntnu_username = username
-    user.save()

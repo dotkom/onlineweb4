@@ -149,6 +149,7 @@ class OnlineUser(AbstractUser):
     )
     bio = models.TextField(_("bio"), max_length=2048, blank=True)
     # NTNU credentials
+    # Only set if the user signs in with FEIDE, or by admins
     ntnu_username = models.CharField(
         _("NTNU-brukernavn"), max_length=50, blank=True, null=True, unique=True
     )
