@@ -18,7 +18,7 @@ class CareerOpportunityURLTestCase(TestCase):
 
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_301_MOVED_PERMANENTLY)
 
     def test_careeropportunity_detail(self):
         past = datetime(2000, 1, 1, 1, 0, 0, 0, UTC)
@@ -29,7 +29,7 @@ class CareerOpportunityURLTestCase(TestCase):
 
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_301_MOVED_PERMANENTLY)
 
 
 class CompanyAPITestCase(GetUrlMixin, APITestCase):
