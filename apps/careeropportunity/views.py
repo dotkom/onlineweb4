@@ -12,9 +12,9 @@ from .serializers import CareerSerializer
 
 def index(request, id=None):
     if id:
-        return redirect(f"https://online.ntnu.no/career/{id}", True)
+        return redirect(f"https://online.ntnu.no/career/{id}", permanent=True)
     else:
-        return redirect("https://online.ntnu.no/career", True)
+        return redirect("https://online.ntnu.no/career", permanent=True)
 
 
 class HundredItemsPaginator(PageNumberPagination):
