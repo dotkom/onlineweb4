@@ -7,12 +7,13 @@
     </div>
 </div>
 
-{% if not user.first_name or not user.last_name %}
+<!-- Ugly fix to get user data for membership application -->
+{% if not user.first_name or not user.last_name or not user.ntnu_username %}
 <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-5">
-        <form id="user-name-form" method="post" action="{% url 'update_user_name' %}">
+        <form id="user-name-form" method="post" action="{% url 'temp_gather_user_data' %}">
             {% csrf_token %}
-            <h3>Vi trenger ditt fornavn og etternavn!</h3>
+            <h3>For å ske medlemskap trenger vi litt informasjon om deg.</h3>
             <div class="form-group">
                 <label for="first_name">Fornavn</label>
                 <input type="text" class="form-control" id="first_name" name="first_name" required>
@@ -20,6 +21,10 @@
             <div class="form-group">
                 <label for="last_name">Etternavn</label>
                 <input type="text" class="form-control" id="last_name" name="last_name" required>
+            </div>
+            <div class="form-group">
+                <label for="ntnu_username">NTNU brukernavn</label>
+                <input type="text" class="form-control" id="ntnu_username" name="ntnu_username" required>
             </div>
             <button type="submit" class="btn btn-primary">Send inn</button>
         </form>

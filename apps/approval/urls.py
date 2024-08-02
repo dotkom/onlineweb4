@@ -13,10 +13,11 @@ urlpatterns = [
         views.create_membership_application,
         name="approval_send_membership_application",
     ),
+    # Ugly fix to get user data for membership application
     re_path(
-        r"^update_user_name/$",
-        views.update_user_name,
-        name="update_user_name",
+        r"^temp_gather_user_data/$",
+        views.temp_gather_user_data,
+        name="temp_gather_user_data",
     ),
     re_path(
         r"^cancel_application/(?P<application_id>\d+)/$",

@@ -139,22 +139,25 @@ def create_membership_application(request):
     raise Http404
 
 
+# Ugly fix to get user data for membership application
 @login_required
-def update_user_name(request):
+def temp_gather_user_data(request):
     if request.method == "POST":
         first_name = request.POST.get("first_name")
         last_name = request.POST.get("last_name")
+        ntnu_username = request.POST.get("ntnu_username")
 
-        if not first_name or not last_name:
-            messages.error(request, _("Både fornavn og etternavn må fylles ut."))
+        if not first_name or not last_name or not ntnu_username:
+            messages.error(request, _("Du må fylles ut alle feltene."))
             return redirect("profiles_active", active_tab="membership")
 
         # Update the user's first and last name
         request.user.first_name = first_name
         request.user.last_name = last_name
+        request.user.ntnu_username = ntnu_username
         request.user.save()
 
-        messages.success(request, _("Ditt navn har blitt oppdatert."))
+        messages.success(request, _("Brukeren har blitt oppdatert."))
         return redirect("profiles_active", active_tab="membership")
     raise Http404
 
