@@ -13,6 +13,11 @@
             gjennom skoleåret. <br> Hvorfor nøle? Søk nå!
             {% endif %}
     </div>
+    <div class="row col-xs-12">
+        <div class="col-md-12">
+            <p><strong>NB! Godkjente og avslåtte søknader havner nederst på siden, sjekk der før du sender inn nye søknader!</strong></p>
+        </div>
+    </div>
 </div>
 {% if not has_active_approvals %}
     <div class="row">
@@ -32,11 +37,6 @@
                     Søk medlemskap med manuell godkjenning
                 </a>
             </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <p><strong>NB! Godkjente og avslåtte søknader havner nederst på siden, sjekk her før du sender inn nye søknader!</strong></p>
         </div>
     </div>
     <div class="manual-membership-form">
@@ -98,8 +98,13 @@
         {% else %}
             <div class="row">
                 <div class="col-xs-12 col-sm-6 col-md-4">
-                    <p>For å aktivere ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
-                    <p>Dette kan gjøres ved å søke om automatisk medlemskap, uavhengig av om du får innvilget det automatisk.</p>
+                    <h4>Vennligst bekreft din studentkonto først:</h4>
+
+                    <a href="{% url 'dataporten:study' %}" class="btn btn-success membership-button">
+                        Bekreft studentkonto
+                    </a>
+
+                    <p>For å godkjenne ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
                 </div>
             </div>
         {% endif %}
