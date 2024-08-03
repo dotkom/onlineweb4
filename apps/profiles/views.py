@@ -97,24 +97,24 @@ def _create_profile_context(request):
             # Tuple syntax ('title', list_of_approvals, is_collapsed)
             (
                 _("aktive søknader"),
-                MembershipApproval.objects.filter(
+                active_applications := MembershipApproval.objects.filter(
                     applicant=request.user, processed=False
                 ),
-                False,
+                len(active_applications) == 0
             ),
             (
                 _("avslåtte søknader"),
-                MembershipApproval.objects.filter(
+                rejected_applications := MembershipApproval.objects.filter(
                     applicant=request.user, processed=True, approved=False
                 ),
-                True,
+                len(rejected_applications) == 0,
             ),
             (
                 _("godkjente søknader"),
-                MembershipApproval.objects.filter(
-                    applicant=request.user, processed=True
+                accepted_applications := MembershipApproval.objects.filter(
+                    applicant=request.user, processed=True, approved=True
                 ),
-                True,
+                False,
             ),
         ],
         "payments": [

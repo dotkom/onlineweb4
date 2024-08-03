@@ -192,7 +192,7 @@ def study_callback(request):  # noqa: C901
         messages.success(
             request,
             f"Bekreftet studieretning som {study_name} i {study_year}. klasse. Dersom dette er feil, "
-            "kontakt dotkom slik at vi kan rette opp og finne ut hva som gikk galt.",
+            "søk om medlemskap med manuell godkjenning eller kontakt dotkom slik at vi kan rette opp.",
         )
     else:
         messages.error(
