@@ -100,7 +100,7 @@ def _create_profile_context(request):
                 active_applications := MembershipApproval.objects.filter(
                     applicant=request.user, processed=False
                 ),
-                len(active_applications) == 0
+                len(active_applications) == 0,
             ),
             (
                 _("avslåtte søknader"),
@@ -114,7 +114,7 @@ def _create_profile_context(request):
                 accepted_applications := MembershipApproval.objects.filter(
                     applicant=request.user, processed=True, approved=True
                 ),
-                False,
+                accepted_applications,
             ),
         ],
         "payments": [
