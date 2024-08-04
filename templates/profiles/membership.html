@@ -7,67 +7,78 @@
 </div>
 <div class="row">
     <div class="col-xs-12 membership-text">
-            Her kan du administrere dine søknader for medlemskap i Online, Linjeforeningen for Informatikk! <br>
-            {% if not has_active_approvals %}
-            Ved å sende inn en medlemskapssøknad, kan du få muligheten til å delta på Online sine mange arrangementer
-            gjennom skoleåret. <br> Hvorfor nøle? Søk nå!
-            {% endif %}
-    </div>
-    <div class="row col-xs-12">
-        <div class="col-md-12">
-            <p><strong>NB! Godkjente og avslåtte søknader havner nederst på siden, sjekk der før du sender inn nye søknader!</strong></p>
-        </div>
+        Her kan du søke medlemskap i Online, Linjeforeningen for Informatikk! <br>
+        Ved å bli medlem i Online, så får du muligheten til å delta på Online sine mange arrangementer
+        gjennom skoleåret.
+        {% if not has_active_approvals %}
+        <br/> Hvorfor nøle? Søk nå!
+        {% endif %}
     </div>
 </div>
 {% if not has_active_approvals %}
-    <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-5">
-            <a href="{% url 'dataporten:study' %}" class="btn btn-success membership-button">
-                Søk medlemskap automatisk gjennom Dataporten
-            </a>
-        </div>
-    </div>
-    <div class="manual-membership-choice">
+    {% if not user.ntnu_username %}
         <div class="row">
-            <div class="col-xs-12 col-sm-6 col-md-5"><strong>Eller</strong></div>
+            <div class="col-xs-12">
+                <h4>Vennligst bekreft din studentstatus først:</h4>
+                {% comment %}
+                med auth0 vil dette endres til "Knytt NTNU-konto til Online-brukeren", og samtidig legge til støtte for
+                innlogging via FEIDE.
+                {% endcomment %}
+                <a href="{% url 'dataporten:study' %}" class="btn btn-success membership-button">
+                    Bekreft studentstatus hos NTNU
+                </a>
+
+                <p>
+                    Dersom du studerer informatikk vil du automatisk bli innvilget medlemskap.
+                </p>
+            </div>
         </div>
+    {% else %}
+    {% comment %} user has confirmed student-status at a previous time {% endcomment %}
+        {% if user.has_expiring_membership %}
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-6">
+                    <p class="ingress">
+                        Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
+                    </p>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-3">
+                    <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success pull-right">Send søknad om forlengelse</button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
         <div class="row">
             <div class="col-xs-12 col-sm-6 col-md-5">
-                <a class="btn btn-warning membership-button manual-membership-button">
-                    Søk medlemskap med manuell godkjenning
+                <a href="{% url 'dataporten:study' %}" class="btn btn-success membership-button">
+                    Oppdater medlemskapet ditt via NTNU
                 </a>
             </div>
         </div>
-    </div>
-    <div class="manual-membership-form">
-        {% if user.ntnu_username %} <!-- they have or have had a membership at somepoint, ntnu_username is *only* set after an interaction with FEIDE -->
-            {% if user.has_expiring_membership %}
-                <hr />
-                <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-md-6">
-                        <p class="ingress">
-                            Ettersom du har et gammelt medlemskap kan du søke om å få dette forlenget. Forlengelsen er for ett år om gangen.
-                        </p>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-3">
-                        <form id="membership-application" method="post" action="{% url 'approval_send_membership_application' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success pull-right">Send søknad om forlengelse</button>
-                        </form>
-                    </div>
-                </div>
-            {% endif %}
-            <hr />
+        <p>
+            Nettopp kommet inn på master?
+
+            Du kan automatisk oppdatere medlemskapet ditt her så snart det er registrert i Studentweb.
+        </p>
+        <hr />
+        <div class="row">
+            <div class="col-xs-12 col-sm-6 col-md-5">
+                <button class="btn btn-warning membership-button manual-membership-button">
+                    Søk medlemskap med manuell godkjenning
+                </button>
+            </div>
+        </div>
+        <div class="manual-membership-form">
             <div class="row">
                 <div class="col-md-12">
                     <p class="ingress">
-                        Med skjemaet under søker du om å få oppdatert studieretningen din. Starten på studieretningen er når du ble tatt opp.
-                        Om du tidligere har vært bachelor og ønsker å søke deg over på master, skal starttidspunkt være når du kom
-                        inn på mastergraden.
+                        Ble klassetrinnet feil, eller planlegger du å søke overgang til informatikk og vil bli sosialt medlem? Da kan du søke om å få det manuellt godkjent her.
                     </p>
                     <p>
                         Merk at det er viktig at du legger inn virkelig informasjon i dette skjemaet. Fusk med feil startdato
-                        og studieretning kan få svært alvorlige konsekvenser, og du risikerer utestengelse fra linjeforeningens
+                        og studieretning kan få konsekvenser, og du risikerer utestengelse fra linjeforeningens
                         arrangementer.
                     </p>
                 </div>
@@ -81,13 +92,13 @@
                         {{ field_of_study_application.field_of_study|as_crispy_field }}
                         <div id="field-of-study-application-documentation">
                             <p>
-                                Manuell søknad om studieretning krever at du laster opp f.eks et screenshot av
-                                studentweb for å vise til at du studerer informatikk.
+                                Manuell søknad om studieretning krever at du laster opp f.eks et skjermbilde av
+                                Studentweb for å vise at du studerer informatikk.
                             </p>
                             <p id="social-membership-application">
                                 For å søke sosialt medlemsskap i linjeforeningen, kreves det at du tar over 50% informatikk
                                 emner (15 stp+) ved NTNU per semester og at du planlegger å søke overgang til informatikk.
-                                Dette kan du vise ved studieplanen på studentweb.
+                                Dette kan du vise ved studieplanen på Studentweb.
                             </p>
                             {{ field_of_study_application.documentation|as_crispy_field }}
                         </div>
@@ -95,32 +106,16 @@
                     </form>
                 </div>
             </div>
-        {% else %}
-            <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-4">
-                    <h4>Vennligst bekreft din studentkonto først:</h4>
-
-                    <a href="{% url 'dataporten:study' %}" class="btn btn-success membership-button">
-                        Bekreft studentkonto
-                    </a>
-
-                    <p>For å godkjenne ditt medlemskap kreves det at du har knyttet din studentkonto til din profil.</p>
-                </div>
-            </div>
-        {% endif %}
-    </div>
-{% endif %}
-<hr />
+        </div>
+    {% endif %}
+{% else %}
 <div class="row">
     <div class="col-md-12">
-        {%  if has_active_approvals %}
-            <p>Du har allerede aktive søknader.</p>
-            <p>Dersom du oppdager feil eller mangler i en aktiv søknad kan du slette den og sende inn en ny.</p>
-        {% else %}
-            <p>Du har ingen aktive søknader.</p>
-        {% endif %}
+        <p>Dersom du oppdager feil eller mangler i søknaden din kan du slette den og sende inn en ny.</p>
     </div>
 </div>
+{% endif %}
+<hr>
 <div class="row row-space-sm">
     <div class="col-md-12">
         <div class="panel-group" id="approvalsaccordion">
