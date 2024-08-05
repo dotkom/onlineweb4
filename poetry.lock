@@ -951,13 +951,13 @@ sftp = ["paramiko (>=1.15)"]
 
 [[package]]
 name = "django-taggit"
-version = "5.0.1"
+version = "6.0.0"
 description = "django-taggit is a reusable Django application for simple tagging."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "django-taggit-5.0.1.tar.gz", hash = "sha256:edcd7db1e0f35c304e082a2f631ddac2e16ef5296029524eb792af7430cab4cc"},
-    {file = "django_taggit-5.0.1-py3-none-any.whl", hash = "sha256:a0ca8a28b03c4b26c2630fd762cb76ec39b5e41abf727a7b66f897a625c5e647"},
+    {file = "django_taggit-6.0.0-py3-none-any.whl", hash = "sha256:7094f797b7e5e3727525a0af7bc550860000ddc2248266529d568eca61b39fb1"},
+    {file = "django_taggit-6.0.0.tar.gz", hash = "sha256:723d98bd5c536daa3c0e1bdae0965f7005a9b15269816bb4053fafec4ebad57e"},
 ]
 
 [package.dependencies]
@@ -3279,4 +3279,4 @@ s3 = ["django-storages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.12"
-content-hash = "5f8fe74e2628221b282832c1c81781d344081e55e668481cd8dfac9e82698124"
+content-hash = "5e5ea96e1b306cf257057bbf4c61b81721d9610d44aadfa3b5d8f9316c66b176"
