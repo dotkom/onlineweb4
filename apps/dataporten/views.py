@@ -2,6 +2,7 @@ import logging
 from urllib.parse import urlparse
 
 import requests
+import sentry_sdk
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -147,24 +148,30 @@ def study_callback(request):  # noqa: C901
         pass
         # @ToDo: Register email address. Maybe store it, but ask user to confirm? -> resend auth email
 
-    extended_userinfo = requests.get(
-        "https://api.dataporten.no/userinfo/v1/userinfo",
-        headers={"Authorization": f"Bearer {access_token}"},
-    ).json()
-
-    given_name = extended_userinfo["givenName"][0]
-    family_name = extended_userinfo["sn"][0]
-
-    user: OnlineUser = request.user
-    user.ntnu_username = ntnu_username_dataporten
-    user.first_name = given_name
-    user.last_name = family_name
-    user.save()
+    try:
+        extended_userinfo = requests.get(
+            "https://api.dataporten.no/userinfo/v1/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+        ).json()
+    except Exception as e:
+        sentry_sdk.capture_exception(e)
+        messages.error(
+            request,
+            "Noe gikk galt, prøv igjen senere eller kontakt dotkom.",
+        )
+        return redirect("profiles_active", active_tab="membership")
 
     # Getting information about study of the user
     groups = fetch_groups_information(access_token)
 
     try:
+        given_name = extended_userinfo["givenName"][0]
+        family_name = extended_userinfo["sn"][0]
+        user: OnlineUser = request.user
+        user.ntnu_username = ntnu_username_dataporten
+        user.first_name = given_name
+        user.last_name = family_name
+        user.save()
         studies_info = find_user_study_and_update(request.user, groups)
 
         if not studies_info:
