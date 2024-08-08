@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import mixins, permissions, status, viewsets
@@ -155,9 +156,17 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         url_path="public-attendees",
     )
     def public_attendees(self, request, pk=None):
+        CACHE_TIME = 10
+        sentinel = object()
+        cached = cache.get("public-attendees" + str(pk), sentinel)
+        if cached is not sentinel:
+            return cached
+
         attendance_event: AttendanceEvent = self.get_object()
         attendees = attendance_event.attending_attendees_qs
         serializer = self.get_serializer(attendees, many=True)
+
+        cache.set("public-attendees" + str(pk), serializer.data, CACHE_TIME)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -169,9 +178,16 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         url_path="public-on-waitlist",
     )
     def public_on_waitlist(self, request, pk=None):
+        CACHE_TIME = 10
+        sentinel = object()
+        cached = cache.get("public-on-waitlist" + str(pk), sentinel)
+        if cached is not sentinel:
+            return cached
+
         attendance_event: AttendanceEvent = self.get_object()
         attendees = attendance_event.waitlist_qs
         serializer = self.get_serializer(attendees, many=True)
+        cache.set("public-on-waitlist" + str(pk), serializer.data, CACHE_TIME)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
