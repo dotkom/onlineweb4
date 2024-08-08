@@ -1,14 +1,18 @@
 import json
+from datetime import datetime
 
 from django.utils import timezone
 
 
-def load_course(course, active=False, years_ago=0):
+def load_course(course, active=False, years_ago=0, now: datetime | None = None):
+    if now is None:
+        now = timezone.now()
+
     if active and years_ago != 0:
         raise ValueError("Cannot have a course in the present be active.")
     elif active:
         return course
-    year = timezone.now().year - years_ago
+    year = now.year - years_ago
     return json.loads(json.dumps(course) % str(year))
 
 

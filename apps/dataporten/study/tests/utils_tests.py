@@ -1,9 +1,12 @@
 import json
 import os
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
 
+import pytest
 from django.test import TestCase
 from django.utils.dateparse import parse_datetime
-from freezegun import freeze_time
 
 from apps.authentication.constants import FieldOfStudyType
 from apps.dataporten.study.courses import GROUP_IDENTIFIERS
@@ -34,6 +37,10 @@ from .course_test_data import (
 )
 
 DIR_NAME = os.path.dirname(os.path.realpath(__file__))
+
+DUMPS = Path(DIR_NAME) / "data"
+SPRING = datetime(year=2018, month=4, day=1, hour=12, tzinfo=ZoneInfo("Europe/Oslo"))
+FALL = datetime(year=2017, month=10, day=1, hour=12, tzinfo=ZoneInfo("Europe/Oslo"))
 
 
 class DataProcessingTestCase(TestCase):
@@ -69,327 +76,173 @@ class DataProcessingTestCase(TestCase):
         self.assertEqual(None, get_course_finish_date(course))
 
     def test_get_course_finish_date_illegal_date(self):
-        course = load_course(ITGK_ACTIVE)
+        course = load_course(ITGK_ACTIVE, now=FALL)
         course["membership"]["notAfter"] = "definitely not a date"
 
         self.assertEqual(None, get_course_finish_date(course))
 
-    @freeze_time("2010-10-01 12:00")
     def test_get_year_from_course_itgk_1st_grader_fall(self):
-        course = load_course(ITGK_EXPIRED, years_ago=0)
-        year = get_year_from_course(course, get_course_finish_date(course))
+        course = load_course(ITGK_EXPIRED, years_ago=0, now=FALL)
+        year = get_year_from_course(course, get_course_finish_date(course), FALL)
 
         self.assertEqual(1, year)
 
-    @freeze_time("2011-03-01 12:00")
     def test_get_year_from_course_itgk_1st_grader_spring(self):
-        course = load_course(ITGK_EXPIRED, years_ago=1)
-        year = get_year_from_course(course, get_course_finish_date(course))
+        course = load_course(ITGK_EXPIRED, years_ago=1, now=SPRING)
+        year = get_year_from_course(course, get_course_finish_date(course), SPRING)
 
         self.assertEqual(1, year)
 
-    @freeze_time("2010-10-01 12:00")
     def test_get_year_from_course_itgk_2nd_grader_fall(self):
-        course = load_course(ITGK_EXPIRED, years_ago=1)
+        course = load_course(ITGK_EXPIRED, years_ago=1, now=FALL)
         course_finish_date = get_course_finish_date(course)
-        year = get_year_from_course(course, course_finish_date)
+        year = get_year_from_course(course, course_finish_date, FALL)
 
         self.assertEqual(2, year)
 
-    @freeze_time("2010-10-01 12:00")
     def test_get_year_from_course_itgk_3rd_grader_fall(self):
-        course = load_course(ITGK_EXPIRED, years_ago=2)
+        course = load_course(ITGK_EXPIRED, years_ago=2, now=FALL)
         course_finish_date = get_course_finish_date(course)
-        year = get_year_from_course(course, course_finish_date)
+        year = get_year_from_course(course, course_finish_date, FALL)
 
         self.assertEqual(3, year)
 
-    @freeze_time("2010-10-01 12:00")
     def test_get_year_from_course_project1_2nd_grader_fall(self):
-        course = load_course(PROJECT1_ACTIVE, years_ago=0)
+        course = load_course(PROJECT1_ACTIVE, years_ago=0, now=FALL)
         course_finish_date = get_course_finish_date(course)
-        year = get_year_from_course(course, course_finish_date)
+        year = get_year_from_course(course, course_finish_date, FALL)
 
         self.assertEqual(2, year)
 
-    @freeze_time("2010-10-01 12:00")
-    def test_get_bachelor_year_1st_grader(self):
-        groups = [load_course(ITGK_ACTIVE, years_ago=0)]
-
-        self.assertEqual(1, get_bachelor_year(groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_bachelor_year_2nd_grader(self):
-        groups = [
-            load_course(ITGK_EXPIRED, years_ago=1),
-            load_course(PROJECT1_ACTIVE, years_ago=0),
-        ]
-
-        self.assertEqual(2, get_bachelor_year(groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_bachelor_year_3rd_grader_fall(self):
-        groups = [
-            load_course(ITGK_EXPIRED, years_ago=2),
-            load_course(PROJECT1_EXPIRED, years_ago=1),
-        ]
-
-        self.assertEqual(3, get_bachelor_year(groups))
-
-    @freeze_time("2011-03-01 12:00")
-    def test_get_bachelor_year_3rd_grader_spring(self):
-        groups = [
-            load_course(ITGK_EXPIRED, years_ago=2),
-            load_course(PROJECT1_EXPIRED, years_ago=1),
-            load_course(PROJECT2_ACTIVE, years_ago=0),
-        ]
-
-        self.assertEqual(3, get_bachelor_year(groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_bachelor_year_3rd_grader_extended_year_fall(self):
-        groups = [
-            load_course(ITGK_EXPIRED, years_ago=3),
-            load_course(PROJECT1_EXPIRED, years_ago=2),
-            load_course(PROJECT2_EXPIRED, years_ago=1),
-        ]
-
-        self.assertEqual(3, get_bachelor_year(groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_master_year_4th_grader_fall(self):
-        groups = []
-
-        self.assertEqual(4, get_master_year(groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_master_year_5th_grader_fall(self):
-        groups = [load_course(PVS_ACTIVE, active=True)]
-
-        self.assertEqual(5, get_master_year(groups))
-
-    @freeze_time("2010-10-01 12:00")
     def test_get_field_of_study_bachelor(self):
         groups = [INFORMATICS_BACHELOR_STUDY_PROGRAMME]
 
         self.assertEqual(FieldOfStudyType.BACHELOR, get_field_of_study(groups))
 
-    @freeze_time("2010-10-01 12:00")
     def test_get_field_of_study_master_pvs(self):
-        groups = [load_course(INFORMATICS_MASTER_PVS_SPECIALIZATION, active=True)]
+        groups = [
+            load_course(INFORMATICS_MASTER_PVS_SPECIALIZATION, active=True, now=FALL)
+        ]
 
         self.assertEqual(
             FieldOfStudyType.SOFTWARE_ENGINEERING, get_field_of_study(groups)
         )
 
-    @freeze_time("2010-10-01 12:00")
-    def test_get_year_1st_grader_fall(self):
-        groups = [INFORMATICS_BACHELOR_STUDY_PROGRAMME, load_course(ITGK_ACTIVE)]
 
-        self.assertEqual(1, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_year_2nd_grader_fall(self):
-        groups = [
-            INFORMATICS_BACHELOR_STUDY_PROGRAMME,
-            load_course(ITGK_EXPIRED, years_ago=1),
-        ]
-
-        self.assertEqual(2, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_year_3rd_grader_fall(self):
-        groups = [
-            INFORMATICS_BACHELOR_STUDY_PROGRAMME,
-            load_course(ITGK_EXPIRED, years_ago=2),
-        ]
-
-        self.assertEqual(3, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_year_4th_grader_fall(self):
-        groups = [INFORMATICS_MASTER_STUDY_PROGRAMME]
-
-        self.assertEqual(4, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
-
-    @freeze_time("2010-10-01 12:00")
-    def test_get_year_5th_grader_fall(self):
-        groups = [
-            INFORMATICS_MASTER_STUDY_PROGRAMME,
-            load_course(PVS_ACTIVE, active=True),
-        ]
-
-        self.assertEqual(5, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
-
-    def test_get_year_not_informatics(self):
-        self.assertEqual(0, get_year("DEFINITELY_NOT_INFORMATICS", []))
+def test_get_year_no_study():
+    assert 0 == get_year("DEFINITELY_NOT_INFORMATICS", [])
 
 
-class GetStudyTestCase(TestCase):
-    @freeze_time("2018-04-01 12:00")
-    def test_find_study_1st_grader(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "1st_grader_2018.json")
-        with open(fname) as f:
-            groups = json.load(f)
+@pytest.mark.parametrize(
+    "groups,expected_year",
+    [
+        ([load_course(PVS_ACTIVE, active=True, now=FALL)], 5),
+        ([], 4),
+    ],
+)
+def test_get_master_year(groups, expected_year):
+    assert expected_year == get_master_year(groups)
 
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
 
-        self.assertEqual(1, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
+@pytest.mark.parametrize(
+    "groups,expected_year,application_time",
+    [
+        (
+            [
+                INFORMATICS_BACHELOR_STUDY_PROGRAMME,
+                load_course(ITGK_EXPIRED, years_ago=2, now=FALL),
+            ],
+            3,
+            FALL,
+        ),
+        (
+            [
+                INFORMATICS_BACHELOR_STUDY_PROGRAMME,
+                load_course(ITGK_EXPIRED, years_ago=1, now=FALL),
+            ],
+            2,
+            FALL,
+        ),
+        (
+            [
+                INFORMATICS_BACHELOR_STUDY_PROGRAMME,
+                load_course(ITGK_ACTIVE, now=FALL),
+            ],
+            1,
+            FALL,
+        ),
+        (
+            [
+                load_course(ITGK_EXPIRED, years_ago=3, now=FALL),
+                load_course(PROJECT1_EXPIRED, years_ago=2, now=FALL),
+                load_course(PROJECT2_EXPIRED, years_ago=1, now=FALL),
+            ],
+            3,
+            FALL,
+        ),
+        (
+            [
+                load_course(ITGK_EXPIRED, years_ago=2, now=FALL),
+                load_course(PROJECT1_EXPIRED, years_ago=1, now=FALL),
+                load_course(PROJECT2_ACTIVE, years_ago=0, now=FALL),
+            ],
+            3,
+            SPRING,
+        ),
+        (
+            [
+                load_course(ITGK_EXPIRED, years_ago=2, now=FALL),
+                load_course(PROJECT1_EXPIRED, years_ago=1, now=FALL),
+            ],
+            3,
+            FALL,
+        ),
+        (
+            [
+                load_course(ITGK_EXPIRED, years_ago=1, now=FALL),
+                load_course(PROJECT1_ACTIVE, years_ago=0, now=FALL),
+            ],
+            2,
+            FALL,
+        ),
+        ([load_course(ITGK_ACTIVE, years_ago=0, now=FALL)], 1, FALL),
+    ],
+)
+def test_get_bachelor_year(groups, expected_year, application_time):
+    assert expected_year == get_bachelor_year(groups, application_time)
 
-    @freeze_time("2018-04-01 12:00")
-    def test_find_study_2nd_grader(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "2nd_grader_2018.json")
-        with open(fname) as f:
-            groups = json.load(f)
 
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
+@pytest.mark.parametrize(
+    "feide_response,expected_year,expected_study",
+    [
+        ("1st_grader_2018", 1, FieldOfStudyType.BACHELOR),
+        ("2nd_grader_2018", 2, FieldOfStudyType.BACHELOR),
+        ("3rd_grader_2018", 3, FieldOfStudyType.BACHELOR),
+        ("4th_grader_2018_dbs", 4, FieldOfStudyType.DATABASE_AND_SEARCH),
+        ("4th_grader_2019_dbs", 4, FieldOfStudyType.DATABASE_AND_SEARCH),
+        (
+            "5th_grader_2018_ki",
+            5,
+            FieldOfStudyType.ARTIFICIAL_INTELLIGENCE,
+        ),
+        ("5th_grader_2018_pvs", 5, FieldOfStudyType.SOFTWARE_ENGINEERING),
+        ("3rd_grader_extended_1_year_2018", 3, FieldOfStudyType.BACHELOR),
+    ],
+)
+def test_find_study(feide_response, expected_year, expected_study):
+    with open(DUMPS / f"{feide_response}.json") as f:
+        groups = json.load(f)
 
-        self.assertEqual(2, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
+    assert expected_study == get_field_of_study(groups)
 
-    @freeze_time("2018-04-01 12:00")
-    def test_find_study_3rd_grader(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "3rd_grader_2018.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
-
-        self.assertEqual(3, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
-
-    @freeze_time("2018-04-01 12:00")
-    def test_find_study_4th_grader_dbs_2018(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "4th_grader_2018_dbs.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.DATABASE_AND_SEARCH, field_of_study)
-
-        self.assertEqual(4, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
-
-    @freeze_time("2019-04-01 12:00")
-    def test_find_study_4th_grader_dbs_2019(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "4th_grader_2019_dbs.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.DATABASE_AND_SEARCH, field_of_study)
-
-        self.assertEqual(4, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
-
-    @freeze_time("2018-04-01 12:00")
-    def test_find_study_5th_grader_ki(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "5th_grader_2018_ki.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.ARTIFICIAL_INTELLIGENCE, field_of_study)
-
-        self.assertEqual(5, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
-
-    @freeze_time("2018-04-01 12:00")
-    def test_find_study_5th_grader_pvs(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "5th_grader_2018_pvs.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.SOFTWARE_ENGINEERING, field_of_study)
-
-        self.assertEqual(5, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
-
-    @freeze_time("2017-10-01 12:00")
-    def test_find_study_1st_grader_fall(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "1st_grader_2018.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
-
-        self.assertEqual(1, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
-
-    @freeze_time("2017-10-01 12:00")
-    def test_find_study_2nd_grader_fall(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "2nd_grader_2018.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
-
-        self.assertEqual(2, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
-
-    @freeze_time("2017-10-01 12:00")
-    def test_find_study_3rd_grader_fall(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "3rd_grader_2018.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
-
-        self.assertEqual(3, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
-
-    @freeze_time("2017-10-01 12:00")
-    def test_find_study_3rd_grader_extended_fall(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "3rd_grader_extended_1_year_2018.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.BACHELOR, field_of_study)
-
-        self.assertEqual(3, get_year(GROUP_IDENTIFIERS["BACHELOR"], groups))
-
-    @freeze_time("2017-10-01 12:00")
-    def test_find_study_4th_grader_dbs_fall(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "4th_grader_2018_dbs.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.DATABASE_AND_SEARCH, field_of_study)
-
-        self.assertEqual(4, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
-
-    @freeze_time("2017-10-01 12:00")
-    def test_find_study_5th_grader_ki_fall(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "5th_grader_2018_ki.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.ARTIFICIAL_INTELLIGENCE, field_of_study)
-
-        self.assertEqual(5, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
-
-    @freeze_time("2017-10-01 12:00")
-    def test_find_study_5th_grader_pvs_fall(self):
-        dumps_dir = os.path.join(DIR_NAME, "data")
-        fname = os.path.join(dumps_dir, "5th_grader_2018_pvs.json")
-        with open(fname) as f:
-            groups = json.load(f)
-
-        field_of_study = get_field_of_study(groups)
-        self.assertEqual(FieldOfStudyType.SOFTWARE_ENGINEERING, field_of_study)
-
-        self.assertEqual(5, get_year(GROUP_IDENTIFIERS["MASTER"], groups))
+    for application_time in [SPRING, FALL]:
+        if expected_study == FieldOfStudyType.BACHELOR:
+            assert expected_year == get_year(
+                GROUP_IDENTIFIERS["BACHELOR"], groups, application_time
+            )
+        elif expected_study in FieldOfStudyType.ALL_MASTERS():
+            assert expected_year == get_year(
+                GROUP_IDENTIFIERS["MASTER"], groups, application_time
+            )
+        else:
+            assert False

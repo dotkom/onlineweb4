@@ -1,6 +1,6 @@
 import logging
+from datetime import datetime
 
-from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from apps.authentication.constants import FieldOfStudyType
@@ -52,11 +52,11 @@ def get_course_finish_date(course):
     return None
 
 
-def get_add_years(course):
+def get_add_years(course, now: datetime):
     """Add years back for more recent courses.
     If course is 2nd grade, the user started one more year before."""
     # Add 1 year if verification happens during fall, 0 if during spring.
-    add_years = 1 if timezone.now().month >= 7 else 0
+    add_years = 1 if now.month >= 7 else 0
 
     if course["id"] == GROUP_IDENTIFIERS["PROSJEKT1"]:
         add_years += 1
@@ -68,21 +68,21 @@ def get_add_years(course):
     return min(3, add_years)
 
 
-def get_year_from_course(course, date):
-    return (timezone.now().year - date.year) + get_add_years(course)
+def get_year_from_course(course, date, now: datetime):
+    return (now.year - date.year) + get_add_years(course, now)
 
 
-def get_bachelor_year(groups):
+def get_bachelor_year(groups, now: datetime):
     years = []
     for group in groups:
         if group.get("id") in GROUP_IDENTIFIERS.values():
             logger.debug("Finding study year from {}".format(group.get("id")))
             parsed_datetime = get_course_finish_date(group)
             if parsed_datetime:
-                years.append(get_year_from_course(group, parsed_datetime))
+                years.append(get_year_from_course(group, parsed_datetime, now))
             else:
                 # If we don't know the end date, only add the years for the course.
-                years.append(get_add_years(group))
+                years.append(get_add_years(group, now))
 
     # Allows for users with extended bachelors to retain year 3 privileges.
     return max(years) if max(years) <= 3 else 3
@@ -96,9 +96,11 @@ def get_master_year(groups):
     return 4
 
 
-def get_year(study_id, groups):
+def get_year(study_id, groups, now: datetime | None = None):
+    if now is None:
+        now = datetime.now()
     if study_id == GROUP_IDENTIFIERS["BACHELOR"]:
-        return get_bachelor_year(groups)
+        return get_bachelor_year(groups, now)
     elif study_id == GROUP_IDENTIFIERS["MASTER"]:
         return get_master_year(groups)
     else:
