@@ -33,11 +33,6 @@ def study(request):
     user's groups membership, which can be used to verify eligibility for membership of Online.
     """
 
-    # If the user already is a member we can return early. However, if we're in testing, we want to skip the check.
-    if request.user.is_member and not settings.DATAPORTEN.get("STUDY").get("TESTING"):
-        messages.info(request, "Du er allerede registrert som medlem.")
-        return redirect("profiles_active", active_tab="membership")
-
     logger.debug(
         f"{request.user} wants to automatically confirm study programme through Dataporten.",
         extra={"user": request.user},
