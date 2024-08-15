@@ -161,7 +161,7 @@ class EventCalendar(Calendar):
         cal_event.add("dtstart", event.event_start)
         cal_event.add("dtend", event.event_end)
         cal_event.add("location", event.location)
-        cal_event.add("summary", event.title)
+        cal_event.add("summary", "Online | " + event.title)
         cal_event.add("description", event.ingress_short)
         cal_event.add("uid", "event-" + str(event.id) + "@online.ntnu.no")
 
