@@ -27,8 +27,6 @@ requirements.txt
 README.MD
 static
 .venv
-# sometimes created by poetry
-onlineweb4.egg-info
 .devcontainer
 .pre-commit-config.yaml
 webpack.test.config.js

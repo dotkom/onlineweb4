@@ -19,50 +19,45 @@ RUN npm run build
 
 FROM python:3.12 AS static-files
 
-ENV APP_DIR=/srv/app \
-    POETRY_VIRTUALENVS_CREATE=false \
-    # for poetry, see https://python-poetry.org/docs/master/#installing-with-the-official-installer
-    PATH="/root/.local/bin:${PATH}"
+ENV APP_DIR=/srv/app
 
 WORKDIR $APP_DIR
 
-RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.8.2 python3 -
+COPY --from=ghcr.io/astral-sh/uv:0.2.37 /uv /bin/uv
+COPY pyproject.toml uv.lock $APP_DIR
 
-COPY pyproject.toml poetry.lock $APP_DIR
-
-ENV DJANGO_SETTINGS_MODULE onlineweb4.settings
-
-RUN poetry install --no-interaction --no-ansi --no-dev
+ENV DJANGO_SETTINGS_MODULE=onlineweb4.settings
 
 COPY . .
 
 COPY --from=js-static $APP_DIR/webpack-stats.json ./webpack-stats.json
 COPY --from=js-static $APP_DIR/bundles ./bundles
 
-RUN ./manage.py collectstatic
+RUN uv run --locked -- ./manage.py collectstatic
 
 FROM amazon/aws-lambda-python:3.12
 
-LABEL maintainer="Dotkom <dotkom@online.ntnu.no>"
-ENV POETRY_VIRTUALENVS_CREATE=false \
-    PATH="/root/.local/bin:${PATH}"
+COPY --from=ghcr.io/astral-sh/uv:0.2.37 /uv /bin/uv
+
 ARG FUNCTION_DIR="/var/task/"
 
-COPY pyproject.toml poetry.lock $FUNCTION_DIR
+COPY pyproject.toml uv.lock $FUNCTION_DIR
 
 # Setup Python environment
-RUN dnf install -y git unzip libffi \
-    && curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.8.2 python3 - \
+RUN dnf install -y unzip \
     # silent, show errors and location (aka follow redirect)
     && curl -sSL --output vault-lambda-extension.zip \
         https://releases.hashicorp.com/vault-lambda-extension/0.10.3/vault-lambda-extension_0.10.3_linux_amd64.zip \
     && unzip vault-lambda-extension.zip -d /opt \
-    && poetry install --no-root --no-dev -E prod \
-    && poetry cache clear . --all -n \
-    && dnf remove -y git unzip perl-Git \
+    && dnf remove -y unzip \
     && dnf clean all \
     && rm vault-lambda-extension.zip \
     && rm -rf /var/cache/dnf
+
+RUN uv sync --no-dev --extra prod --locked --no-cache && rm /bin/uv
+
+ENV VIRTUAL_ENV=/var/task/.venv
+ENV PATH="/var/task/.venv/bin:$PATH"
 
 COPY ./ $FUNCTION_DIR
 

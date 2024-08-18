@@ -27,8 +27,8 @@
 		"ghcr.io/devcontainers/features/node:1": {
 			"version": "20"
 		},
-		"ghcr.io/devcontainers-contrib/features/poetry:2": {
-			"version": "1.8.2"
+		"ghcr.io/va-h/devcontainers-features/uv:1": {
+			"version": "0.2.37"
 		}
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -37,7 +37,7 @@
 		8000 // Django
 	]
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "poetry install && export POETRY_ENV_PATH=$(poetry env info --path) && poetry run pre-commit install --install-hooks",
+	// "postCreateCommand": "",
 	// avoids notification about no python-interpreter selected
 	// "waitFor": "postCreateCommand"
 }
