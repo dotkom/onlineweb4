@@ -1,4 +1,3 @@
-from chunks.models import Chunk
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -18,11 +17,6 @@ admin.autodiscover()
 
 class HomePageView(TemplateView):
     template_name = "frontpage.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["chunks"] = Chunk.objects.filter(key__startswith="om_")[:25]
-        return context
 
 
 urlpatterns = [
@@ -111,12 +105,6 @@ if "apps.contact" in settings.INSTALLED_APPS:
 if "apps.dashboard" in settings.INSTALLED_APPS:
     urlpatterns += [
         re_path(r"^dashboard/", include("apps.dashboard.urls")),
-        re_path(
-            r"^dashboard/chunks/",
-            include(
-                "apps.dashboard.chunks.dashboard.urls", namespace="chunk-dashboard"
-            ),
-        ),
     ]
 
 if "apps.dataporten" in settings.INSTALLED_APPS:
@@ -190,9 +178,6 @@ if "apps.webshop" in settings.INSTALLED_APPS:
             include("apps.webshop.dashboard.urls", namespace="dashboard-webshop"),
         ),
     ]
-
-if "apps.chunksapi" in settings.INSTALLED_APPS:
-    urlpatterns += [re_path(r"^chunks/", include("apps.chunksapi.urls"))]
 
 if "apps.payment" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^payment/", include("apps.payment.urls"))]

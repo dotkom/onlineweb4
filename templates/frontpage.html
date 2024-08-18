@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load chunks %}
 {% load markdown_deux_tags %}
 {% load render_bundle from webpack_loader %}
 
@@ -158,66 +157,27 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-8 col-md-9">
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="about-online">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <p class="ingress">Online er linjeforeningen for informatikkstudenter ved
-                                    NTNU i Trondheim. Linjeforeningens oppgave er å forbedre studiemiljøet ved
-                                    å fremme sosialt samvær, faglig kompetanse og kontakt med næringslivet.</p>
-                                    <p>Linjeforeningen består av omtrent 100 frivillige medarbeidere,
-                                    fordelt over Hovedstyret, komiteer og nodekomiteer. I tillegg til vervene i
-                                    linjeforeningen er mange studenter også engasjert i Realfagskjelleren,
-                                    Datakameratene FK og Casual Gaming.</p>
-                                    <p>Vi har kontorer i A-blokka på Realfagbygget, Gløshaugen. Her
-                                    fins det mat og drikke for alle som vil ha, og ofte kan det være greit å
-                                    finne hjelp til en øving eller et prosjekt man jobber med. Det er heller
-                                    ikke uhørt at triKom serverer vafler eller kake.</p>
-                                    <p>Ekskursjoner, kurs og presentasjoner fra bedrifter er ukentlige hendelser
-                                    hos oss. Mange arrangementer er sponset av linjeforeningen eller bedrifter
-                                    slik at du kan hygge deg i godt selskap selv om studielånet er langt unna.</p>
-                                    <p>I de siste årene har Online hatt en eventyrlig vekst på alle områder,
-                                    og har etablert seg som en betydningsfull organisasjon i Trondheim. Fokus
-                                    på samarbeid og kommunikasjon har drevet frem mange gode initiativer hvor
-                                    vi har stått langt fremme som pådrivere.</p>
-                                    <p>Hos oss vil du stifte nye vennskap som vil vare livet ut, og hjelpe
-                                    deg når du skal ut i arbeidslivet. Du vil trives i Online!</p>
-                                </div>
-                            </div>
-                        </div>
-                        {% for chunk in chunks %}
-                        <div class="tab-pane" id="about-{{ chunk.key | slice:'3:' }}"">
-{% filter markdown %}
-{{ chunk.content }}
-{% endfilter %}
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                <div class="col-sm-4 col-md-3">
-                    <ul class="nav nav-pills nav-stacked" id="about-tabs">
-                        <li class="nav-header">Organisasjonen</li>
-                        <li class="active"><a data-prefixom="false" href="#about-online">Om Online</a></li>
-                        <li><a href="#about-hovedstyret">Hovedstyret</a></li>
-                        <li><a href="#about-hovedsamarbeidspartner">Hovedsamarbeidspartner</a></li>
-                        <li class="nav-header">Komiteer</li>
-                        <li><a href="#about-arrkom">Arrkom</a></li>
-                        <li><a href="#about-bankom">Bankom</a></li>
-                        <li><a href="#about-bedkom">Bedkom</a></li>
-                        <li><a href="#about-dotkom">Dotkom</a></li>
-                        <li><a href="#about-fagkom">Fagkom</a></li>
-                        <li><a href="#about-prokom">Prokom</a></li>
-                        <li><a href="#about-senkom">Seniorkom</a></li>
-                        <li><a href="#about-trikom">Trikom</a></li>
-                        <li class="nav-header">Annet</li>
-                        <li><a href="#about-noder">Nodekomiteer</a></li>
-                        <li><a href="#about-interessegrupper">Interessegrupper</a></li>
-                        <li><a href="#about-kjelleren">Realfagskjelleren</a></li>
-                        <li><a href="#about-datakameratene">Datakameratene FK</a></li>
-                        <li><a href="#about-casual_gaming">Casual Gaming</a></li>
-                        <li><a href="#about-output">Output</a></li>
-                    </ul>
+                <div class="col-md-12">
+                    <p class="ingress">Online er linjeforeningen for informatikkstudenter ved
+                    NTNU i Trondheim. Linjeforeningens oppgave er å forbedre studiemiljøet ved
+                    å fremme sosialt samvær, faglig kompetanse og kontakt med næringslivet.</p>
+                    <p>Linjeforeningen består av omtrent 100 frivillige medarbeidere,
+                    fordelt over Hovedstyret, komiteer og nodekomiteer. I tillegg til vervene i
+                    linjeforeningen er mange studenter også engasjert i Realfagskjelleren,
+                    Datakameratene FK og Casual Gaming.</p>
+                    <p>Vi har kontorer i A-blokka på Realfagbygget, Gløshaugen. Her
+                    fins det mat og drikke for alle som vil ha, og ofte kan det være greit å
+                    finne hjelp til en øving eller et prosjekt man jobber med. Det er heller
+                    ikke uhørt at triKom serverer vafler eller kake.</p>
+                    <p>Ekskursjoner, kurs og presentasjoner fra bedrifter er ukentlige hendelser
+                    hos oss. Mange arrangementer er sponset av linjeforeningen eller bedrifter
+                    slik at du kan hygge deg i godt selskap selv om studielånet er langt unna.</p>
+                    <p>I de siste årene har Online hatt en eventyrlig vekst på alle områder,
+                    og har etablert seg som en betydningsfull organisasjon i Trondheim. Fokus
+                    på samarbeid og kommunikasjon har drevet frem mange gode initiativer hvor
+                    vi har stått langt fremme som pådrivere.</p>
+                    <p>Hos oss vil du stifte nye vennskap som vil vare livet ut, og hjelpe
+                    deg når du skal ut i arbeidslivet. Du vil trives i Online!</p>
                 </div>
             </div>
         </div>
