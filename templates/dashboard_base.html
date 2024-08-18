@@ -113,18 +113,6 @@
                         </ul>
                     </li>
                     {% endif %}
-                    {% if 'chunks.add_chunk' in user_permissions %}
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-file-o blue"></i> <span>Chunks</span>
-                            <i class="fa fa-angle-down pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="{% url 'chunk-dashboard:create' %}"><i class="fa fa-angle-double-right orange"></i> Ny Chunk</a></li>
-                            <li><a href="{% url 'chunk-dashboard:list' %}"><i class="fa fa-angle-double-right orange"></i> Oversikt</a></li>
-                        </ul>
-                    </li>
-                    {% endif %}
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-group blue"></i> <span>Grupper</span>

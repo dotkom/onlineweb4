@@ -169,7 +169,6 @@ INSTALLED_APPS = [
     "mptt",  # Wiki
     "sekizai",  # Wiki
     "sorl.thumbnail",  # Wiki
-    "chunks",
     "crispy_forms",
     "crispy_bootstrap3",
     "django_dynamic_fixture",
@@ -220,7 +219,6 @@ INSTALLED_APPS = [
     "apps.posters",
     "apps.splash",
     "apps.webshop",
-    "apps.chunksapi",
     "scripts",
     # Wiki
     "wiki",

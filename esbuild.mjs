@@ -12,7 +12,6 @@ let entryPoints = [
     { out: 'dashboardApproval', in: 'assets/dashboard/approval/index.js' },
     { out: 'dashboardArticle', in: 'assets/dashboard/article/index.js' },
     { out: 'dashboardCareeropportunity', in: 'assets/dashboard/careeropportunity/index.js' },
-    { out: 'dashboardChunks', in: 'assets/dashboard/chunks/index.js' },
     { out: 'dashboardEvents', in: 'assets/dashboard/events/index.js' },
     { out: 'dashboardGallery', in: 'assets/dashboard/gallery/index.js' },
     { out: 'dashboardGroups', in: 'assets/dashboard/groups/index.js' },
