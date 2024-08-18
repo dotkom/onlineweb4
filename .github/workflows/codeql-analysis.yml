@@ -30,19 +30,30 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Restore uv cache
+      if: matrix.language == 'python'
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.uv-cache
+        key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          uv-${{ runner.os }}
+
     - name: Set up Python
       if: matrix.language == 'python'
       uses: actions/setup-python@v5
       with:
-        python-version-file: '.python-version'
+        python-version-file: 'pyproject.toml'
+
+    - name: Set up uv
+      if: matrix.language == 'python'
+      # Install uv using the standalone installer
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
 
     - name: Install dependencies
       if: matrix.language == 'python'
-      env:
-        POETRY_VIRTUALENVS_CREATE: false
-      run: |
-        pip install poetry==1.8.2
-        poetry install --no-interaction --no-ansi
+      run: uv sync
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
