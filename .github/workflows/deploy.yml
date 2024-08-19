@@ -23,6 +23,7 @@ on:
 
 env:
   ECR_REPOSITORY: onlineweb4-zappa
+  UV_CACHE_DIR: /tmp/.uv-cache
 
 jobs:
   deploy:

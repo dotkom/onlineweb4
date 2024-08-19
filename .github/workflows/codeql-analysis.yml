@@ -12,6 +12,9 @@ on:
     # The branches below must be a subset of the branches above
     branches: [ main ]
 
+env:
+  UV_CACHE_DIR: /tmp/.uv-cache
+
 jobs:
   analyze:
     name: Analyze
@@ -29,16 +32,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Restore uv cache
-      if: matrix.language == 'python'
-      uses: actions/cache@v4
-      with:
-        path: /tmp/.uv-cache
-        key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
-        restore-keys: |
-          uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
-          uv-${{ runner.os }}
 
     - name: Set up Python
       if: matrix.language == 'python'
