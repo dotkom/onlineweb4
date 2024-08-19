@@ -65,6 +65,7 @@ RUN ZAPPA_HANDLER_PATH=$(python -c "from zappa import handler; print (handler.__
 
 COPY --from=static-files /srv/app/webpack-stats.json ./
 COPY --from=vault-lambda-extension /vault/extensions/vault-lambda-extension /opt/extensions/vault-lambda-extension
+RUN chmod +x /opt/extensions/vault-lambda-extension
 ARG VERSION
 # https://docs.sentry.io/platforms/python/guides/logging/configuration/releases/#setting-a-release
 ENV SENTRY_VERSION=${VERSION}
