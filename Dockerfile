@@ -54,10 +54,8 @@ RUN dnf install -y unzip \
     && rm vault-lambda-extension.zip \
     && rm -rf /var/cache/dnf
 
-RUN uv sync --no-dev --extra prod --locked --no-cache && rm /bin/uv
-
-ENV VIRTUAL_ENV=/var/task/.venv
-ENV PATH="/var/task/.venv/bin:$PATH"
+# FIXME: once uv supports using uv.lock to install into system python this should actually use the lockfile
+RUN uv pip install -r pyproject.toml --extra prod --verify-hashes --no-cache --system --compile-bytecode && rm /bin/uv
 
 COPY ./ $FUNCTION_DIR
 

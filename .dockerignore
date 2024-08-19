@@ -32,3 +32,4 @@ static
 webpack.test.config.js
 .devcontainer
 meta.json
+Dockerfile
