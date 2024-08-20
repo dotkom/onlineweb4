@@ -1,9 +1,11 @@
+import json
 from collections import OrderedDict
 from datetime import datetime, time, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
+from django.core import serializers
 from django.core.exceptions import PermissionDenied
 from django.forms.models import modelformset_factory
 from django.http import HttpResponse, JsonResponse
@@ -29,6 +31,7 @@ from apps.events.models import (
     Attendee,
     CompanyEvent,
     Event,
+    EventUserAction,
     Reservation,
     Reservee,
 )
@@ -323,6 +326,16 @@ def event_details(request, event_id, active_tab="details"):
     event = context["event"]
     context["active_tab"] = active_tab
     context["form"] = dashboard_forms.CreateEventForm(instance=event, user=request.user)
+
+    # History of event for analytics pane
+    registration_history = EventUserAction.objects.filter(event=event)
+    print(registration_history)
+    context["registration_history"] = registration_history
+    context["registration_history_json"] = json.dumps(
+        serializers.serialize("json", registration_history)
+    )
+    context["event_registration_start"] = event.attendance_event.registration_start
+    context["event_registration_end"] = event.attendance_event.registration_end
 
     extras = {}
     if event.is_attendance_event() and event.attendance_event.extras:
