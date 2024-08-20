@@ -1,0 +1,76 @@
+- model: authentication.Membership
+  pk: 1
+  fields:
+    username: test1student
+    registered: "2024-8-19"
+    note: "Test note"
+    description: "Test description"
+    expiration_date: "2026-10-01"
+
+- model: authentication.Membership
+  pk: 2
+  fields:
+    username: test2student
+    registered: "2024-8-19"
+    note: "Test note"
+    description: "Test description"
+    expiration_date: "2026-10-01"
+
+
+- model: authentication.OnlineUser
+  pk: 1
+  fields:
+    is_superuser: 1
+    is_staff: 1
+    username: test1
+    ntnu_username: test1student
+    gender: male
+    first_name: test
+    last_name: user1
+    email: test1@user.com
+    password: "pbkdf2_sha256$720000$cR1si6IeZiYooLaIFz93k7$9o7XJ34lG+DEeQ8N0mQBtACvecVMADZo3H3eyoT9Puw=" # 123
+    last_login: "2019-08-09T13:00:30+00:00"
+    field_of_study: 0  # Default: GUEST
+    started_date: "2019-08-09"
+    compiled: false
+    infomail: false
+    jobmail: false
+    phone_number: ""
+    address: ""
+    zip_code: ""
+    allergies: ""
+    nickname: ""
+    website: ""
+    github: ""
+    linkedin: ""
+    bio: ""
+    auth0_subject: "auth0|66c49513bd99017647045a3f"
+
+- model: authentication.OnlineUser
+  pk: 2
+  fields:
+    is_superuser: 1
+    is_staff: 1
+    username: test2
+    ntnu_username: test2student
+    gender: male
+    first_name: test
+    last_name: user2
+    email: test2@user.com
+    password: "pbkdf2_sha256$720000$cR1si6IeZiYooLaIFz93k7$9o7XJ34lG+DEeQ8N0mQBtACvecVMADZo3H3eyoT9Puw=" # 123
+    last_login: "2020-03-09T13:00:30+00:00"
+    field_of_study: 0  # Default: GUEST
+    started_date: "2020-03-09"
+    compiled: false
+    infomail: false
+    jobmail: false
+    phone_number: ""
+    address: ""
+    zip_code: ""
+    allergies: ""
+    nickname: ""
+    website: ""
+    github: ""
+    linkedin: ""
+    bio: ""
+    auth0_subject: "auth0|66c4b5e9414409b3e0298f28"
