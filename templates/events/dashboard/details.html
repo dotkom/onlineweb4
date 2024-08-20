@@ -82,6 +82,9 @@ Arrangementsdetaljer
             <li role="presentation">
                 <a href="#company" aria-controls="company" role="tab" data-toggle="tab">Bedrifter</a>
             </li>
+            <li role="presentation">
+                <a href="#registration-history" aria-controls="registration-history" role="tab" data-toggle="tab">Påmeldingshistorikk</a>
+            </li>
         </ul>
     </div>
 </div>
@@ -144,6 +147,9 @@ Arrangementsdetaljer
     <div role="tabpanel" class="tab-pane" id="company">
         {% include "events/dashboard/details/company.html" %}
         <div id="add-company-view"></div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="registration-history">
+        {% include "events/dashboard/details/registration-history.html" %}
     </div>
 </div>
 

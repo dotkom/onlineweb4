@@ -1,0 +1,127 @@
+<div class="row">
+    <div class="col-lg-12" style="position: relative; height:40vh; width:80vw">
+        <canvas id="attendeesChart"></canvas>
+    </div>
+</div>
+
+
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script>
+        const registrationHistoryRaw  = "{{ registration_history_json|escapejs }}";
+        const registrationHistory = JSON.parse(JSON.parse(registrationHistoryRaw));
+
+        // history type:
+        /* 
+        [{
+            "model": "events.eventuseraction",
+            "pk": 1,
+            "fields": {
+                "timestamp": "2024-08-20T13:52:55.391Z",
+                "type": "register",
+                "user": 1
+            }
+        }, ...]
+        */
+
+        const eventRegistrationStart = new Date("{{ event_registration_start|safe }}");
+        const eventRegistrationEnd = new Date("{{ event_registration_end|safe }}");
+
+        const daysWithTotal = (raw) => {
+            const base = [{timestamp: eventRegistrationStart, total: 0}];
+            const end = new Date(Math.min(new Date(), eventRegistrationEnd));
+            const days = Math.floor((end - eventRegistrationStart) / (1000 * 60 * 60 * 24));
+
+            const daysWithTotal = [];
+            for (let i = 0; i <= days; i++) {
+                let totalForDay = 0;
+                const day = new Date(eventRegistrationStart);
+                day.setDate(day.getDate() + i);
+
+                // set time to 23:59:59
+                day.setHours(23, 59, 59);
+
+                for (let j = 0; j < raw.length; j++) {
+                    const actionDate = new Date(raw[j].fields.timestamp);
+                    if (actionDate <= day) {
+                        totalForDay += raw[j].fields.type === 'register' ? 1 : -1;
+                    }
+                }
+
+                daysWithTotal.push({ timestamp: day, total: totalForDay });
+            }
+
+            return daysWithTotal;
+        }
+
+        const totalRegistrationsPerDay = daysWithTotal(registrationHistory);
+
+        // plot total registrations over time using chart.js
+        const ctx = document.getElementById('attendeesChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                // extract day from timestamp
+                labels: totalRegistrationsPerDay.map((action, i) => action.timestamp.toLocaleDateString().split('T')[0]),
+                datasets: [{
+                    label: 'Registrations',
+                    data: totalRegistrationsPerDay.map(action => action.total),
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                // responsive: false,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const index = context.dataIndex;
+                                const action = totalRegistrationsPerDay[index];
+                                return `Total: ${action.total}, Timestamp: ${action.timestamp.toLocaleString()}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // render
+        chart.render();
+    </script>
+{% endblock %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Historikk</h3>
+            </div>
+            <div class="panel-body">
+                <div id="attendees-content">
+                    <table class="table table-striped table-condensed tablesorter attendees" id="attendees-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tidspunkt</th>
+                                <th>Registrert årstall for bruker</th>
+                                <th>Handling</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendeelist">
+                            {% for registration in registration_history reversed %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ registration.timestamp }}</td>
+                                <td>{{ registration.user.year }}</td>
+                                <td>{{ registration.type }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
