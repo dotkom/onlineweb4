@@ -49,7 +49,7 @@
                 <li><a href="https://online.ntnu.no/events">Arrangementer</a></li>
                 <li><a href="https://online.ntnu.no/career">Karriere</a></li>
                 <li><a href="https://online.ntnu.no/hobbygroups" class="hidden-sm">Interessegrupper</a></li>
-                <li><a href="/wiki/">Wiki</a></li>
+                <li><a href="https://wiki.online.ntnu.no/">Wiki</a></li>
                 <li><a href="/webshop/">Webshop</a></li>
             </ul>
             <ul class="mn-user-nav">
@@ -66,6 +66,7 @@
                         {% endif %}
                         {% if user.is_staff %}
                             <li><a href="/dashboard/">Dashboard</a></li>
+                            <li><a href="/wiki/komiteer/">Intern wiki</a></li>
                         {% endif %}
                         <li>
                             <a href="{% url 'profiles' %}">

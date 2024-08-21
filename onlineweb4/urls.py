@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from django.views.generic import TemplateView
 from django_js_reverse.views import urls_js
@@ -18,6 +19,9 @@ admin.autodiscover()
 class HomePageView(TemplateView):
     template_name = "frontpage.html"
 
+
+def redirect_to_new_wiki(request, path):
+    return redirect(f"https://wiki.online.ntnu.no/{path}", permanent=True)
 
 urlpatterns = [
     # Admin urls
@@ -58,6 +62,8 @@ urlpatterns = [
     ),
     # Wiki
     re_path(r"^notify/", include("django_nyt.urls")),
+    re_path(r"^wiki/online/(?!komiteer/)(?P<path>([^/]+/)*)$", redirect_to_new_wiki),
+    re_path(r"^wiki/$", lambda r: redirect_to_new_wiki(r, "")),
     re_path(r"^wiki/", include("wiki.urls")),
 ]
 
