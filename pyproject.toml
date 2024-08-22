@@ -60,8 +60,6 @@ s3 = [
 ]
 
 [tool.uv]
-# silence warning related to sync/add/run, remove once 0.3 is released
-preview = true
 dev-dependencies = [
     "pytest~=8.3",
     "pytest-cov~=5.0",
