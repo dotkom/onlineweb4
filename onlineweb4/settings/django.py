@@ -212,7 +212,6 @@ INSTALLED_APPS = [
     "apps.marks",
     "apps.feedback",
     "apps.profiles",
-    "apps.mailinglists",
     "apps.notifications",
     "apps.payment",
     "apps.permissions",

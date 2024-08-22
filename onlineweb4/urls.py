@@ -166,10 +166,15 @@ if "apps.posters" in settings.INSTALLED_APPS:
 if "apps.profiles" in settings.INSTALLED_APPS:
     urlpatterns += [re_path(r"^profile/", include("apps.profiles.urls"))]
 
-if "apps.mailinglists" in settings.INSTALLED_APPS:
-    urlpatterns += [
-        re_path(r"^resourcecenter/mailinglists/", include("apps.mailinglists.urls")),
-    ]
+urlpatterns += [
+    re_path(
+        r"^resourcecenter/mailinglists/$",
+        lambda _request: redirect(
+            "https://wiki.online.ntnu.no/linjeforening/e-postlister/",
+            permanent=True,
+        ),
+    ),
+]
 
 if "apps.splash" in settings.INSTALLED_APPS:
     urlpatterns += [
