@@ -7,7 +7,7 @@
     "> 5% in NO"
   ],
   "dependencies": {
-    "bootstrap": "3.4.1",
+    "bootstrap": "5.3.3",
     "classnames": "^2.2.5",
     "corejs-typeahead": "^1.1.0",
     "cropperjs": "^1.6.1",
