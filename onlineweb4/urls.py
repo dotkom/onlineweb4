@@ -23,6 +23,7 @@ class HomePageView(TemplateView):
 def redirect_to_new_wiki(request, path):
     return redirect(f"https://wiki.online.ntnu.no/{path}", permanent=True)
 
+
 urlpatterns = [
     # Admin urls
     re_path(r"^admin/doc/", include("django.contrib.admindocs.urls")),
