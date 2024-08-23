@@ -2,8 +2,6 @@ from decouple import config
 
 S3_MEDIA_STORAGE_ENABLED = config("OW4_USE_S3", cast=bool, default=False)
 if S3_MEDIA_STORAGE_ENABLED:
-    from storages.backends.s3 import S3Storage
-
     AWS_S3_REGION_NAME = config("OW4_S3_REGION", default="eu-north-1")
     AWS_STORAGE_BUCKET_NAME = config("OW4_S3_BUCKET_NAME")
     AWS_S3_CUSTOM_DOMAIN = (
@@ -18,22 +16,28 @@ if S3_MEDIA_STORAGE_ENABLED:
 
     MEDIA_LOCATION = "media"
 
-    class MediaRootS3BotoStorage(S3Storage):
-        def __init__(self, **kwargs):
-            super().__init__(**(kwargs | {"location": MEDIA_LOCATION}))
-
-    DEFAULT_FILE_STORAGE = "onlineweb4.settings.MediaRootS3BotoStorage"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{MEDIA_LOCATION}/"
     MEDIA_ROOT = ""
 
     STATIC_LOCATION = "static"
 
-    class StaticRootS3BotoStorage(S3Storage):
-        def __init__(self, **kwargs):
-            super().__init__(**(kwargs | {"location": STATIC_LOCATION}))
 
-    STATICFILES_STORAGE = "onlineweb4.settings.StaticRootS3BotoStorage"
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
 
     WIKI_ATTACHMENTS_LOCAL_PATH = False
     WIKI_ATTACHMENTS_APPEND_EXTENSION = False
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {
+                "location": MEDIA_LOCATION,
+            }
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3.S3Storage",
+            "OPTIONS": {
+                "location": STATIC_LOCATION,
+            }
+        }
+    }
