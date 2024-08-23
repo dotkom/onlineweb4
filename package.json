@@ -22,7 +22,7 @@
     "js-cookie": "^3.0.5",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
-    "react-bootstrap": "0.33.1",
+    "react-bootstrap": "2.10.4",
     "react-dom": "^16.8.6",
     "react-markdown": "^2.5.0",
     "react-router": "^5.0.0",
