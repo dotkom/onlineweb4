@@ -21,7 +21,6 @@ if S3_MEDIA_STORAGE_ENABLED:
 
     STATIC_LOCATION = "static"
 
-
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{STATIC_LOCATION}/"
 
     WIKI_ATTACHMENTS_LOCAL_PATH = False
@@ -32,12 +31,12 @@ if S3_MEDIA_STORAGE_ENABLED:
             "BACKEND": "storages.backends.s3.S3Storage",
             "OPTIONS": {
                 "location": MEDIA_LOCATION,
-            }
+            },
         },
         "staticfiles": {
             "BACKEND": "storages.backends.s3.S3Storage",
             "OPTIONS": {
                 "location": STATIC_LOCATION,
-            }
-        }
+            },
+        },
     }
