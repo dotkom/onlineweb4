@@ -23,7 +23,7 @@ ENV APP_DIR=/srv/app
 
 WORKDIR $APP_DIR
 
-COPY --from=ghcr.io/astral-sh/uv:0.3.2 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.3.3 /uv /bin/uv
 COPY pyproject.toml uv.lock $APP_DIR
 
 ENV DJANGO_SETTINGS_MODULE=onlineweb4.settings
@@ -48,7 +48,7 @@ RUN python -m zipfile -e /vault.zip /vault
 
 FROM amazon/aws-lambda-python:3.12
 
-COPY --from=ghcr.io/astral-sh/uv:0.3.2 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.3.3 /uv /bin/uv
 
 ARG FUNCTION_DIR="/var/task/"
 
