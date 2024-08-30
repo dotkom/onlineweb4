@@ -1,10 +1,3 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-# we don't _actually_ need a build system, unclear how to configure that with uv
-[tool.hatch.build.targets.wheel]
-packages = ["apps/*"]
-
 [project]
 name = "onlineweb4"
 version = "1.0.0"

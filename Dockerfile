@@ -24,6 +24,7 @@ ENV APP_DIR=/srv/app
 WORKDIR $APP_DIR
 
 COPY --from=ghcr.io/astral-sh/uv:0.4.1 /uv /bin/uv
+
 COPY pyproject.toml uv.lock $APP_DIR
 
 ENV DJANGO_SETTINGS_MODULE=onlineweb4.settings
@@ -54,8 +55,8 @@ ARG FUNCTION_DIR="/var/task/"
 
 COPY pyproject.toml uv.lock $FUNCTION_DIR
 
-# FIXME: once uv supports using uv.lock to install into system python this should actually use the lockfile
-RUN uv pip install -r pyproject.toml --extra prod --verify-hashes --no-cache --system --compile-bytecode && rm /bin/uv
+# offline to skip uv isntalling dependencies before the export
+RUN uv export --format requirements-txt --extra prod --locked --no-cache --offline | uv pip install -r=- --verify-hashes --no-cache --system --compile-bytecode && rm /bin/uv
 
 COPY ./ $FUNCTION_DIR
 
