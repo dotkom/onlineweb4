@@ -26,8 +26,17 @@ class WatsonFilter(django_filters.CharFilter):
 
 
 class EventFilter(django_filters.FilterSet):
-    event_start__gte = django_filters.DateTimeFilter(
-        field_name="event_start", lookup_expr="gte"
+    registration_start__gte = django_filters.DateTimeFilter(
+        field_name="attendance_event__registration_start", lookup_expr="gte"
+    )
+    registration_start__lte = django_filters.DateTimeFilter(
+        field_name="attendance_event__registration_start", lookup_expr="lte"
+    )
+    registration_end__gte = django_filters.DateTimeFilter(
+        field_name="attendance_event__registration_end", lookup_expr="gte"
+    )
+    registration_end__lte = django_filters.DateTimeFilter(
+        field_name="attendance_event__registration_end", lookup_expr="lte"
     )
     event_start__lte = django_filters.DateTimeFilter(
         field_name="event_start", lookup_expr="lte"

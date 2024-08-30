@@ -56,6 +56,12 @@ class EventSerializer(serializers.ModelSerializer):
     )
     companies = serializers.StringRelatedField(many=True)
     attendee_info = serializers.SerializerMethodField()
+    registration_start = serializers.DateTimeField(
+        source="attendance_event.registration_start"
+    )
+    registration_end = serializers.DateTimeField(
+        source="attendance_event.registration_end"
+    )
 
     def get_attendee_info(self, instance: Event):
         user = self.context["request"].user
@@ -95,6 +101,8 @@ class EventSerializer(serializers.ModelSerializer):
             "waitlist",
             "number_of_seats_taken",
             "attendee_info",
+            "registration_start",
+            "registration_end",
         )
 
 

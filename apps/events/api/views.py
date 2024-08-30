@@ -60,6 +60,8 @@ class EventViewSet(viewsets.ModelViewSet):
         "id",
         "closest",
         "has_passed",
+        "attendance_event__registration_start",
+        "attendance_event__registration_end",
     )
     ordering = ("has_passed", "closest", "id")
 
@@ -158,6 +160,19 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         attendance_event: AttendanceEvent = self.get_object()
         attendees = attendance_event.attending_attendees_qs
         serializer = self.get_serializer(attendees, many=True)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["GET"],
+        permission_classes=(permissions.IsAuthenticated,),
+        serializer_class=AttendanceEventSerializer,
+        url_path="by-registration",
+    )
+    def by_registration(self, request):
+        attendance_events = AttendanceEvent.by_registration.all()
+        serializer = self.get_serializer(attendance_events, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
