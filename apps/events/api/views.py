@@ -164,19 +164,6 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @action(
-        detail=False,
-        methods=["GET"],
-        permission_classes=(permissions.IsAuthenticated,),
-        serializer_class=AttendanceEventSerializer,
-        url_path="by-registration",
-    )
-    def by_registration(self, request):
-        attendance_events = AttendanceEvent.by_registration.all()
-        serializer = self.get_serializer(attendance_events, many=True)
-
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-    @action(
         detail=True,
         methods=["GET"],
         permission_classes=(permissions.IsAuthenticated,),
