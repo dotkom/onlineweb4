@@ -32,27 +32,6 @@ urlpatterns = [
     re_path(r"^$", HomePageView.as_view(), name="home"),
     # Django-js-reverse used to get django urls to react
     re_path(r"^jsreverse/$", urls_js, name="js_reverse"),
-    # nav-bar menu urls
-    re_path(
-        r"^#events$",
-        HomePageView.as_view(template_name="frontpage.html"),
-        name="events-link",
-    ),
-    re_path(
-        r"^#articles$",
-        HomePageView.as_view(template_name="frontpage.html"),
-        name="articles-link",
-    ),
-    re_path(
-        r"^#about$",
-        HomePageView.as_view(template_name="frontpage.html"),
-        name="about-link",
-    ),
-    re_path(
-        r"^#business$",
-        HomePageView.as_view(template_name="frontpage.html"),
-        name="business-link",
-    ),
     # Online Notifier Owner Verification (checked yearly or so by Google)
     re_path(
         r"^google79c0b331a83a53de\.html$",

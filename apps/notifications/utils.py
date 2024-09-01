@@ -1,4 +1,5 @@
 from collections.abc import Iterable
+from functools import partial
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -62,15 +63,15 @@ def send_message_to_users(
 
         if has_push_permission:
             on_commit(
-                lambda notification=notification: dispatch_push_notification_task(
-                    notification_id=notification.id
+                partial(
+                    dispatch_push_notification_task, notification_id=notification.id
                 )
             )
 
         if has_email_permission:
             on_commit(
-                lambda notification=notification: dispatch_email_notification_task(
-                    notification_id=notification.id
+                partial(
+                    dispatch_email_notification_task, notification_id=notification.id
                 )
             )
 

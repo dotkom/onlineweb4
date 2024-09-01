@@ -18,8 +18,6 @@ let entryPoints = [
     { out: 'dashboardHobbies', in: 'assets/dashboard/hobbies/index.jsx' },
     { out: 'dashboardPosters', in: 'assets/dashboard/posters/index.js' },
     { out: 'dashboardWebshop', in: 'assets/dashboard/webshop/index.js' },
-    { out: 'eventsArchive', in: 'assets/events/archive/index.js' },
-    { out: 'eventsDetails', in: 'assets/events/details/index.js' },
     { out: 'eventsMail', in: 'assets/events/mail/index.js' },
     { out: 'feedback', in: 'assets/feedback/index.js' },
     { out: 'frontpage', in: 'assets/frontpage/index.jsx' },

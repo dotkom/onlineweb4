@@ -1192,7 +1192,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "coverage", specifier = "~=7.6" },
-    { name = "freezegun", specifier = "~=1.5" },
+    { name = "freezegun", specifier = ">=1.5.1" },
     { name = "pre-commit", specifier = "~=3.8" },
     { name = "pytest", specifier = "~=8.3" },
     { name = "pytest-cov", specifier = "~=5.0" },

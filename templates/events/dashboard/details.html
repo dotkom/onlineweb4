@@ -93,6 +93,20 @@ Arrangementsdetaljer
         {%  include "events/dashboard/details/details.html" %}
     </div>
     <div role="tabpanel" class="tab-pane" id="attendees">
+        <style>
+            #attendee-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1em;
+                padding: .5em;
+                max-width: 100vw;
+            }
+        </style>
+        <div id="attendee-actions">
+            <a href="{% url 'event_attendees_pdf' event.id %}" class="btn btn-primary">Påmeldingsliste PDF</a>
+            <a href="{% url 'event_attendees_json' event.id %}" class="btn btn-primary">Påmeldingsliste JSON</a>
+            <a href="{% url 'event_mail_participants' event.id %}" class="btn btn-primary">Send e-post til deltakere</a>
+        </div>
         <div class="panel-group">
           <div class="panel panel-default">
             <div class="panel-heading">

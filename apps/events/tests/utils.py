@@ -7,14 +7,14 @@ from apps.authentication.constants import GroupType
 from apps.authentication.models import GroupMember, OnlineGroup, OnlineUser
 from apps.companyprofile.models import Company
 from apps.events.models.Attendance import CompanyEvent
-from apps.payment.models import Payment, PaymentDelay, PaymentPrice, PaymentRelation
+from apps.payment.models import Payment, PaymentPrice, PaymentRelation
 
 from ..constants import EventType
 from ..models import AttendanceEvent, Attendee, Event
 
 
 def generate_event(
-    event_type=EventType.BEDPRES, organizer: Group = None, attendance=True
+    event_type=EventType.BEDPRES, organizer: Group | None = None, attendance=True
 ) -> Event:
     if organizer is None:
         organizer = create_committee_group()
@@ -25,7 +25,7 @@ def generate_event(
 
 
 def generate_company_event(
-    event_type=EventType.BEDPRES, organizer: Group = None, attendance=True
+    event_type=EventType.BEDPRES, organizer: Group | None = None, attendance=True
 ) -> Event:
     onlinecorp: Company = G(Company, name="onlinecorp")
     bedpres_with_onlinecorp = generate_event(
@@ -66,10 +66,6 @@ def pay_for_event(event: Event, user: OnlineUser, *args, **kwargs) -> PaymentRel
     )
 
 
-def add_payment_delay(payment: Payment, user: OnlineUser) -> PaymentDelay:
-    return G(PaymentDelay, payment=payment, user=user)
-
-
 def generate_user(username: str, *args, **kwargs) -> OnlineUser:
     user = G(
         OnlineUser,
@@ -85,16 +81,6 @@ def generate_user(username: str, *args, **kwargs) -> OnlineUser:
 
 def generate_attendee(event: Event, username: str) -> Attendee:
     return attend_user_to_event(event, generate_user(username))
-
-
-def add_to_committee(user: OnlineUser, group: Group = None) -> OnlineUser:
-    committee_group = create_committee_group()
-    add_to_group(committee_group, user)
-
-    if group:
-        add_to_group(group, user)
-
-    return user
 
 
 def create_committee_group(group: Group = None):
