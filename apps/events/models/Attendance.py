@@ -730,6 +730,10 @@ class Attendee(models.Model):
         if not self.has_paid:
             self._clean_payment_delays()
 
+        # if self.has_paid:
+        # if self.payment_relations.first()
+        # we need to issue a refund
+
         # TODO: Not delete attendee unless payments have been refunded?
         self.delete()
 

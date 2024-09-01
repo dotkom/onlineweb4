@@ -48,16 +48,16 @@
         <div class="container">
             <ul>
                 <li class="top-menu-link">
-                    <a data-section="events" class="active" href="{% url 'events-link' %}">Arrangementer</a>
+                    <a data-section="events" class="active" href="https://online.ntnu.no/events">Arrangementer</a>
                 </li>
                 <li class="top-menu-link">
-                    <a data-section="articles" href="{% url 'articles-link' %}">Artikler</a>
+                    <a data-section="articles" href="#articles">Artikler</a>
                 </li>
                 <li class="top-menu-link">
-                    <a data-section="business" href="{% url 'business-link' %}">For bedrifter</a>
+                    <a data-section="business" href="#business">For bedrifter</a>
                 </li>
                 <li class="top-menu-link">
-                    <a data-section="about" href="{% url 'about-link' %}">Om Online</a>
+                    <a data-section="about" href="#about">Om Online</a>
                 </li>
             </ul>
         </div>
@@ -66,9 +66,15 @@
 
 {% block content %}
     <section id="events">
-        <div class="container">
-            <div id="event-items"></div>
-        </div>
+        <style>
+            #events {
+                padding-top: 100px;
+                display: grid;
+                place-items: center;
+            }
+        </style>
+        <h2>Arrangementer er flyttet til OWF!</h2>
+        <a href="https://online.ntnu.no" class="btn btn-primary">Gå til nye OnlineWeb-en</a>
     </section>
 
     <section id="articles">

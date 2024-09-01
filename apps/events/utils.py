@@ -12,10 +12,10 @@ from django.utils import timezone
 
 from apps.authentication.models import OnlineGroup
 from apps.authentication.models import OnlineUser as User
-from apps.events.models import Attendee, Event, Extras
+from apps.events.models import Event
 from apps.notifications.constants import PermissionType
 from apps.notifications.utils import send_message_to_users
-from apps.payment.models import PaymentDelay, PaymentRelation, PaymentTypes
+from apps.payment.models import PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 
@@ -167,136 +167,6 @@ class EventCalendar(Calendar):
         cal_event.add("url", f"https://online.ntnu.no/events/{event.id}")
 
         self.cal.add_component(cal_event)
-
-
-def handle_attendance_event_detail(event, user, context):
-    attendance_event = event.attendance_event
-
-    user_anonymous = True
-    user_attending = False
-    attendee = False
-    place_on_wait_list = 0
-    will_be_on_wait_list = False
-    can_unattend = True
-    rules = []
-    user_status = False
-    show_as_attending = False
-    user_setting_show_as_attending = False
-
-    if attendance_event.rule_bundles:
-        for rule_bundle in attendance_event.rule_bundles.all():
-            rules.append(rule_bundle.rule_strings)
-
-    if user.is_authenticated:
-        user_anonymous = False
-        if attendance_event.is_attendee(user):
-            user_attending = True
-            attendee = Attendee.objects.get(event=attendance_event, user=user)
-            show_as_attending = attendee.show_as_attending_event
-
-        will_be_on_wait_list = attendance_event.will_i_be_on_wait_list
-
-        can_unattend = timezone.now() < attendance_event.registration_end
-
-        user_status = event.attendance_event.is_eligible_for_signup(user)
-
-        # Check if this user is on the waitlist
-        place_on_wait_list = attendance_event.what_place_is_user_on_wait_list(user)
-
-        # Get the default setting for visible as attending event from users privacy setting
-        user_setting_show_as_attending = user.get_visible_as_attending_events()
-
-    context.update(
-        {
-            "now": timezone.now(),
-            "attendance_event": attendance_event,
-            "user_anonymous": user_anonymous,
-            "attendee": attendee,
-            "user_attending": user_attending,
-            "will_be_on_wait_list": will_be_on_wait_list,
-            "can_unattend": can_unattend,
-            "rules": rules,
-            "user_status": user_status,
-            "place_on_wait_list": int(place_on_wait_list),
-            "user_setting_show_as_attending": user_setting_show_as_attending,
-            "show_as_attending": show_as_attending,
-            # 'position_in_wait_list': position_in_wait_list,
-        }
-    )
-    return context
-
-
-def handle_event_payment(event, user, payment, context):
-    user_paid = False
-    payment_delay = None
-    payment_relation_id = None
-
-    context.update(
-        {
-            "payment": payment,
-            "user_paid": user_paid,
-            "payment_delay": payment_delay,
-            "payment_relation_id": payment_relation_id,
-        }
-    )
-
-    if not user.is_authenticated:  # Return early if user not logged in, can't filter payment relations against no one
-        return context
-
-    payment_relations = PaymentRelation.objects.filter(
-        payment=payment, user=user, refunded=False
-    )
-    for payment_relation in payment_relations:
-        user_paid = True
-        payment_relation_id = payment_relation.id
-    if not user_paid and context["user_attending"]:
-        attendee = Attendee.objects.get(event=event.attendance_event, user=user)
-        if attendee:
-            user_paid = attendee.paid
-
-    if not user_paid:
-        payment_delays = PaymentDelay.objects.filter(user=user, payment=payment)
-        if payment_delays:
-            payment_delay = payment_delays[0]
-
-    context.update(
-        {
-            "user_paid": user_paid,
-            "payment_delay": payment_delay,
-            "payment_relation_id": payment_relation_id,
-        }
-    )
-
-    return context
-
-
-def handle_event_ajax(event, user, action, extras_id):
-    if action == "extras":
-        return handle_event_extras(event, user, extras_id)
-    else:
-        raise NotImplementedError
-
-
-def handle_event_extras(event, user, extras_id):
-    resp = {"message": "Feil!"}
-
-    if not event.is_attendance_event():
-        return {"message": "Dette er ikke et påmeldingsarrangement."}
-
-    attendance_event = event.attendance_event
-
-    if not attendance_event.is_attendee(user):
-        return {"message": "Du er ikke påmeldt dette arrangementet."}
-
-    attendee = Attendee.objects.get(event=attendance_event, user=user)
-    try:
-        attendee.extras = attendance_event.extras.get(id=extras_id)
-    except Extras.DoesNotExist:
-        return {"message": "Ugyldig valg"}
-
-    attendee.save()
-    resp["message"] = "Lagret ditt valg"
-    return resp
 
 
 def handle_attend_event_payment(event: Event, user: User):

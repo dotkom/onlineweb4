@@ -1,9 +1,17 @@
+from datetime import UTC, datetime, timedelta
+from time import sleep
+
+from django.conf import settings
 from django.contrib.auth.models import Group
+from django.core import mail
 from django.utils import timezone
 from django_dynamic_fixture import G
+from freezegun import freeze_time
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APITransactionTestCase
 
+from apps.events.models import Event
+from apps.events.models.Attendance import AttendanceEvent, Attendee
 from apps.events.tests.utils import (
     attend_user_to_event,
     generate_event,
@@ -11,11 +19,17 @@ from apps.events.tests.utils import (
     generate_user,
     pay_for_event,
 )
+from apps.marks.models import MarkRuleSet
+from apps.notifications.constants import PermissionType
+from apps.notifications.models import Permission
+from apps.payment.models import PaymentDelay
 from onlineweb4.fields.turnstile import mock_validate_turnstile
 from onlineweb4.testing import GetUrlMixin
 
 from ...models import Extras, StatusCode
 from .utils import generate_attendee
+
+User = settings.AUTH_USER_MODEL
 
 
 class AttendanceEventTestCase(GetUrlMixin, APITestCase):
@@ -100,7 +114,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
 
     @mock_validate_turnstile()
     def test_signup_settings_override_defaults(self, _):
-        test_cases: list[tuple[dict[str, bool]]] = [
+        test_cases: list[tuple[dict[str, bool], dict[str, bool], dict[str, bool]]] = [
             (
                 {
                     "show_as_attending_event": True,
@@ -450,3 +464,129 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         response = self.client.get(self.get_extras_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+# This needs to be a TransactionTestCase since notifications are sent using on_commit hooks
+# see https://docs.djangoproject.com/en/5.1/topics/testing/tools/#django.test.TransactionTestCase
+class EventsUnattendWaitList(GetUrlMixin, APITransactionTestCase):
+    basename = "events_attendance_events"
+
+    def setUp(self):
+        G(Permission, permission_type=PermissionType.WAIT_LIST_BUMP, force_email=True)
+        self.event = G(Event, event_start=timezone.now() + timedelta(days=1))
+        G(
+            AttendanceEvent,
+            event=self.event,
+            unattend_deadline=timezone.now() + timedelta(days=1),
+            max_capacity=2,
+            waitlist=True,
+        )
+        self.user = generate_user("test")
+        self.client.force_login(self.user)
+        self.other_user = generate_user("other")
+        self.url = self.get_action_url("unregister", self.event.id)
+        self.rule_Set = G(
+            MarkRuleSet,
+            duration=timedelta(days=14),
+            valid_from_date=datetime(year=2016, month=1, day=1, tzinfo=UTC),
+        )
+
+    def test_unattend_notifies_waitlist_when_attending(self):
+        G(Attendee, event=self.event.attendance_event)
+        attend_user_to_event(self.event, self.user)
+        G(Attendee, event=self.event.attendance_event, n=3)
+
+        r = self.client.delete(self.url)
+
+        self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Du har fått plass på", mail.outbox[0].subject)
+
+    def test_unattend_does_not_notify_waitlist_when_on_waitlist(self):
+        G(Attendee, event=self.event.attendance_event, n=2)
+        attend_user_to_event(self.event, self.user)
+        G(Attendee, event=self.event.attendance_event)
+
+        r = self.client.delete(self.url)
+
+        self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
+        sleep(2)
+        self.assertEqual(len(mail.outbox), 0)
+
+    @freeze_time("2017-01-01 12:00")
+    def test_payment_type_instant_uses_extended(self):
+        generate_payment(self.event, payment_type=1)
+        G(Attendee, event=self.event.attendance_event)
+        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.other_user)
+        G(Attendee, event=self.event.attendance_event)
+        payment_delay_time = timedelta(days=2)
+
+        r = self.client.delete(self.url)
+
+        self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
+        sleep(2)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Du har fått plass på", mail.outbox[0].subject)
+        payment_delay = PaymentDelay.objects.get(user=self.other_user)
+        self.assertEqual(payment_delay.valid_to, timezone.now() + payment_delay_time)
+
+    def test_payment_delay_is_not_created_if_deadline_over_48_hours(self):
+        generate_payment(
+            self.event, payment_type=2, deadline=timezone.now() + timedelta(days=3)
+        )
+        G(Attendee, event=self.event.attendance_event)
+        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.other_user)
+        G(Attendee, event=self.event.attendance_event)
+
+        r = self.client.delete(self.url)
+
+        self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
+        sleep(2)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Du har fått plass på", mail.outbox[0].subject)
+        payment_delay = PaymentDelay.objects.filter(user=self.other_user)
+        self.assertFalse(payment_delay.exists())
+
+    @freeze_time("2017-01-01 12:00")
+    def test_payment_delay_is_created_if_deadline_under_48_hours(self):
+        generate_payment(
+            self.event, payment_type=2, deadline=timezone.now() + timedelta(hours=47)
+        )
+        G(Attendee, event=self.event.attendance_event)
+        attend_user_to_event(self.event, self.user)
+        other_user_attendee = attend_user_to_event(self.event, self.other_user)
+        G(Attendee, event=self.event.attendance_event)
+        payment_delay_time = timedelta(days=2)
+
+        r = self.client.delete(self.url)
+
+        self.assertIn(
+            other_user_attendee, self.event.attendance_event.attending_attendees_qs
+        )
+        self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
+        sleep(2)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Du har fått plass på", mail.outbox[0].subject)
+        payment_delay = PaymentDelay.objects.get(user=self.other_user)
+        self.assertEqual(payment_delay.valid_to, timezone.now() + payment_delay_time)
+
+    @freeze_time("2017-01-01 12:00")
+    def test_payment_type_delay_uses_payment_delay(self):
+        delay_days = 4
+        payment_delay_time = timedelta(days=delay_days)
+        generate_payment(self.event, payment_type=3, delay=payment_delay_time)
+        G(Attendee, event=self.event.attendance_event)
+        attend_user_to_event(self.event, self.user)
+        attend_user_to_event(self.event, self.other_user)
+        G(Attendee, event=self.event.attendance_event)
+
+        r = self.client.delete(self.url)
+
+        self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
+        sleep(2)
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn("Du har fått plass på", mail.outbox[0].subject)
+        payment_delay = PaymentDelay.objects.get(user=self.other_user)
+        self.assertEqual(payment_delay.valid_to, timezone.now() + payment_delay_time)

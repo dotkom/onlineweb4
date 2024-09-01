@@ -1,11 +1,15 @@
+from django.shortcuts import redirect
 from django.urls import re_path
 
-from apps.api.utils import SharedAPIRootRouter
 from apps.events import views
 from apps.events.feeds import OpenedSignupsFeed
 
 urlpatterns = [
-    re_path(r"^$", views.index, name="events_index"),
+    re_path(
+        r"^$",
+        lambda r: redirect("https://online.ntnu.no/events", permanent=True),
+        name="events_index",
+    ),
     re_path(
         r"^(?P<event_id>\d+)/attendees/pdf$",
         views.generate_pdf,
@@ -16,21 +20,18 @@ urlpatterns = [
         views.generate_json,
         name="event_attendees_json",
     ),
-    re_path(r"^(?P<event_id>\d+)/attend/$", views.attend_event, name="attend_event"),
-    re_path(
-        r"^(?P<event_id>\d+)/unattend/$", views.unattend_event, name="unattend_event"
-    ),
-    re_path(
-        r"^(?P<event_id>\d+)/show_attending/$",
-        views.toggle_show_as_attending,
-        name="toggle_show_as_attending",
-    ),
     re_path(
         r"^(?P<event_id>\d+)/(?P<event_slug>[a-zA-Z0-9_-]+)/$",
-        views.details,
+        lambda _r, event_id, event_slug: redirect(
+            f"https://online.ntnu.no/events/${event_id}", permanent=True
+        ),
         name="events_details",
     ),
-    re_path(r"^search/.*$", views.search_events, name="search_events"),
+    re_path(
+        r"^search/.*$",
+        lambda _r: redirect("https://online.ntnu.no/events", permanent=True),
+        name="search_events",
+    ),
     re_path(
         r"^mail-participants/(?P<event_id>\d+)$",
         views.mail_participants,
@@ -46,7 +47,3 @@ urlpatterns = [
     ),
     re_path("^signup-feed/$", OpenedSignupsFeed()),
 ]
-
-# API v1
-router = SharedAPIRootRouter()
-router.register("events", views.EventViewSet, basename="events")
