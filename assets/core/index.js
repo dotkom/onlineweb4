@@ -7,3 +7,7 @@ import './less/core.less';
 
 init();
 timeOutAlerts();
+
+if (import.meta.env.ENVIRONMENT === 'dev')  {
+    await import('./less/staging_theme.less');
+}
