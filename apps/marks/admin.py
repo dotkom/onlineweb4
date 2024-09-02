@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.db.models import Count
+from django.db.models.query import QuerySet
+from django.http import HttpRequest
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from reversion.admin import VersionAdmin
@@ -39,12 +42,19 @@ class MarkAdmin(VersionAdmin):
         "ruleset",
     ]
 
-    list_display = ["__str__", "category", "cause", "added_date", "weight"]
+    list_display = ["__str__", "affected_count", "cause", "added_date", "weight"]
     readonly_fields = (
         "expiration_date",
         "ruleset",
     )
     search_fields = ("title",)
+
+    @admin.display(description="Antall påvirket")
+    def affected_count(self, mark: Mark):
+        return mark.affected_count
+
+    def get_queryset(self, request: HttpRequest) -> QuerySet[Mark]:
+        return super().get_queryset(request).annotate(affected_count=Count("users"))
 
     def save_model(self, request, obj, form, change):
         obj.last_changed_by = request.user
@@ -55,7 +65,8 @@ class MarkAdmin(VersionAdmin):
 class SuspensionAdmin(VersionAdmin):
     model = Suspension
     list_display = ["title", "user", "created_time", "expiration_date", "cause"]
-
+    fields = ["title", "user", "created_time", "expiration_date", "cause"]
+    readonly_fields = ["user", "created_time"]
     exclude = ("payment_id",)
 
 
