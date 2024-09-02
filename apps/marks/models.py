@@ -239,7 +239,9 @@ class MarkUser(models.Model):
     def save(self, *args, **kwargs):
         now = timezone.now()
 
-        if should_be_suspended(self.user, user_weight(self.user) + self.mark.weight, now.date()):
+        if should_be_suspended(
+            self.user, user_weight(self.user) + self.mark.weight, now.date()
+        ):
             s = Suspension(
                 title=_("For mange prikker på rad"),
                 description=_(
@@ -365,14 +367,13 @@ type UserSanction = MarkDelay | Suspended
 
 
 def should_be_suspended(u: User, weight: int, today: date):
-    has_suspension = (Suspension.active_suspensions(u, today)
+    has_suspension = (
+        Suspension.active_suspensions(u, today)
         .filter(cause=Suspension.Cause.MARKS)
-        .exists())
-    has_too_much_mark_weight = weight >= 6
-    should_be_suspended = (
-        has_too_much_mark_weight
-        and not has_suspension
+        .exists()
     )
+    has_too_much_mark_weight = weight >= 6
+    should_be_suspended = has_too_much_mark_weight and not has_suspension
     logger.info("Checking sanctions for %s. %s", u.pk, f"{weight=}; {has_suspension=}")
     return should_be_suspended
 

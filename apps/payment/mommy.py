@@ -15,6 +15,7 @@ from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
 logger = logging.getLogger(__name__)
 
+
 def payment_reminder():
     event_payments = Payment.objects.filter(
         payment_type=PaymentTypes.DEADLINE,

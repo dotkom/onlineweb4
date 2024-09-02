@@ -83,7 +83,7 @@ def test_suspensions_and_marks_over_time(db):
 
     assert type(user_sanctions(user, now.date())) is MarkDelay
     sanction_users(m[1], [user], now)
-    
+
     assert type(user_sanctions(user, now.date())) is Suspended
     sanction_users(m[2], [user], now)
 
