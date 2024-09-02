@@ -56,7 +56,7 @@ let result = await esbuild.build({
     sourcemap: process.env.NODE_ENV === "production" || false,
     metafile: true,
     define: {
-      'import.meta.env.ENVIRONMENT': JSON.stringify(process.env.ENVIRONMENT),
+      'import.meta.env.ENVIRONMENT': JSON.stringify(process.env.ENVIRONMENT ?? "dev"),
     }
 });
 
