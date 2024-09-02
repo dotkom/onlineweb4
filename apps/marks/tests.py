@@ -13,6 +13,7 @@ from apps.authentication.models import OnlineUser as User
 from apps.marks.models import (
     DURATION,
     Mark,
+    MarkDelay,
     MarkRuleSet,
     RuleAcceptance,
     Suspended,
@@ -77,8 +78,14 @@ def test_suspensions_and_marks_over_time(db):
         ruleset=F(duration=timedelta(days=14)),
     )
 
-    for mark in m:
-        sanction_users(mark, [user], now)
+    assert user_sanctions(user, now.date()) is None
+    sanction_users(m[0], [user], now)
+
+    assert type(user_sanctions(user, now.date())) is MarkDelay
+    sanction_users(m[1], [user], now)
+    
+    assert type(user_sanctions(user, now.date())) is Suspended
+    sanction_users(m[2], [user], now)
 
     assert type(user_sanctions(user, now.date())) is Suspended
 

@@ -13,12 +13,9 @@ from apps.marks.models import Mark, Suspension, sanction_users
 from apps.payment.models import Payment, PaymentDelay, PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
 
+logger = logging.getLogger(__name__)
 
 def payment_reminder():
-    logging.basicConfig()
-    # logger = logging.getLogger()
-    # logger.info("Event payment job started")
-
     event_payments = Payment.objects.filter(
         payment_type=PaymentTypes.DEADLINE,
         active=True,
@@ -41,7 +38,6 @@ def payment_reminder():
                         "Du har fått en prikk fordi du ikke har betalt for et arrangement."
                     ),
                 )
-                mark.save()
                 send_deadline_passed_mail_payment(payment)
                 notify_committee(payment)
                 sanction_users(mark, users)
@@ -188,8 +184,7 @@ def handle_deadline_passed(payment_delay, unattend_deadline_passed):
             "Du har fått en prikk fordi du ikke har betalt for et arrangement."
         ),
     )
-    mark.save()
-    mark.users.set([payment_delay.user])
+    sanction_users(mark, [payment_delay.user])
     if unattend_deadline_passed:
         handle_suspensions(payment_delay)
     else:

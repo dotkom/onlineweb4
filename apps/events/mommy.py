@@ -56,17 +56,16 @@ def set_marks(attendance_event: AttendanceEvent, logger=None):
     logger.info('Proccessing "%s"', event.title)
     users = attendance_event.not_attended()
 
-    mark = Mark(
-        title=f"Manglende oppmøte på {event.title}",
-        cause=Mark.Cause.NO_ATTENDANCE,
-        description=f"Du har fått en prikk på grunn av manglende oppmøte på {event.title}.",
-    )
-    mark.save()
+    if users:
+        mark = Mark(
+            title=f"Manglende oppmøte på {event.title}",
+            cause=Mark.Cause.NO_ATTENDANCE,
+            description=f"Du har fått en prikk på grunn av manglende oppmøte på {event.title}.",
+        )
+        sanction_users(mark, users)
 
-    sanction_users(mark, users)
-
-    for u in users:
-        logger.info("Mark given to: %s", u)
+        for u in users:
+            logger.info("Mark given to: %s", u)
 
     attendance_event.marks_has_been_set = True
     attendance_event.save()

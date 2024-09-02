@@ -89,13 +89,6 @@ def generate_message(feedback, logger):
     message.contact = f"\n\nEventuelle spørsmål sendes til {message.committee_mail} "
     message.date = date_message(end_date)
 
-    mark = Mark(
-        title=f"Manglende tilbakemelding på {title}",
-        cause=Mark.Cause.MISSED_FEEDBACK,
-        description="Du har fått en prikk fordi du ikke har levert tilbakemelding.",
-    )
-    mark.save()
-
     if deadline_diff < 0:  # Deadline passed
         feedback.active = False
         feedback.save()
@@ -103,6 +96,11 @@ def generate_message(feedback, logger):
         message.status = "Deadine passed"
 
         if feedback.gives_mark:
+            mark = Mark(
+                title=f"Manglende tilbakemelding på {title}",
+                cause=Mark.Cause.MISSED_FEEDBACK,
+                description="Du har fått en prikk fordi du ikke har levert tilbakemelding.",
+            )
             sanction_users(mark, not_responded)
 
             message.intro = (

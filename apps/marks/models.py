@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from decimal import InvalidOperation
@@ -9,6 +10,7 @@ from django.db.models import Q, QuerySet, Sum
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
+logger = logging.getLogger(__name__)
 User = settings.AUTH_USER_MODEL
 
 DURATION = 14
@@ -237,12 +239,7 @@ class MarkUser(models.Model):
     def save(self, *args, **kwargs):
         now = timezone.now()
 
-        if (
-            user_weight(self.user) + self.mark.weight >= 6
-            and not Suspension.active_suspensions(self.user)
-            .filter(cause=Suspension.Cause.MARKS)
-            .exists()
-        ):
+        if should_be_suspended(self.user, user_weight(self.user) + self.mark.weight, now.date()):
             s = Suspension(
                 title=_("For mange prikker på rad"),
                 description=_(
@@ -367,6 +364,19 @@ class Suspended:
 type UserSanction = MarkDelay | Suspended
 
 
+def should_be_suspended(u: User, weight: int, today: date):
+    has_suspension = (Suspension.active_suspensions(u, today)
+        .filter(cause=Suspension.Cause.MARKS)
+        .exists())
+    has_too_much_mark_weight = weight >= 6
+    should_be_suspended = (
+        has_too_much_mark_weight
+        and not has_suspension
+    )
+    logger.info("Checking sanctions for %s. %s", u.pk, f"{weight=}; {has_suspension=}")
+    return should_be_suspended
+
+
 def sanction_users(
     sanction: Mark | Suspension,
     users: list[User] | None = None,
@@ -376,14 +386,6 @@ def sanction_users(
         now = timezone.now()
 
     def sanction_mark(mark: Mark, users: list[User], now: datetime):
-        def should_be_suspended(u: User, today: date):
-            return (
-                user_weight(u, today) + mark.weight >= 6
-                and not Suspension.active_suspensions(u, today)
-                .filter(cause=Suspension.Cause.MARKS)
-                .exists()
-            )
-
         mark.users.set(users)
 
         suspensions = [
@@ -401,7 +403,7 @@ def sanction_users(
                 cause=Suspension.Cause.MARKS,
             )
             for user in users
-            if should_be_suspended(user, now.date())
+            if should_be_suspended(user, user_weight(user, now.date()), now.date())
         ]
 
         Suspension.objects.bulk_create(suspensions)
