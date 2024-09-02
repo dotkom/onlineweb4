@@ -57,7 +57,7 @@ let result = await esbuild.build({
     metafile: true,
     define: {
       'import.meta.env.ENVIRONMENT': JSON.stringify(process.env.ENVIRONMENT),
-    },
+    }
 });
 
 // We are very sneaky here, we used to use webpack, with https://github.com/django-webpack/webpack-bundle-tracker
