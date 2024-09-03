@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "less": "^4.2.0",
-    "less-loader": "^7.3.0"
+    "less-loader": "^12.0.0"
   },
   "scripts": {
     "build": "node esbuild.mjs"
