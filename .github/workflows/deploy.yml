@@ -83,7 +83,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: VERSION=${{ steps.meta.outputs.version }}
+          build-args: |
+            ENVIRONMENT=${{ inputs.environment }}
+            VERSION=${{ steps.meta.outputs.version }}
 
       - name: Create Sentry release
         uses: getsentry/action-release@v1
