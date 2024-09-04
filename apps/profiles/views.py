@@ -321,7 +321,7 @@ class GSuiteCreateAccount(View):
                     request, "Noe gikk galt. Vennligst ta kontakt med dotkom."
                 )
 
-        return redirect("profile_add_email")
+        return redirect("profiles")
 
 
 class GSuiteResetPassword(View):
@@ -335,7 +335,7 @@ class GSuiteResetPassword(View):
         except ValueError as err:
             messages.error(request, err)
 
-        return redirect("profile_add_email")
+        return redirect("profiles")
 
 
 class PublicProfileSearchSet(
