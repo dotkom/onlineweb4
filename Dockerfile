@@ -3,6 +3,8 @@
 
 FROM node:20-alpine AS js-static
 
+ARG ENVIRONMENT
+ENV ENVIRONMENT=$ENVIRONMENT
 ENV APP_DIR=/srv/app
 ENV NODE_ENV=production
 
