@@ -2,7 +2,7 @@
 name = "onlineweb4"
 version = "1.0.0"
 description = "Web pages for Online, Linjeforeningen for Informatikk at NTNU"
-requires-python = "~=3.12"
+requires-python = "~=3.12.1"
 dependencies = [
     "django~=5.0",
     "djangorestframework~=3.15",
