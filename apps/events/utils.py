@@ -164,6 +164,7 @@ class EventCalendar(Calendar):
         cal_event.add("summary", event.title)
         cal_event.add("description", event.ingress_short)
         cal_event.add("uid", "event-" + str(event.id) + "@online.ntnu.no")
+        cal_event.add("url", f"https://online.ntnu.no/events/{event.id}")
 
         self.cal.add_component(cal_event)
 
