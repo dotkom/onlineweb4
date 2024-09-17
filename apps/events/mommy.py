@@ -93,7 +93,8 @@ def generate_message(attendance_event):
     )
     message.contact = f"\n\nEventuelle spørsmål sendes til {message.committee_mail} "
     message.send = True
-    message.committee_message = f'På grunn av manglende oppmøte på "{event.title}" har følgende brukere fått en prikk:\n'
+    marks_amount = Mark.Cause.NO_ATTENDANCE.weight()
+    message.committee_message = f'På grunn av manglende oppmøte på "{event.title}" har følgende brukere fått {marks_amount} prikk(er):\n'
     message.committee_message += not_attended_string
     return message
 
