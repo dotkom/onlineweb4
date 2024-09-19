@@ -9,11 +9,12 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
+        migrations.RenameField(
             model_name="careeropportunity",
-            name="deadline_asap",
+            old_name="deadline_asap",
+            new_name="rolling_admission",
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name="careeropportunity",
             name="rolling_admission",
             field=models.BooleanField(
