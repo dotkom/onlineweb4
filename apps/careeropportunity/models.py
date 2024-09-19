@@ -25,7 +25,9 @@ class CareerOpportunity(models.Model):
     end = models.DateTimeField(_("aktiv til"))
     featured = models.BooleanField(_("fremhevet"), default=False, blank=True)
     deadline = models.DateTimeField(_("frist"), default=None, null=True, blank=True)
-    rolling_admission = models.BooleanField(_("Søknader vurderes fortløpende"), default=False, blank=False)
+    rolling_admission = models.BooleanField(
+        _("Søknader vurderes fortløpende"), default=False, blank=False
+    )
 
     JOB_TYPE_CHOICES = (
         (1, "Fastjobb"),

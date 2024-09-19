@@ -50,7 +50,9 @@ class AddCareerOpportunityForm(forms.ModelForm):
         required=False,
         widget=DatetimePickerInput(),
     )
-    rolling_admission = forms.BooleanField(label="Søknader vurderes fortløpende", required=False)
+    rolling_admission = forms.BooleanField(
+        label="Søknader vurderes fortløpende", required=False
+    )
 
     class Meta:
         model = CareerOpportunity
