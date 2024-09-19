@@ -33,7 +33,6 @@ class CareerSerializer(TaggitSerializer, serializers.ModelSerializer):
             "end",
             "featured",
             "deadline",
-            "deadline_asap",
             "rolling_admission",
             "employment",
             "location",

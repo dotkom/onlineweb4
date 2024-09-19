@@ -50,8 +50,7 @@ class AddCareerOpportunityForm(forms.ModelForm):
         required=False,
         widget=DatetimePickerInput(),
     )
-    deadline_asap = forms.BooleanField(label="Frist er snarest", required=False)
-    rolling_admission = forms.BooleanField(label="Løpende opptak", required=False)
+    rolling_admission = forms.BooleanField(label="Søknader vurderes fortløpende", required=False)
 
     class Meta:
         model = CareerOpportunity
@@ -66,7 +65,7 @@ class AddCareerOpportunityForm(forms.ModelForm):
             "end",
             "featured",
             "deadline",
-            "deadline_asap",
+            "rolling_admission",
             "employment",
             "location",
         )
