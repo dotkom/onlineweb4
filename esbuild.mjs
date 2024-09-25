@@ -7,7 +7,6 @@ let entryPoints = [
     { out: 'articleDetails', in: 'assets/article/details/index.js' },
     { out: 'articleArchive', in: 'assets/article/archive/index.js' },
     { out: 'core', in: 'assets/core/index.js' },
-    { out: 'contact', in: 'assets/contact/index.js' },
     { out: 'dashboard', in: 'assets/dashboard/core/index.js' },
     { out: 'dashboardApproval', in: 'assets/dashboard/approval/index.js' },
     { out: 'dashboardArticle', in: 'assets/dashboard/article/index.js' },
