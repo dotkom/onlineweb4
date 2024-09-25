@@ -5,8 +5,11 @@
 {% block title %}Grupper - {{ group }}{% endblock %}
 
 {% block styles %}
-    {{ block.super }}
+    {{ block.super }}
     {% render_bundle 'dashboardGroups' 'css' %}
+    {% if ENVIRONMENT == 'dev' %}
+        {% render_bundle 'staging_theme' 'css' %}
+    {% endif %}
 {% endblock %}
 
 {% block js %}
@@ -20,7 +23,7 @@
 
 {% block breadcrumbs %}
 <li><a href="/dashboard/auth/groups/">Grupper</a></li>
-<li>{{ group }}</li>
+<li>{{ group }}</li>
 {% endblock %}
 
 {% block content %}

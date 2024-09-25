@@ -6,10 +6,8 @@ from apps.feedback.models import FeedbackRelation
 
 def context_settings(request):
     context_extras = {}
-    if hasattr(settings, "GOOGLE_ANALYTICS_KEY"):
-        context_extras["GOOGLE_ANALYTICS_KEY"] = settings.GOOGLE_ANALYTICS_KEY
-    if hasattr(settings, "HOT_RELOAD"):
-        context_extras["HOT_RELOAD"] = settings.HOT_RELOAD
+    if hasattr(settings, "ENVIRONMENT"):
+        context_extras["ENVIRONMENT"] = settings.ENVIRONMENT
     return context_extras
 
 

@@ -10,6 +10,8 @@ PROJECT_SETTINGS_DIRECTORY = Path(globals()["__file__"]).parent
 # Root directory. Contains manage.py
 PROJECT_ROOT_DIRECTORY = PROJECT_SETTINGS_DIRECTORY.parent.parent
 
+ENVIROMENT = config("ENVIRONMENT", default="development")
+
 sys.dont_write_bytecode = config(
     "OW4_PYTHON_DONT_WRITE_BYTECODE", cast=bool, default=True
 )
