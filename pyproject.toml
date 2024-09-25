@@ -46,7 +46,7 @@ prod = [
     "zappa~=0.59",
     "boto3~=1.35",
     # required for zappa
-    "setuptools~=74.0",
+    "setuptools~=75.1",
 ]
 s3 = [
     "django-storages[s3]~=1.14",
