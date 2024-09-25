@@ -202,7 +202,6 @@ INSTALLED_APPS = [
     "apps.authentication",
     "apps.careeropportunity",
     "apps.companyprofile",
-    "apps.contact",
     "apps.dashboard",
     "apps.dataporten",
     "apps.gallery",
