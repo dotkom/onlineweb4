@@ -19,7 +19,7 @@ COPY esbuild.mjs ./
 
 RUN npm run build
 
-FROM python:3.12 AS static-files
+FROM python:3.13 AS static-files
 
 ENV APP_DIR=/srv/app
 
@@ -38,7 +38,7 @@ COPY --from=js-static $APP_DIR/bundles ./bundles
 
 RUN uv run --locked -- ./manage.py collectstatic
 
-FROM python:3.12 AS vault-lambda-extension
+FROM python:3.13 AS vault-lambda-extension
 
 WORKDIR /vault
 
