@@ -37,6 +37,13 @@ pre-commit install
 
 Authentication goes through our Auth0-tenant, to get access to development configuration contact dotkom@online.ntnu.no.
 
+If you are a member of dotkom you can use our configuration in doppler. 
+
+```sh
+doppler setup
+doppler run -- ./manage.py runserver
+```
+
 ## Frameworks
 
 ### Frontend
