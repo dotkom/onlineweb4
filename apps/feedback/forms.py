@@ -1,5 +1,6 @@
 from crispy_forms.helper import FormHelper
 from django import forms
+from django.core import validators
 
 from apps.feedback.models import (
     RATING_CHOICES,
@@ -46,7 +47,8 @@ class FieldOfStudyAnswerForm(AnswerForm):
 
 class TextAnswerForm(AnswerForm):
     answer = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "form-control", "type": "text"})
+        widget=forms.Textarea(attrs={"class": "form-control", "type": "text"}),
+        validators=[validators.MinLengthValidator(20)],
     )
 
     class Meta:
