@@ -55,17 +55,19 @@ def set_marks(attendance_event: AttendanceEvent, logger=None):
     event = attendance_event.event
     logger.info('Proccessing "%s"', event.title)
     users = attendance_event.not_attended()
+    mark_cause = Mark.Cause.NO_ATTENDANCE
+    mark_weight = mark_cause.weight()
 
     if users:
         mark = Mark(
             title=f"Manglende oppmøte på {event.title}",
-            cause=Mark.Cause.NO_ATTENDANCE,
-            description=f"Du har fått en prikk på grunn av manglende oppmøte på {event.title}.",
+            cause=mark_cause,
+            description=f"Du har fått {mark_weight} {"prikk" if mark_weight == 1 else "prikker"} på grunn av manglende oppmøte på {event.title}.",
         )
         sanction_users(mark, users)
 
         for u in users:
-            logger.info("Mark given to: %s", u)
+            logger.info("%s marks given to: %s", mark_weight, u)
 
     attendance_event.marks_has_been_set = True
     attendance_event.save()
@@ -86,15 +88,13 @@ def generate_message(attendance_event):
 
     message.committee_mail = event.feedback_mail()
     not_attended_string = "\n".join([user.get_full_name() for user in not_attended])
+    mark_weight = Mark.Cause.NO_ATTENDANCE.weight()
 
     message.subject = title
-    message.intro = (
-        f'Hei\n\nPå grunn av manglende oppmøte på "{title}" har du fått en prikk'
-    )
+    message.intro = f'Hei\n\nPå grunn av manglende oppmøte på "{title}" har du fått {mark_weight} {"prikk" if mark_weight == 1 else "prikker"}'
     message.contact = f"\n\nEventuelle spørsmål sendes til {message.committee_mail} "
     message.send = True
-    marks_amount = Mark.Cause.NO_ATTENDANCE.weight()
-    message.committee_message = f'På grunn av manglende oppmøte på "{event.title}" har følgende brukere fått {marks_amount} prikk(er):\n'
+    message.committee_message = f'På grunn av manglende oppmøte på "{event.title}" har følgende brukere fått {mark_weight} {"prikk" if mark_weight == 1 else "prikker"}:\n'
     message.committee_message += not_attended_string
     return message
 
