@@ -60,7 +60,7 @@ dev-dependencies = [
     "pytest-xdist~=3.6",
     "coverage~=7.6",
     "ruff~=0.6",
-    "pre-commit~=3.8",
+    "pre-commit~=4.0",
     "freezegun>=1.5.1",
 ]
 
