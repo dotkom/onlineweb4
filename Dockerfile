@@ -1,7 +1,7 @@
 # This is only intended to build the application for deployment on AWS Lambda with Zappa
 # it has limited usage locally
 
-FROM node:20-alpine AS js-static
+FROM node:23-alpine AS js-static
 
 ARG ENVIRONMENT
 ENV ENVIRONMENT=$ENVIRONMENT
