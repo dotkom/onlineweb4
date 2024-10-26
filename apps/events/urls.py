@@ -23,7 +23,7 @@ urlpatterns = [
     re_path(
         r"^(?P<event_id>\d+)/(?P<event_slug>[a-zA-Z0-9_-]+)/$",
         lambda _r, event_id, event_slug: redirect(
-            f"https://online.ntnu.no/events/${event_id}", permanent=True
+            f"https://online.ntnu.no/events/{event_id}", permanent=True
         ),
         name="events_details",
     ),
