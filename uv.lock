@@ -799,15 +799,15 @@ wheels = [
 
 [[package]]
 name = "icalendar"
-version = "5.0.13"
+version = "6.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "python-dateutil" },
-    { name = "pytz" },
+    { name = "tzdata" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3c/d8/ada43e4872aab3bfaf2cc2e09b2d2a5d83f771bfc58ba6a63904a5067db8/icalendar-5.0.13.tar.gz", hash = "sha256:92799fde8cce0b61daa8383593836d1e19136e504fa1671f471f98be9b029706", size = 119371 }
+sdist = { url = "https://files.pythonhosted.org/packages/2f/c8/517de527ddd5acf8dfb4da1b0faf27ceba30526f481680f56e7c5b91dd83/icalendar-6.0.1.tar.gz", hash = "sha256:1ff44825d7b41c3f77eac9e09cc67a770dd3c2377430c23b0eb7d91603088892", size = 98425 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a4/e1/371d172fa02319d5998b22bb61b524eb1be6216a549edd997fd7d00007d0/icalendar-5.0.13-py3-none-any.whl", hash = "sha256:5ded5415e2e1edef5ab230024a75878a7a81d518a3b1ae4f34bf20b173c84dc2", size = 118510 },
+    { url = "https://files.pythonhosted.org/packages/76/c5/d10fc932f7fcc770180b4bf3c63df79d518086a51548422101f4a7c8fdfa/icalendar-6.0.1-py3-none-any.whl", hash = "sha256:9bf3d69203bd0366a9a29a8b0e220574580b86d7918afcb628fc6920287922f3", size = 131316 },
 ]
 
 [[package]]
@@ -1073,7 +1073,7 @@ s3 = [
     { name = "django-storages", extra = ["s3"] },
 ]
 
-[package.dev-dependencies]
+[package.dependency-groups]
 dev = [
     { name = "coverage" },
     { name = "freezegun" },
@@ -1110,7 +1110,7 @@ requires-dist = [
     { name = "djangorestframework", specifier = "~=3.15" },
     { name = "drf-spectacular", specifier = "~=0.27" },
     { name = "google-api-python-client", specifier = "~=2.141" },
-    { name = "icalendar", specifier = "~=5.0" },
+    { name = "icalendar", specifier = "~=6.0" },
     { name = "mozilla-django-oidc", specifier = "~=4.0" },
     { name = "oic", specifier = "~=1.7" },
     { name = "pdfdocument", specifier = "~=4.0" },
@@ -1128,7 +1128,7 @@ requires-dist = [
     { name = "zappa", marker = "extra == 'prod'", specifier = "~=0.59" },
 ]
 
-[package.metadata.requires-dev]
+[package.metadata.dependency-groups]
 dev = [
     { name = "coverage", specifier = "~=7.6" },
     { name = "freezegun", specifier = ">=1.5.1" },
@@ -1557,15 +1557,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/87/c7/5e1547c44e31da50a460df93af11a535ace568ef89d7a811069ead340c4a/python-slugify-8.0.4.tar.gz", hash = "sha256:59202371d1d05b54a9e7720c5e038f928f45daaffe41dd10822f3907b937c856", size = 10921 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a4/62/02da182e544a51a5c3ccf4b03ab79df279f9c60c5e82d5e8bec7ca26ac11/python_slugify-8.0.4-py2.py3-none-any.whl", hash = "sha256:276540b79961052b66b7d116620b36518847f52d5fd9e3a70164fc8c50faa6b8", size = 10051 },
-]
-
-[[package]]
-name = "pytz"
-version = "2024.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/3a/31/3c70bf7603cc2dca0f19bdc53b4537a797747a58875b552c8c413d963a3f/pytz-2024.2.tar.gz", hash = "sha256:2aa355083c50a0f93fa581709deac0c9ad65cca8a9e9beac660adcbd493c798a", size = 319692 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/c3/005fcca25ce078d2cc29fd559379817424e94885510568bc1bc53d7d5846/pytz-2024.2-py2.py3-none-any.whl", hash = "sha256:31c7c1817eb7fae7ca4b8c7ee50c72f93aa2dd863de768e1ef4245d426aa0725", size = 508002 },
 ]
 
 [[package]]
