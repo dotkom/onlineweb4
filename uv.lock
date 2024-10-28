@@ -1073,7 +1073,7 @@ s3 = [
     { name = "django-storages", extra = ["s3"] },
 ]
 
-[package.dev-dependencies]
+[package.dependency-groups]
 dev = [
     { name = "coverage" },
     { name = "freezegun" },
@@ -1121,14 +1121,14 @@ requires-dist = [
     { name = "pyyaml", specifier = "~=6.0" },
     { name = "requests", extras = ["security"], specifier = "~=2.32" },
     { name = "sentry-sdk", extras = ["django"], specifier = "~=2.13" },
-    { name = "setuptools", marker = "extra == 'prod'", specifier = "~=74.0" },
+    { name = "setuptools", marker = "extra == 'prod'", specifier = "~=75.2" },
     { name = "stripe", specifier = "~=3.5" },
     { name = "unidecode", specifier = "~=1.3" },
     { name = "wiki", specifier = "~=0.11" },
     { name = "zappa", marker = "extra == 'prod'", specifier = "~=0.59" },
 ]
 
-[package.metadata.requires-dev]
+[package.metadata.dependency-groups]
 dev = [
     { name = "coverage", specifier = "~=7.6" },
     { name = "freezegun", specifier = ">=1.5.1" },
@@ -1730,11 +1730,11 @@ django = [
 
 [[package]]
 name = "setuptools"
-version = "74.1.3"
+version = "75.2.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/cd/01/e30d66bbb6403b7d41ac1ac0e3c51727c5e8f3558d8f9a9efe4282e90308/setuptools-74.1.3.tar.gz", hash = "sha256:fbb126f14b0b9ffa54c4574a50ae60673bbe8ae0b1645889d10b3b14f5891d28", size = 1356471 }
+sdist = { url = "https://files.pythonhosted.org/packages/07/37/b31be7e4b9f13b59cde9dcaeff112d401d49e0dc5b37ed4a9fc8fb12f409/setuptools-75.2.0.tar.gz", hash = "sha256:753bb6ebf1f465a1912e19ed1d41f403a79173a9acf66a42e7e6aec45c3c16ec", size = 1350308 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/14/37/166aba5a70924e574eb0aec9f7ec227ac0d7ae72dd2f823675365172120d/setuptools-74.1.3-py3-none-any.whl", hash = "sha256:1cfd66bfcf197bce344da024c8f5b35acc4dcb7ca5202246a75296b4883f6851", size = 1262070 },
+    { url = "https://files.pythonhosted.org/packages/31/2d/90165d51ecd38f9a02c6832198c13a4e48652485e2ccf863ebb942c531b6/setuptools-75.2.0-py3-none-any.whl", hash = "sha256:a7fcb66f68b4d9e8e66b42f9876150a3371558f98fa32222ffaa5bced76406f8", size = 1249825 },
 ]
 
 [[package]]
