@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
@@ -7,6 +9,7 @@ from rest_framework import status
 
 from apps.authentication.models import OnlineUser as User
 from apps.events.models import AttendanceEvent, Event
+from apps.feedback.models import Feedback, FeedbackRelation, TextQuestion
 
 
 def create_generic_attendance_event():
@@ -23,6 +26,7 @@ def add_permissions(user):
     user.user_permissions.add(
         Permission.objects.filter(codename="view_event").first(),
         Permission.objects.filter(codename="add_event").first(),
+        Permission.objects.filter(codename="delete_feedbackrelation").first(),
     )
 
 
@@ -61,4 +65,24 @@ class DashboardEventsURLTestCase(TestCase):
 
         response = self.client.get(url)
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_dashboard_remove_feedback_from_event(self):
+        add_permissions(self.user)
+        # Is staff, view_event and add_event, delete_feedbackrelation permissions
+        event = create_generic_attendance_event()
+
+        feedback = Feedback.objects.create(author=self.user)
+        TextQuestion.objects.create(feedback=feedback)
+        deadline = timezone.now().date() + timedelta(days=4)
+
+        FeedbackRelation.objects.create(
+            feedback=feedback, content_object=event, deadline=deadline, active=True
+        )
+
+        url = reverse(
+            "dashboard_events_remove_feedback",
+            kwargs={"event_id": event.id, "pk": feedback.id},
+        )
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
