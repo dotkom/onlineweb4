@@ -69,13 +69,9 @@ class DashboardEventsURLTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_dashboard_remove_feedback_from_event(self):
-        # self.committee = G(Group, name="Arrkom")
         add_permissions(self.user)
 
         event = create_generic_attendance_event()
-        # event = G(Event, event_type=EventType.BEDPRES, organizer=self.committee)
-        # G(AttendanceEvent, event=event)
-
         feedback = Feedback.objects.create(author=self.user)
         TextQuestion.objects.create(feedback=feedback)
         deadline = timezone.now().date() + timedelta(days=4)
@@ -85,17 +81,12 @@ class DashboardEventsURLTestCase(TestCase):
         )
 
         assign_perm("delete_feedbackrelation", self.user, feedbackrelation)
-        # self.user.groups.add(self.committee)
         self.assertTrue(self.user.has_perm("feedback.delete_feedbackrelation"))
 
         url = reverse(
             "dashboard_events_remove_feedback",
             kwargs={"event_id": event.id, "pk": feedback.id},
         )
-        response = self.client.get(url)
+        response = self.client.post(url)
 
-        """
-        django.template.exceptions.TemplateDoesNotExist: feedback/feedbackrelation_confirm_delete.html
-        """
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
