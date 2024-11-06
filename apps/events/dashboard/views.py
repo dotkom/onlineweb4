@@ -187,7 +187,6 @@ class RemoveFeedbackRelationView(DashboardObjectPermissionMixin, DeleteView):
     model = FeedbackRelation
 
     permission_required = "feedback.delete_feedbackrelation"
-    # permission_required = "events.add_attendanceevent"
 
     def get_success_url(self):
         return reverse(
