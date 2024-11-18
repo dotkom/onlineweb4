@@ -63,7 +63,7 @@ jobs:
           DATABASE_URL: postgres://ow4user:ow4password@localhost:5432/ow4db
         run: uv run -- pytest --cov=apps --cov-report xml
 
-      - uses: codecov/codecov-action@v4
+      - uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
