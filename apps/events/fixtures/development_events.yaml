@@ -1,0 +1,74 @@
+- model: auth.Group
+  pk: 1
+  fields:
+    name: "Organizers"
+
+- model: auth.Group
+  pk: 2
+  fields:
+    name: "Speakers"
+
+- model: auth.Group
+  pk: 3
+  fields:
+    name: "Participants"
+
+
+
+- model: events.Event
+  pk: 1
+  fields:
+    title: "Python Workshop"
+    event_start: "2023-06-15T18:00:00+02:00"
+    event_end: "2023-06-15T21:00:00+02:00"
+    location: "Online Meeting Room"
+    ingress_short: "Learn Python basics in this interactive workshop"
+    ingress: "Join us for an exciting Python workshop where you'll learn the fundamentals of programming in Python."
+    description: "This workshop is perfect for beginners who want to start their journey in Python programming. We'll cover basic syntax, data types, control structures, and more."
+    event_type: 1  # Assuming 1 represents a workshop in your EventType choices
+    organizer: 1  # Assuming 1 is the ID of an existing Group
+    visible: true
+
+- model: events.AttendanceEvent
+  pk: 1
+  fields:
+    event: 1
+    max_capacity: 100
+    waitlist: true
+    guest_attendance: false
+    registration_start: "2023-06-01T00:00:00+02:00"
+    unattend_deadline: "2023-06-14T23:59:59+02:00"
+    registration_end: "2023-06-15T17:00:00+02:00"
+    automatically_set_marks: false
+    marks_has_been_set: false
+    # rule_bundles: []
+    # extras: []
+    # payments: []
+
+- model: events.Event
+  pk: 2
+  fields:
+    title: "Tech Talk: AI and Machine Learning"
+    event_start: "2023-07-01T19:00:00+02:00"
+    event_end: "2023-07-01T21:00:00+02:00"
+    location: "Main Auditorium"
+    ingress_short: "Explore the latest trends in AI and Machine Learning"
+    ingress: "Join us for an insightful tech talk on the current state and future of AI and Machine Learning technologies."
+    description: "Our guest speaker, a renowned expert in the field, will discuss recent advancements, practical applications, and potential future developments in AI and Machine Learning."
+    event_type: 2  # Assuming 2 represents a tech talk in your EventType choices
+    organizer: 2  # Assuming 2 is the ID of another existing Group
+    visible: true
+
+- model: events.Event
+  pk: 3
+  fields:
+    title: "Hackathon: Solve Real-World Problems"
+    event_start: "2023-08-20T09:00:00+02:00"
+    event_end: "2023-08-21T18:00:00+02:00"
+    location: "Innovation Hub"
+    ingress_short: "48-hour hackathon to create solutions for local challenges"
+    ingress: "Participate in our annual hackathon where teams compete to develop innovative solutions for real-world problems faced by local communities."
+    description: "This exciting 48-hour event brings together developers, designers, and problem-solvers to create impactful solutions. Form teams, brainstorm ideas, and build prototypes that could make a difference in people's lives."
+    event_type: 3  # Assuming 3 represents a hackathon in your EventType choices
+    organizer: 3  # Assuming 3 is the ID of another existing Group
+    visible: true
