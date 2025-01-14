@@ -45,7 +45,7 @@ def event_ajax_handler(event: Event, request):
 
 def handle_attended(attendee: Attendee, value: bool):
     """
-    Toggle attending-status of an attendee between attending and not attending
+    Set attending-status of an attendee to attending or not attending
     """
     attendee.attended = value
     attendee.save()
@@ -55,7 +55,7 @@ def handle_attended(attendee: Attendee, value: bool):
 
 def handle_paid(attendee: Attendee, value: bool):
     """
-    Toggle paid status of an attendee between paid and not paid
+    Set paid status of an attendee to paid or not paid
     """
     attendee.paid = value
     attendee.save()
