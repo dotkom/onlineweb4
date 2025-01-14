@@ -43,3 +43,20 @@ export const toggleChecked = (element) => {
     }
   }
 };
+
+export const setChecked = (element, checked) => {
+  const checkedIcon = 'fa-check-square-o';
+  const uncheckedIcon = 'fa-square-o';
+  const allITags = $(element).find('i');
+  const ilen = allITags.length;
+
+  let icon;
+  for (let m = 0; m < ilen; m += 1) {
+    icon = allITags[m];
+    if (checked) {
+      $(icon).addClass('checked').removeClass(uncheckedIcon).addClass(checkedIcon);
+    } else {
+      $(icon).removeClass('checked').removeClass(checkedIcon).addClass(uncheckedIcon);
+    }
+  }
+}

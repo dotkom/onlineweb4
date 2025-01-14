@@ -17,6 +17,7 @@ def event_ajax_handler(event: Event, request):
     administrating_user = request.user
     attendee_id = request.POST.get("attendee_id")
     user_id = request.POST.get("user_id")
+    value = request.POST.get("value") == "true"
 
     if action == "attended":
         attendee = _get_attendee(attendee_id)
@@ -25,7 +26,7 @@ def event_ajax_handler(event: Event, request):
                 "message": f"Fant ingen påmeldte med oppgitt ID ({attendee_id}).",
                 "status": 400,
             }
-        return handle_attended(attendee)
+        return handle_attended(attendee, value)
     elif action == "paid":
         attendee = _get_attendee(attendee_id)
         if not attendee:
@@ -33,7 +34,7 @@ def event_ajax_handler(event: Event, request):
                 "message": f"Fant ingen påmeldte med oppgitt ID ({attendee_id}).",
                 "status": 400,
             }
-        return handle_paid(attendee)
+        return handle_paid(attendee, value)
     elif action == "add_attendee":
         return handle_add_attendee(event, user_id)
     elif action == "remove_attendee":
@@ -42,24 +43,24 @@ def event_ajax_handler(event: Event, request):
         raise NotImplementedError
 
 
-def handle_attended(attendee: Attendee):
+def handle_attended(attendee: Attendee, value: bool):
     """
     Toggle attending-status of an attendee between attending and not attending
     """
-    attendee.attended = not attendee.attended
+    attendee.attended = value
     attendee.save()
 
-    return {"message": "OK", "status": 200}
+    return _get_event_context(attendee.event.event)
 
 
-def handle_paid(attendee: Attendee):
+def handle_paid(attendee: Attendee, value: bool):
     """
     Toggle paid status of an attendee between paid and not paid
     """
-    attendee.paid = not attendee.paid
+    attendee.paid = value
     attendee.save()
 
-    return {"message": "OK", "status": 200}
+    return _get_event_context(attendee.event.event)
 
 
 def _get_attendee_data(attendee_qs):
