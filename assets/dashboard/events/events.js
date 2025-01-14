@@ -1,6 +1,9 @@
 import jQuery from 'jquery';
 import { plainUserTypeahead } from 'common/typeahead';
 import { ajax, showStatusMessage } from 'common/utils';
+import bootstrapTabJs from 'common/bootstrap-tab';
+
+bootstrapTabJs(jQuery);
 
 /*
   The event module provides dynamic functions to event objects
