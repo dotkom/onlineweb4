@@ -1,6 +1,6 @@
 import jQuery from 'jquery';
 import { plainUserTypeahead } from 'common/typeahead';
-import { ajax, showStatusMessage, toggleChecked } from 'common/utils';
+import { ajax, showStatusMessage } from 'common/utils';
 
 /*
   The event module provides dynamic functions to event objects
@@ -87,13 +87,16 @@ const Event = (function PrivateEvent($) {
     });
 
     // Toggle paid and attended
-    $('.toggle-attendee').each(function toggleAttendee() {
-      $(this).on('click', function toggleAttendeeClick() {
+    $('.toggle-attendee').each(function toggleAttendee(_, elem) {
+      let checked = Boolean(elem.querySelector(".checked"));
+      $(this).on('click', function toggleAttendeeClick(e) {
+        e.preventDefault();
+        checked = !checked;
         if ($(this).hasClass('attended')) {
-          Event.attendee.toggle(this, 'attended');
+          Event.attendee.setChecked(this, 'attended', checked);
         }
         if ($(this).hasClass('paid')) {
-          Event.attendee.toggle(this, 'paid');
+          Event.attendee.setChecked(this, 'paid', checked);
         }
       });
     });
@@ -149,14 +152,14 @@ const Event = (function PrivateEvent($) {
 
     // Attendee module, toggles and adding
     attendee: {
-      toggle(cell, action) {
+      setChecked(cell, action, checked) {
         const data = {
           attendee_id: $(cell).data('id'),
           action,
+          value: checked,
         };
-        const success = () => {
-          // var line = $('#' + attendee_id > i)
-          toggleChecked(cell);
+        const success = (eventData) => {
+          drawTable('attendeelist', eventData.attendees, eventData.is_payment_event, eventData.has_extras);
         };
         const error = (xhr, txt, errorMessage) => {
           showStatusMessage(errorMessage, 'alert-danger');
