@@ -69,5 +69,5 @@ export const ajax = (method, url, data, success, error, type) => {
       payload.dataType = 'json';
     }
   }
-  $.ajax(payload);
+  return $.ajax(payload);
 };
