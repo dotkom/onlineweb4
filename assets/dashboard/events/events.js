@@ -1,6 +1,7 @@
 import jQuery from 'jquery';
 import { plainUserTypeahead } from 'common/typeahead';
-import { ajax, showStatusMessage } from 'common/utils';
+import { ajax, showStatusMessage, setChecked } from 'common/utils';
+import { element } from 'prop-types';
 import bootstrapTabJs from 'common/bootstrap-tab';
 
 bootstrapTabJs(jQuery);
@@ -155,6 +156,7 @@ const Event = (function PrivateEvent($) {
 
     // Attendee module, toggles and adding
     attendee: {
+      setCheckedXhr: null,
       setChecked(cell, action, checked) {
         const data = {
           attendee_id: $(cell).data('id'),
@@ -164,11 +166,20 @@ const Event = (function PrivateEvent($) {
         const success = (eventData) => {
           drawTable('attendeelist', eventData.attendees, eventData.is_payment_event, eventData.has_extras);
         };
-        const error = (xhr, txt, errorMessage) => {
-          showStatusMessage(errorMessage, 'alert-danger');
+        let originalChecked = Boolean(cell.querySelector(".checked"));
+        const error = (error) => {
+          if (error.statusText !== 'abort') {
+            showStatusMessage(error.statusText, 'alert-danger');
+            setChecked(cell, originalChecked);
+          }
         };
 
-        ajax('POST', attendanceEndpoint, data, success, error, null);
+        setChecked(cell, checked);
+        if (this.setCheckedXhr) {
+          this.setCheckedXhr.abort();
+        }
+        this.setCheckedXhr = ajax('POST', attendanceEndpoint, data, success, error, null);
+        console.log(this.setCheckedXhr)
       },
       add(userId) {
         const data = {
