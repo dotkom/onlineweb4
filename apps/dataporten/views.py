@@ -11,6 +11,7 @@ from django.shortcuts import redirect
 from oic import rndstr
 from oic.oauth2 import AuthorizationResponse, ResponseError
 
+from apps.authentication.auth0 import auth0_client
 from apps.authentication.models import OnlineUser
 from apps.dataporten.study.tasks import (
     fetch_groups_information,
@@ -140,7 +141,20 @@ def study_callback(request):  # noqa: C901
         )
         return redirect("profiles_active", active_tab="membership")
     elif not request.user.ntnu_username:
-        pass
+        auth0 = auth0_client()
+        conflicting_users = auth0.users.list(
+            q=f"app_metadata.ntnu_username:{ntnu_username_dataporten}"
+        )
+        if len(conflicting_users) != 0:
+            sentry_sdk.capture_message(
+                f"Dataporten user already exists in Auth0 {ntnu_username_dataporten}"
+            )
+            messages.error(
+                request,
+                "Noe gikk galt, prøv igjen senere eller kontakt dotkom.",
+            )
+            return redirect("profiles_active", active_tab="membership")
+
         # @ToDo: Register email address. Maybe store it, but ask user to confirm? -> resend auth email
 
     try:

@@ -126,18 +126,26 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
 
     def update_user(self, user: OnlineUser, claims):
         # if email was updated in Auth0-dashboard instead of through OW
-        # changed = False
-        # if user.email == claims.get("email"):
-        #     user.email = claims.get("email")
-        #     changed = True
-        # TODO: move source of truth to auth0
-        # if given_name := claims.get("given_name"):
-        #     user.first_name = given_name
-        # if family_name := claims.get("family_name"):
-        #     user.first_name = family_name
-        # if gender := claims.get("gender"):
-        #     user.gender = gender
-        # if changed:
-        #     user.save()
+
+        changed = False
+
+        if (email := claims.get("email")) != user.email:
+            user.email = email
+            changed = True
+
+        if (given_name := claims.get("given_name")) != user.first_name:
+            user.first_name = given_name
+            changed = True
+
+        if (family_name := claims.get("family_name")) != user.last_name:
+            user.last_name = family_name
+            changed = True
+
+        if (gender := claims.get("gender")) != user.gender:
+            user.gender = gender
+            changed = True
+
+        if changed:
+            user.save()
 
         return super().update_user(user, claims)
