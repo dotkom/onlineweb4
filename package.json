@@ -24,8 +24,8 @@
     "react-bootstrap": "0.33.1",
     "react-dom": "^16.8.6",
     "react-markdown": "^2.5.0",
-    "react-router": "^5.0.0",
-    "react-router-dom": "^5.0.0",
+    "react-router": "^7.0.0",
+    "react-router-dom": "^7.0.0",
     "react-transition-group": "^4.0.0",
     "tablesorter": "^2.28.3",
     "underscore": "^1.12.1"
