@@ -49,7 +49,7 @@ ADD --checksum=sha256:69b95ca2f99196868077fa5d360db24aaed16fdf6038e72273163aa4cc
 
 RUN python -m zipfile -e /vault.zip /vault
 
-FROM amazon/aws-lambda-python:3.12
+FROM amazon/aws-lambda-python:3.13
 
 COPY --from=ghcr.io/astral-sh/uv:0.5.28 /uv /bin/uv
 
