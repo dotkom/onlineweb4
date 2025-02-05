@@ -280,27 +280,27 @@ class OnlineUser(AbstractUser):
                     }
                 )
 
+            new_data = {}
             if self.first_name != old.first_name and len(self.first_name) > 0:
                 # auth0 does not allow zero-length names
-                auth0 = auth0 if auth0 is not None else auth0_client()
-                auth0.users.update(self.auth0_subject, {"given_name": self.first_name})
+                new_data |= {"given_name": self.first_name}
 
             if self.last_name != old.last_name and len(self.last_name) > 0:
-                auth0 = auth0 if auth0 is not None else auth0_client()
-                auth0.users.update(self.auth0_subject, {"family_name": self.last_name})
+                new_data |= {"family_name": self.last_name}
+
+            if self.ntnu_username != old.ntnu_username and len(self.ntnu_username) > 0:
+                new_data |= {"app_metadata": {"ntnu_username": self.ntnu_username}}
 
             if self.phone_number != old.phone_number:
                 # this should technically perform more validation, number might be invalid
-                auth0 = auth0 if auth0 is not None else auth0_client()
-                auth0.users.update(
-                    self.auth0_subject, {"user_metadata": {"phone": self.phone_number}}
-                )
+                new_data |= {"user_metadata": {"phone": self.phone_number}}
 
             if self.gender != old.gender:
-                auth0 = auth0 if auth0 is not None else auth0_client()
-                auth0.users.update(
-                    self.auth0_subject, {"user_metadata": {"gender": self.gender}}
-                )
+                new_data |= {"user_metadata": {"gender": self.gender}}
+
+            if new_data != {}:
+                auth0 = auth0_client()
+                auth0.users.update(self.auth0_subject, new_data)
 
         super().save(*args, **kwargs)
 
