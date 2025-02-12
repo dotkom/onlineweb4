@@ -55,6 +55,7 @@ OW4_GSUITE_SYNC = {
         "online-il": "online-il",
         "techtalks": "techtalks",
         "komiteledere": "komiteledere",
+        "karrieredagene": "karrieredagene",
     },
 }
 
