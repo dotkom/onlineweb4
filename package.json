@@ -47,5 +47,5 @@
     "url": "https://github.com/dotkom/onlineweb4/issues"
   },
   "homepage": "https://online.ntnu.no/",
-  "packageManager": "npm@10.9.0"
+  "packageManager": "npm@11.1.0"
 }
