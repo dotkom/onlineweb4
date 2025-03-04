@@ -129,19 +129,19 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
 
         changed = False
 
-        if (email := claims.get("email")) != user.email:
+        if (email := claims.get("email")) and email != user.email:
             user.email = email
             changed = True
 
-        if (given_name := claims.get("given_name")) != user.first_name:
+        if (given_name := claims.get("given_name")) and given_name != user.first_name:
             user.first_name = given_name
             changed = True
 
-        if (family_name := claims.get("family_name")) != user.last_name:
+        if (family_name := claims.get("family_name")) and family_name != user.last_name:
             user.last_name = family_name
             changed = True
 
-        if (gender := claims.get("gender")) != user.gender:
+        if (gender := claims.get("gender")) and gender != user.gender:
             user.gender = gender
             changed = True
 
