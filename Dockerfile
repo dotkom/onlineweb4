@@ -25,7 +25,7 @@ ENV APP_DIR=/srv/app
 
 WORKDIR $APP_DIR
 
-COPY --from=ghcr.io/astral-sh/uv:0.6.3 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.6.4 /uv /bin/uv
 
 COPY pyproject.toml uv.lock $APP_DIR
 
@@ -51,7 +51,7 @@ RUN python -m zipfile -e /vault.zip /vault
 
 FROM amazon/aws-lambda-python:3.12
 
-COPY --from=ghcr.io/astral-sh/uv:0.6.3 /uv /bin/uv
+COPY --from=ghcr.io/astral-sh/uv:0.6.4 /uv /bin/uv
 
 ARG FUNCTION_DIR="/var/task/"
 
