@@ -145,7 +145,7 @@ def study_callback(request):  # noqa: C901
         conflicting_users = auth0.users.list(
             q=f"app_metadata.ntnu_username:{ntnu_username_dataporten}"
         )
-        if len(conflicting_users) != 0:
+        if len(conflicting_users["users"]) != 0:
             sentry_sdk.capture_message(
                 f"Dataporten user already exists in Auth0 {ntnu_username_dataporten}"
             )
