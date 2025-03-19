@@ -311,7 +311,9 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         self.event.save()
         attend_user_to_event(self.event, self.user)
 
-        response = self.client.delete(self.get_unregister_url(self.event.id))
+        response = self.client.delete(
+            self.get_unregister_url(self.event.id), {"cause": "other"}, format="json"
+        )
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(self.event.attendance_event.is_attendee(self.user))
@@ -323,7 +325,9 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         self.event.attendance_event.save()
         attend_user_to_event(self.event, self.user)
 
-        response = self.client.delete(self.get_unregister_url(self.event.id))
+        response = self.client.delete(
+            self.get_unregister_url(self.event.id), {"cause": "other"}, format="json"
+        )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(self.event.attendance_event.is_attendee(self.user))
@@ -341,7 +345,9 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         self.event.save()
         attend_user_to_event(self.event, self.user)
 
-        response = self.client.delete(self.get_unregister_url(self.event.id))
+        response = self.client.delete(
+            self.get_unregister_url(self.event.id), {"cause": "other"}, format="json"
+        )
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertTrue(self.event.attendance_event.is_attendee(self.user))
@@ -360,7 +366,9 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         self.event.event_start = timezone.now() + timezone.timedelta(days=3)
         self.event.attendance_event.save()
         self.event.save()
-        self.client.delete(self.get_unregister_url(self.event.id))
+        self.client.delete(
+            self.get_unregister_url(self.event.id), {"cause": "other"}, format="json"
+        )
 
         response = self.client.post(
             self.get_register_url(self.event.id), self.captcha_arg
@@ -496,7 +504,7 @@ class EventsUnattendWaitList(GetUrlMixin, APITransactionTestCase):
         attend_user_to_event(self.event, self.user)
         G(Attendee, event=self.event.attendance_event, n=3)
 
-        r = self.client.delete(self.url)
+        r = self.client.delete(self.url, {"cause": "other"}, format="json")
 
         self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(mail.outbox), 1)
@@ -507,7 +515,7 @@ class EventsUnattendWaitList(GetUrlMixin, APITransactionTestCase):
         attend_user_to_event(self.event, self.user)
         G(Attendee, event=self.event.attendance_event)
 
-        r = self.client.delete(self.url)
+        r = self.client.delete(self.url, {"cause": "other"}, format="json")
 
         self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
         sleep(2)
@@ -522,7 +530,7 @@ class EventsUnattendWaitList(GetUrlMixin, APITransactionTestCase):
         G(Attendee, event=self.event.attendance_event)
         payment_delay_time = timedelta(days=2)
 
-        r = self.client.delete(self.url)
+        r = self.client.delete(self.url, {"cause": "other"}, format="json")
 
         self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
         sleep(2)
@@ -540,7 +548,7 @@ class EventsUnattendWaitList(GetUrlMixin, APITransactionTestCase):
         attend_user_to_event(self.event, self.other_user)
         G(Attendee, event=self.event.attendance_event)
 
-        r = self.client.delete(self.url)
+        r = self.client.delete(self.url, {"cause": "other"}, format="json")
 
         self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
         sleep(2)
@@ -560,7 +568,7 @@ class EventsUnattendWaitList(GetUrlMixin, APITransactionTestCase):
         G(Attendee, event=self.event.attendance_event)
         payment_delay_time = timedelta(days=2)
 
-        r = self.client.delete(self.url)
+        r = self.client.delete(self.url, {"cause": "other"}, format="json")
 
         self.assertIn(
             other_user_attendee, self.event.attendance_event.attending_attendees_qs
@@ -582,7 +590,7 @@ class EventsUnattendWaitList(GetUrlMixin, APITransactionTestCase):
         attend_user_to_event(self.event, self.other_user)
         G(Attendee, event=self.event.attendance_event)
 
-        r = self.client.delete(self.url)
+        r = self.client.delete(self.url, {"cause": "other"}, format="json")
 
         self.assertEqual(r.status_code, status.HTTP_204_NO_CONTENT)
         sleep(2)

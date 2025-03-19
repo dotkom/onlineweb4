@@ -876,3 +876,37 @@ class GroupRestriction(models.Model):
         verbose_name_plural = _("restriksjoner")
         permissions = (("view_restriction", "View Restriction"),)
         default_permissions = ("add", "change", "delete")
+
+
+class DeregistrationCauses(models.TextChoices):
+    SICK = "sick", _("Sykdom")
+    ECONOMIC = "economic", _("Økonomi")
+    TIME = "time", _("Tidsklemma")
+    SCHOOL = "school", _("Skole")
+    NO_FAMILIAR_FACES = "no_familiar_faces", _("Ingen kjente påmeldte")
+    ADMIN = "admin", _("Meldt av administrator")
+    MISSING_PAYMENT = "missing_payment", _("Mangler betaling")
+    OTHER = "other", _("Annet")
+
+
+class DeregistrationFeedback(models.Model):
+    event = models.ForeignKey(
+        "Event",
+        related_name="deregistrations",
+        on_delete=models.CASCADE,
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    cause = models.TextField(
+        _("årsak"),
+        choices=DeregistrationCauses.choices,
+        default=DeregistrationCauses.OTHER,
+    )
+    text = models.TextField(_("begrunnelse"), default="")
+
+    def __str__(self):
+        return f"Bruker meldte seg av {self.event.title} grunnet {self.cause}"
+
+    class Meta:
+        verbose_name = _("avregistrering")
+        ordering = ["-pk"]

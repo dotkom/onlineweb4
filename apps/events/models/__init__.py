@@ -9,6 +9,7 @@ from .Attendance import (
     AttendanceEvent,
     Attendee,
     CompanyEvent,
+    DeregistrationFeedback,
     GroupRestriction,
     Reservation,
     Reservee,
@@ -19,6 +20,7 @@ from .Extras import Extras
 
 __all__ = [
     FieldOfStudyRule,
+    DeregistrationFeedback,
     GradeRule,
     Rule,
     RuleBundle,
