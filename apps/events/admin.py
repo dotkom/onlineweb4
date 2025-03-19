@@ -7,6 +7,7 @@ from apps.events.models import (
     AttendanceEvent,
     Attendee,
     CompanyEvent,
+    DeregistrationFeedback,
     Event,
     Extras,
     FieldOfStudyRule,
@@ -192,6 +193,12 @@ class ReservationAdmin(GuardedModelAdmin, VersionAdmin):
         obj.save()
 
 
+class DeregistationAdmin(admin.ModelAdmin):
+    model = DeregistrationFeedback
+    list_display = "cause", "timestamp"
+    readonly_fields = ("timestamp", "user", "event", "cause", "text")
+
+
 admin.site.register(Event, EventAdmin)
 admin.site.register(Attendee, AttendeeAdmin)
 admin.site.register(RuleBundle, RuleBundleAdmin)
@@ -200,3 +207,4 @@ admin.site.register(GradeRule, GradeRuleAdmin)
 admin.site.register(UserGroupRule, UserGroupRuleAdmin)
 admin.site.register(FieldOfStudyRule, FieldOfStudyRuleAdmin)
 admin.site.register(Reservation, ReservationAdmin)
+admin.site.register(DeregistrationFeedback, DeregistationAdmin)

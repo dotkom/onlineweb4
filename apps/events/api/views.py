@@ -5,6 +5,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from apps.events.models.Attendance import DeregistrationFeedback
+from apps.events.serializers import DeregisterFeedbackSerializer
 from apps.payment.serializers import PaymentReadOnlySerializer
 from apps.profiles.models import Privacy
 
@@ -139,10 +141,23 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         detail=True,
         methods=["DELETE"],
         permission_classes=(permissions.IsAuthenticated, UnregisterPermission),
+        serializer_class=DeregisterFeedbackSerializer,
     )
     def unregister(self, request, pk=None):
         user = request.user
         attendance_event: AttendanceEvent = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        DeregistrationFeedback.objects.create(
+            user=user,
+            event=attendance_event.event,
+            cause=serializer.validated_data.get("cause"),
+            text=serializer.validated_data.get("text", ""),
+        )
+
         attendee = Attendee.objects.get(event=attendance_event, user=user)
         # Attendees un-attend with themselves as the admin user.
         attendee.unattend(user)
