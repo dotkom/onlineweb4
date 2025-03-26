@@ -4,11 +4,17 @@ from zoneinfo import ZoneInfo
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import EmailMessage
+from django.db import transaction
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
-from apps.events.models import AttendanceEvent, Attendee
+from apps.events.models import (
+    AttendanceEvent,
+    Attendee,
+    DeregistrationCauses,
+    DeregistrationFeedback,
+)
 from apps.marks.models import Mark, Suspension, sanction_users
 from apps.payment.models import Payment, PaymentDelay, PaymentTypes
 from utils.email import AutoChunkedEmailMessage, handle_mail_error
@@ -280,6 +286,12 @@ def send_notification_mail(payment_delay, unattend_deadline_passed):
 
 
 def unattend(payment_delay):
-    Attendee.objects.get(
-        event=payment_delay.payment.content_object, user=payment_delay.user
-    ).delete()
+    with transaction.atomic():
+        Attendee.objects.get(
+            event=payment_delay.payment.content_object, user=payment_delay.user
+        ).delete()
+        DeregistrationFeedback.objects.create(
+            user=payment_delay.user,
+            event=payment_delay.payment.content_object,
+            cause=DeregistrationCauses.MISSING_PAYMENT,
+        )
