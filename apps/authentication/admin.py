@@ -19,7 +19,7 @@ class MarkUserInline(admin.TabularInline):
     model = MarkUser
     extra = 0
     fields = ("mark",)
-    readonly_fields = ("mark",)
+    readonly_fields = ("mark", "expiration_date")
 
     verbose_name = _("Prikk")
     verbose_name_plural = _("Prikker")
