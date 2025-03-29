@@ -4,14 +4,19 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('marks', '0014_alter_suspension_options'),
+        ("marks", "0014_alter_suspension_options"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='mark',
-            options={'default_permissions': ('add', 'change', 'delete'), 'ordering': ['-pk'], 'permissions': (('view_mark', 'View Mark'),), 'verbose_name': 'Prikk', 'verbose_name_plural': 'Prikker'},
+            name="mark",
+            options={
+                "default_permissions": ("add", "change", "delete"),
+                "ordering": ["-pk"],
+                "permissions": (("view_mark", "View Mark"),),
+                "verbose_name": "Prikk",
+                "verbose_name_plural": "Prikker",
+            },
         ),
     ]
