@@ -216,6 +216,7 @@ class Mark(models.Model):
         verbose_name_plural = _("Prikker")
         permissions = (("view_mark", "View Mark"),)
         default_permissions = ("add", "change", "delete")
+        ordering = ["-pk"]
 
 
 class MarkUser(models.Model):

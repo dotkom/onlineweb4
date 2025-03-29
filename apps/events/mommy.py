@@ -62,7 +62,7 @@ def set_marks(attendance_event: AttendanceEvent, logger=None):
         mark = Mark(
             title=f"Manglende oppmøte på {event.title}",
             cause=mark_cause,
-            description=f"Du har fått {mark_weight} {"prikk" if mark_weight == 1 else "prikker"} på grunn av manglende oppmøte på {event.title}.",
+            description=f"Du har fått {mark_weight} {'prikk' if mark_weight == 1 else 'prikker'} på grunn av manglende oppmøte på {event.title}.",
         )
         sanction_users(mark, users)
 

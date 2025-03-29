@@ -11,12 +11,12 @@ def client_setup(client_id, client_secret):
 
     logger = logging.getLogger(__name__)
 
-    assert (
-        client_id
-    ), "Missing client id when setting up Dataporten OpenID Connect Relying Party"
-    assert (
-        client_secret
-    ), "Missing client secret when setting up Dataporten OpenID Connect Relying Party"
+    assert client_id, (
+        "Missing client id when setting up Dataporten OpenID Connect Relying Party"
+    )
+    assert client_secret, (
+        "Missing client secret when setting up Dataporten OpenID Connect Relying Party"
+    )
 
     client = Client(client_authn_method=CLIENT_AUTHN_METHOD)
 

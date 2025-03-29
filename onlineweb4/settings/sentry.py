@@ -10,7 +10,7 @@ OW4_SENTRY_DSN = config("OW4_SENTRY_DSN", default="")
 sentry_sdk.init(
     dsn=OW4_SENTRY_DSN,
     environment=config("OW4_ENVIRONMENT", default="DEVELOP"),
-    enable_tracing=True,
+    traces_sample_rate=1.0,
     profiles_sample_rate=0.2,
     integrations=[DjangoIntegration(), AwsLambdaIntegration(timeout_warning=True)],
     ignore_errors=[ValidationError],

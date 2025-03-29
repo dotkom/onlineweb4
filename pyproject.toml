@@ -5,7 +5,7 @@ description = "Web pages for Online, Linjeforeningen for Informatikk at NTNU"
 requires-python = "~=3.12.1"
 dependencies = [
     "django~=5.0",
-    "djangorestframework~=3.15",
+    "djangorestframework~=3.16",
     "django-filter~=25.1",
     "django-dynamic-fixture~=4.0",
     "django-watson~=1.6",
@@ -13,7 +13,7 @@ dependencies = [
     "django-guardian~=2.4",
     "django-taggit~=6.0",
     "django-markdown-deux~=1.0",
-    "django-cors-headers~=4.4",
+    "django-cors-headers~=4.7",
     "django-webpack-loader~=3.1",
     "django-turnstile~=0.1",
     "django-crispy-forms~=2.3",
@@ -35,7 +35,7 @@ dependencies = [
     "sentry-sdk[django]~=2.13",
     "psycopg2-binary~=2.9",
     "mozilla-django-oidc~=4.0",
-    "auth0-python~=4.7",
+    "auth0-python~=4.8",
     "drf-spectacular~=0.27",
 ]
 
@@ -46,7 +46,7 @@ prod = [
     "zappa~=0.59",
     "boto3~=1.35",
     # required for zappa
-    "setuptools~=75.2",
+    "setuptools~=78.1",
 ]
 s3 = [
     "django-storages[s3]~=1.14",
@@ -60,7 +60,7 @@ dev-dependencies = [
     "pytest-xdist~=3.6",
     "coverage~=7.6",
     "ruff~=0.6",
-    "pre-commit~=3.8",
+    "pre-commit~=4.2",
     "freezegun>=1.5.1",
 ]
 

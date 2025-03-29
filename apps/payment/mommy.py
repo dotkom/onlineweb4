@@ -210,7 +210,7 @@ def handle_suspensions(payment_delay):
         cause=Suspension.Cause.PAYMENT,
         description=f"""
     Du har ikke betalt for et arangement du har vært med på. For å fjerne denne suspensjonen må du betale.\n
-    Mer informasjon om betalingen finner du her: {settings.BASE_URL+ payment_delay.payment.content_object.event.get_absolute_url()}""",
+    Mer informasjon om betalingen finner du her: {settings.BASE_URL + payment_delay.payment.content_object.event.get_absolute_url()}""",
     )
 
     suspension.save()

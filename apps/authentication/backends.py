@@ -92,7 +92,7 @@ class Auth0OIDCAB(OIDCAuthenticationBackend):
             return user
         else:
             LOGGER.debug(
-                "Login failed: No user with %s found, and " "OIDC_CREATE_USER is False",
+                "Login failed: No user with %s found, and OIDC_CREATE_USER is False",
                 userinfo.get("sub"),
             )
             return None
