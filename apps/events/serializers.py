@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from apps.companyprofile.serializers import CompanySerializer
 from apps.events.models import AttendanceEvent, CompanyEvent, Event, Extras, RuleBundle
-from apps.events.models.Attendance import DeregistrationFeedback
+from apps.events.models.Attendance import DeregistrationCauses, DeregistrationFeedback
 from apps.gallery.serializers import ResponsiveImageSerializer
 
 logger = logging.getLogger(__name__)
@@ -89,6 +89,10 @@ class EventSerializer(serializers.ModelSerializer):
 
 class DeregisterFeedbackSerializer(serializers.ModelSerializer):
     text = serializers.CharField(required=False, default="", allow_blank=True)
+    cause = serializers.ChoiceField(
+        choices=DeregistrationCauses.choices,
+        required=True,
+    )
 
     class Meta:
         model = DeregistrationFeedback

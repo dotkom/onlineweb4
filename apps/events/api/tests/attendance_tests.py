@@ -318,6 +318,21 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(self.event.attendance_event.is_attendee(self.user))
 
+    def test_user_can_unregister_no_cause_fails(self):
+        self.event.attendance_event.unattend_deadline = (
+            timezone.now() + timezone.timedelta(days=2)
+        )
+        self.event.event_start = timezone.now() + timezone.timedelta(days=3)
+        self.event.attendance_event.save()
+        self.event.save()
+        attend_user_to_event(self.event, self.user)
+
+        response = self.client.delete(
+            self.get_unregister_url(self.event.id), dict(), format="json"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_user_cannot_unregister_after_deadline_has_passed(self):
         self.event.attendance_event.unattend_deadline = (
             timezone.now() - timezone.timedelta(days=2)
