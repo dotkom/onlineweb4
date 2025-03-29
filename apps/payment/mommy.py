@@ -292,6 +292,6 @@ def unattend(payment_delay):
         ).delete()
         DeregistrationFeedback.objects.create(
             user=payment_delay.user,
-            event=payment_delay.payment.content_object,
+            event=payment_delay.payment.content_object.event,
             cause=DeregistrationCauses.MISSING_PAYMENT,
         )
