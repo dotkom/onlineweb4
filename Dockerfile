@@ -19,7 +19,7 @@ COPY esbuild.mjs ./
 
 RUN npm run build
 
-FROM python:3.13 AS static-files
+FROM python:3.12 AS static-files
 
 ENV APP_DIR=/srv/app
 
@@ -38,7 +38,7 @@ COPY --from=js-static $APP_DIR/bundles ./bundles
 
 RUN uv run --locked -- ./manage.py collectstatic
 
-FROM python:3.13 AS vault-lambda-extension
+FROM python:3.12 AS vault-lambda-extension
 
 WORKDIR /vault
 
@@ -49,7 +49,7 @@ ADD --checksum=sha256:69b95ca2f99196868077fa5d360db24aaed16fdf6038e72273163aa4cc
 
 RUN python -m zipfile -e /vault.zip /vault
 
-FROM amazon/aws-lambda-python:3.13
+FROM amazon/aws-lambda-python:3.12
 
 COPY --from=ghcr.io/astral-sh/uv:0.6.5 /uv /bin/uv
 
