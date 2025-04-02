@@ -1061,7 +1061,7 @@ dependencies = [
     { name = "pywebpush" },
     { name = "pyyaml" },
     { name = "requests" },
-    { name = "sentry-sdk", extra = ["django"] },
+    { name = "sentry-sdk" },
     { name = "stripe" },
     { name = "unidecode" },
     { name = "wiki" },
@@ -1093,44 +1093,44 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "auth0-python", specifier = "~=4.8" },
+    { name = "auth0-python", specifier = "==4.8.1" },
     { name = "boto3", marker = "extra == 'prod'", specifier = "~=1.35" },
-    { name = "crispy-bootstrap3", specifier = "~=2024.1" },
-    { name = "dj-database-url", specifier = "~=2.2" },
-    { name = "django", specifier = "~=5.0" },
-    { name = "django-cors-headers", specifier = "~=4.7" },
-    { name = "django-crispy-forms", specifier = "~=2.3" },
-    { name = "django-dynamic-fixture", specifier = "~=4.0" },
-    { name = "django-filter", specifier = "~=25.1" },
-    { name = "django-guardian", specifier = "~=2.4" },
-    { name = "django-js-reverse", specifier = "~=0.10" },
-    { name = "django-markdown-deux", specifier = "~=1.0" },
-    { name = "django-reversion", specifier = "~=5.1" },
+    { name = "crispy-bootstrap3", specifier = "==2024.1" },
+    { name = "dj-database-url", specifier = "==2.3.0" },
+    { name = "django", specifier = "==5.1.7" },
+    { name = "django-cors-headers", specifier = "==4.7.0" },
+    { name = "django-crispy-forms", specifier = "==2.3" },
+    { name = "django-dynamic-fixture", specifier = "==4.0.1" },
+    { name = "django-filter", specifier = "==25.1" },
+    { name = "django-guardian", specifier = "==2.4.0" },
+    { name = "django-js-reverse", specifier = "==0.10.2" },
+    { name = "django-markdown-deux", specifier = "==1.0.6" },
+    { name = "django-reversion", specifier = "==5.1.0" },
     { name = "django-ses", marker = "extra == 'prod'", specifier = "~=4.1" },
     { name = "django-storages", extras = ["s3"], marker = "extra == 'prod'", specifier = "~=1.14" },
     { name = "django-storages", extras = ["s3"], marker = "extra == 's3'", specifier = "~=1.14" },
-    { name = "django-taggit", specifier = "~=6.0" },
-    { name = "django-turnstile", specifier = "~=0.1" },
-    { name = "django-watson", specifier = "~=1.6" },
-    { name = "django-webpack-loader", specifier = "~=3.1" },
-    { name = "djangorestframework", specifier = "~=3.16" },
-    { name = "drf-spectacular", specifier = "~=0.27" },
-    { name = "google-api-python-client", specifier = "~=2.141" },
-    { name = "icalendar", specifier = "~=6.0" },
-    { name = "mozilla-django-oidc", specifier = "~=4.0" },
-    { name = "oic", specifier = "~=1.7" },
-    { name = "pdfdocument", specifier = "~=4.0" },
-    { name = "pillow", specifier = "~=11.0" },
-    { name = "psycopg2-binary", specifier = "~=2.9" },
-    { name = "python-decouple", specifier = "~=3.8" },
-    { name = "pywebpush", specifier = "~=2.0.0" },
-    { name = "pyyaml", specifier = "~=6.0" },
-    { name = "requests", extras = ["security"], specifier = "~=2.32" },
-    { name = "sentry-sdk", extras = ["django"], specifier = "~=2.13" },
+    { name = "django-taggit", specifier = "==6.1.0" },
+    { name = "django-turnstile", specifier = "==0.1.2" },
+    { name = "django-watson", specifier = "==1.6.3" },
+    { name = "django-webpack-loader", specifier = "==3.1.1" },
+    { name = "djangorestframework", specifier = "==3.16.0" },
+    { name = "drf-spectacular", specifier = "==0.28.0" },
+    { name = "google-api-python-client", specifier = "==2.166.0" },
+    { name = "icalendar", specifier = "==6.1.3" },
+    { name = "mozilla-django-oidc", specifier = "==4.0.1" },
+    { name = "oic", specifier = "==1.7.0" },
+    { name = "pdfdocument", specifier = "==4.0.0" },
+    { name = "pillow", specifier = "==11.1.0" },
+    { name = "psycopg2-binary", specifier = "==2.9.10" },
+    { name = "python-decouple", specifier = "==3.8" },
+    { name = "pywebpush", specifier = "==2.0.3" },
+    { name = "pyyaml", specifier = "==6.0.2" },
+    { name = "requests", specifier = "==2.32.3" },
+    { name = "sentry-sdk", specifier = "==2.24.1" },
     { name = "setuptools", marker = "extra == 'prod'", specifier = "~=78.1" },
-    { name = "stripe", specifier = "~=3.5" },
-    { name = "unidecode", specifier = "~=1.3" },
-    { name = "wiki", specifier = "~=0.11" },
+    { name = "stripe", specifier = "~=12.0" },
+    { name = "unidecode", specifier = "==1.3.8" },
+    { name = "wiki", specifier = "==0.11.2" },
     { name = "zappa", marker = "extra == 'prod'", specifier = "~=0.59" },
 ]
 provides-extras = ["prod", "s3"]
@@ -1717,11 +1717,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/65/95/91137ffe7a5956496155af5ffbe45ee4ddfa795a569136147e766abd14b1/sentry_sdk-2.24.1-py2.py3-none-any.whl", hash = "sha256:36baa6a1128b9d98d2adc5e9b2f887eff0a6af558fc2b96ed51919042413556d", size = 336945 },
 ]
 
-[package.optional-dependencies]
-django = [
-    { name = "django" },
-]
-
 [[package]]
 name = "setuptools"
 version = "78.1.0"
@@ -1760,14 +1755,15 @@ wheels = [
 
 [[package]]
 name = "stripe"
-version = "3.5.0"
+version = "12.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/33/8b/50bb439eb47aa52df730227f0abc34fc52db54191bc89c8e5e4742a39222/stripe-3.5.0.tar.gz", hash = "sha256:08f74cae6619d4a7d78f8162ff72bc3e9c913f53ec96ecd5ddc7d823c2e79ddd", size = 247698 }
+sdist = { url = "https://files.pythonhosted.org/packages/a0/d6/7d20b2431106c68004924fc9d437c346c447f2ef045f6cc83b52d6c22db1/stripe-12.0.0.tar.gz", hash = "sha256:1bc64192b6bd853fa75e2246ad553baa28e27e348eb2c3336b4d8b021d27aae5", size = 1369861 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b0/30/8efbd3ea5ab9a0052b4b7b560cff5b695918f27208c068bc3c3734bdf296/stripe-3.5.0-py2.py3-none-any.whl", hash = "sha256:69d5bf4611624a503bcec84a61b1f2a2b874bfc828432e4fd75cd120bcc3efef", size = 232117 },
+    { url = "https://files.pythonhosted.org/packages/e2/c0/09ae7c4d31fc325d8c70da888a08e40bfddd52b5bce92b86d7902e391466/stripe-12.0.0-py2.py3-none-any.whl", hash = "sha256:1105bbceca8c0aead941c7c3ec676727610cb6437b6e8905379f2ccc370eeafd", size = 1613508 },
 ]
 
 [[package]]
