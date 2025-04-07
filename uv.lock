@@ -94,7 +94,7 @@ wheels = [
 
 [[package]]
 name = "auth0-python"
-version = "4.8.1"
+version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -103,9 +103,9 @@ dependencies = [
     { name = "requests" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/27/ca/c5d5aef3599d143b3fa5203be850542ee54e3798392fb80bd3126fd865e2/auth0_python-4.8.1.tar.gz", hash = "sha256:2d46027296a5e6d7c28f2ef1cc3d9b5705f3978de3622a744dabf36b39d53342", size = 74876 }
+sdist = { url = "https://files.pythonhosted.org/packages/e8/46/1071f1a190b2397874cb4bf6be4daddc2aa3f83618d27e1e83df89a32c29/auth0_python-4.9.0.tar.gz", hash = "sha256:f9b31ea9c906d0a123b9cdc6ccd7bbbb8156123f44789b08571c45947fb21238", size = 75870 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/70/0025c8f763ece48b9dbffe22b68f843f1cd43a6324ee9f95e94a1d3e4d6c/auth0_python-4.8.1-py3-none-any.whl", hash = "sha256:ac2fea3cba4dc186b2f01a953a08db5f38a543255c19e9298fef4755fe5f9716", size = 134260 },
+    { url = "https://files.pythonhosted.org/packages/ac/d1/800ab8dfe15f00836b8d1ea41f68f5e4731a96e8fc19548993996f3b5728/auth0_python-4.9.0-py3-none-any.whl", hash = "sha256:6440c7f74dfd669d9f5cdfe9bb44c4c3b230ce98a82353f55a387e90241fbf5b", size = 135349 },
 ]
 
 [[package]]
@@ -127,30 +127,30 @@ css = [
 
 [[package]]
 name = "boto3"
-version = "1.37.23"
+version = "1.37.28"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/65/81/fcaf72cf86c4b3f1a4efa3500e08c97d2a98966a35760acfaed79100c6a0/boto3-1.37.23.tar.gz", hash = "sha256:82f4599a34f5eb66e916b9ac8547394f6e5899c19580e74b60237db04cf66d1e", size = 111354 }
+sdist = { url = "https://files.pythonhosted.org/packages/b7/f5/dd50ed0a20019fa38c22797718c80d38e8b75b5e97c971a908c638e819aa/boto3-1.37.28.tar.gz", hash = "sha256:09ee85ba70a88286bba0d1bf5f0460a4b3bde52d162216accfe637b8bfac351b", size = 111385 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/25/eb/88fe910bde6ccc94cbf099bc5e50b7bf79c97a3292bb4e0e2fbd73824906/boto3-1.37.23-py3-none-any.whl", hash = "sha256:fc462b9fd738bd8a1c121d94d237c6b6a05a2c1cc709d16f5223acb752f7310b", size = 139561 },
+    { url = "https://files.pythonhosted.org/packages/5d/76/2723dede8c69d04e37f0897e9c05b597b6906df3d4c80186e39a0bc1b914/boto3-1.37.28-py3-none-any.whl", hash = "sha256:e584d9d33808633e73af3d962e22cf2cea91a38bc5a17577bb25618f8ded504f", size = 139562 },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.37.23"
+version = "1.37.28"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0e/34/9becaddf187353e1449a3bfa08ee7b069398f51e3d600cffdb0a63789e34/botocore-1.37.23.tar.gz", hash = "sha256:3a249c950cef9ee9ed7b2278500ad83a4ad6456bc433a43abd1864d1b61b2acb", size = 13680710 }
+sdist = { url = "https://files.pythonhosted.org/packages/92/90/557082a8379ece106b37eb00766efc7a32cbfcdaa0d1d78f38f99eefd218/botocore-1.37.28.tar.gz", hash = "sha256:69ea327f70f0607d174c4c2b1dcc87327b9c48e413c9d322179172b614b28e03", size = 13799915 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8e/1c/9d840859acaf6df9effa9ef3e25624c27fc65334c51396909b22e235e8d1/botocore-1.37.23-py3-none-any.whl", hash = "sha256:ffbe1f5958adb1c50d72d3ad1018cb265fe349248c08782d334601c0814f0e38", size = 13446175 },
+    { url = "https://files.pythonhosted.org/packages/ea/c3/29ffcb4c90492bcfcff1b7e5ddb5529846acc0e627569432db9842c47675/botocore-1.37.28-py3-none-any.whl", hash = "sha256:c26b645d7b125bf42ffc1671b862b47500ee658e3a1c95d2438cb689fc85df15", size = 13467675 },
 ]
 
 [[package]]
@@ -368,16 +368,16 @@ wheels = [
 
 [[package]]
 name = "django"
-version = "5.1.7"
+version = "5.1.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "sqlparse" },
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5f/57/11186e493ddc5a5e92cc7924a6363f7d4c2b645f7d7cb04a26a63f9bfb8b/Django-5.1.7.tar.gz", hash = "sha256:30de4ee43a98e5d3da36a9002f287ff400b43ca51791920bfb35f6917bfe041c", size = 10716510 }
+sdist = { url = "https://files.pythonhosted.org/packages/00/40/45adc1b93435d1b418654a734b68351bb6ce0a0e5e37b2f0e9aeb1a2e233/Django-5.1.8.tar.gz", hash = "sha256:42e92a1dd2810072bcc40a39a212b693f94406d0ba0749e68eb642f31dc770b4", size = 10723602 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ba/0f/7e042df3d462d39ae01b27a09ee76653692442bc3701fbfa6cb38e12889d/Django-5.1.7-py3-none-any.whl", hash = "sha256:1323617cb624add820cb9611cdcc788312d250824f92ca6048fda8625514af2b", size = 8276912 },
+    { url = "https://files.pythonhosted.org/packages/ec/0d/e6dd0ed898b920fec35c6eeeb9acbeb831fff19ad21c5e684744df1d4a36/Django-5.1.8-py3-none-any.whl", hash = "sha256:11b28fa4b00e59d0def004e9ee012fefbb1065a5beb39ee838983fd24493ad4f", size = 8277130 },
 ]
 
 [[package]]
@@ -1061,7 +1061,7 @@ dependencies = [
     { name = "pywebpush" },
     { name = "pyyaml" },
     { name = "requests" },
-    { name = "sentry-sdk", extra = ["django"] },
+    { name = "sentry-sdk" },
     { name = "stripe" },
     { name = "unidecode" },
     { name = "wiki" },
@@ -1093,44 +1093,44 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "auth0-python", specifier = "~=4.8" },
+    { name = "auth0-python", specifier = "==4.9.0" },
     { name = "boto3", marker = "extra == 'prod'", specifier = "~=1.35" },
-    { name = "crispy-bootstrap3", specifier = "~=2024.1" },
-    { name = "dj-database-url", specifier = "~=2.2" },
-    { name = "django", specifier = "~=5.0" },
-    { name = "django-cors-headers", specifier = "~=4.7" },
-    { name = "django-crispy-forms", specifier = "~=2.3" },
-    { name = "django-dynamic-fixture", specifier = "~=4.0" },
-    { name = "django-filter", specifier = "~=25.1" },
-    { name = "django-guardian", specifier = "~=2.4" },
-    { name = "django-js-reverse", specifier = "~=0.10" },
-    { name = "django-markdown-deux", specifier = "~=1.0" },
-    { name = "django-reversion", specifier = "~=5.1" },
+    { name = "crispy-bootstrap3", specifier = "==2024.1" },
+    { name = "dj-database-url", specifier = "==2.3.0" },
+    { name = "django", specifier = "==5.1.8" },
+    { name = "django-cors-headers", specifier = "==4.7.0" },
+    { name = "django-crispy-forms", specifier = "==2.3" },
+    { name = "django-dynamic-fixture", specifier = "==4.0.1" },
+    { name = "django-filter", specifier = "==25.1" },
+    { name = "django-guardian", specifier = "==2.4.0" },
+    { name = "django-js-reverse", specifier = "==0.10.2" },
+    { name = "django-markdown-deux", specifier = "==1.0.6" },
+    { name = "django-reversion", specifier = "==5.1.0" },
     { name = "django-ses", marker = "extra == 'prod'", specifier = "~=4.1" },
     { name = "django-storages", extras = ["s3"], marker = "extra == 'prod'", specifier = "~=1.14" },
     { name = "django-storages", extras = ["s3"], marker = "extra == 's3'", specifier = "~=1.14" },
-    { name = "django-taggit", specifier = "~=6.0" },
-    { name = "django-turnstile", specifier = "~=0.1" },
-    { name = "django-watson", specifier = "~=1.6" },
-    { name = "django-webpack-loader", specifier = "~=3.1" },
-    { name = "djangorestframework", specifier = "~=3.16" },
-    { name = "drf-spectacular", specifier = "~=0.27" },
-    { name = "google-api-python-client", specifier = "~=2.141" },
-    { name = "icalendar", specifier = "~=6.0" },
-    { name = "mozilla-django-oidc", specifier = "~=4.0" },
-    { name = "oic", specifier = "~=1.7" },
-    { name = "pdfdocument", specifier = "~=4.0" },
-    { name = "pillow", specifier = "~=11.0" },
-    { name = "psycopg2-binary", specifier = "~=2.9" },
-    { name = "python-decouple", specifier = "~=3.8" },
-    { name = "pywebpush", specifier = "~=2.0.0" },
-    { name = "pyyaml", specifier = "~=6.0" },
-    { name = "requests", extras = ["security"], specifier = "~=2.32" },
-    { name = "sentry-sdk", extras = ["django"], specifier = "~=2.13" },
+    { name = "django-taggit", specifier = "==6.1.0" },
+    { name = "django-turnstile", specifier = "==0.1.2" },
+    { name = "django-watson", specifier = "==1.6.3" },
+    { name = "django-webpack-loader", specifier = "==3.1.1" },
+    { name = "djangorestframework", specifier = "==3.16.0" },
+    { name = "drf-spectacular", specifier = "==0.28.0" },
+    { name = "google-api-python-client", specifier = "==2.166.0" },
+    { name = "icalendar", specifier = "==6.1.3" },
+    { name = "mozilla-django-oidc", specifier = "==4.0.1" },
+    { name = "oic", specifier = "==1.7.0" },
+    { name = "pdfdocument", specifier = "==4.0.0" },
+    { name = "pillow", specifier = "==11.1.0" },
+    { name = "psycopg2-binary", specifier = "==2.9.10" },
+    { name = "python-decouple", specifier = "==3.8" },
+    { name = "pywebpush", specifier = "==2.0.3" },
+    { name = "pyyaml", specifier = "==6.0.2" },
+    { name = "requests", specifier = "==2.32.3" },
+    { name = "sentry-sdk", specifier = "==2.24.1" },
     { name = "setuptools", marker = "extra == 'prod'", specifier = "~=78.1" },
-    { name = "stripe", specifier = "~=3.5" },
-    { name = "unidecode", specifier = "~=1.3" },
-    { name = "wiki", specifier = "~=0.11" },
+    { name = "stripe", specifier = "==3.5.0" },
+    { name = "unidecode", specifier = "==1.3.8" },
+    { name = "wiki", specifier = "==0.11.2" },
     { name = "zappa", marker = "extra == 'prod'", specifier = "~=0.59" },
 ]
 provides-extras = ["prod", "s3"]
@@ -1715,11 +1715,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/f1/ef/4847dcd63e3f3c451cf701a825d21200f1322d46ac97586d5c90a13dfea1/sentry_sdk-2.24.1.tar.gz", hash = "sha256:8ba3c29990fa48865b908b3b9dc5ae7fa7e72407c7c9e91303e5206b32d7b8b1", size = 318124 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/65/95/91137ffe7a5956496155af5ffbe45ee4ddfa795a569136147e766abd14b1/sentry_sdk-2.24.1-py2.py3-none-any.whl", hash = "sha256:36baa6a1128b9d98d2adc5e9b2f887eff0a6af558fc2b96ed51919042413556d", size = 336945 },
-]
-
-[package.optional-dependencies]
-django = [
-    { name = "django" },
 ]
 
 [[package]]
