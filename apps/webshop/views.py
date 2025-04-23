@@ -193,6 +193,7 @@ class RemoveOrder(LoginRequiredMixin, WebshopMixin, RedirectView):
 
 class ProductViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Product.objects.filter(active=True)
+    ordering_fields = ["id"]
     permission_classes = (permissions.AllowAny,)
     serializer_class = ProductReadOnlySerializer
 
@@ -204,6 +205,7 @@ class OrderViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         "read": OrderReadOnlySerializer,
         "update": OrderUpdateSerializer,
     }
+    ordering_fields = []
 
     def get_queryset(self):
         user = self.request.user
@@ -216,6 +218,7 @@ class OrderLineViewSet(MultiSerializerMixin, viewsets.ModelViewSet):
         "read": OrderLineReadOnlySerializer,
         "write": OrderLineCreateSerializer,
     }
+    ordering_fields = []
 
     def get_queryset(self):
         user = self.request.user
