@@ -93,6 +93,7 @@ class AttendanceEventViewSet(viewsets.ModelViewSet):
         return (
             AttendanceEvent.objects.all()
             .select_related("reserved_seats", "event")
+            .prefetch_related("attendees__user")
             .filter(event__in=events)
         )
 

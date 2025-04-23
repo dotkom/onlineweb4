@@ -78,7 +78,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_not_extra_queries_for_logged_in(self):
-        with self.assertNumQueries(18):
+        with self.assertNumQueries(15):
             response = self.client.get(self.get_list_url())
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -421,7 +421,7 @@ class AttendanceEventTestCase(GetUrlMixin, APITestCase):
         self.attendee1.save()
         self.attendee2.save()
 
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(3):
             response = self.client.get(self.get_public_attendees_url(self.event.id))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
