@@ -93,6 +93,7 @@ class ArticleViewSet(
     serializer_class = ArticleSerializer
     permission_classes = (AllowAny,)
     filterset_class = ArticlesFilter
+    ordering_fields = ["id", "changed_date", "published_date", "created_date"]
 
     def get_queryset(self):
         return (
