@@ -47,6 +47,10 @@ urlpatterns = [
     re_path(r"^wiki/", include("wiki.urls")),
 ]
 
+# Robots.txt
+urlpatterns += [
+    re_path(r"^robots.txt$", TemplateView.as_view(template_name="robots.txt", content_type="text/plain"))
+]
 
 # Onlineweb app urls
 
