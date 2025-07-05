@@ -38,17 +38,6 @@ COPY --from=js-static $APP_DIR/bundles ./bundles
 
 RUN uv run --locked -- ./manage.py collectstatic
 
-FROM python:3.12 AS vault-lambda-extension
-
-WORKDIR /vault
-
-# https://developer.hashicorp.com/vault/docs/platform/aws/lambda-extension
-ADD --checksum=sha256:69b95ca2f99196868077fa5d360db24aaed16fdf6038e72273163aa4cc372b0b \ 
-    https://releases.hashicorp.com/vault-lambda-extension/0.10.3/vault-lambda-extension_0.10.3_linux_amd64.zip \
-    /vault.zip
-
-RUN python -m zipfile -e /vault.zip /vault
-
 FROM amazon/aws-lambda-python:3.12
 
 COPY --from=ghcr.io/astral-sh/uv:0.6.5 /uv /bin/uv
@@ -67,8 +56,6 @@ RUN ZAPPA_HANDLER_PATH=$(python -c "from zappa import handler; print (handler.__
 && cp $ZAPPA_HANDLER_PATH $FUNCTION_DIR
 
 COPY --from=static-files /srv/app/webpack-stats.json ./
-COPY --from=vault-lambda-extension /vault/extensions/vault-lambda-extension /opt/extensions/vault-lambda-extension
-RUN chmod +x /opt/extensions/vault-lambda-extension
 ARG VERSION
 # https://docs.sentry.io/platforms/python/guides/logging/configuration/releases/#setting-a-release
 ENV SENTRY_VERSION=${VERSION}

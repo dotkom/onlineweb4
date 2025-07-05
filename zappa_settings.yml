@@ -38,7 +38,6 @@ prod:
     OW4_EVENTS_ENABLE_CAPTCHA: 'True'
     OW4_DJANGO_ALLOWED_HOSTS: online.ntnu.no,old.online.ntnu.no,*.execute-api.eu-north-1.amazonaws.com
     OW4_DJANGO_BASE_URL: https://old.online.ntnu.no
-    OW4_GSUITE_CREDENTIALS_PATH: "/tmp/secrets/gsuite-creds.json"
     OW4_GSUITE_ENABLED: 'True'
     OW4_GSUITE_ACCOUNTS_ENABLED: 'True'
     OW4_GSUITE_ACCOUNTS_ENABLE_INSERT: 'True'
@@ -53,16 +52,6 @@ prod:
     OW4_ZAPPA: 'True'
     OW4_USE_S3: 'True'
     OW4_S3_BUCKET_NAME: onlineweb4-prod
-  aws_environment_variables:
-    VAULT_ADDR: https://vault.online.ntnu.no:8200
-    VAULT_AUTH_PROVIDER: aws
-    VAULT_AUTH_ROLE: ow4
-    VAULT_SECRET_PATH_DB: postgres/creds/ow4
-    VAULT_SECRET_FILE_DB: "/tmp/secrets/db.json"
-    VAULT_SECRET_PATH_GSUITE: secret/data/onlineweb4/gsuite-creds
-    VAULT_SECRET_FILE_GSUITE: "/tmp/secrets/gsuite-creds.json"
-    VAULT_SECRET_PATH_ENV: secret/data/onlineweb4/zappa-env
-    VAULT_SECRET_FILE_ENV: "/tmp/secrets/env.json"
 dev:
   aws_region: eu-north-1
   django_settings: onlineweb4.settings
@@ -100,12 +89,4 @@ dev:
     OW4_ZAPPA: 'True'
     OW4_USE_S3: 'True'
     OW4_S3_BUCKET_NAME: onlineweb4-dev
-  aws_environment_variables:
-    VAULT_ADDR: https://vault.online.ntnu.no:8200
-    VAULT_AUTH_PROVIDER: aws
-    VAULT_AUTH_ROLE: ow4dev
-    VAULT_SECRET_PATH_DB: postgres/creds/ow4dev
-    VAULT_SECRET_FILE_DB: "/tmp/secrets/db.json"
-    VAULT_SECRET_PATH_ENV: secret/data/onlineweb4/dev/zappa-env
-    VAULT_SECRET_FILE_ENV: "/tmp/secrets/env.json"
 

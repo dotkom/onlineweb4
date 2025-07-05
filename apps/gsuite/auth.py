@@ -9,20 +9,20 @@ from googleapiclient.discovery import Resource, build
 
 
 def generate_g_suite_credentials(
-    json_keyfile_name: str = settings.OW4_GSUITE_SYNC.get("CREDENTIALS"),
+    json_credentials: str = settings.OW4_GSUITE_SYNC.get("CREDENTIALS"),
     scopes: list[str] = None,
 ) -> ServiceAccountCredentials:
     """
     Creates the credentials required for building a Google API Client Resource.
-    :param json_keyfile_name: Path to the JSON keyfile. Get this at
+    :param json_credentials: The JSON keyfile. Get this at
         https://console.developers.google.com/apis/credentials?project=ow4-gsuitesync
     :param scopes: A list of scopes that the Service Account should be able to access.
     :return: Credentials
     """
 
-    service_account_info = json.load(open(json_keyfile_name))
+    service_account_info = json.load(json_credentials)
     credentials = service_account.Credentials.from_service_account_info(
-        service_account_info["data"]["data"], scopes=scopes
+        service_account_info, scopes=scopes
     )
     credentials = credentials.with_subject(
         settings.OW4_GSUITE_SETTINGS.get("DELEGATED_ACCOUNT")
