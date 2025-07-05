@@ -38,7 +38,6 @@ prod:
     OW4_EVENTS_ENABLE_CAPTCHA: 'True'
     OW4_DJANGO_ALLOWED_HOSTS: online.ntnu.no,old.online.ntnu.no,*.execute-api.eu-north-1.amazonaws.com
     OW4_DJANGO_BASE_URL: https://old.online.ntnu.no
-    OW4_GSUITE_CREDENTIALS_PATH: "/tmp/secrets/gsuite-creds.json"
     OW4_GSUITE_ENABLED: 'True'
     OW4_GSUITE_ACCOUNTS_ENABLED: 'True'
     OW4_GSUITE_ACCOUNTS_ENABLE_INSERT: 'True'
