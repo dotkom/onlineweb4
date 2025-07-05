@@ -1,37 +1,27 @@
-import json
-
 from decouple import config
 
 DEBUG = False
 TEMPLATE_DEBUG = False
 
-secrets_dir = "/tmp/secrets"
-
-db_creds_file = open(f"{secrets_dir}/db.json")
-env_file = open(f"{secrets_dir}/env.json")
-
-db_creds = json.load(db_creds_file)["data"]
-env = json.load(env_file)["data"]["data"]
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": config("OW4_DATABASE_NAME", default="ow4dev"),
-        "USER": db_creds["username"],
-        "PASSWORD": db_creds["password"],
-        "HOST": env["POSTGRES_HOST"],
+        "USER": config("OW4_DATABASE_USERNAME"),
+        "PASSWORD": config("OW4_DATABASE_PASSWORD"),
+        "HOST": config("OW4_DATABASE_HOST"),
         "PORT": "5432",
     },
 }
 
-SECRET_KEY = env["SECRET_KEY"]
+SECRET_KEY = config("SECRET_KEY")
 
 
 DATAPORTEN = {
     "STUDY": {
         "TESTING": config("OW4_DP_STUDY_TESTING", cast=bool, default=True),
-        "CLIENT_ID": env["DP_STUDY_CLIENT_ID"],
-        "CLIENT_SECRET": env["DP_STUDY_CLIENT_SECRET"],
+        "CLIENT_ID": config("DP_STUDY_CLIENT_ID"),
+        "CLIENT_SECRET": config("DP_STUDY_CLIENT_SECRET"),
         "REDIRECT_URI": config("OW4_DP_STUDY_REDIRECT_URI", default=""),
         "PROVIDER_URL": "https://auth.dataporten.no/oauth/token",
         "SCOPES": [
@@ -45,25 +35,25 @@ DATAPORTEN = {
     }
 }
 
-VIMEO_API_TOKEN = env["VIMEO_API_TOKEN"]
+VIMEO_API_TOKEN = config("VIMEO_API_TOKEN")
 
-WEB_PUSH_PRIVATE_KEY = env["WEB_PUSH_PRIVATE_KEY"]
+WEB_PUSH_PRIVATE_KEY = config("WEB_PUSH_PRIVATE_KEY")
 
-TURNSTILE_SITEKEY = env["OW4_TURNSTILE_PUBLIC_KEY"]
-TURNSTILE_SECRET = env["OW4_TURNSTILE_PRIVATE_KEY"]
+TURNSTILE_SITEKEY = config("OW4_TURNSTILE_PUBLIC_KEY")
+TURNSTILE_SECRET = config("OW4_TURNSTILE_PRIVATE_KEY")
 
 STRIPE_PUBLIC_KEYS = {
-    "arrkom": env["STRIPE_PUBKEY_ARRKOM"],
-    "prokom": env["STRIPE_PUBKEY_PROKOM"],
-    "trikom": env["STRIPE_PUBKEY_TRIKOM"],
-    "fagkom": env["STRIPE_PUBKEY_FAGKOM"],
+    "arrkom": config("STRIPE_PUBKEY_ARRKOM"),
+    "prokom": config("STRIPE_PUBKEY_PROKOM"),
+    "trikom": config("STRIPE_PUBKEY_TRIKOM"),
+    "fagkom": config("STRIPE_PUBKEY_FAGKOM"),
 }
 
 STRIPE_PRIVATE_KEYS = {
-    "arrkom": env["STRIPE_PRIVKEY_ARRKOM"],
-    "prokom": env["STRIPE_PRIVKEY_PROKOM"],
-    "trikom": env["STRIPE_PRIVKEY_TRIKOM"],
-    "fagkom": env["STRIPE_PRIVKEY_FAGKOM"],
+    "arrkom": config("STRIPE_PRIVKEY_ARRKOM"),
+    "prokom": config("STRIPE_PRIVKEY_PROKOM"),
+    "trikom": config("STRIPE_PRIVKEY_TRIKOM"),
+    "fagkom": config("STRIPE_PRIVKEY_FAGKOM"),
 }
 
 APPROVAL_SETTINGS = {
@@ -76,10 +66,10 @@ AWS_SES_REGION_ENDPOINT = f"email.{AWS_SES_REGION_NAME}.amazonaws.com"
 SESSION_COOKIE_SAMESITE = None
 ADMINS = (("dotKom", "utvikling@online.ntnu.no"),)
 
-AUTH0_ISSUER = env["AUTH0_ISSUER"]
-AUTH0_CLIENT_ID = env["AUTH0_CLIENT_ID"]
-AUTH0_MGMT_TENANT = env["AUTH0_MGMT_TENANT"]
-AUTH0_CLIENT_SECRET = env["AUTH0_CLIENT_SECRET"]
+AUTH0_ISSUER = config("AUTH0_ISSUER")
+AUTH0_CLIENT_ID = config("AUTH0_CLIENT_ID")
+AUTH0_MGMT_TENANT = config("AUTH0_MGMT_TENANT")
+AUTH0_CLIENT_SECRET = config("AUTH0_CLIENT_SECRET")
 
 # this OIDC is for non-API-auth
 OIDC_OP_JWKS_ENDPOINT = f"{AUTH0_ISSUER}/.well-known/jwks.json"
