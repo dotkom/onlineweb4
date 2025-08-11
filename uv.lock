@@ -1127,7 +1127,7 @@ requires-dist = [
     { name = "requests", extras = ["security"], specifier = "~=2.32" },
     { name = "sentry-sdk", extras = ["django"], specifier = "~=2.13" },
     { name = "setuptools", marker = "extra == 'prod'", specifier = "~=80.0" },
-    { name = "stripe", specifier = "~=3.5" },
+    { name = "stripe", specifier = "~=12.4" },
     { name = "unidecode", specifier = "~=1.3" },
     { name = "wiki", specifier = "~=0.11" },
     { name = "zappa", marker = "extra == 'prod'", specifier = "~=0.59" },
@@ -1759,14 +1759,15 @@ wheels = [
 
 [[package]]
 name = "stripe"
-version = "3.5.0"
+version = "12.4.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
+    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/33/8b/50bb439eb47aa52df730227f0abc34fc52db54191bc89c8e5e4742a39222/stripe-3.5.0.tar.gz", hash = "sha256:08f74cae6619d4a7d78f8162ff72bc3e9c913f53ec96ecd5ddc7d823c2e79ddd", size = 247698, upload-time = "2022-06-30T19:21:55.553Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ed/48/98caed87572968a6f4077507080b64d21763e2b6109c26e7e994a65dbcb2/stripe-12.4.0.tar.gz", hash = "sha256:1cd1f5b0579867923081bacf594959d1f403f218223a06dc38273beb07d01567", size = 1414724, upload-time = "2025-07-30T17:25:53.206Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b0/30/8efbd3ea5ab9a0052b4b7b560cff5b695918f27208c068bc3c3734bdf296/stripe-3.5.0-py2.py3-none-any.whl", hash = "sha256:69d5bf4611624a503bcec84a61b1f2a2b874bfc828432e4fd75cd120bcc3efef", size = 232117, upload-time = "2022-06-30T19:21:52.542Z" },
+    { url = "https://files.pythonhosted.org/packages/23/75/a513c6e3262e31d55b93d073629aaf6667c39ca3c00ff3d2e3cfc2d5cff1/stripe-12.4.0-py2.py3-none-any.whl", hash = "sha256:10720fcbf075a0b4e3eefb209a005c94564ac0f6166d284ff3164439f39af86c", size = 1654255, upload-time = "2025-07-30T17:25:50.864Z" },
 ]
 
 [[package]]
