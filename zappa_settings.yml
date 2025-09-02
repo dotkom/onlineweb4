@@ -43,7 +43,7 @@ prod:
     OW4_GSUITE_ACCOUNTS_ENABLED: 'True'
     OW4_GSUITE_ACCOUNTS_ENABLE_INSERT: 'True'
     OW4_GSUITE_DELEGATED_ACCOUNT: ow4gsuitesync@online.ntnu.no
-    OW4_GSUITE_SYNC_ENABLED: 'True'
+    OW4_GSUITE_SYNC_ENABLED: 'False'
     OW4_GSUITE_SYNC_ENABLE_INSERT: 'True'
     OW4_GSUITE_SYNC_ENABLE_DELETE: 'True'
     OW4_DP_STUDY_REDIRECT_URI: https://old.online.ntnu.no/dataporten/study/callback/
